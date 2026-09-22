@@ -30,13 +30,16 @@ export default function Hero() {
       className="relative isolate h-[82svh] min-h-[480px] max-h-[860px] overflow-hidden bg-forest-950 lg:h-[72svh] xl:h-[70svh]"
     >
       <motion.div style={{ y, scale }} className="absolute inset-0 will-change-transform">
-        <img
-          src="/images/hero-campus.jpg"
-          alt="The GIBS campus at golden hour, sandstone pavilions and reflecting pool with members of the school community walking the promenade"
-          className="h-full w-full object-cover"
-          fetchPriority="high"
-          decoding="async"
-        />
+        <div className="kenburns absolute inset-0">
+          <img
+            src="/images/hero-campus.jpg"
+            alt="The GIBS campus at golden hour, sandstone pavilions and reflecting pool with members of the school community walking the promenade"
+            className="h-full w-full object-cover"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </div>
+        <div className="film-grain" aria-hidden="true" />
       </motion.div>
 
       {/*
@@ -145,7 +148,7 @@ export default function Hero() {
             className="mt-5 max-w-xl text-[clamp(0.95rem,1.5vw,1.125rem)] leading-[1.55] text-white/85"
             style={{ textShadow: "0 4px 12px rgba(0, 0, 0, 0.35)" }}
           >
-            A contemporary business education for leaders, entrepreneurs and organizations of the Global Africa.
+            A business school for the people and institutions building the Global Africa.
           </motion.p>
 
           <motion.div
@@ -158,7 +161,7 @@ export default function Hero() {
               to="/programmes"
               className="group inline-flex items-center gap-2.5 rounded-full bg-[#006837] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-[#005a2f] hover:shadow-[0_6px_18px_rgba(0,0,0,0.3)] hover:-translate-y-0.5"
             >
-              Discover our programs
+              Explore programmes
               <ArrowUpRight className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
             <Link

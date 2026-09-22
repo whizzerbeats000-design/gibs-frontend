@@ -2,7 +2,8 @@ import type { ReactNode } from "react";
 import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
 import { ArrowUpRight, PlusIcon, Diamond } from "./icons";
-import { DATA_REQUIRED, type Programme } from "../lib/data";
+import { useCardDepth } from "./depth";
+import { type Programme } from "../lib/data";
 
 /* ---------- Programme row (index pages / homepage) ---------- */
 
@@ -13,72 +14,41 @@ export function ProgramRow({
   programme: Programme;
   index: number;
 }) {
+  const audience = programme.audience?.[0];
   return (
     <Link
       to={`/programmes/${programme.slug}`}
-      className="group grid grid-cols-[2.25rem_1fr] gap-x-4 border-b rule py-8 sm:grid-cols-[4.5rem_1fr_auto] sm:items-center sm:gap-x-10 sm:py-8"
+      className="group grid grid-cols-[2.25rem_1fr] gap-x-4 border-b rule py-8 sm:grid-cols-[4.5rem_1fr_auto] sm:items-center sm:gap-x-12 sm:py-9"
     >
-      <span className="pt-1 text-[11px] font-bold tracking-[0.16em] text-forest-600">
+      <span className="pt-1 text-[11px] font-medium tracking-[0.14em] text-muted">
         {String(index + 1).padStart(2, "0")}
       </span>
       <span>
-        <span className="flex flex-wrap items-center gap-x-4 gap-y-2">
-          <span
-            className="block type-h3 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-2"
-            style={{
-              fontWeight: 400,
-              WebkitFontSmoothing: "antialiased",
-              MozOsxFontSmoothing: "grayscale",
-              textRendering: "optimizeLegibility" as const,
-            }}
-          >
-            {programme.title}
-          </span>
-          <span
-            className="text-gold-700"
-            style={{
-              fontSize: "0.85rem",
-              letterSpacing: "0.08em",
-              lineHeight: 1.5,
-              textTransform: "uppercase" as const,
-              fontWeight: 400,
-              WebkitFontSmoothing: "antialiased",
-              MozOsxFontSmoothing: "grayscale",
-            }}
-          >
-            {programme.category}
-          </span>
+        <span
+          className="block text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600"
+        >
+          {programme.category}
         </span>
         <span
-          className="mt-3 block max-w-2xl type-body"
-          style={{
-            fontSize: "1.05rem",
-            color: "#2D2D2D",
-            WebkitFontSmoothing: "antialiased",
-            MozOsxFontSmoothing: "grayscale",
-            textRendering: "optimizeLegibility" as const,
-          }}
+          className="mt-2 block type-h3 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-2"
+        >
+          {programme.title}
+        </span>
+        <span
+          className="mt-2 block max-w-2xl type-body"
         >
           {programme.tagline}
         </span>
-        {programme.duration === DATA_REQUIRED && (
+        {audience && (
           <span
-            className="mt-3 block uppercase text-muted"
-            style={{
-              fontSize: "0.85rem",
-              letterSpacing: "0.08em",
-              lineHeight: 1.5,
-              fontWeight: 400,
-              WebkitFontSmoothing: "antialiased",
-              MozOsxFontSmoothing: "grayscale",
-            }}
+            className="mt-1.5 block max-w-lg text-[13px] leading-relaxed text-muted"
           >
-            Duration &amp; intake: to be published
+            For {audience.charAt(0).toLowerCase() + audience.slice(1)}
           </span>
         )}
       </span>
-      <span className="col-start-2 mt-5 flex h-12 w-12 items-center justify-center rounded-full border border-ink/15 text-ink/70 transition-all duration-300 sm:col-start-auto sm:mt-0 group-hover:border-forest-600 group-hover:bg-forest-600 group-hover:text-ivory">
-        <ArrowUpRight className="h-5 w-5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      <span className="col-start-2 mt-6 flex h-9 w-9 items-center justify-center text-forest-700 transition-transform duration-300 ease-out sm:col-start-auto sm:mt-0 group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+        <ArrowUpRight className="h-5 w-5" />
       </span>
     </Link>
   );
@@ -105,9 +75,14 @@ export function EditorialCard({
   excerpt: string;
   cta?: string;
 }) {
+  const depthRef = useCardDepth<HTMLAnchorElement>(2.25);
   return (
-    <Link to={to} className="group block">
-      <div className="relative aspect-[4/3] overflow-hidden">
+    <Link
+      ref={depthRef}
+      to={to}
+      className="group block card-depth card-spot"
+    >
+      <div className="relative aspect-[4/3] overflow-hidden shadow-card">
         <img
           src={image}
           alt={alt}
@@ -117,6 +92,7 @@ export function EditorialCard({
         />
         <div className="absolute inset-0 bg-forest-900/25 transition-colors duration-300 group-hover:bg-forest-900/15" />
         <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
+        <div className="film-grain" aria-hidden="true" />
       </div>
       <div className="mt-5 flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.16em]">
         <span className="text-forest-600">{tag}</span>

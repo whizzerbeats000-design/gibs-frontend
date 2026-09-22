@@ -431,6 +431,7 @@ export function ClosingImmersive({
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
       />
+      <div className="film-grain" aria-hidden="true" />
       <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(0,32,9,0.92)_0%,rgba(0,38,12,0.72)_45%,rgba(0,32,9,0.45)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,32,9,0.7),transparent_55%)]" />
       <div className="container-x relative py-28 sm:py-36">

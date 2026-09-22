@@ -5,6 +5,7 @@ import {
   useState,
   type ReactNode,
   type MouseEvent,
+  type Ref,
 } from "react";
 
 /*
@@ -66,11 +67,12 @@ type LinkProps = {
   children: ReactNode;
   className?: string;
   onClick?: () => void;
+  ref?: Ref<HTMLAnchorElement>;
   "aria-label"?: string;
   "aria-current"?: boolean | "page";
 };
 
-export function Link({ to, children, className, onClick, ...rest }: LinkProps) {
+export function Link({ to, children, className, onClick, ref, ...rest }: LinkProps) {
   const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
     e.preventDefault();
@@ -78,7 +80,7 @@ export function Link({ to, children, className, onClick, ...rest }: LinkProps) {
     navigate(to);
   };
   return (
-    <a href={hrefFor(to)} className={className} onClick={handleClick} {...rest}>
+    <a ref={ref} href={hrefFor(to)} className={className} onClick={handleClick} {...rest}>
       {children}
     </a>
   );

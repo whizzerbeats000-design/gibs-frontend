@@ -121,7 +121,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           <div className="lg:col-span-5">
             <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + 16px)" }}>
               <Reveal y={32}>
-                <div className="border border-line bg-white p-7 shadow-crisp sm:p-8">
+                <div className="border border-line bg-white p-7 shadow-card sm:p-8">
                   <p className="eyebrow">At a glance</p>
                   <dl className="mt-5">
                     <FactRow label="Category" value={programme.category} />
@@ -209,7 +209,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             {/* Delivery phases */}
             <Reveal delay={0.1} className="lg:col-span-5">
               <p className="meta">Indicative structure</p>
-              <div className="mt-5 border border-line bg-white p-7 shadow-crisp sm:p-8">
+              <div className="mt-5 border border-line bg-white p-7 shadow-card sm:p-8">
                 {SPINE.map((s) => (
                   <div key={s.phase} className="flex gap-5 border-b rule py-5 first:pt-0 last:border-b-0 last:pb-0">
                     <span className="display-serif text-2xl text-gold-600">{s.phase}</span>

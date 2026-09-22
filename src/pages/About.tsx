@@ -188,7 +188,7 @@ export default function About() {
           </Reveal>
           <div className="order-1 flex items-center p-8 sm:p-14 lg:p-20">
             <Reveal>
-              <p className="eyebrow-light">Global Perspective · The Future</p>
+              <p className="eyebrow-light">Global Perspective</p>
               <h2 className="display-serif type-h2 mt-6">
                 A school for the Global Africa
               </h2>

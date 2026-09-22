@@ -313,10 +313,7 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
         hidden && "pointer-events-none opacity-0"
       )}
     >
-      <span className="relative flex h-2.5 w-2.5">
-        <span className="concierge-ping absolute inline-flex h-full w-full rounded-full bg-gold-300" />
-        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-gold-300" />
-      </span>
+      <span className="h-2 w-2 shrink-0 rounded-full bg-gold-300" aria-hidden="true" />
       <ChatIcon className="h-4.5 w-4.5" />
       <span className="hidden sm:inline">GIBS Concierge</span>
     </button>

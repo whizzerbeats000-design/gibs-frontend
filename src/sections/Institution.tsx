@@ -69,7 +69,7 @@ export default function GlobalPerspective() {
               {PERSPECTIVES.map((p) => (
                 <Reveal key={p.k} delay={0.1}>
                   <div className="grid grid-cols-1 gap-1 border-b rule-light py-6 sm:grid-cols-[11rem_1fr] sm:gap-8">
-                    <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-gold-300">
+                    <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-gold-300">
                       {p.k}
                     </p>
                     <p className="type-body text-ivory/85">{p.v}</p>

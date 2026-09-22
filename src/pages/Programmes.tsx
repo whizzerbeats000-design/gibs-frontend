@@ -61,7 +61,7 @@ export default function ProgrammesPage() {
       <section className="bg-white">
         <div className="container-x pb-24 pt-8 sm:pb-32 sm:pt-10">
           {/* Filters */}
-          <div className="sticky top-[72px] z-20 -mx-5 mb-10 border-y border-line bg-white/92 px-5 py-4 backdrop-blur-md sm:mx-0 sm:rounded-panel sm:border sm:px-6 xl:top-[108px]">
+          <div className="sticky top-[72px] z-20 -mx-5 mb-10 border-y border-line bg-white/92 px-5 py-4 backdrop-blur-md sm:mx-0 sm:rounded-panel sm:border sm:px-6">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <div
                 role="group"

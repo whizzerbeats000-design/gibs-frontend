@@ -86,7 +86,7 @@ export default function Experience() {
               y={48}
               className="relative z-10 -mt-16 ml-auto mr-2 w-[62%] sm:mr-8 sm:w-[52%] lg:-mt-24"
             >
-              <div className="border-[6px] border-paper shadow-lift">
+              <div className="border-[6px] border-paper shadow-card">
                 <div className="relative aspect-[4/3] overflow-hidden">
                   <motion.img
                     style={{ y: smallY }}
@@ -96,6 +96,7 @@ export default function Experience() {
                     decoding="async"
                     className="absolute inset-0 h-[112%] w-full object-cover"
                   />
+                  <div className="film-grain" aria-hidden="true" />
                   <div className="absolute inset-0 bg-forest-900/25" />
                 </div>
               </div>
@@ -109,7 +110,7 @@ export default function Experience() {
               transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}
               className="absolute -left-1 top-8 hidden max-w-[220px] border border-ivory/40 bg-forest-800/90 px-6 py-5 text-ivory backdrop-blur-[2px] sm:block lg:left-0"
             >
-              <p className="text-[11px] font-bold uppercase leading-relaxed tracking-[0.16em] text-gold-300">
+              <p className="text-[11px] font-medium uppercase leading-relaxed tracking-[0.12em] text-gold-300">
                 A campus built for
                 <br /> study and dialogue
               </p>

@@ -31,10 +31,11 @@ export function PageHero({
             className="h-full w-full object-cover"
             decoding="async"
           />
+          <div className="film-grain" aria-hidden="true" />
           <div className="absolute inset-0 bg-[linear-gradient(95deg,rgba(0,32,9,0.82)_0%,rgba(0,40,14,0.55)_45%,rgba(0,32,9,0.30)_100%)]" />
           <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,32,9,0.72),transparent_50%)]" />
         </div>
-        <div className="container-x relative pb-16 pt-[120px] sm:pb-24 sm:pt-[148px] xl:pt-[180px]">
+        <div className="container-x relative pb-16 pt-[120px] sm:pb-24 sm:pt-[148px] xl:pt-[148px]">
           {breadcrumbs && (
             <div className="text-ivory/70 [&_a]:text-ivory/70 [&_a:hover]:text-gold-300">
               <Breadcrumbs items={breadcrumbs} />
@@ -63,7 +64,7 @@ export function PageHero({
 
   return (
     <section className="bg-paper">
-      <div className="container-x pb-14 pt-[120px] sm:pb-20 sm:pt-[142px] xl:pt-[176px]">
+      <div className="container-x pb-14 pt-[120px] sm:pb-20 sm:pt-[142px] xl:pt-[148px]">
         {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
         <Reveal>
           <p className="eyebrow">{eyebrow}</p>

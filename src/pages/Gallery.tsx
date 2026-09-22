@@ -267,7 +267,7 @@ export default function Gallery() {
       </section>
 
       {/* Filters */}
-      <section className="sticky top-[72px] z-20 border-y border-line bg-white/95 backdrop-blur-md xl:top-[108px]">
+      <section className="sticky top-[72px] z-20 border-y border-line bg-white/95 backdrop-blur-md">
         <div className="container-x flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
           {CATEGORIES.map((cat) => (
             <button

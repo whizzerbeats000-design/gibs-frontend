@@ -1,6 +1,6 @@
 import { Reveal } from "../components/motion";
 import { Link } from "../lib/router";
-import { ChatIcon, ArrowUpRight } from "../components/icons";
+import { ArrowUpRight } from "../components/icons";
 import { useConcierge } from "../components/Concierge";
 import { MeridianRule } from "../components/ui";
 
@@ -42,15 +42,12 @@ export default function ConciergeBand() {
 
           {/* Quote card — the single green moment of this section */}
           <Reveal delay={0.16} y={36} className="lg:col-span-5">
-            <figure className="relative bg-forest-800 p-9 text-ivory shadow-lift sm:p-12">
+            <figure className="relative bg-forest-800 p-9 text-ivory shadow-card sm:p-12">
               <MeridianRule light at="82%" className="absolute inset-x-9 top-7 w-auto sm:inset-x-12" />
-              <span className="mt-4 flex h-12 w-12 items-center justify-center rounded-pill bg-gold-300 text-forest-950">
-                <ChatIcon className="h-5 w-5" />
-              </span>
-              <blockquote className="display-serif mt-7 text-[1.55rem] leading-[1.4]">
+              <blockquote className="display-serif mt-10 text-[1.55rem] leading-[1.4]">
                 “Welcome to GIBS Concierge. How can we help you find your way?”
               </blockquote>
-              <figcaption className="mt-6 text-[11px] font-bold uppercase tracking-[0.16em] text-ivory/55">
+              <figcaption className="mt-6 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/55">
                 Guided assistance · not an AI service
               </figcaption>
             </figure>

@@ -45,10 +45,10 @@ export default function InsightsTeaser() {
               <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
             </div>
             <div className="flex flex-col justify-center lg:col-span-5">
-              <div className="flex items-center gap-3 text-[11px] font-bold uppercase tracking-[0.16em]">
+              <div className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.12em]">
                 <span className="text-forest-600">{featured.category}</span>
-                <span className="h-px w-4 bg-gold-500" />
-                <span className="font-semibold tracking-[0.18em] text-muted">{featured.status}</span>
+                <span className="text-muted/70">·</span>
+                <span className="text-muted">{featured.status}</span>
               </div>
               <h3 className="display-serif type-h3 mt-5 text-ink transition-colors group-hover:text-forest-800">
                 {featured.title}
@@ -73,7 +73,7 @@ export default function InsightsTeaser() {
           {[second, third].map((post) => (
             <motion.article key={post.slug} variants={staggerItem} className="bg-paper p-8 sm:p-10">
               <Link to={`/research-insights/${post.slug}`} className="group block">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600">
                   {post.category}
                 </p>
                 <h3 className="display-serif type-h3 mt-4 text-ink transition-colors group-hover:text-forest-800">

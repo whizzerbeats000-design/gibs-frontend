@@ -22,7 +22,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
     <>
       {/* Article masthead */}
       <section className="bg-paper">
-        <div className="container-x pb-12 pt-[120px] sm:pb-14 sm:pt-[142px] xl:pt-[176px]">
+        <div className="container-x pb-12 pt-[120px] sm:pb-14 sm:pt-[142px] xl:pt-[148px]">
           <Breadcrumbs
             items={[
               { label: "Research & Insights", to: "/research-insights" },

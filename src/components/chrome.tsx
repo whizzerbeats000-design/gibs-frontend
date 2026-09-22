@@ -58,40 +58,8 @@ export function Header({
   const isActive = (to: string) =>
     to === "/" ? path === "/" : path === to || path.startsWith(to + "/");
 
-  const SECONDARY = [
-    { label: "News & Insights", to: "/research-insights" },
-    { label: "Events", to: "/events" },
-    { label: "Campus Life", to: "/campus" },
-    { label: "Gallery", to: "/gallery" },
-    { label: "Contact", to: "/contact" },
-  ];
-
   return (
     <header className="fixed inset-x-0 top-0 z-[var(--z-header)]">
-      {/* Utility / secondary navigation — desktop only */}
-      <div className="hidden bg-forest-900 text-ivory/75 xl:block">
-        <div className="container-x flex h-9 items-center justify-between">
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-gold-300/90">
-            Business / Leadership / Impact
-          </p>
-          <nav aria-label="Secondary" className="flex items-center gap-7">
-            {SECONDARY.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                aria-current={isActive(link.to) ? "page" : undefined}
-                className={cn(
-                  "text-[11px] font-semibold uppercase tracking-[0.14em] transition-colors duration-200",
-                  isActive(link.to) ? "text-gold-300" : "text-ivory/70 hover:text-ivory"
-                )}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
-      </div>
-
       {/* Primary bar — the single sanctioned glass treatment */}
       <div
         className={cn(

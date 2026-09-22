@@ -11,7 +11,7 @@ export default function AdmissionsTeaser() {
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
-              <p className="eyebrow-light">Admissions · The Journey</p>
+              <p className="eyebrow-light">Admissions</p>
             </Reveal>
             <Reveal delay={0.08} y={28}>
               <h2 className="display-serif type-h2 mt-5">
@@ -43,7 +43,7 @@ export default function AdmissionsTeaser() {
                   key={step.n}
                   className="grid grid-cols-[3rem_1fr] items-baseline gap-x-5 border-b rule-light py-5 sm:grid-cols-[4rem_1fr] sm:gap-x-8"
                 >
-                  <span className="text-[12px] font-bold tracking-[0.16em] text-gold-300">{step.n}</span>
+                  <span className="text-[12px] font-medium tracking-[0.14em] text-gold-300">{step.n}</span>
                   <h3 className="display-serif type-h3 text-ivory">{step.title}</h3>
                 </li>
               ))}

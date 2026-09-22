@@ -106,7 +106,7 @@ export default function ExecutiveEducation() {
       <section className="paper-grain bg-paper">
         <div className="container-x py-20 sm:py-24">
           <Reveal>
-            <p className="eyebrow">For Organizations · The Method</p>
+            <p className="eyebrow">The Method</p>
             <h2 className="display-serif type-h2 mt-5 max-w-3xl text-ink">
               Custom work begins with the question
               <em className="text-forest-700"> beneath the question.</em>
@@ -115,7 +115,7 @@ export default function ExecutiveEducation() {
           <div className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
             {ENGAGEMENT.map((step) => (
               <Reveal key={step.n} delay={0.05 * Number(step.n)}>
-                <p className="text-[11px] font-bold tracking-[0.16em] text-forest-600">{step.n}</p>
+                <p className="text-[11px] font-medium tracking-[0.14em] text-muted">{step.n}</p>
                 <h3 className="display-serif type-h3 mt-4 text-ink">{step.title}</h3>
                 <p className="mt-3 type-body">{step.body}</p>
               </Reveal>
@@ -160,7 +160,7 @@ export default function ExecutiveEducation() {
           </Reveal>
           <div className="lg:col-span-6 lg:order-1">
             <Reveal>
-              <p className="eyebrow">Faculty expertise · The environment</p>
+              <p className="eyebrow">Faculty Expertise</p>
               <h2 className="display-serif type-h2 mt-5 text-ink">
                 Taught by people who still do the work
               </h2>

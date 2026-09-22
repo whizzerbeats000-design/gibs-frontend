@@ -65,9 +65,22 @@
   --radius-panel: 4px;
   --radius-pill: 9999px;
 
-  /* Elevation — crisp and rare */
+  /* Elevation — crisp and rare.
+     Hierarchy: L1 flat editorial → L2 cards → L3 interactive cards → L4 floating
+     surfaces (nav/dialog). Layered tight+soft pairs read as physical depth;
+     one huge blurred shadow reads as plastic — avoid. */
   --shadow-crisp: 0 1px 2px rgba(18, 18, 18, 0.05);
   --shadow-lift: 0 28px 60px -30px rgba(18, 18, 18, 0.35);
+  /* L2 — cards: a near contact edge, a brief falloff, a long soft ambient pool. */
+  --shadow-card:
+    0 1px 2px rgba(18, 18, 18, 0.05),
+    0 3px 8px rgba(18, 18, 18, 0.04),
+    0 18px 36px -22px rgba(0, 40, 16, 0.22);
+  /* L3 — interactive cards: raised + closer ambient pool. */
+  --shadow-card-strong:
+    0 2px 4px rgba(18, 18, 18, 0.06),
+    0 8px 18px -8px rgba(18, 18, 18, 0.09),
+    0 28px 52px -24px rgba(0, 40, 16, 0.30);
 
   /* Layout */
   --container-page: 1280px;
@@ -203,11 +216,14 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
+  /* Section headings — large but not every heading at the same ceiling.
+     The hero owns the biggest size; sections sit one rung quieter so the
+     full-page scale reads as an intentional climb, not an equal shout. */
   .type-h2 {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
-    line-height: 1.08;
+    font-size: clamp(2.1rem, 4vw, 3.4rem);
+    line-height: 1.1;
     letter-spacing: -0.015em;
     text-wrap: balance;
     -webkit-font-smoothing: antialiased;
@@ -217,8 +233,8 @@ body {
   .type-h3 {
     font-family: var(--font-display);
     font-weight: 400;
-    font-size: clamp(1.6rem, 3vw, 2.4rem);
-    line-height: 1.15;
+    font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+    line-height: 1.2;
     letter-spacing: -0.01em;
     text-wrap: balance;
     -webkit-font-smoothing: antialiased;
@@ -271,14 +287,16 @@ body {
     text-wrap: pretty;
     @apply text-muted;
   }
+  /* Section labels — deliberately quiet: medium weight, tighter tracking.
+     Hierarchy comes from size and space, not from shouting labels. */
   .eyebrow {
-    @apply text-[12px] font-semibold uppercase tracking-[0.14em] text-[#006837] sm:text-[13px];
+    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-forest-700 sm:text-[12px];
   }
   .eyebrow-light {
-    @apply text-[12px] font-semibold uppercase tracking-[0.14em] text-gold-focus sm:text-[13px];
+    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-gold-300 sm:text-[12px];
   }
   .meta {
-    @apply text-[12px] font-semibold uppercase tracking-[0.12em] text-muted;
+    @apply text-[11px] font-medium uppercase tracking-[0.1em] text-muted sm:text-[12px];
   }
   .prose-editorial {
     @apply text-[16.5px] leading-[1.9] text-ink/85;
@@ -288,8 +306,8 @@ body {
   }
   .prose-editorial h2 {
     font-family: var(--font-display);
-    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
-    line-height: 1.08;
+    font-size: clamp(2.1rem, 4vw, 3.4rem);
+    line-height: 1.1;
     letter-spacing: -0.015em;
     color: var(--color-ink);
     margin: 2.2em 0 0.8em;
@@ -347,6 +365,15 @@ body {
   }
 
   /* The Meridian Horizon — signature hairline with meridian marker */
+@keyframes kenburns {
+  from { transform: scale(1.02) translateY(0.2%); }
+  to   { transform: scale(1.05) translateY(-0.6%); }
+}
+
+@keyframes concierge-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
   .meridian {
     @apply relative block h-px w-full;
     background: linear-gradient(
@@ -390,8 +417,28 @@ body {
   .btn-sm {
     @apply px-4 py-2.5 text-[13px];
   }
+  /* Premium primary — a thin ivory highlight across the top edge (light
+     catching the button), a hairline amber edge (restrained gold illumination),
+     a dark contact edge seating it, and a long soft pool beneath. Elevates on
+     hover; presses flat on active. Reads as expensive, never neon. */
   .btn-primary {
-    @apply bg-forest-600 text-ivory shadow-crisp hover:bg-forest-700;
+    @apply bg-forest-600 text-ivory hover:bg-forest-700;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.14),
+      0 0 0 1px rgba(212, 169, 62, 0.16),
+      0 2px 0 rgba(0, 20, 5, 0.35),
+      0 10px 22px -12px rgba(0, 40, 14, 0.45);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 0 0 1px rgba(212, 169, 62, 0.26),
+      0 2px 0 rgba(0, 20, 5, 0.35),
+      0 14px 30px -14px rgba(0, 40, 14, 0.5);
+  }
+  .btn-primary:active {
+    transform: translateY(0) scale(0.985);
   }
   /* Hero CTA — the one elevated control. A thin contact edge plus a soft
      ambient drop reads as physically seated, never floating glass. */
@@ -458,6 +505,65 @@ body {
     @apply inline-flex min-h-[44px] items-center rounded-pill border px-4 py-2 text-[13px] font-bold transition-colors duration-200;
   }
 
+  /* ---------------- Dimensional cards ----------------
+     Fee examples — imprecise survivorship data.
+     CARD DEPTH (L3): a physical, sub-3° tilt that trails the pointer; driven
+     entirely by CSS variables set from a passive pointermove handler (no
+     React re-renders, no layout reads). Disabled for coarse pointers and
+     prefers-reduced-motion (see media queries below).
+  ------------------------------------------------------------- */
+  .card-depth {
+    transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    transform-style: preserve-3d;
+    transition:
+      transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s ease;
+  }
+  .card-depth:hover {
+    box-shadow: var(--shadow-card-strong);
+  }
+
+  /* CARD LIGHTING: a restrained ivory highlight follows the pointer inside the
+     surface. Alpha 0.05 — light interacting with the material, not an RGB glow. */
+  .card-spot {
+    position: relative;
+  }
+  .card-spot::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      420px circle at var(--mx, 50%) var(--my, 50%),
+      rgba(255, 251, 235, 0.05),
+      transparent 45%
+    );
+    transition: opacity 0.45s ease;
+  }
+  .card-spot:hover::before,
+  .card-spot:focus-within::before {
+    opacity: 1;
+  }
+
+  /* Film grain — 1.5% turbulence, static paint, composited once. Attach to
+     important photography only (hero, full-bleed closes, framed features). */
+  .film-grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.015;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Ken Burns — hero photograph breathes over ~40s. transform-only,
+     compositor thread. Subconscious, not obvious (scale 1.02 → 1.05). */
+  .kenburns {
+    animation: kenburns 46s ease-in-out infinite alternate;
+  }
+
   /* Rendering containment */
   .cv-auto {
     content-visibility: auto;
@@ -478,14 +584,7 @@ body {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* Concierge pulse */
-@keyframes concierge-ping {
-  0% { transform: scale(1); opacity: 0.7; }
-  80%, 100% { transform: scale(2.6); opacity: 0; }
-}
-.concierge-ping {
-  animation: concierge-ping 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
-}
+/* Concierge typing dots */
 @keyframes blink {
   0%, 80%, 100% { opacity: 0.2; }
   40% { opacity: 1; }
@@ -498,10 +597,28 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .concierge-ping, .typing-dot { animation: none; }
+  .typing-dot { animation: none; }
   .btn { transform: none !important; }
+  .kenburns { animation: none !important; }
+  .card-depth { transform: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* Touch / coarse pointers never receive tilt or pointer-light; they scroll.
+   Elevation shadow may remain (harmless), transform is stripped entirely. */
+@media (pointer: coarse) {
+  .card-depth { transform: none !important; }
+  .card-spot::before { opacity: 0 !important; }
+}
+
+/* Mobile hero breathes slower and stays fractionally flatter — the scale
+   delta and duration keep the effect subconscious on small viewports. */
+@media (max-width: 767px) {
+  .kenburns {
+    animation-duration: 60s;
+    transform-origin: 50% 62%;
   }
 }

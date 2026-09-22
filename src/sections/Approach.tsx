@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Reveal, stagger, staggerItem, staggerSlow } from "../components/motion";
-import { Diamond } from "../components/icons";
 import { ArrowTextLink, MeridianRule } from "../components/ui";
 
 const COMMITMENTS = [
@@ -48,11 +47,7 @@ export default function Perspective() {
             viewport={{ once: true, margin: "-10% 0px" }}
             className="lg:col-span-4"
           >
-            <motion.div variants={staggerItem} className="flex items-center gap-2 text-gold-600">
-              <Diamond className="h-2 w-2" />
-              <span className="h-px w-12 bg-gold-500/70" />
-            </motion.div>
-            <motion.p variants={staggerItem} className="mt-6 type-body">
+            <motion.p variants={staggerItem} className="mt-6 max-w-md type-body">
               GIBS pairs rigorous scholarship with the lived practice of
               leaders working across African markets and the world.
             </motion.p>
@@ -74,7 +69,7 @@ export default function Perspective() {
                 variants={staggerItem}
                 className="grid grid-cols-[auto_1fr] gap-x-6 border-t rule py-8 first:border-t-0 first:pt-0 sm:grid-cols-[5rem_1fr] sm:gap-x-10 sm:py-9 sm:first:pt-0"
               >
-                <span className="pt-1.5 text-xs font-bold tracking-[0.16em] text-forest-600">{c.n}</span>
+                <span className="pt-1.5 text-xs font-medium tracking-[0.14em] text-muted">{c.n}</span>
                 <div>
                   <h3 className="display-serif type-h3 text-ink">
                     {c.title}

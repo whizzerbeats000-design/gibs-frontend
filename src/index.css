@@ -1,0 +1,507 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+@import "tailwindcss";
+
+/* ============================================================
+   GIBS DESIGN SYSTEM — single source of truth
+   The Meridian Horizon · Modern Classicism
+   Global Excellence, African Heart
+   ============================================================ */
+@theme {
+  /* Fraunces — variable display serif (weight 300–700, optical size 9–144).
+      SOFT/WONK are pinned to 0 so the family reads controlled and architectural
+      rather than wonky; display sizes use the wide rendering it was designed for. */
+  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
+  /* Instrument Serif — high-contrast Modern Editorial Serif for display */
+  --font-display: "Instrument Serif", Georgia, serif;
+  /* Libre Baskerville — wide, low-contrast Transitional Serif. Mobile menu
+      sheet only; site-wide display font is unaffected. */
+  --font-baskerville: "Libre Baskerville", Georgia, serif;
+  /* Space Grotesk — architectural grotesque for UI, micro-type and body. */
+  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+
+  /* Forest green — primary signal (600 = brand #006B1B) */
+  --color-forest-50: #edf6ee;
+  --color-forest-100: #d4ebd8;
+  --color-forest-200: #aed8b7;
+  --color-forest-300: #7dc08c;
+  --color-forest-400: #489c61;
+  --color-forest-500: #1e7e3a;
+  --color-forest-600: #006b1b;
+  --color-forest-700: #005817;
+  --color-forest-800: #004614;
+  --color-forest-900: #00310e;
+  --color-forest-950: #002009;
+
+  /* Warm amber gold — confident accent (300 lov keeps the light cast for
+      dark surfaces; 500–700 step toward amber for presence & text contrast) */
+  --color-gold-100: #f7eec9;
+  --color-gold-200: #f0e2a2;
+  --color-gold-300: #ebd375;
+  --color-gold-400: #d4a93e;
+  --color-gold-500: #c0932a;
+  --color-gold-600: #9c7419;
+  --color-gold-700: #75570f;
+
+  /* Hero focus gold — #E2C06B per type spec */
+  --color-gold-focus: #e2c06b;
+
+  /* Warm cream surfaces — a paper-like ivory family with a warmer cast */
+  --color-ivory: #f3f0e8;
+  --color-paper: #faf7ef;
+  --color-stone: #ece8dc;
+  --color-ink: #121212;
+  --color-muted: #4a5568;
+  --color-line: #e4e1d5;
+
+  /* Semantic status (used only for forms/states) */
+  --color-success: #1e7e3a;
+  --color-warning: #a38530;
+  --color-error: #9b1c1c;
+  --color-error-bg: #fdf2f2;
+
+  /* Shape scale — architecture over pills */
+  --radius-xs: 2px;
+  --radius-panel: 4px;
+  --radius-pill: 9999px;
+
+  /* Elevation — crisp and rare */
+  --shadow-crisp: 0 1px 2px rgba(18, 18, 18, 0.05);
+  --shadow-lift: 0 28px 60px -30px rgba(18, 18, 18, 0.35);
+
+  /* Layout */
+  --container-page: 1280px;
+  --gutter: 1.25rem;
+
+  /* Motion — durations and easing are inlined where used */
+
+  /* Z-index */
+  --z-header: 50;
+  --z-nav: 60;
+  --z-search: 70;
+  --z-concierge: 80;
+
+  /* Sticky offsets (header: 72px; +36px utility bar on xl) */
+  --sticky-top: 72px;
+}
+@media (min-width: 1280px) {
+  :root {
+    --sticky-top: 108px;
+  }
+}
+
+/* ---- Semantic token aliases (consumed via arbitrary values) ---- */
+:root {
+  --bg: var(--color-paper);
+  --surface: #ffffff;
+  --surface-muted: var(--color-ivory);
+  --text-primary: var(--color-ink);
+  --text-secondary: var(--color-muted);
+  --text-inverse: var(--color-ivory);
+  --accent: var(--color-forest-600);
+  --accent-hover: var(--color-forest-700);
+  --accent-contrast: var(--color-ivory);
+  --border: var(--color-line);
+  /* Focus outline must hold 3:1 against any surface; forest-600 passes on
+     paper, ivory, stone and white — amber does not. */
+  --focus: var(--color-forest-600);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  max-width: 100%;
+}
+
+/* WCAG 1.4.10: reflow without horizontal scroll at 320px / 200% zoom */
+html, body {
+  max-width: 100%;
+}
+.container-x,
+[class*="grid-cols-"],
+[class*="flex"] {
+  min-width: 0;
+}
+img, video, svg {
+  max-width: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+::selection {
+  background: var(--color-gold-300);
+  color: var(--color-forest-950);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+[id] {
+  scroll-margin-top: 120px;
+}
+
+@layer components {
+  /* ---------------- Layout ---------------- */
+  .container-x {
+    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-12;
+  }
+
+  /* ---------------- Typography roles ----------------
+     GIBS type system — Instrument Serif for display (Modern Editorial), Fraunces fallback, Space Grotesk for UI/body.
+     Display weights use Instrument Serif for high-contrast editorial impact; Fraunces remains for refined light cuts.
+  ------------------------------------------------------------- */
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .fraunces {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-variation-settings: "SOFT" 0, "WONK" 0;
+  }
+  .display-serif {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    text-wrap: balance;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+    text-wrap: balance;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  .type-h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.2rem, 6.5vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  .type-h2 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  .type-h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  /* Hero headline — Instrument Serif with 3D lighting */
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.2rem, 6.5vw, 5.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  .hero-title-white {
+    color: #ffffff;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    text-shadow:
+      0px 1px 0px rgba(255, 255, 255, 0.4),
+      0px 2px 1px rgba(0, 0, 0, 0.4),
+      0px 4px 3px rgba(0, 0, 0, 0.5),
+      0px 10px 20px rgba(0, 0, 0, 0.7);
+  }
+  .hero-title-gold {
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    background: linear-gradient(180deg, #FFF8DC 0%, #E2C06B 40%, #B88E28 85%, #8A6814 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(1px 2px 0px #3d2b05) drop-shadow(2px 5px 10px rgba(0, 0, 0, 0.55));
+  }
+  .type-lead {
+    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
+    line-height: 1.55;
+    text-wrap: pretty;
+    @apply text-muted;
+  }
+  .type-body {
+    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
+    line-height: 1.55;
+    text-wrap: pretty;
+    @apply text-muted;
+  }
+  .eyebrow {
+    @apply text-[12px] font-semibold uppercase tracking-[0.14em] text-[#006837] sm:text-[13px];
+  }
+  .eyebrow-light {
+    @apply text-[12px] font-semibold uppercase tracking-[0.14em] text-gold-focus sm:text-[13px];
+  }
+  .meta {
+    @apply text-[12px] font-semibold uppercase tracking-[0.12em] text-muted;
+  }
+  .prose-editorial {
+    @apply text-[16.5px] leading-[1.9] text-ink/85;
+  }
+  .prose-editorial p + p {
+    margin-top: 1.6em;
+  }
+  .prose-editorial h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 4.5vw, 3.8rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+    color: var(--color-ink);
+    margin: 2.2em 0 0.8em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  .prose-editorial blockquote {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    line-height: 1.5;
+    color: var(--color-forest-800);
+    border-left: 2px solid var(--color-gold-500);
+    padding-left: 1.5rem;
+    margin: 2em 0;
+  }
+
+  /* ---------------- Subtle dimensional type ----------------
+     Used only on the signature display moments (home/page heroes and the
+     footer wordmark). Layered 1px/2px/3px offsets read as printed letterpress
+     depth — never extrusion or bevel. Keep RESTRAINED.
+  ------------------------------------------------------------- */
+  .type-extrude-ivory {
+    text-shadow:
+      1px 1px 0 rgba(0, 0, 0, 0.30),
+      2px 2px 0 rgba(0, 0, 0, 0.16),
+      3px 3px 0 rgba(0, 0, 0, 0.07);
+  }
+  .type-extrude-ink {
+    text-shadow:
+      1px 1px 0 rgba(18, 18, 18, 0.07),
+      2px 2px 0 rgba(18, 18, 18, 0.04);
+  }
+  /* Hero wordmark — architectural letterpress depth: a restrained offset
+     edge in forest tones with a soft ambient pool of shadow beneath. Read
+     as printed, dimensional type, never bevel or extrusion. */
+  .type-extrude-deep-ivory {
+    text-shadow:
+      0 1px 0 rgba(0, 0, 0, 0.42),
+      1px 2px 0 rgba(0, 24, 7, 0.34),
+      2px 3px 0 rgba(0, 24, 7, 0.24),
+      3px 4px 0 rgba(0, 24, 7, 0.16),
+      0 10px 26px rgba(0, 0, 0, 0.38);
+  }
+
+  /* ---------------- Hairline rules ---------------- */
+  .rule {
+    border-color: rgba(18, 18, 18, 0.14);
+  }
+  .rule-light {
+    border-color: rgba(245, 245, 240, 0.18);
+  }
+  .rule-gold {
+    border-color: rgba(198, 165, 68, 0.55);
+  }
+
+  /* The Meridian Horizon — signature hairline with meridian marker */
+  .meridian {
+    @apply relative block h-px w-full;
+    background: linear-gradient(
+      90deg,
+      transparent 0,
+      rgba(18, 18, 18, 0.18) 12%,
+      rgba(18, 18, 18, 0.18) 88%,
+      transparent 100%
+    );
+  }
+  .meridian::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: var(--meridian-at, 50%);
+    width: 7px;
+    height: 7px;
+    background: var(--color-gold-500);
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+  .meridian-light {
+    background: linear-gradient(
+      90deg,
+      transparent 0,
+      rgba(245, 245, 240, 0.22) 12%,
+      rgba(245, 245, 240, 0.22) 88%,
+      transparent 100%
+    );
+  }
+
+  /* ---------------- Buttons — one system ---------------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-pill font-semibold transition-[background-color,color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-2 active:scale-[0.985];
+  }
+  .btn-lg {
+    @apply px-7 py-4 text-[15px];
+  }
+  .btn-md {
+    @apply px-5 py-3 text-sm;
+  }
+  .btn-sm {
+    @apply px-4 py-2.5 text-[13px];
+  }
+  .btn-primary {
+    @apply bg-forest-600 text-ivory shadow-crisp hover:bg-forest-700;
+  }
+  /* Hero CTA — the one elevated control. A thin contact edge plus a soft
+     ambient drop reads as physically seated, never floating glass. */
+  .btn-lift {
+    @apply bg-forest-600 text-ivory hover:bg-forest-700;
+    box-shadow:
+      0 2px 0 rgba(0, 20, 5, 0.4),
+      0 18px 40px -18px rgba(0, 32, 9, 0.55);
+  }
+  .btn-lift:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 2px 0 rgba(0, 20, 5, 0.4),
+      0 22px 48px -18px rgba(0, 32, 9, 0.6);
+  }
+  .btn-lift:active {
+    transform: translateY(0);
+  }
+  .btn-gold {
+    @apply bg-gold-300 text-forest-950 hover:bg-gold-400;
+  }
+  .btn-ink {
+    @apply bg-ink text-ivory hover:bg-forest-900;
+  }
+  .btn-outline-light {
+    @apply border border-ivory/35 text-ivory hover:border-gold-300 hover:text-gold-300;
+  }
+  .btn-outline-ink {
+    @apply border border-ink/25 text-ink hover:border-forest-700 hover:bg-forest-600 hover:text-ivory;
+  }
+
+  .link-underline {
+    @apply relative inline-flex items-center gap-2 pb-1 font-semibold;
+  }
+  .link-underline::after {
+    content: "";
+    @apply absolute inset-x-0 bottom-0 h-px;
+    background: currentColor;
+    opacity: 0.4;
+    transition: opacity 0.3s ease, background 0.3s ease;
+  }
+  .link-underline:hover::after {
+    opacity: 1;
+  }
+
+  /* ---------------- Forms ---------------- */
+  .field-label {
+    @apply mb-2 block text-[12px] font-bold uppercase tracking-[0.16em] text-ink;
+  }
+  .field-input {
+    @apply w-full rounded-panel border border-ink/20 bg-white px-4 py-3.5 text-base text-ink placeholder:text-muted/60 transition-colors duration-200 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-[15px];
+  }
+  .field-input-error {
+    @apply border-error/60 focus:border-error focus:ring-error/15;
+  }
+
+  /* ---------------- Panels ---------------- */
+  .panel {
+    @apply rounded-panel border border-line bg-white shadow-crisp;
+  }
+
+  /* Filter / taxonomy chips — 44px touch target */
+  .chip {
+    @apply inline-flex min-h-[44px] items-center rounded-pill border px-4 py-2 text-[13px] font-bold transition-colors duration-200;
+  }
+
+  /* Rendering containment */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 1000px;
+  }
+}
+
+/* Paper grain — normal blend, negligible paint cost */
+.paper-grain {
+  position: relative;
+}
+.paper-grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Concierge pulse */
+@keyframes concierge-ping {
+  0% { transform: scale(1); opacity: 0.7; }
+  80%, 100% { transform: scale(2.6); opacity: 0; }
+}
+.concierge-ping {
+  animation: concierge-ping 2.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+@keyframes blink {
+  0%, 80%, 100% { opacity: 0.2; }
+  40% { opacity: 1; }
+}
+.typing-dot {
+  animation: blink 1.3s infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .concierge-ping, .typing-dot { animation: none; }
+  .btn { transform: none !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

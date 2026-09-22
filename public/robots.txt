@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# The official Sitemap: line is intentionally absent until a production
+# domain is confirmed. This is a hash-routed single-page app; document URLs
+# become crawlable only when the site is served from the official domain
+# (ideally with real paths or SSR). Nothing should point at help.gibs.example
+# or any other invented domain. When the domain is live, add:
+# Sitemap: https://<official-domain>/sitemap.xml

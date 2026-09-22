@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SITEMAP INACTIVE — DOMAIN REQUIRED
+  --------------------------------
+  This sitemap is deliberately deactivated. The site currently runs as a
+  hash-routed single-page app under no production domain; gibs.example is a
+  placeholder and must not be published. A sitemap that names an invented or
+  placeholder host is worse than no sitemap.
+
+  Rebuild this file after launch when BOTH are true:
+    1. The official production domain is confirmed (replace <official-domain>).
+    2. The app is served with crawlable URLs — real paths (e.g.
+       https://<official-domain>/programmes) rather than #/ hash fragments,
+       which search engines treat as one URL.
+
+  Programme slugs: mba, executive-mba, doctorate-business-administration,
+  executive-education, custom-programmes, undergraduate-business
+  Article slugs: quiet-authority-of-long-term-institutions,
+  growth-mapped-from-the-continent, changed-decisions
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

@@ -143,3 +143,42 @@ forest/gold tokens (no brand change; the yellow/black electronics kit was mapped
 - **Verification:** `tsc --noEmit` 0 errors; build ✓ (**630.99 kB / 176.56 gzip**, +1.05 kB for
   the a11y tokens); compiled CSS asserts `min-height:44px` on `.btn-sm` and the gold outline
   overrides render; zero raw-hex leftovers in `dist`.
+
+## Appendix — Mobile nav sheet overflow bug (fixed)
+
+**Bug:** the "Explore Goshen." sheet was not reliably scrollable. On short viewports the list
+cut off after item 08/09 with no way to reach Events, Campus Life, Contact, "Apply Now" or the
+footer; on tall viewports it fit. Inconsistent, viewport-height dependent.
+
+**Root cause:** `.paper-grain` declared `position: relative` as an **unlayered** author rule.
+In Tailwind v4, unlayered CSS wins the cascade over `@layer utilities`, so the sheet's Tailwind
+`fixed inset-0` was overridden — `#mobile-navigation` computed `position: relative`, rendered
+in normal flow at ~1,314 px tall on a scroll-locked (`overflow: hidden`) body, and the bottom of
+the sheet fell below the fold with nothing scrollable.
+
+**Fix:**
+1. Moved `.paper-grain` (+ `::before`) into `@layer components` so positioning utilities can
+   override the relative anchor — the general fix for any future `paper-grain fixed` combo.
+2. Added a dedicated `.mobile-nav-sheet` class (components layer, after `.paper-grain`) with an
+   explicit box model: `position: fixed; inset: 0; height: 100vh; height: 100dvh` (dvh tracks
+   the visible viewport as mobile browser chrome collapses), `overscroll-behavior: contain` and
+   `-webkit-overflow-scrolling: touch`.
+3. Sheet markup switched to `mobile-nav-sheet` + `overflow-y-auto`; whole-sheet scrolling
+   (the authored intent) is preserved, so the eyebrow/title/pills scroll away and the list,
+   "Apply Now" and the footer are always reachable.
+4. The close button is now `fixed` (pinned at the top-right) instead of absolutely positioned,
+   so it never scrolls out of reach.
+5. Reopening the sheet resets scroll position to the top (`scrollTop = 0` on open).
+
+**Verified headlessly (Playwright/Chromium) at 320×560, 375×667, 412×915, 390×844:**
+- The sheet computes `position: fixed`, top/bottom exactly bound to the viewport, `overflowY:
+  auto`, `scrollHeight > clientHeight`.
+- All 10 list items individually reachable via `scrollIntoView` (no clipped element); "Apply
+  Now", item 10 (Contact) and the "Goshen International Business School" footer all visible at
+  bottom scroll on every viewport; item 01 + "Explore Goshen." visible at top scroll.
+- Close → reopen resets `scrollTop` to 0; close button stays pinned while scrolled.
+- No horizontal overflow within the sheet; 0 console/page errors.
+- Desktop (1440×900): hamburger hidden, sheet absent from DOM, primary nav + "Apply Now"
+  intact, no document overflow. The body scroll-lock still releases cleanly on close.
+- Screenshots (top + bottom at 375×667, bottom at 320×560, desktop) saved under
+  `/tmp/opencode/nav-*.png`.

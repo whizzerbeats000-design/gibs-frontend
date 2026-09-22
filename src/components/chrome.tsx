@@ -185,6 +185,13 @@ export function MobileNav({
   const ref = useFocusTrap<HTMLDivElement>(open);
   const { path: routePath } = useRoute();
 
+  // Reopening the sheet always starts from the top of the list.
+  useEffect(() => {
+    if (!open) return;
+    const node = document.getElementById("mobile-navigation");
+    if (node) node.scrollTop = 0;
+  }, [open]);
+
   return (
     <AnimatePresence>
       {open && (
@@ -194,7 +201,7 @@ export function MobileNav({
           role="dialog"
           aria-modal="true"
           aria-label="Menu"
-          className="paper-grain fixed inset-0 z-[var(--z-nav)] overflow-y-auto overscroll-contain bg-paper"
+          className="mobile-nav-sheet paper-grain overflow-y-auto overscroll-contain bg-paper z-[var(--z-nav)]"
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -16 }}
@@ -205,7 +212,7 @@ export function MobileNav({
               type="button"
               onClick={onClose}
               aria-label="Close menu"
-              className="absolute right-5 top-[18px] flex h-[52px] w-[52px] items-center justify-center rounded-pill bg-stone text-ink transition-colors hover:bg-forest-600 hover:text-ivory"
+              className="fixed right-5 top-[18px] z-10 flex h-[52px] w-[52px] items-center justify-center rounded-pill bg-stone text-ink transition-colors hover:bg-forest-600 hover:text-ivory"
             >
               <CloseIcon className="h-5 w-5" />
             </button>

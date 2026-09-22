@@ -159,14 +159,14 @@ export default function Hero() {
           >
             <Link
               to="/programmes"
-              className="group inline-flex items-center gap-2.5 rounded-full bg-[#006837] px-7 py-4 text-[15px] font-semibold text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-[#005a2f] hover:shadow-[0_6px_18px_rgba(0,0,0,0.3)] hover:-translate-y-0.5"
+              className="group inline-flex items-center gap-2.5 rounded-full bg-forest-600 px-7 py-4 text-[15px] font-semibold text-ivory shadow-[0_4px_14px_rgba(0,0,0,0.25)] transition-all duration-300 hover:bg-forest-700 hover:shadow-[0_6px_18px_rgba(0,0,0,0.3)] hover:-translate-y-0.5 focus-visible:outline-gold-300"
             >
               Explore programmes
               <ArrowUpRight className="h-4 w-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
             <Link
               to="/about"
-              className="inline-flex items-center gap-1.5 text-[15px] font-medium text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white"
+              className="inline-flex items-center gap-1.5 text-[15px] font-medium text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white focus-visible:outline-gold-300"
             >
               Our story
             </Link>

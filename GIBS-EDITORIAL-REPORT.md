@@ -117,3 +117,29 @@ Specific findings:
   row).
 - DOM-level assertions confirmed: utility bar gone; `01 — …` band labels render; rows show
   category → title → tagline → audience line; hero copy/CTA updated; concierge ping class gone.
+
+## Appendix — WCAG 2.2 AA gate (Professional-design-system discipline, adapted)
+
+Applied the universal quality gates from the Professional design-system skill to GIBS's own
+forest/gold tokens (no brand change; the yellow/black electronics kit was mapped onto GIBS):
+
+- **Semantic tokens only.** Removed the last raw hex values — Hero CTA (`#006837/#005a2f` →
+  `bg-forest-600/hover:bg-forest-700`), mobile-nav label (`#006837` → `text-forest-600`), nav
+  intro copy (`#4b5563` → `text-muted`). Grep for raw hex in `src` now returns nothing outside
+  `index.css` tokens.
+- **Visible focus on every interactive element.** Global `:focus-visible` (2px forest-600 ring,
+  3px offset) is the default. Suppressed outlines were audited: form fields replace the ring with
+  `focus:border-forest-600 + focus:ring`; the global search bar now shows a
+  `focus-within:border + focus-within:ring` indicator; skip-link, `<main tabindex=-1>`, and the
+  Concierge scroll region retain deliberate focus handling.
+- **Dark-surface rings.** Controls on forest-800/900 and hero imagery (`btn-gold`,
+  `btn-outline-light`, hero CTA/secondary link, footer subscribe) switch the ring to
+  `gold-300` (≈7:1 on forest-800) because forest-600 is invisible there.
+- **Target sizes.** `.btn-sm` raised from ≈38 px to a guaranteed 44 px; search suggestion chips
+  raised 40 → 44 px. `.chip`, `h-11/h-12` controls, and `field-input` already met 44 px.
+- **Form a11y.** All 7 form controls (ProgrammeNav select, programme search, global search,
+  concierge, footer email, `Field` input/select/textarea) verified to have an accessible name
+  (visible or `sr-only` label, or `aria-label`); errors wired via `aria-invalid`/`aria-describedby`.
+- **Verification:** `tsc --noEmit` 0 errors; build ✓ (**630.99 kB / 176.56 gzip**, +1.05 kB for
+  the a11y tokens); compiled CSS asserts `min-height:44px` on `.btn-sm` and the gold outline
+  overrides render; zero raw-hex leftovers in `dist`.

@@ -415,7 +415,7 @@ body {
     @apply px-5 py-3 text-sm;
   }
   .btn-sm {
-    @apply px-4 py-2.5 text-[13px];
+    @apply px-4 py-3 text-[13px] min-h-[44px];
   }
   /* Premium primary — a thin ivory highlight across the top edge (light
      catching the button), a hairline amber edge (restrained gold illumination),
@@ -465,6 +465,13 @@ body {
   }
   .btn-outline-light {
     @apply border border-ivory/35 text-ivory hover:border-gold-300 hover:text-gold-300;
+  }
+  /* The global focus ring is forest-600 — invisible on forest-800/900
+     surfaces. Controls that live on dark sections switch the ring to gold
+     (7:1 against forest-800, 3:1+ against forest-900 and gold fills). */
+  .btn-gold:focus-visible,
+  .btn-outline-light:focus-visible {
+    outline-color: var(--color-gold-300);
   }
   .btn-outline-ink {
     @apply border border-ink/25 text-ink hover:border-forest-700 hover:bg-forest-600 hover:text-ivory;

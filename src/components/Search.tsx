@@ -124,7 +124,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
             transition={{ duration: 0.35, ease: EASE }}
             className="relative flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden border border-line bg-paper shadow-lift sm:rounded-panel"
           >
-            <div className="flex items-center gap-3 border-b border-line px-5">
+            <div className="flex items-center gap-3 border-b border-line px-5 focus-within:border-forest-600/50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-forest-600/40">
               <SearchIcon className="h-5 w-5 shrink-0 text-forest-700" />
               <label htmlFor="global-search" className="sr-only">
                 Search programmes, pages and research
@@ -166,7 +166,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
                         key={s}
                         type="button"
                         onClick={() => setQuery(s)}
-                        className="min-h-[40px] rounded-pill border border-ink/20 px-4 py-2 text-[13px] font-semibold text-ink/75 transition-colors hover:border-forest-600 hover:text-forest-700"
+                        className="min-h-[44px] rounded-pill border border-ink/20 px-4 py-2 text-[13px] font-semibold text-ink/75 transition-colors hover:border-forest-600 hover:text-forest-700"
                       >
                         {s}
                       </button>

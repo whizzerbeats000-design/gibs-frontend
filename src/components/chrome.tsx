@@ -212,7 +212,7 @@ export function MobileNav({
 
             <div className="grid flex-1 gap-10 lg:grid-cols-12">
               <div className="lg:col-span-5">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#006837]">
+                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
                   GIBS / Navigation
                 </p>
                 <h2 className="mt-6 font-baskerville text-[38px] leading-[0.95] tracking-[-0.02em] text-ink">
@@ -220,7 +220,7 @@ export function MobileNav({
                   <br />
                   <em className="italic text-forest-600">Goshen.</em>
                 </h2>
-                <p className="mt-5 max-w-md text-[14px] leading-[1.55] text-[#4b5563]">
+                <p className="mt-5 max-w-md text-[14px] leading-[1.55] text-muted">
                   Move through the institution, programmes, campus and admissions,
                   or ask the Concierge to guide you.
                 </p>
@@ -439,7 +439,7 @@ function Newsletter() {
           type="submit"
           disabled={status === "submitting"}
           aria-label="Register interest"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-gold-300"
         >
           {status === "submitting" ? (
             <span

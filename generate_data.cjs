@@ -1,4 +1,6 @@
-/* ==========================================================================
+const fs = require('fs');
+
+const dataContent = `/* ==========================================================================
    GIBS CONTENT LAYER — Single Source of Truth for Institutional Data.
    ========================================================================== */
 
@@ -11,7 +13,7 @@ import type {
   GIBS_EVENT,
 } from "../types/data";
 
-export type { Programme, GIBS_EVENT } from "../types/data";
+export type { Programme } from "../types/data";
 
 export const DATA_REQUIRED = "[OFFICIAL GIBS DATA REQUIRED]";
 
@@ -227,8 +229,8 @@ const makeProgramme = (p: Partial<Programme> & { slug: string; title: string; ca
   location: p.location,
   destination: p.destination,
   duration: p.duration || "1 Week",
-  tagline: p.tagline || `Executive training in ${p.category}`,
-  summary: p.summary || `${p.title}. Target: ${p.target}. Schedule: ${p.schedule}.`,
+  tagline: p.tagline || \`Executive training in \${p.category}\`,
+  summary: p.summary || \`\${p.title}. Target: \${p.target}. Schedule: \${p.schedule}.\`,
   audience: p.audience || [p.target],
   indicativeStructure: p.indicativeStructure || [
     "Module 1: Strategic Foundations & Industry Context",
@@ -250,7 +252,7 @@ const makeProgramme = (p: Partial<Programme> & { slug: string; title: string; ca
     },
     {
       q: "Where is this programme scheduled?",
-      a: `Scheduled for ${p.schedule} at ${p.location}.`,
+      a: \`Scheduled for \${p.schedule} at \${p.location}.\`,
     },
   ],
   officialOnly: p.officialOnly || ["Venue confirmation", "Nomination portal link"],
@@ -2480,3 +2482,7 @@ export const STATIC_PAGES = [
   { title: "Campus", to: "/campus", blurb: "Ilorin HQ, Abuja, and Ibafo campus locations and facilities.", type: "Page" },
   { title: "Contact", to: "/contact", blurb: "Reach GIBS via email, phones, postal address, or enquiry form.", type: "Page" },
 ];
+`;
+
+fs.writeFileSync('src/lib/data.ts', dataContent);
+console.log('src/lib/data.ts updated successfully');

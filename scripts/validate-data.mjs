@@ -1,4 +1,4 @@
-const {
+import {
   INSTITUTION,
   CONTACTS,
   CAMPUSES,
@@ -6,7 +6,7 @@ const {
   PROGRAMMES,
   LOCAL_PROGRAMMES,
   FOREIGN_PROGRAMMES,
-} = require('../dist-test/lib/data.cjs');
+} from '../src/lib/data.ts';
 
 console.log('--- EXECUTING AUTOMATED DATA & INTEGRITY VALIDATION ---');
 

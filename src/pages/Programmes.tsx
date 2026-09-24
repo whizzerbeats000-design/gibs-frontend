@@ -1,18 +1,18 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { ProgramRow } from "../components/cards";
-import { BtnLink, Breadcrumbs, DataNote, EmptyState } from "../components/ui";
+import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
-import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
+import { PROGRAMMES, PROGRAM_CATEGORIES, LOCAL_PROGRAMMES, FOREIGN_PROGRAMMES } from "../lib/data";
 import { Reveal, stagger, staggerItem } from "../components/motion";
 import { useSeo } from "../lib/router";
 import { cn } from "../utils/cn";
 
 export default function ProgrammesPage() {
   useSeo({
-    title: "Programmes — GIBS",
+    title: "135 Training Programmes — GIBS",
     description:
-      "Explore GIBS programmes: the MBA, Executive MBA, Doctor of Business Administration, executive education and undergraduate business pathways.",
+      "Explore GIBS complete catalogue of 113 local training programmes across Nigeria and 22 foreign programmes in Kigali, Dubai, London, and Houston.",
   });
 
   const [category, setCategory] = useState<(typeof PROGRAM_CATEGORIES)[number]>("All");
@@ -21,37 +21,66 @@ export default function ProgrammesPage() {
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return PROGRAMMES.filter((p) => {
-      const categoryMatch = category === "All" || p.category === category;
+      let categoryMatch = false;
+      if (category === "All") {
+        categoryMatch = true;
+      } else if (category === "Local/Open") {
+        categoryMatch = p.programmeType === "Local/Open";
+      } else if (category === "Foreign") {
+        categoryMatch = p.programmeType === "Foreign";
+      } else {
+        categoryMatch = p.category === category;
+      }
+
       const queryMatch =
         !q ||
         p.title.toLowerCase().includes(q) ||
-        p.tagline.toLowerCase().includes(q) ||
-        p.summary.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q);
+        p.category.toLowerCase().includes(q) ||
+        p.target.toLowerCase().includes(q) ||
+        p.schedule.toLowerCase().includes(q) ||
+        p.location.toLowerCase().includes(q) ||
+        p.destination.toLowerCase().includes(q) ||
+        (p.number && p.number.toString().includes(q));
+
       return categoryMatch && queryMatch;
     });
   }, [category, query]);
 
   return (
     <>
-      {/* Editorial introduction — intentionally image-free, typographic, spacious */}
+      {/* Editorial introduction */}
       <section className="bg-paper">
         <div className="container-x pb-12 pt-[112px] sm:pb-16 sm:pt-[132px] lg:pb-20 lg:pt-[148px]">
           <Breadcrumbs items={[{ label: "Programmes" }]} />
           <Reveal>
-            <p className="eyebrow mt-6">The Programmes</p>
+            <p className="eyebrow mt-6">Catalogue of 135 Programmes</p>
           </Reveal>
           <Reveal delay={0.06} y={20}>
             <h1 className="type-h1 mt-4 max-w-3xl text-ink">
-              Programmes for <em className="italic text-forest-700">ambitious minds.</em>
+              Capacity-building for <em className="italic text-forest-700">public & private leaders.</em>
             </h1>
           </Reveal>
           <Reveal delay={0.12} y={16}>
             <p className="mt-6 max-w-2xl type-body">
-              From first degree to doctorate, and from open executive convenings to journeys
-              built for one institution.
+              Browse all <strong>113 local training courses</strong> across our Ilorin HQ, Abuja, Ibafo, and domestic centers, plus <strong>22 foreign overseas programmes</strong> in Kigali, Dubai, London, and Houston.
             </p>
           </Reveal>
+
+          {/* Quick metric chips */}
+          <Reveal delay={0.15}>
+            <div className="mt-8 flex flex-wrap gap-4 text-xs font-semibold uppercase tracking-wider text-forest-800">
+              <span className="rounded-full bg-forest-50 px-3 py-1.5 border border-forest-200">
+                Total: 135 Programmes
+              </span>
+              <span className="rounded-full bg-forest-50 px-3 py-1.5 border border-forest-200">
+                Local: 113 Courses (₦ NGN)
+              </span>
+              <span className="rounded-full bg-amber-50 px-3 py-1.5 border border-amber-200 text-amber-900">
+                Foreign: 22 Courses (USD / GBP)
+              </span>
+            </div>
+          </Reveal>
+
           <Reveal delay={0.18}>
             <div className="mt-10 h-px w-full bg-line" />
           </Reveal>
@@ -66,7 +95,7 @@ export default function ProgrammesPage() {
               <div
                 role="group"
                 aria-label="Filter programmes by category"
-                className="flex flex-wrap gap-2.5"
+                className="flex flex-wrap gap-2"
               >
                 {PROGRAM_CATEGORIES.map((cat) => (
                   <button
@@ -75,20 +104,20 @@ export default function ProgrammesPage() {
                     aria-pressed={category === cat}
                     onClick={() => setCategory(cat)}
                     className={cn(
-                      "chip",
+                      "chip text-xs py-1.5 px-3",
                       category === cat
                         ? "border-forest-600 bg-forest-600 text-ivory"
                         : "border-ink/20 text-ink/70 hover:border-forest-600 hover:text-forest-700"
                     )}
                   >
-                    {cat}
+                    {cat === "Local/Open" ? `Local Courses (${LOCAL_PROGRAMMES.length})` : cat === "Foreign" ? `Foreign Courses (${FOREIGN_PROGRAMMES.length})` : cat}
                   </button>
                 ))}
               </div>
 
-              <div className="relative w-full lg:w-72">
+              <div className="relative w-full lg:w-80">
                 <label htmlFor="programme-search" className="sr-only">
-                  Search programmes
+                  Search programmes by title, category, venue, or number
                 </label>
                 <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
                 <input
@@ -96,7 +125,7 @@ export default function ProgrammesPage() {
                   type="search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search programmes…"
+                  placeholder="Search by title, location, schedule, or number…"
                   className="w-full rounded-pill border border-ink/20 bg-paper py-2.5 pl-10 pr-9 text-base text-ink placeholder:text-muted/70 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-sm"
                 />
                 {query && (
@@ -113,11 +142,26 @@ export default function ProgrammesPage() {
             </div>
           </div>
 
-          {/* Results */}
-          <p className="meta mb-2" aria-live="polite">
-            {filtered.length} {filtered.length === 1 ? "programme" : "programmes"}
-            {category !== "All" ? ` · ${category}` : ""}
-          </p>
+          {/* Results Metadata */}
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <p className="meta" aria-live="polite">
+              Showing <strong>{filtered.length}</strong> of <strong>135</strong> programmes
+              {category !== "All" ? ` · ${category}` : ""}
+              {query ? ` · matching "${query}"` : ""}
+            </p>
+            {(category !== "All" || query) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCategory("All");
+                  setQuery("");
+                }}
+                className="text-xs font-semibold text-forest-700 hover:underline"
+              >
+                Reset all filters
+              </button>
+            )}
+          </div>
 
           {filtered.length > 0 ? (
             <motion.div
@@ -136,7 +180,7 @@ export default function ProgrammesPage() {
           ) : (
             <EmptyState
               title="No programmes match"
-              body="No programme matches that combination of category and search. Try a broader term or reset the filters to see every pathway."
+              body="No programme matches that combination of category and search. Try a broader term like 'finance', 'telecom', 'dubai', or 'kigali'."
               action={
                 <BtnLink
                   to="/programmes"
@@ -153,18 +197,19 @@ export default function ProgrammesPage() {
             />
           )}
 
-          <div className="mt-14 grid gap-8 border-t rule pt-10 lg:grid-cols-2">
-            <DataNote label="Official programme information to be published">
-              Durations, fees, dates and entry requirements are published by
-              the registrar once confirmed. Pending items appear on each
-              programme page as "To be published".
-            </DataNote>
-            <div className="flex flex-wrap items-center gap-x-8 gap-y-4 lg:justify-end">
-              <BtnLink to="/admissions" variant="primary" size="lg">
-                Begin admissions
+          <div className="mt-14 flex flex-wrap items-center justify-between gap-6 border-t rule pt-10">
+            <div>
+              <p className="type-h3 text-ink">Need custom corporate training?</p>
+              <p className="mt-1 text-sm text-ink/70">
+                GIBS designs tailored capacity-building workshops for public sector MDAs and private enterprises.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <BtnLink to="/contact" variant="primary" size="lg">
+                Register Participants
               </BtnLink>
               <BtnLink to="/concierge" variant="outline-ink" size="lg">
-                Ask the Concierge
+                Inquire via Concierge
               </BtnLink>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { HexMark } from "./Logo";
 import { MenuIcon, CloseIcon, SearchIcon, ChatIcon, ArrowUpRight } from "./icons";
 import { MeridianRule } from "./ui";
-import { NAV_LINKS } from "../lib/data";
+import { NAV_LINKS, INSTITUTION, CONTACTS } from "../lib/data";
 import { EASE } from "./motion";
 import { cn } from "../utils/cn";
 
@@ -488,19 +488,20 @@ export function GlobalFooter() {
                 <HexMark compact className="h-full w-full" />
               </span>
               <div className="leading-tight">
-                <p className="fraunces font-semibold text-base text-ivory">Goshen International</p>
+                <p className="fraunces font-semibold text-base text-ivory">{INSTITUTION.legalName}</p>
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-gold-300">
-                  Business School
+                  CAC {INSTITUTION.cac}
                 </p>
               </div>
             </div>
             <p className="mt-7 max-w-sm type-body text-ivory/85">
-              An international business school of scholarship and practice, for
-              the leaders and institutions of the Global Africa.
+              {INSTITUTION.positioning}
             </p>
-            <p className="mt-5 text-[11.5px] leading-relaxed text-ivory/60">
-              Institutional address and contact details: to be published
-            </p>
+            <div className="mt-5 space-y-1 text-[12px] leading-relaxed text-ivory/70">
+              <p><span className="font-semibold text-gold-300">Postal:</span> {CONTACTS.postalAddress}</p>
+              <p><span className="font-semibold text-gold-300">Email:</span> {CONTACTS.emails.join(" · ")}</p>
+              <p><span className="font-semibold text-gold-300">Tel:</span> {CONTACTS.phones.slice(0, 3).join(", ")}</p>
+            </div>
             <Newsletter />
           </div>
 
@@ -535,14 +536,14 @@ export function GlobalFooter() {
         </div>
 
         <div className="mt-10 flex flex-col gap-4 text-[11px] uppercase tracking-[0.16em] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Goshen International Business School</p>
-          <p className="text-ivory/60" title="Official social channels to be confirmed">
-            LinkedIn · Instagram · YouTube, channels to be confirmed
+          <p>© {new Date().getFullYear()} {INSTITUTION.legalName} ({INSTITUTION.cac})</p>
+          <p className="text-ivory/60">
+            Official Website: {CONTACTS.website}
           </p>
         </div>
         <div className="mt-6 flex flex-col gap-2 border-t rule-light pt-6 text-[11px] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">
-          <p>Privacy policy · Terms of use · Accessibility statement. Documents pending publication.</p>
-          <p>All institutional facts remain subject to official GIBS confirmation.</p>
+          <p>Incorporated {INSTITUTION.incorporationDate} · {INSTITUTION.registrationAuthority}</p>
+          <p>"{INSTITUTION.slogan}"</p>
         </div>
       </div>
     </footer>

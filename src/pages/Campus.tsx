@@ -1,25 +1,16 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { PageHero } from "../components/PageHero";
-import { BtnLink, ClosingImmersive, DataNote } from "../components/ui";
+import { BtnLink, ClosingImmersive } from "../components/ui";
 import { Reveal } from "../components/motion";
-import { Diamond, MapPinIcon, ArrowUpRight } from "../components/icons";
-import { Link } from "../lib/router";
+import { Diamond, MapPinIcon } from "../components/icons";
 import { useSeo } from "../lib/router";
-import { CAMPUS_FACILITIES, IMAGES } from "../lib/data";
-
-const ENVIRONMENTS = [
-  { img: IMAGES.library, title: "The Library", note: "Collections, reading rooms and research space" },
-  { img: IMAGES.lecture, title: "Case rooms", note: "Where discussion becomes method" },
-  { img: IMAGES.colonnade, title: "Cloisters & quadrangles", note: "The unhurried space between sessions" },
-  { img: IMAGES.boardroom, title: "Convening rooms", note: "Executives, boards and public dialogue" },
-];
+import { CAMPUSES, CAPACITY, IMAGES, INSTITUTION } from "../lib/data";
 
 export default function Campus() {
   useSeo({
-    title: "Campus — GIBS",
-    description:
-      "The GIBS campus: modern classicism in stone and light, with libraries, case rooms, gardens and residential quarters.",
+    title: `Campuses — ${INSTITUTION.abbreviation}`,
+    description: `Official campuses of ${INSTITUTION.legalName} in Ilorin, Abuja, and Ibafo (Ogun State).`,
   });
 
   const ref = useRef<HTMLDivElement>(null);
@@ -33,198 +24,136 @@ export default function Campus() {
     <>
       <PageHero
         image={IMAGES.colonnade}
-        imageAlt="Sunlight through the sandstone colonnade of the GIBS campus"
-        eyebrow="The Campus"
-        title="Built in"
-        italic="stone and light."
-        intro="A campus designed for the two moments a school exists for: deep private study, and the unhurried conversation that follows a seminar."
-        breadcrumbs={[{ label: "Campus" }]}
+        imageAlt="The GIBS learning facilities"
+        eyebrow="Our Campuses"
+        title="Institutional"
+        italic="Campuses & Facilities."
+        intro="GIBS operates dedicated campuses in Ilorin Headquarters, Abuja, and Ibafo (Ogun State), fully equipped for executive and professional capacity building."
+        breadcrumbs={[{ label: "Campuses" }]}
       />
 
-      {/* Architectural statement */}
-      <section className="bg-paper">
-        <div className="container-x grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-16">
-          <div className="lg:col-span-4">
-            <Reveal>
-              <p className="eyebrow">Modern Classicism</p>
-            </Reveal>
-          </div>
-          <div className="lg:col-span-8">
-            <Reveal delay={0.08}>
-              <p className="display-serif type-h3 text-ink">
-                Travertine and forest-green steel, oak and brushed brass. The
-                campus is built from materials chosen to weather beautifully.
-                It is permanent from the first visit, and only more so on the
-                hundredth.
-              </p>
-            </Reveal>
-            <Reveal delay={0.16}>
-              <p className="mt-8 max-w-2xl type-body">
-                Pavilions are arranged around cloisters, gardens and reflecting
-                water. Case rooms open onto quadrangles, the library sits at
-                the heart of the school, and residences keep the fellows on
-                site. The place is built to slow thinking down.
-              </p>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
-      {/* Full-bleed library */}
-      <section ref={ref} className="relative h-[56vh] min-h-[360px] overflow-hidden bg-forest-950">
-        <motion.img
-          style={{ y }}
-          src={IMAGES.library}
-          alt="The GIBS library with oak shelving, brass lamps and green leather chairs"
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-[112%] w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,32,9,0.75),transparent_60%)]" />
-        <div className="container-x absolute inset-x-0 bottom-0 pb-12 text-ivory">
+      {/* Campus Locations Grid */}
+      <section className="bg-paper py-20 sm:py-24">
+        <div className="container-x">
           <Reveal>
-            <p className="eyebrow-light">The Heart of the School</p>
-            <h2 className="display-serif type-h2 mt-3 max-w-xl">
-              The Library, built for long afternoons
+            <p className="eyebrow">Campus Directory</p>
+            <h2 className="display-serif type-h2 mt-4 text-ink">
+              Official GIBS <em className="text-forest-700">Campuses</em>
             </h2>
           </Reveal>
-        </div>
-      </section>
 
-      {/* Facilities index */}
-      <section className="bg-white">
-        <div className="container-x grid gap-12 py-20 sm:py-24 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <Reveal>
-              <p className="eyebrow">Facilities</p>
-              <h2 className="display-serif type-h2 mt-5 text-ink">
-                What the campus holds
-              </h2>
-              <p className="mt-5 type-body">
-                Every facility serves teaching, study or the civic life of the
-                institution. Capacities are published with the official campus
-                record.
-              </p>
-            </Reveal>
-          </div>
-          <Reveal delay={0.1} className="lg:col-span-8">
-            <ul className="border-t rule">
-              {CAMPUS_FACILITIES.map((f) => (
-                <li
-                  key={f.name}
-                  className="grid min-w-0 grid-cols-[auto_1fr] items-baseline gap-4 border-b rule py-5 sm:grid-cols-[auto_1fr_auto]"
-                >
-                  <Diamond className="h-2 w-2 shrink-0 text-gold-600" />
-                  <span className="display-serif type-h3 min-w-0 break-words text-ink">{f.name}</span>
-                  <span className="col-start-2 min-w-0 break-words text-[12px] uppercase tracking-[0.14em] text-muted sm:col-start-auto">
-                    {f.note}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        </div>
-      </section>
+          <div className="mt-12 grid gap-10 lg:grid-cols-3">
+            {CAMPUSES.map((campus) => (
+              <Reveal key={campus.id}>
+                <div className="border border-line bg-white p-8 h-full flex flex-col justify-between shadow-card">
+                  <div>
+                    <span className="chip border-forest-600/30 bg-forest-50 text-forest-800 font-medium text-[12px] px-3 py-1">
+                      {campus.type}
+                    </span>
+                    <h3 className="display-serif type-h3 mt-4 text-ink">{campus.name}</h3>
+                    <p className="mt-3 flex items-start gap-2 text-[13.5px] leading-relaxed text-muted">
+                      <MapPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-forest-600" />
+                      <span>{campus.address}</span>
+                    </p>
 
-      {/* Environment grid */}
-      <section className="paper-grain border-y border-line bg-paper">
-        <div className="container-x py-20 sm:py-24">
-          <Reveal>
-            <p className="eyebrow">Environments</p>
-          </Reveal>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2">
-            {ENVIRONMENTS.map((env, i) => (
-              <Reveal key={env.title} delay={i * 0.06}>
-                <figure className="group">
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={env.img}
-                      alt={env.title}
-                      loading="lazy"
-                      decoding="async"
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
-                    />
-                    <div className="absolute inset-0 bg-forest-900/25" />
-                    <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
+                    <div className="mt-6 border-t rule pt-4">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-700 mb-3">
+                        Facilities
+                      </p>
+                      <ul className="space-y-2">
+                        {campus.facilities.map((fac) => (
+                          <li key={fac} className="flex items-center gap-2 text-[13px] text-ink/80">
+                            <Diamond className="h-1.5 w-1.5 shrink-0 text-gold-600" />
+                            {fac}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                  <figcaption className="mt-4 flex min-w-0 items-baseline justify-between gap-4">
-                    <span className="display-serif min-w-0 break-words text-lg text-ink">{env.title}</span>
-                    <span className="min-w-0 break-words text-[12px] uppercase tracking-[0.14em] text-muted">{env.note}</span>
-                  </figcaption>
-                </figure>
+                </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Location + visit */}
-      <section className="bg-white">
-        <div className="container-x grid gap-12 py-20 sm:py-24 lg:grid-cols-12">
+      {/* Parallax Feature Section */}
+      <section ref={ref} className="relative h-[50vh] min-h-[360px] overflow-hidden bg-forest-950">
+        <motion.img
+          style={{ y }}
+          src={IMAGES.library}
+          alt="GIBS learning environments"
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 h-[112%] w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,32,9,0.8),transparent_60%)]" />
+        <div className="container-x absolute inset-x-0 bottom-0 pb-12 text-ivory">
+          <Reveal>
+            <p className="eyebrow-light">Capacity & Scale</p>
+            <h2 className="display-serif type-h2 mt-3 max-w-2xl">
+              Capacity for up to 500 candidates per campus
+            </h2>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Capacity & Off-Campus Locations */}
+      <section className="bg-white py-20 sm:py-24">
+        <div className="container-x grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
-              <p className="eyebrow">Location & Visits</p>
-              <h2 className="display-serif type-h2 mt-5 text-ink">
-                Arrange a visit
+              <p className="eyebrow">Training Capacity</p>
+              <h2 className="display-serif type-h2 mt-4 text-ink">
+                Accommodating <em className="text-forest-700">Cohorts</em>
               </h2>
-              <div className="mt-7 space-y-6">
-                <div className="flex items-start gap-4">
-                  <MapPinIcon className="mt-1 h-5 w-5 shrink-0 text-forest-600" />
-                  <div>
-                    <p className="text-[14px] font-bold text-ink">Campus address</p>
-                    <p className="mt-1 text-[14px] italic leading-relaxed text-muted">To be published</p>
-                  </div>
-                </div>
-                <DataNote label="Address, directions and open days to be published">
-                  The Concierge coordinates individual visits and group tours;
-                  scheduled open-day dates appear on the Events calendar once
-                  confirmed.
-                </DataNote>
-              </div>
-              <div className="mt-9 flex flex-wrap gap-3">
-                <BtnLink to="/contact?type=Campus+visits+%26+events" variant="primary" size="lg">
-                  Arrange a visit
-                </BtnLink>
-                <BtnLink to="/concierge" variant="outline-ink" size="lg">
-                  Ask the Concierge
-                </BtnLink>
+              <div className="mt-6 space-y-4 type-body">
+                <p>
+                  <strong className="text-ink">Workshop/Seminar Format:</strong> {CAPACITY.workshopFormat}
+                </p>
+                <p>
+                  <strong className="text-ink">Large Class Format:</strong> {CAPACITY.largeClassFormat}
+                </p>
               </div>
             </Reveal>
           </div>
-          <Reveal y={36} className="lg:col-span-7">
-            <div className="relative aspect-[16/11] overflow-hidden">
-              <img
-                src={IMAGES.city}
-                alt="The GIBS campus — sandstone pavilions and open sky"
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-forest-900/20" />
-              <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-            </div>
-            <Link to="/events" className="group link-underline mt-5 inline-flex text-sm font-semibold text-forest-700">
-              Open days & events
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5" />
-            </Link>
-          </Reveal>
+
+          <div className="lg:col-span-7">
+            <Reveal delay={0.1}>
+              <p className="eyebrow">Off-Campus Locations</p>
+              <h2 className="display-serif type-h2 mt-4 text-ink">
+                Approved Off-Campus Training Cities
+              </h2>
+              <p className="mt-3 type-body text-muted">
+                In addition to our permanent campuses, GIBS conducts executive workshops and capacity-building programs in approved locations across Nigeria:
+              </p>
+
+              <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {CAPACITY.offCampusApprovedLocations.map((city) => (
+                  <div key={city} className="border border-line bg-paper p-4 text-center">
+                    <p className="display-serif font-semibold text-ink">{city}</p>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
 
       <ClosingImmersive
         image={IMAGES.hero}
-        alt="The GIBS campus, reflecting pool and pavilions at golden hour"
-        eyebrow="The Campus"
-        title="Come and see it"
-        italic="in person."
-        body="The institution is best understood on the ground: walking the cloisters, sitting in the library, joining a conversation."
+        alt="The GIBS campus Facilities"
+        eyebrow="Campus Enquiries"
+        title="Arrange a visit or"
+        italic="book facilities."
+        body="Contact the administration team to schedule campus visits or discuss facility bookings for executive sessions."
         actions={
           <>
             <BtnLink to="/contact?type=Campus+visits+%26+events" variant="gold" size="lg">
-              Book a visit
+              Book a Visit
             </BtnLink>
-            <BtnLink to="/events" variant="outline-light" size="lg">
-              Open days
+            <BtnLink to="/contact" variant="outline-light" size="lg">
+              Contact Us
             </BtnLink>
           </>
         }

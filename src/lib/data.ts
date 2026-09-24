@@ -1,36 +1,183 @@
 /* ==========================================================================
-   GIBS CONTENT LAYER — single source for site content.
-
-   CONTENT INTEGRITY
-   -----------------
-   Nothing here is presented as an official fact unless it is generic
-   institutional positioning. All dates, fees, durations, accreditation,
-   faculty identities, statistics and curriculum details that only GIBS can
-   confirm are flagged with DATA_REQUIRED and rendered by <DataNote/>.
-   Replace these markers with official GIBS content before launch.
+   GIBS CONTENT LAYER — Single Source of Truth for Institutional Data.
    ========================================================================== */
 
 export const DATA_REQUIRED = "[OFFICIAL GIBS DATA REQUIRED]";
+
+export const INSTITUTION = {
+  legalName: "Goshen International Business School Limited",
+  abbreviation: "GIBS",
+  cac: "RC 1178333",
+  incorporationDate: "March 17, 2014",
+  registrationAuthority: "Corporate Affairs Commission, Ilorin",
+  slogan: "Take advantage of us, so that no one takes advantage of you",
+  positioning:
+    "An outfit committed to manpower development and capacity-building. Our uniqueness is in our dedication to capacity-building exercise.",
+  mission:
+    "Goshen International Business School (GIBS) is dedicated to empowering the future generation through acquisition and communication of management and business knowledge relevant to the development of Nigeria and the world at large. We are a world-class Business School impacting positively on the public and private sectors of the economy.",
+  vision:
+    "To support the development of National Manpower and Economic Development Policies for the emancipation of the people.",
+  guidingPrinciples: [
+    "Thoroughness",
+    "Fair",
+    "Firm",
+    "Forthright",
+  ],
+  coreValues: [
+    "Integrity",
+    "Diligence",
+    "Excellence",
+    "Professionalism",
+    "Responsiveness",
+    "Innovation",
+    "Commitment",
+  ],
+  strategicFocus: [
+    "Knowledge updates",
+    "Stakeholder knowledge",
+    "Bridging knowledge gaps",
+    "Introducing societal developments",
+    "Stakeholder support",
+  ],
+};
+
+export const CONTACTS = {
+  website: "www.gibs.com.ng",
+  emails: ["gibsilorin@gmail.com", "goshenibs22@gmail.com"],
+  phones: [
+    "08160010401",
+    "08033429427",
+    "08186464474",
+    "08032296041",
+    "07085792767",
+  ],
+  postalAddress:
+    "P.O. Box 63, Ilorin General Post Office, Kwara State, Nigeria",
+};
+
+export type CampusInfo = {
+  id: string;
+  name: string;
+  type: "Headquarters" | "Campus";
+  address: string;
+  facilities: string[];
+};
+
+export const CAMPUSES: CampusInfo[] = [
+  {
+    id: "ilorin-hq",
+    name: "Ilorin Headquarters",
+    type: "Headquarters",
+    address:
+      "No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa-Akanbi, Ilorin, Kwara State, Nigeria.",
+    facilities: [
+      "12 lecture rooms",
+      "Library",
+      "100-person hall",
+      "20-room guest facility",
+      "Olympic-size lawn tennis court",
+      "International table tennis",
+      "Keep-fit grounds",
+      "3 medium halls",
+      "16-seater buses",
+      "6-seater mini-bus",
+      "24/7 power",
+      "Security",
+    ],
+  },
+  {
+    id: "abuja",
+    name: "Abuja Campus",
+    type: "Campus",
+    address:
+      "Plot 194, Lugbe 1 Layout, Near Okay Centre, Direct Behind Rainoil filling station, FHA Lugbe, Airport Road, Abuja.",
+    facilities: [
+      "2 × 100-person halls",
+      "7 lecture rooms",
+      "2 admin offices",
+      "2 syndicate rooms",
+      "3-room guest facility",
+      "2 standby generators",
+      "18 toilets",
+      "Large parking",
+    ],
+  },
+  {
+    id: "ibafo",
+    name: "Ibafo, Ogun Campus",
+    type: "Campus",
+    address:
+      "KM 36 Lagos-Ibadan Express Road, Adjacent Dap-Mude Hotel, Behind World Oil Station, Ibafo, Ogun State.",
+    facilities: [
+      "1 hall",
+      "4 lecture rooms",
+      "4 syndicate rooms",
+    ],
+  },
+];
+
+export const CAPACITY = {
+  workshopFormat: "300 candidates across 6 classes of 25 per campus",
+  largeClassFormat: "Up to 500 candidates per campus",
+  offCampusApprovedLocations: [
+    "Lagos",
+    "Keffi",
+    "Kaduna",
+    "Owerri",
+    "Port Harcourt",
+    "Benin City",
+  ],
+};
+
+export const GOVERNANCE = {
+  council: "Governing Council",
+  structure:
+    "4 directors under the Chairman; Management team consisting of 20 advisors and experts.",
+};
+
+export const FACULTY_DESIGNATIONS = [
+  { id: "01", title: "Chairman, Academic Board", department: "Academic Board" },
+  { id: "02", title: "Advisor, Environmental Sustainability Project", department: "Environmental Projects" },
+  { id: "03", title: "Advisor, Training and Manpower Development", department: "Capacity Building" },
+  { id: "04", title: "Advisor, International Partnership", department: "Global Relations" },
+  { id: "05", title: "Advisor, Economic Development Project", department: "Economic Research" },
+  { id: "06", title: "Advisor, Legal and Regulatory Services", department: "Legal Affairs" },
+  { id: "07", title: "Advisor, Curriculum Development", department: "Academic Affairs" },
+  { id: "08", title: "Coordinator, Academic Activities", department: "Academic Operations" },
+  { id: "09", title: "Advisor, Inter-Agencies Services", department: "Public Sector Relations" },
+  { id: "10", title: "Advisor, Financial Services", department: "Finance & Strategy" },
+  { id: "11", title: "Coordinator, General Services", department: "Institutional Operations" },
+  { id: "12", title: "Acting Registrar and Coordinator, ICT Services", department: "Registry & Technology" },
+  { id: "13", title: "Coordinator, External Relations", department: "Corporate Communications" },
+  { id: "14", title: "Coordinator, Research and Development", department: "Research & Development" },
+];
+
+export const ACCREDITATIONS = [
+  "CAC RC 1178333",
+  "Centre for Management Development (CMD)",
+  "Industrial Training Fund (ITF) Certificate of Compliance",
+  "NSTIF",
+];
+
+export const INTERNATIONAL = {
+  technicalPartner: "Pacific Institute of Technology, Georgia, USA",
+  overseasHubs: [
+    "Miami",
+    "Houston",
+    "London",
+    "Dubai",
+    "Cape Town",
+    "Durban",
+    "Kigali",
+    "Netherlands",
+    "Ghana",
+  ],
+};
 
 export const IMAGES = {
   hero: "/images/hero-campus.jpg",
   colonnade: "/images/campus-colonnade.jpg",
   library: "/images/library-interior.jpg",
-  /*
-   * PLACEHOLDER ALIASES — official photography not yet supplied.
-   * Each alias maps to the closest available local asset.
-   * Alt text describes what is ACTUALLY VISIBLE in the substituted image,
-   * not the hypothetical future image. Replace image paths and alt text
-   * together when official photography arrives.
-   *
-   * Original Pexels reference URLs (for photographer/art-direction reference):
-   *   boardroom: https://images.pexels.com/photos/6950048/...
-   *   city:      https://images.pexels.com/photos/29069344/...
-   *   lecture:   https://images.pexels.com/photos/8197558/...
-   *   seminar:   https://images.pexels.com/photos/14612128/...
-   *   books:     https://images.pexels.com/photos/7703306/...
-   *   study:     https://images.pexels.com/photos/7793679/...
-   */
   boardroom: "/images/library-interior.jpg",
   city: "/images/hero-campus.jpg",
   lecture: "/images/library-interior.jpg",
@@ -46,12 +193,6 @@ export const NAV_LINKS = [
   { label: "About GIBS", to: "/about" },
   { label: "Admissions", to: "/admissions" },
 ];
-
-/* ---------------- Events ----------------
-   No events are fabricated. The official calendar is marked pending and the
-   interface is fully built: categories, featured/upcoming/past grouping,
-   filtering and registration CTAs all activate the moment official events
-   are supplied through this array. */
 
 export type GIBS_EVENT = {
   slug: string;
@@ -79,6 +220,8 @@ export type ProgrammeCategory =
   | "Doctoral"
   | "Undergraduate";
 
+export type ProgrammeCurrency = "NGN" | "USD" | "GBP";
+
 export type Programme = {
   slug: string;
   title: string;
@@ -95,6 +238,9 @@ export type Programme = {
   requirements: string;
   faqs: { q: string; a: string }[];
   officialOnly: string[];
+  currency?: ProgrammeCurrency;
+  destination?: string;
+  number?: number;
 };
 
 export const PROGRAMMES: Programme[] = [
@@ -127,6 +273,8 @@ export const PROGRAMMES: Programme[] = [
     startDate: DATA_REQUIRED,
     fees: DATA_REQUIRED,
     requirements: DATA_REQUIRED,
+    currency: "NGN",
+    destination: "Nigeria",
     faqs: [
       {
         q: "Is the MBA offered full-time or on a modular schedule?",
@@ -172,6 +320,8 @@ export const PROGRAMMES: Programme[] = [
     startDate: DATA_REQUIRED,
     fees: DATA_REQUIRED,
     requirements: DATA_REQUIRED,
+    currency: "NGN",
+    destination: "Nigeria",
     faqs: [
       {
         q: "How is the Executive MBA scheduled around work?",
@@ -213,6 +363,8 @@ export const PROGRAMMES: Programme[] = [
     startDate: DATA_REQUIRED,
     fees: DATA_REQUIRED,
     requirements: DATA_REQUIRED,
+    currency: "NGN",
+    destination: "Nigeria",
     faqs: [
       {
         q: "How does the DBA differ from a PhD?",
@@ -255,6 +407,8 @@ export const PROGRAMMES: Programme[] = [
     startDate: DATA_REQUIRED,
     fees: DATA_REQUIRED,
     requirements: "Open to nominated and self-nominated leaders; " + DATA_REQUIRED,
+    currency: "NGN",
+    destination: "Nigeria",
     faqs: [
       {
         q: "When is the next open programme?",
@@ -291,6 +445,8 @@ export const PROGRAMMES: Programme[] = [
     startDate: "Convened on agreement; " + DATA_REQUIRED,
     fees: DATA_REQUIRED + "; scoped per engagement",
     requirements: "By consultation; " + DATA_REQUIRED,
+    currency: "NGN",
+    destination: "Nigeria",
     faqs: [
       {
         q: "How does a custom engagement begin?",
@@ -326,6 +482,8 @@ export const PROGRAMMES: Programme[] = [
     startDate: DATA_REQUIRED,
     fees: DATA_REQUIRED,
     requirements: DATA_REQUIRED,
+    currency: "NGN",
+    destination: "Nigeria",
     faqs: [
       {
         q: "What qualifications are awarded?",
@@ -378,8 +536,6 @@ export const RESEARCH_THEMES = [
 ];
 
 export const INSIGHT_TYPES = ["All", "Research", "Leadership Perspective", "Case Study", "Events"];
-
-/* ---------------- Editorial (Research & Insights) ---------------- */
 
 export type ArticleBlock =
   | { type: "p"; text: string }
@@ -568,9 +724,6 @@ export const REQUIREMENTS_ACCORDION = [
   },
 ];
 
-/* Editorial category bands for homepage programme discovery.
-   Grouping is a navigation aid, not an official taxonomy — it invents no
-   programme facts; every item links to its verified-detail page. */
 export const HOME_PROGRAMME_BANDS: {
   band: string;
   note: string;
@@ -621,8 +774,6 @@ export const ADMISSIONS_FAQS = [
   },
 ];
 
-/* ---------------- Campus ---------------- */
-
 export const CAMPUS_FACILITIES = [
   { name: "The Library", note: "Quiet reading, collections and research rooms" },
   { name: "The Forum", note: "Convening hall for lectures and public dialogue" },
@@ -631,8 +782,6 @@ export const CAMPUS_FACILITIES = [
   { name: "Quadrangles & Gardens", note: "Open-air cloisters for conversation" },
   { name: "Residences & Common Rooms", note: "For residential fellows and executives" },
 ];
-
-/* ---------------- Contact ---------------- */
 
 export const ENQUIRY_TYPES = [
   "Programmes & MBA admissions",
@@ -643,8 +792,6 @@ export const ENQUIRY_TYPES = [
   "Media & partnerships",
   "Something else",
 ];
-
-/* ---------------- Static page index (powers search) ---------------- */
 
 export const STATIC_PAGES = [
   { title: "Programmes", to: "/programmes", blurb: "MBA, EMBA, doctorate, executive and undergraduate pathways.", type: "Page" },

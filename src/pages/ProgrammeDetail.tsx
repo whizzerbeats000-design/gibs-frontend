@@ -79,7 +79,6 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
   if (!programme) return <NotFound />;
 
   const related = relatedProgrammes(slug, 3);
-  const pending = (v: string) => v.startsWith(DATA_REQUIRED);
 
   return (
     <>
@@ -125,15 +124,16 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   <p className="eyebrow">At a glance</p>
                   <dl className="mt-5">
                     <FactRow label="Category" value={programme.category} />
-                    <FactRow label="Format" value={programme.format} pending={pending(programme.format)} />
-                    <FactRow label="Duration" value={programme.duration} pending />
-                    <FactRow label="Next intake" value={programme.startDate} pending={pending(programme.startDate)} />
-                    <FactRow label="Tuition & fees" value={programme.fees} pending />
+                    <FactRow label="Type" value={programme.programmeType} />
+                    <FactRow label="Format" value={programme.format} />
+                    <FactRow label="Duration" value={programme.duration} />
+                    <FactRow label="Schedule" value={programme.schedule} />
+                    <FactRow label="Location" value={programme.location} />
+                    <FactRow label="Tuition Fee" value={programme.fee || programme.fees} />
                   </dl>
                   <div className="mt-7">
-                    <DataNote label="Official data required">
-                      The registrar publishes confirmed scheduling, fees and
-                        requirements. None are estimated here.
+                    <DataNote label="Official GIBS 2026 Calendar">
+                      Fees and cohort dates are fixed per official calendar. Registration closes 14 days prior to cohort start.
                     </DataNote>
                   </div>
                   <BtnLink to="/admissions" variant="primary" size="lg" className="mt-7 w-full">

@@ -5,7 +5,7 @@ import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { useSeo } from "../lib/router";
-import { getProgramme, IMAGES, INTERNATIONAL, INSTITUTION } from "../lib/data";
+import { getProgramme, PROGRAMMES, IMAGES, INTERNATIONAL, INSTITUTION } from "../lib/data";
 
 const ENGAGEMENT = [
   {
@@ -43,8 +43,11 @@ export default function ExecutiveEducation() {
     description: `Executive education, in-plant customized workshops, and international training programs in Kigali, Dubai, London, and Houston by ${INSTITUTION.legalName}.`,
   });
 
-  const open = getProgramme("executive-education")!;
-  const custom = getProgramme("custom-programmes")!;
+  const open = getProgramme("strategic-leadership-through-technological-innovation") || PROGRAMMES[0];
+  const custom = getProgramme("developing-leadership-competencies-for-improved-productivity") || PROGRAMMES[1];
+  const executivePrograms = PROGRAMMES.filter(
+    (p) => p.category.includes("Management") || p.category.includes("Leadership") || p.programmeType === "Foreign"
+  ).slice(0, 4);
 
   return (
     <>
@@ -170,8 +173,9 @@ export default function ExecutiveEducation() {
             <p className="eyebrow">Executive pathways</p>
           </Reveal>
           <div className="mt-8 border-t rule">
-            <ProgramRow programme={open} index={0} />
-            <ProgramRow programme={custom} index={1} />
+            {executivePrograms.map((prog, idx) => (
+              <ProgramRow key={prog.slug} programme={prog} index={idx} />
+            ))}
           </div>
           <div className="mt-10">
             <ArrowTextLink to="/contact?type=Custom+programmes+for+my+organization">

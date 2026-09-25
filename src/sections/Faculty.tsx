@@ -29,9 +29,8 @@ export default function FacultyScholarship() {
             </Reveal>
             <Reveal delay={0.22}>
               <div className="mt-8 max-w-md">
-                <DataNote label="Faculty directory in preparation">
-                  Named faculty profiles, biographies and publication records
-                  will be published as official appointments are confirmed.
+                <DataNote label="Governance & Leadership">
+                  Led by a Governing Council with 4 directors under the Chairman, supported by 14 academic and management advisory board designations.
                 </DataNote>
               </div>
             </Reveal>

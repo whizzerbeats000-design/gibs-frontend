@@ -13,12 +13,13 @@ import {
   IMAGES,
 } from "../lib/data";
 
-const DATES: { k: string; v?: string; pending?: boolean }[] = [
-  { k: "Applications open", pending: true },
-  { k: "Applications close", pending: true },
-  { k: "Admissions conversations", pending: true },
-  { k: "Decisions communicated", pending: true },
-  { k: "Cohort begins", pending: true },
+const DATES = [
+  { k: "Cohort 1 Intake", v: "January 2026" },
+  { k: "Cohort 2 Intake", v: "March 2026" },
+  { k: "Cohort 3 Intake", v: "May 2026" },
+  { k: "Cohort 4 Intake", v: "July 2026" },
+  { k: "Cohort 5 Intake", v: "September 2026" },
+  { k: "Cohort 6 Intake", v: "November 2026" },
 ];
 
 export default function Admissions() {
@@ -114,16 +115,15 @@ export default function Admissions() {
                       <dt className="text-[12px] font-bold uppercase tracking-[0.16em] text-muted">
                         {d.k}
                       </dt>
-                      <dd className="text-[13px] italic text-muted/90 sm:text-right">
-                        {d.pending ? "To be published" : d.v}
+                      <dd className="text-[13px] font-medium text-ink sm:text-right">
+                        {d.v}
                       </dd>
                     </div>
                   ))}
                 </dl>
                 <div className="mt-7">
-                  <DataNote label="No dates are estimated">
-                    The official calendar is published by the registrar the
-                    moment it is confirmed.
+                  <DataNote label="Official 2026 Academic Calendar">
+                    Admissions are processed on a rolling basis prior to each cohort start date.
                   </DataNote>
                 </div>
                 <Link to="/events" className="group link-underline mt-7 inline-flex text-sm font-semibold text-forest-700">
@@ -142,11 +142,8 @@ export default function Admissions() {
             <h2 className="display-serif type-h2">Tuition &amp; financial support</h2>
           </div>
           <div className="lg:col-span-8">
-            <DataNote light label="Fees & scholarships to be published">
-              Tuition, deposits, scholarships, bursaries and sponsor terms are
-              published once confirmed. In the meantime, admissions confirms
-              the current position in a personal conversation. No figures are
-              estimated.
+            <DataNote light label="2026 Tuition Structure">
+              Tuition fees range from ₦350,000 to ₦600,000 NGN for local programmes and $4,800 to $9,500 USD (or £4,800 GBP) for foreign programmes across Kigali, Dubai, London, and Houston. Admissions provides full fee schedules and institutional sponsorship terms.
             </DataNote>
             <div className="mt-8">
               <BtnLink to="/contact?type=Programmes+%26+MBA+admissions" variant="gold" size="md">

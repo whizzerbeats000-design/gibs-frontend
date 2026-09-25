@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingImmersive } from "../components/ui";
 import { Reveal } from "../components/motion";
-import { Diamond, MapPinIcon } from "../components/icons";
+import { MapPinIcon } from "../components/icons";
 import { useSeo } from "../lib/router";
 import { CAMPUSES, CAPACITY, IMAGES, INSTITUTION } from "../lib/data";
 
@@ -63,7 +63,7 @@ export default function Campus() {
                       <ul className="space-y-2">
                         {campus.facilities.map((fac) => (
                           <li key={fac} className="flex items-center gap-2 text-[13px] text-ink/80">
-                            <Diamond className="h-1.5 w-1.5 shrink-0 text-gold-600" />
+                            <span className="h-1.5 w-1.5 rounded-full bg-forest-600 shrink-0" />
                             {fac}
                           </li>
                         ))}

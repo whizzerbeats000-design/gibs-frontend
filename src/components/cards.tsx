@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
-import { ArrowUpRight, PlusIcon, Diamond } from "./icons";
+import { ArrowUpRight, PlusIcon } from "./icons";
 import { useCardDepth } from "./depth";
 import { type Programme } from "../lib/data";
 
@@ -126,11 +126,10 @@ export function ThemeCard({
 }) {
   return (
     <div className="flex h-full flex-col border-t rule pt-6">
-      <span className="flex items-center gap-2 text-[11px] font-bold tracking-[0.16em] text-gold-700">
-        <Diamond className="h-1.5 w-1.5" />
+      <span className="text-[11px] font-bold tracking-[0.16em] text-gold-700">
         {number}
       </span>
-      <h3 className="display-serif mt-4 text-xl leading-snug text-ink">{title}</h3>
+      <h3 className="display-serif mt-3 text-xl leading-snug text-ink">{title}</h3>
       <p className="mt-3 type-body text-muted">{blurb}</p>
     </div>
   );

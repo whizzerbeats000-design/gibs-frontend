@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal, stagger, staggerItem, EASE } from "../components/motion";
-import { Diamond, ArrowUpRight } from "../components/icons";
+import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { CAMPUS_FACILITIES, IMAGES } from "../lib/data";
 
@@ -47,9 +47,8 @@ export default function Experience() {
                 <motion.li
                   key={f.name}
                   variants={staggerItem}
-                  className="flex items-baseline gap-4 border-b rule py-4.5"
+                  className="flex items-baseline gap-4 border-b rule py-4"
                 >
-                  <Diamond className="h-2 w-2 shrink-0 text-gold-600" />
                   <span className="display-serif type-h3 text-ink">{f.name}</span>
                 </motion.li>
               ))}

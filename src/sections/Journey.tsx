@@ -49,8 +49,8 @@ export default function AdmissionsTeaser() {
               ))}
             </ol>
             <div className="mt-7">
-              <DataNote light label="Intake calendar to be published">
-                Deadlines, decision dates and tuition from the registrar.
+              <DataNote light label="Official 2026 Academic Calendar">
+                Cohort intakes run in January, March, May, July, September, and November 2026.
               </DataNote>
             </div>
           </Reveal>

@@ -1,11 +1,11 @@
 import { PageHero } from "../components/PageHero";
-import { BtnLink, ClosingImmersive, DataNote, ArrowTextLink } from "../components/ui";
+import { BtnLink, ClosingImmersive, ArrowTextLink } from "../components/ui";
 import { ProgramRow } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { useSeo } from "../lib/router";
-import { getProgramme, IMAGES } from "../lib/data";
+import { getProgramme, PROGRAMMES, IMAGES, INTERNATIONAL, INSTITUTION } from "../lib/data";
 
 const ENGAGEMENT = [
   {
@@ -30,25 +30,34 @@ const ENGAGEMENT = [
   },
 ];
 
+const FOREIGN_HUBS = [
+  { destination: "Kigali, Rwanda", fee: "$4,800 USD", currency: "USD", note: "8 specialized executive programs" },
+  { destination: "Dubai, UAE", fee: "$4,800 USD", currency: "USD", note: "5 specialized executive programs" },
+  { destination: "London, UK", fee: "£4,800 GBP", currency: "GBP", note: "4 specialized executive programs" },
+  { destination: "Houston, Texas", fee: "$5,000 – $9,500 USD", currency: "USD", note: "5 specialized executive programs" },
+];
+
 export default function ExecutiveEducation() {
   useSeo({
-    title: "Executive Education — GIBS",
-    description:
-      "Open-enrolment executive programmes and custom leadership journeys for boards, governments and fast-scaling organizations.",
+    title: `Executive Education & Foreign Training — ${INSTITUTION.abbreviation}`,
+    description: `Executive education, in-plant customized workshops, and international training programs in Kigali, Dubai, London, and Houston by ${INSTITUTION.legalName}.`,
   });
 
-  const open = getProgramme("executive-education")!;
-  const custom = getProgramme("custom-programmes")!;
+  const open = getProgramme("strategic-leadership-through-technological-innovation") || PROGRAMMES[0];
+  const custom = getProgramme("developing-leadership-competencies-for-improved-productivity") || PROGRAMMES[1];
+  const executivePrograms = PROGRAMMES.filter(
+    (p) => p.category.includes("Management") || p.category.includes("Leadership") || p.programmeType === "Foreign"
+  ).slice(0, 4);
 
   return (
     <>
       <PageHero
         image={IMAGES.boardroom}
-        imageAlt="The GIBS library — a quiet environment for executive learning"
-        eyebrow="Executive Education"
+        imageAlt="GIBS executive learning environment"
+        eyebrow="Executive Education & Capacity Development"
         title="Leadership for those already"
         italic="operating at scale."
-        intro="Open programmes for experienced professionals and custom journeys built around your organization's decision."
+        intro={`${INSTITUTION.legalName} delivers executive open programs, in-plant customized workshops, and foreign training in key international hubs.`}
         breadcrumbs={[{ label: "Executive Education" }]}
       />
 
@@ -59,13 +68,13 @@ export default function ExecutiveEducation() {
             {[
               {
                 p: open,
-                eyebrowText: "For individuals",
-                body: "Short, intensive convenings for rising and senior leaders, focused, practical and taught by faculty who also work inside real institutions.",
+                eyebrowText: "For Individuals & Executives",
+                body: "Short, intensive convenings for rising and senior leaders, focused, practical and taught by faculty and advisors who work inside real institutions.",
               },
               {
                 p: custom,
-                eyebrowText: "For organizations",
-                body: "A custom engagement built with boards and executive committees around one institution's strategy, transition or transformation.",
+                eyebrowText: "In-Plant & Custom Workshops",
+                body: "Custom leadership journeys and in-plant workshops designed for boards, public sector agencies, and private enterprises.",
               },
             ].map(({ p, eyebrowText, body }) => (
               <div key={p.slug} className="bg-white p-8 sm:p-12">
@@ -92,12 +101,46 @@ export default function ExecutiveEducation() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div className="mt-10">
-            <DataNote label="Executive calendar & fees to be published">
-              Dates, venues and fees follow the official executive calendar
-              once confirmed.
-            </DataNote>
+      {/* Foreign Training Catalogue Highlights */}
+      <section className="border-y border-line bg-forest-900 text-ivory py-20 sm:py-24">
+        <div className="container-x">
+          <Reveal>
+            <p className="eyebrow-light">International Training Locations</p>
+            <h2 className="display-serif type-h2 mt-4 text-ivory">
+              Foreign Training Destinations & Currencies
+            </h2>
+            <p className="mt-3 type-body text-ivory/80 max-w-2xl">
+              Academic Technical Partner: <strong className="text-gold-300">{INTERNATIONAL.technicalPartner}</strong>. Foreign training is hosted across four primary international destinations with destination-specific pricing:
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {FOREIGN_HUBS.map((hub) => (
+              <Reveal key={hub.destination}>
+                <div className="border border-gold-500/30 bg-forest-950 p-6 h-full flex flex-col justify-between">
+                  <div>
+                    <span className="chip border-gold-400/40 bg-gold-400/10 text-gold-300 font-mono text-[12px] px-3 py-1">
+                      {hub.currency}
+                    </span>
+                    <h3 className="display-serif type-h3 mt-3 text-ivory">{hub.destination}</h3>
+                    <p className="mt-2 text-[13px] text-ivory/70">{hub.note}</p>
+                  </div>
+                  <div className="mt-6 border-t rule-light pt-3">
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-gold-300">Tuition Fee</p>
+                    <p className="display-serif text-lg font-semibold text-ivory mt-1">{hub.fee}</p>
+                  </div>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+
+          <div className="mt-10 border-t rule-light pt-6">
+            <p className="text-[12px] text-ivory/70">
+              Additional overseas hubs include: {INTERNATIONAL.overseasHubs.join(", ")}.
+            </p>
           </div>
         </div>
       </section>
@@ -108,8 +151,7 @@ export default function ExecutiveEducation() {
           <Reveal>
             <p className="eyebrow">The Method</p>
             <h2 className="display-serif type-h2 mt-5 max-w-3xl text-ink">
-              Custom work begins with the question
-              <em className="text-forest-700"> beneath the question.</em>
+              In-Plant & Custom Work Method
             </h2>
           </Reveal>
           <div className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
@@ -131,8 +173,9 @@ export default function ExecutiveEducation() {
             <p className="eyebrow">Executive pathways</p>
           </Reveal>
           <div className="mt-8 border-t rule">
-            <ProgramRow programme={open} index={0} />
-            <ProgramRow programme={custom} index={1} />
+            {executivePrograms.map((prog, idx) => (
+              <ProgramRow key={prog.slug} programme={prog} index={idx} />
+            ))}
           </div>
           <div className="mt-10">
             <ArrowTextLink to="/contact?type=Custom+programmes+for+my+organization">
@@ -142,56 +185,13 @@ export default function ExecutiveEducation() {
         </div>
       </section>
 
-      {/* Faculty expertise & learning environment */}
-      <section className="bg-white">
-        <div className="container-x grid items-center gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-14">
-          <Reveal y={36} className="lg:col-span-6 lg:order-2">
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <img
-                src={IMAGES.library}
-                alt="The quiet executive learning environment with oak, brass and reading light"
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-forest-950/20" />
-              <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-            </div>
-          </Reveal>
-          <div className="lg:col-span-6 lg:order-1">
-            <Reveal>
-              <p className="eyebrow">Faculty Expertise</p>
-              <h2 className="display-serif type-h2 mt-5 text-ink">
-                Taught by people who still do the work
-              </h2>
-              <p className="mt-5 max-w-xl type-body">
-                Executive faculty move between the classroom and the boardroom;
-                they research, advise and lead, and bring current institutional
-                problems into every convening. Programmes are hosted in case
-                rooms and residential quarters designed for candour.
-              </p>
-              <div className="mt-8">
-                <DataNote label="Faculty assignments & venue schedules to be published">
-                  Named faculty biographies, programme dates and locations are
-                  published once confirmed.
-                </DataNote>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
-                <ArrowTextLink to="/faculty">Faculty & research</ArrowTextLink>
-                <ArrowTextLink to="/campus">The campus</ArrowTextLink>
-              </div>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
       <ClosingImmersive
         image={IMAGES.seminar}
-        alt="Executives in a GIBS convening, in discussion around a case room"
+        alt="Executives in a GIBS convening"
         eyebrow="Executive Education"
-        title="Bring a leadership question."
-        italic="We'll bring the faculty."
-        body="Custom work begins with a confidential conversation about the decision your organization must take."
+        title="Bring a capacity question."
+        italic="We'll bring the team."
+        body="Commission a custom in-plant workshop or enroll in our foreign training cohorts."
         actions={
           <>
             <BtnLink to="/contact?type=Executive+education" variant="gold" size="lg">

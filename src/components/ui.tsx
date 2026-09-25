@@ -7,7 +7,7 @@ import type {
 } from "react";
 import { Link, useRoute } from "../lib/router";
 import { cn } from "../utils/cn";
-import { Diamond, ChevronRight, ArrowUpRight } from "./icons";
+import { ChevronRight, ArrowUpRight } from "./icons";
 import { Reveal } from "./motion";
 
 /* ---------- Buttons ---------- */
@@ -175,7 +175,6 @@ export function DataNote({
         light ? "border-gold-400/70 text-ivory/70" : "border-gold-600 text-muted"
       )}
     >
-      <Diamond className={cn("mt-1.5 h-1.5 w-1.5 shrink-0", light ? "text-gold-400" : "text-gold-600")} />
       <p>
         <span className={cn("font-bold uppercase tracking-[0.12em]", light ? "text-gold-300" : "text-gold-700")}>
           {label}.
@@ -202,10 +201,7 @@ export function EmptyState({
   const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
     <div className="flex flex-col items-center border border-line bg-ivory/55 px-6 py-16 text-center">
-      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold-600/40 bg-gold-100/70">
-        <Diamond className="h-2 w-2 text-gold-700" />
-      </span>
-      <Heading className="display-serif type-h3 mt-5 text-ink">{title}</Heading>
+      <Heading className="display-serif type-h3 text-ink">{title}</Heading>
       <p className="mt-3 max-w-md type-body text-muted">{body}</p>
       {action && <div className="mt-7">{action}</div>}
     </div>

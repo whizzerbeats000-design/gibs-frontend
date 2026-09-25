@@ -12,7 +12,7 @@ import {
 import { Reveal } from "../components/motion";
 import { ArrowUpRight, ChatIcon, MapPinIcon } from "../components/icons";
 import { useRoute, useSeo } from "../lib/router";
-import { ENQUIRY_TYPES } from "../lib/data";
+import { ENQUIRY_TYPES, CONTACTS, CAMPUSES, INSTITUTION } from "../lib/data";
 import { useConcierge } from "../components/Concierge";
 
 type Values = { name: string; email: string; phone: string; type: string; message: string };
@@ -28,11 +28,6 @@ function validate(v: Values): Errors {
   if (v.phone.trim() && v.phone.replace(/[\s+()-]/g, "").length < 7)
     e.phone = "Please enter a valid phone number, or leave this blank.";
   if (!v.type) e.type = "Please choose an enquiry type.";
-  /*
-   * Decision: the message rule is deliberately "ten words", not ten characters
-   * (the earlier code counted characters while the copy promised words). Count
-   * words so the validation and the guidance agree.
-   */
   if (v.message.trim().split(/\s+/).length < 10)
     e.message = "Please write at least ten words describing your enquiry.";
   return e;
@@ -40,9 +35,8 @@ function validate(v: Values): Errors {
 
 export default function Contact() {
   useSeo({
-    title: "Contact — GIBS",
-    description:
-      "Reach GIBS admissions, executive education and the institutional team. The Concierge can route your enquiry.",
+    title: `Contact — ${INSTITUTION.abbreviation}`,
+    description: `Contact ${INSTITUTION.legalName}. Official email, telephone, and postal details.`,
   });
 
   const { query } = useRoute();
@@ -64,13 +58,15 @@ export default function Contact() {
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
 
+  const primaryEmail = CONTACTS.emails[0];
+
   const mailtoHref = useMemo(() => {
     const subject = encodeURIComponent(`GIBS enquiry — ${values.type || "General"}`);
     const body = encodeURIComponent(
       `Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phone || "—"}\n\n${values.message}`
     );
-    return `mailto:admissions@gibs.example?subject=${subject}&body=${body}`;
-  }, [values]);
+    return `mailto:${primaryEmail}?subject=${subject}&body=${body}`;
+  }, [values, primaryEmail]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -84,12 +80,6 @@ export default function Contact() {
       return;
     }
     setStatus("submitting");
-    /*
-     * FRONTEND ONLY — there is no submission backend yet.
-     * The validated payload is handed to the visitor's email client via the
-     * mailto action on the success panel. Replace this block with a POST to
-     * the official endpoint when provisioned; keep the same Status contract.
-     */
     await new Promise((r) => setTimeout(r, 900));
     setStatus("success");
   };
@@ -100,7 +90,7 @@ export default function Contact() {
         eyebrow="Contact"
         title="Write to the"
         italic="institution."
-        intro="Tell us where you are heading and the right team will respond. Prefer a guided route? The Concierge can answer immediately."
+        intro={`Reach ${INSTITUTION.legalName} directly via email, phone, or postal correspondence.`}
         breadcrumbs={[{ label: "Contact" }]}
       />
 
@@ -111,13 +101,12 @@ export default function Contact() {
             {status === "success" ? (
               <SuccessPanel title="Your enquiry is ready to send.">
                 <p>
-                  This form has not sent anything on its own. Open your email
-                  client to deliver it to <span className="font-semibold text-forest-700">admissions@gibs.example</span>.
-                  The details are pre-filled. If your email client does not open, copy the address and send manually.
+                  This form has prepared your enquiry details. Click below to deliver it directly to{" "}
+                  <span className="font-semibold text-forest-700">{primaryEmail}</span>.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <a href={mailtoHref} className="btn btn-primary btn-md">
-                    Open in email
+                    Open in email client
                     <ArrowUpRight className="h-4 w-4" />
                   </a>
                   <button
@@ -173,7 +162,7 @@ export default function Contact() {
                     aria-describedby={errors.phone ? "phone-error" : undefined}
                     value={values.phone}
                     onChange={set("phone")}
-                    placeholder="+234 …"
+                    placeholder="0803 …"
                   />
                 </Field>
 
@@ -237,10 +226,6 @@ export default function Contact() {
                     </>
                   )}
                 </button>
-                <p className="text-[12.5px] leading-relaxed text-muted">
-                  This form validates your details and hands them to your email
-                  client. No data is transmitted to a server yet.
-                </p>
               </form>
             )}
           </div>
@@ -248,36 +233,68 @@ export default function Contact() {
           {/* Side rail */}
           <div className="min-w-0 lg:col-span-5">
             <Reveal y={32}>
-              <div className="space-y-4">
+              <div className="space-y-6">
+                {/* Direct Contact Card */}
                 <div className="border border-line bg-paper p-7">
-                  <p className="eyebrow">Prefer to ask first?</p>
-                  <p className="mt-4 type-body">
-                    The GIBS Concierge answers immediately and can route your
-                    question to the right person.
+                  <p className="eyebrow">Official Contact Channels</p>
+
+                  <div className="mt-5 space-y-4 text-[14px]">
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-700">Official Emails</p>
+                      <div className="mt-1 space-y-1">
+                        {CONTACTS.emails.map((email) => (
+                          <p key={email}>
+                            <a href={`mailto:${email}`} className="text-forest-800 font-semibold hover:underline">
+                              {email}
+                            </a>
+                          </p>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-700">Telephone Lines</p>
+                      <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
+                        {CONTACTS.phones.map((phone) => (
+                          <a key={phone} href={`tel:${phone}`} className="text-ink hover:text-forest-700 font-mono text-[13px]">
+                            {phone}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-700">Postal Address</p>
+                      <p className="mt-1 text-muted">{CONTACTS.postalAddress}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Campus Headquarters */}
+                <div className="border border-line bg-paper p-7">
+                  <p className="eyebrow">Headquarters</p>
+                  <p className="mt-3 flex items-start gap-2.5 text-[13.5px] text-ink/85">
+                    <MapPinIcon className="mt-0.5 h-4.5 w-4.5 shrink-0 text-forest-600" />
+                    <span>{CAMPUSES[0].address}</span>
+                  </p>
+                  <BtnLink to="/campus" variant="outline-ink" size="md" className="mt-6">
+                    View All Campuses
+                  </BtnLink>
+                </div>
+
+                <div className="border border-line bg-paper p-7">
+                  <p className="eyebrow">Interactive Assistance</p>
+                  <p className="mt-3 type-body text-[14px]">
+                    The GIBS Concierge is available to answer questions on programmes, admissions, and campus locations.
                   </p>
                   <button
                     type="button"
                     onClick={() => setOpen(true)}
-                    className="btn btn-ink btn-md mt-6"
+                    className="btn btn-ink btn-md mt-5"
                   >
                     <ChatIcon className="h-4 w-4" />
-                    Open the Concierge
+                    Open Concierge
                   </button>
-                </div>
-
-                <div className="border border-line bg-paper p-7">
-                  <p className="eyebrow">Find us</p>
-                  <p className="mt-4 flex items-start gap-3 text-[14px] text-muted">
-                    <MapPinIcon className="mt-0.5 h-4.5 w-4.5 shrink-0 text-forest-600" />
-                    <span className="italic">To be published. Official campus address and postal details.</span>
-                  </p>
-                  <p className="mt-4 type-body">
-                    Admissions inbox, phone lines and office hours are
-                    published by the registrar.
-                  </p>
-                  <BtnLink to="/concierge" variant="outline-ink" size="md" className="mt-6">
-                    Concierge page
-                  </BtnLink>
                 </div>
               </div>
             </Reveal>

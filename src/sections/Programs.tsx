@@ -8,7 +8,8 @@ import { ArrowUpRight } from "../components/icons";
 function ProgrammePanel({ slug }: { slug: string }) {
   const p = PROGRAMMES.find((x) => x.slug === slug);
   if (!p) return null;
-  const audience = p.audience?.[0];
+  const description = p.tagline || p.summary;
+  const audienceText = p.audience?.[0] || p.targetAudience;
   return (
     <Link
       to={`/programmes/${p.slug}`}
@@ -21,10 +22,10 @@ function ProgrammePanel({ slug }: { slug: string }) {
         <h3 className="display-serif type-h3 mt-2 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5">
           {p.title}
         </h3>
-        <p className="mt-2 max-w-xl type-body">{p.tagline}.</p>
-        {audience && (
-          <p className="mt-1.5 max-w-lg text-[13px] leading-relaxed text-muted">
-            For {audience.charAt(0).toLowerCase() + audience.slice(1)}
+        {description && <p className="mt-2 max-w-xl type-body">{description}</p>}
+        {audienceText && (
+          <p className="mt-1.5 max-w-lg text-[13px] leading-relaxed text-muted line-clamp-2">
+            For {audienceText.charAt(0).toLowerCase() + audienceText.slice(1)}
           </p>
         )}
       </div>
@@ -54,8 +55,7 @@ export default function ProgrammeDiscovery() {
           </div>
           <Reveal delay={0.16} className="lg:col-span-4">
             <p className="max-w-sm type-body">
-              Four ways into GIBS, from a first degree to custom executive work
-              for a single institution.
+              135 specialized management, finance, executive and international programmes designed for public and private sector leaders.
             </p>
           </Reveal>
         </div>

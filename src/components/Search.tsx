@@ -16,25 +16,25 @@ type SearchItem = {
 
 const INDEX: SearchItem[] = [
   ...PROGRAMMES.map((p) => ({
-    title: p.title,
-    blurb: p.tagline,
+    title: `${p.code} · ${p.title}`,
+    blurb: `${p.fees} · ${p.schedule}`,
     to: `/programmes/${p.slug}`,
     group: "Programmes" as const,
-    keywords: `${p.category} ${p.summary} mba emba dba doctorate executive undergraduate degree`,
+    keywords: `${p.code} ${p.title} ${p.category} ${p.destination} ${p.targetAudience} ${p.schedule} ${p.fees} ${p.summary} ${p.duration}`,
   })),
   ...STATIC_PAGES.map((p) => ({
     title: p.title,
     blurb: p.blurb,
     to: p.to,
     group: "Pages" as const,
-    keywords: p.blurb,
+    keywords: `${p.title} ${p.blurb}`,
   })),
   ...RESEARCH_THEMES.map((t, i) => ({
     title: t.title,
     blurb: t.blurb,
     to: "/research-insights",
     group: "Research" as const,
-    keywords: `faculty scholarship theme ${i}`,
+    keywords: `faculty scholarship theme ${t.title} ${t.blurb} ${i}`,
   })),
   ...ARTICLES.map((a) => ({
     title: a.title,
@@ -140,7 +140,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
                     window.location.hash = `#${results[0].to}`;
                   }
                 }}
-                placeholder="Search programmes, admissions, faculty, insights…"
+                placeholder="Search by programme name, code, sector, venue or city…"
                 className="w-full bg-transparent py-5 text-[16px] text-ink placeholder:text-muted/70 focus:outline-none"
                 type="search"
                 autoComplete="off"
@@ -159,9 +159,20 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
               {/* Initial state */}
               {trimmed.length < 2 && (
                 <div className="px-4 py-8">
-                  <p className="meta">Start typing. Try</p>
+                  <p className="meta">Quick Searches</p>
                   <div className="mt-4 flex flex-wrap gap-2">
-                    {["MBA", "Executive", "Admissions", "Campus", "Research"].map((s) => (
+                    {[
+                      "Accounting",
+                      "Kigali",
+                      "Dubai",
+                      "London",
+                      "Houston",
+                      "Telecom",
+                      "Oil & Gas",
+                      "Pension",
+                      "Maritime",
+                      "Cybersecurity",
+                    ].map((s) => (
                       <button
                         key={s}
                         type="button"
@@ -183,15 +194,14 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
                     No results for “{trimmed}”
                   </p>
                   <p className="mx-auto mt-2 max-w-sm type-body text-muted">
-                    Nothing in the site index matches that search. Try a programme name such
-                    as MBA, or ask the Concierge for personal guidance.
+                    Nothing in the site index matches that search. Try a topic such as Accounting, Procurement, Kigali, Dubai, or ask GIBS AI.
                   </p>
                   <Link
                     to="/concierge"
                     onClick={onClose}
                     className="btn btn-primary btn-md mt-6"
                   >
-                    Ask the Concierge
+                    Ask GIBS AI
                     <ArrowUpRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>

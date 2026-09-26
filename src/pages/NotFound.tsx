@@ -31,7 +31,7 @@ export default function NotFound() {
         </div>
         <div className="mt-14 border-t rule-light pt-6">
           <ArrowTextLink to="/concierge" light>
-            Or ask the GIBS Concierge to find your way
+            Or ask GIBS AI to find your way
           </ArrowTextLink>
         </div>
       </div>

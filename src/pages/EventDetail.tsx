@@ -32,7 +32,7 @@ export default function EventDetail({ slug }: { slug: string }) {
               body={`Event reference "${slug}" has no published record yet. Register your interest and receive the official programme the moment it is confirmed.`}
               action={
                 <div className="flex flex-wrap justify-center gap-3">
-                  <BtnLink to="/contact?type=Campus+visits+%26+events" variant="primary" size="md">
+                  <BtnLink to="/contact?type=Campus+Facility+Booking+%26+Enquiries" variant="primary" size="md">
                     Register interest
                   </BtnLink>
                   <BtnLink to="/events" variant="outline-ink" size="md">
@@ -48,9 +48,6 @@ export default function EventDetail({ slug }: { slug: string }) {
   }
 
   /* ── Found event ──────────────────────────────────────────────────── */
-  const d = new Date(event.date);
-  const validDate = !Number.isNaN(d.getTime());
-
   return (
     <>
       <PageHero
@@ -67,14 +64,7 @@ export default function EventDetail({ slug }: { slug: string }) {
                 <div className="grid grid-cols-[8rem_1fr] gap-4 border-b rule py-4">
                   <dt className="meta">Date</dt>
                   <dd className="text-[14px] text-ink">
-                    {validDate
-                      ? d.toLocaleDateString("en-GB", {
-                          weekday: "long",
-                          day: "2-digit",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : event.date}
+                    {event.date}
                   </dd>
                 </div>
                 <div className="grid grid-cols-[8rem_1fr] gap-4 border-b rule py-4">
@@ -103,7 +93,7 @@ export default function EventDetail({ slug }: { slug: string }) {
                       To attend or register your interest, contact the events team directly.
                     </p>
                     <BtnLink
-                      to="/contact?type=Campus+visits+%26+events"
+                      to="/contact?type=Campus+Facility+Booking+%26+Enquiries"
                       variant="primary"
                       size="lg"
                       className="mt-6 w-full"

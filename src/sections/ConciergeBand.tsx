@@ -14,26 +14,26 @@ export default function ConciergeBand() {
           {/* Editorial copy */}
           <div className="lg:col-span-7">
             <Reveal>
-              <p className="eyebrow">GIBS Concierge</p>
+              <p className="eyebrow">GIBS AI</p>
               <h2 className="type-h2 mt-5 text-ink">
                 The digital
                 <br />
-                <em className="italic text-forest-700">admissions desk.</em>
+                <em className="italic text-forest-700">programme guide.</em>
               </h2>
             </Reveal>
             <Reveal delay={0.12}>
               <p className="mt-5 max-w-xl type-body">
-                The GIBS Concierge answers questions directly, or hands you to
-                a colleague who can.
+                GIBS AI answers questions directly about the 2026 programme catalogue,
+                overseas training hubs, and campus facilities.
               </p>
             </Reveal>
             <Reveal delay={0.18}>
               <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
                 <button type="button" onClick={() => setOpen(true)} className="btn btn-primary btn-lg">
-                  Open the Concierge
+                  Open GIBS AI
                 </button>
                 <Link to="/concierge" className="group link-underline text-sm font-semibold text-forest-700">
-                  Concierge page
+                  GIBS AI page
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </Link>
               </div>
@@ -45,10 +45,10 @@ export default function ConciergeBand() {
             <figure className="relative bg-forest-800 p-9 text-ivory shadow-card sm:p-12">
               <MeridianRule light at="82%" className="absolute inset-x-9 top-7 w-auto sm:inset-x-12" />
               <blockquote className="display-serif mt-10 text-[1.55rem] leading-[1.4]">
-                “Welcome to GIBS Concierge. How can we help you find your way?”
+                “Welcome to GIBS AI. How can we help you find your way?”
               </blockquote>
               <figcaption className="mt-6 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/55">
-                Guided assistance · not an AI service
+                Intelligent programme &amp; enquiry guide
               </figcaption>
             </figure>
           </Reveal>

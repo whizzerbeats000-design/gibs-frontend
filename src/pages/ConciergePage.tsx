@@ -6,29 +6,29 @@ import { ChatIcon } from "../components/icons";
 import { useSeo } from "../lib/router";
 
 const TOPICS = [
-  { title: "Programmes", body: "MBA, Executive MBA, doctorate, executive and undergraduate pathways." },
-  { title: "Admissions", body: "The six-step journey, requirements, dates and supporting materials." },
-  { title: "Executive Education", body: "Open programmes and custom leadership journeys for organizations." },
-  { title: "Campus experience", body: "The learning environments, facilities and arranging a visit." },
-  { title: "Speak with admissions", body: "When a human answer is better, the Concierge routes you directly." },
+  { title: "Programmes & Training", body: "113 Local / Open training courses and 22 Foreign executive training programmes across Kigali, Dubai, London, and Houston." },
+  { title: "Programme Subscription & Enquiries", body: "Programme selection, corporate nomination process, published fee schedules, and registration details." },
+  { title: "Executive Education", body: "Overseas training hubs (Kigali, Dubai, London, Houston) and customized in-plant workshops." },
+  { title: "Campuses & Facilities", body: "Ilorin Headquarters, Abuja Center, Ibafo (Ogun State) Center, and off-campus domestic venues." },
+  { title: "Institutional Team", body: "Governing Council, 20 Advisors and subject matter experts, and Pacific Institute of Technology technical partnership." },
 ];
 
 export default function ConciergePage() {
   useSeo({
-    title: "GIBS Concierge — Guided assistance",
+    title: "GIBS AI — Intelligent Programme & Institutional Guide",
     description:
-      "The GIBS Concierge is a guided admissions desk for programmes, admissions, executive education, the campus and contact.",
+      "GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, campus facilities, and subscription enquiries.",
   });
   const { setOpen } = useConcierge();
 
   return (
     <>
       <PageHero
-        eyebrow="GIBS Concierge"
-        title="A digital admissions"
-        italic="desk."
-        intro="A routing service for the admissions desk: programmes, admissions, the campus. It answers instantly, or hands you on."
-        breadcrumbs={[{ label: "Concierge" }]}
+        eyebrow="GIBS AI"
+        title="Intelligent programme"
+        italic="guide."
+        intro="Explore the GIBS 2026 training catalogue, foreign executive destinations, campus facilities, and subscription enquiries with verified official information."
+        breadcrumbs={[{ label: "GIBS AI" }]}
       />
 
       <section className="bg-white">
@@ -41,12 +41,12 @@ export default function ConciergePage() {
                   <ChatIcon className="h-5 w-5" />
                 </span>
                 <h2 className="display-serif type-h2 mt-6 text-ink">
-                  Welcome to GIBS Concierge. How can we help you find your way?
+                  Welcome to GIBS AI. How can we help you find your way?
                 </h2>
                 <p className="mt-4 type-body">
-                  A guided, rule-based assistant. It answers common questions
-                  instantly and routes anything official or personal to the
-                  right human team.
+                  An intelligent, verified programme assistant. It answers common questions
+                  instantly and routes official enquiries directly to the
+                  right GIBS team.
                 </p>
               </div>
 
@@ -64,7 +64,7 @@ export default function ConciergePage() {
 
               <div className="mt-9 flex flex-wrap gap-3">
                 <button type="button" onClick={() => setOpen(true)} className="btn btn-outline-ink btn-md">
-                  Open the floating Concierge
+                  Open floating GIBS AI
                 </button>
                 <BtnLink to="/contact" variant="outline-ink" size="md">
                   Contact GIBS directly
@@ -83,14 +83,14 @@ export default function ConciergePage() {
                       <span className="relative flex h-2 w-2">
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
                       </span>
-                      GIBS Concierge
+                      GIBS AI
                     </p>
                     <p className="mt-0.5 text-[11px] text-ivory/75">
-                      Guided assistance · typically replies instantly
+                      Intelligent guide · typically replies instantly
                     </p>
                   </div>
                   <span className="hidden rounded-pill border border-ivory/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-ivory/90 sm:block">
-                    Frontend demo assistant
+                    Official Guide
                   </span>
                 </div>
                 <div className="min-h-0 flex-1">

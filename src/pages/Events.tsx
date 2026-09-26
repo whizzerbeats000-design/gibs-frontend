@@ -24,16 +24,16 @@ const CATEGORIES = [
 ] as const;
 
 function EventRow({ event }: { event: GIBS_EVENT }) {
-  const d = new Date(event.date);
+  const d = new Date(event.startDate || event.date);
   const valid = !Number.isNaN(d.getTime());
   return (
     <article className="group grid gap-5 border-b rule py-8 sm:grid-cols-[9rem_1fr_auto] sm:items-center sm:gap-10">
       <div className="border-l-2 border-gold-500 pl-4">
         <p className="display-serif text-xl text-ink">
-          {valid ? d.toLocaleDateString("en-GB", { day: "2-digit", month: "short" }) : event.date}
+          {event.date}
         </p>
         <p className="meta mt-1">
-          {valid ? d.toLocaleDateString("en-GB", { year: "numeric" }) : "Date to confirm"}
+          {valid ? d.toLocaleDateString("en-GB", { year: "numeric" }) : "2026"}
         </p>
       </div>
       <div>
@@ -52,7 +52,7 @@ function EventRow({ event }: { event: GIBS_EVENT }) {
         </div>
       </div>
       <BtnLink
-        to={event.status === "upcoming" ? "/contact?type=Campus+visits+%26+events" : "/research-insights"}
+        to={event.status === "upcoming" ? "/contact?type=Campus+Facility+Booking+%26+Enquiries" : "/research-insights"}
         variant="outline-ink"
         size="md"
         className="sm:self-center"
@@ -136,11 +136,11 @@ export default function Events() {
                 body="Dates, locations and registration appear here as they are confirmed by the events office."
                 action={
                   <div className="flex flex-wrap justify-center gap-3">
-                    <BtnLink to="/contact?type=Campus+visits+%26+events" variant="primary" size="md">
+                    <BtnLink to="/contact?type=Campus+Facility+Booking+%26+Enquiries" variant="primary" size="md">
                       Register your interest
                     </BtnLink>
                     <BtnLink to="/concierge" variant="outline-ink" size="md">
-                      Ask the Concierge
+                      Ask GIBS AI
                     </BtnLink>
                   </div>
                 }

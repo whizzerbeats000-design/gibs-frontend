@@ -54,10 +54,10 @@ type Message = {
 const WELCOME: Message = {
   id: 0,
   role: "concierge",
-  text: "Welcome to GIBS Concierge. I can help with programmes, admissions, executive education, the campus and our faculty. How can I help you find your way?",
+  text: "Welcome to GIBS AI. I can help with 2026 programmes, foreign training hubs, campus facilities, and subscription enquiries. How can I help you find your way?",
 };
 
-const STORAGE_KEY = "gibs-concierge-v1";
+const STORAGE_KEY = "gibs-concierge-v2";
 
 function loadHistory(): Message[] {
   try {
@@ -187,7 +187,7 @@ export function ConciergeConversation({
         ref={scrollRef}
         tabIndex={0}
         role="region"
-        aria-label="Concierge conversation"
+        aria-label="GIBS AI conversation"
         aria-describedby="concierge-transcript-hint"
         className="flex-1 space-y-5 overflow-y-auto px-5 py-6 sm:px-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest-600/30 focus-visible:ring-inset"
         aria-live="polite"
@@ -207,7 +207,7 @@ export function ConciergeConversation({
             >
               {m.role === "concierge" && (
                 <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
-                  GIBS Concierge
+                  GIBS AI
                 </p>
               )}
               <p>{m.text}</p>
@@ -271,13 +271,13 @@ export function ConciergeConversation({
         }}
       >
         <label htmlFor={compact ? "concierge-input-modal" : "concierge-input-page"} className="sr-only">
-          Ask the GIBS Concierge
+          Ask GIBS AI
         </label>
         <input
           id={compact ? "concierge-input-modal" : "concierge-input-page"}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about programmes, admissions…"
+          placeholder="Ask about programmes, schedules, fees, campuses…"
           className="field-input py-3"
         />
         <button
@@ -290,7 +290,7 @@ export function ConciergeConversation({
         </button>
       </form>
       <p className="px-5 pb-3 text-[11px] leading-snug text-muted">
-        Guided rule-based assistant, not an AI service. For official answers, the Concierge routes you to the GIBS team.
+        Intelligent programme assistant. For official enquiries, GIBS AI routes you directly to the GIBS registry.
       </p>
     </div>
   );
@@ -305,17 +305,17 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
     <button
       type="button"
       onClick={() => setOpen(true)}
-      aria-label="Open GIBS Concierge"
+      aria-label="Open GIBS AI"
       aria-expanded={open}
       tabIndex={hidden ? -1 : 0}
       className={cn(
-        "fixed bottom-5 right-4 z-[var(--z-concierge)] flex items-center gap-2.5 rounded-pill bg-forest-600 py-3.5 pl-4 pr-5 text-sm font-semibold text-ivory shadow-lift ring-1 ring-forest-900/20 transition-all duration-300 hover:-translate-y-0.5 hover:bg-forest-700 sm:bottom-7 sm:right-8",
+        "fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 z-[var(--z-concierge)] flex items-center gap-2.5 rounded-pill bg-forest-600 py-3 pl-3.5 pr-4.5 text-[13px] font-semibold text-ivory shadow-[0_8px_24px_rgba(0,32,9,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] ring-1 ring-forest-900/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-forest-700 sm:bottom-8 sm:right-8 sm:py-3.5 sm:pl-4 sm:pr-5 sm:text-sm",
         hidden && "pointer-events-none opacity-0"
       )}
     >
       <span className="h-2 w-2 shrink-0 rounded-full bg-gold-300" aria-hidden="true" />
       <ChatIcon className="h-4.5 w-4.5" />
-      <span className="hidden sm:inline">GIBS Concierge</span>
+      <span className="hidden sm:inline">GIBS AI</span>
     </button>
   );
 }
@@ -339,7 +339,7 @@ export function ConciergeDialog() {
           {/* Scrim */}
           <button
             type="button"
-            aria-label="Close Concierge"
+            aria-label="Close GIBS AI"
             onClick={() => setOpen(false)}
             className="absolute inset-0 h-full w-full cursor-default bg-ink/45 backdrop-blur-[2px]"
           />
@@ -348,7 +348,7 @@ export function ConciergeDialog() {
             ref={ref}
             role="dialog"
             aria-modal="true"
-            aria-label="GIBS Concierge"
+            aria-label="GIBS AI"
             initial={{ y: 48, opacity: 0, scale: 0.985 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 32, opacity: 0, scale: 0.99 }}
@@ -361,9 +361,9 @@ export function ConciergeDialog() {
                   <span className="relative flex h-2 w-2">
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
                   </span>
-                  GIBS Concierge
+                  GIBS AI
                 </p>
-                <p className="mt-0.5 text-[11px] text-ivory/75">Guided assistance · typically replies instantly</p>
+                <p className="mt-0.5 text-[11px] text-ivory/75">Intelligent guide · typically replies instantly</p>
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -383,7 +383,7 @@ export function ConciergeDialog() {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  aria-label="Close Concierge panel"
+                  aria-label="Close GIBS AI panel"
                   className="flex h-11 w-11 items-center justify-center rounded-pill text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory"
                 >
                   <CloseIcon className="h-5 w-5" />

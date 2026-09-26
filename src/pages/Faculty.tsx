@@ -1,115 +1,136 @@
 import { PageHero } from "../components/PageHero";
-import { BtnLink, ClosingQuiet, EmptyState } from "../components/ui";
-import { ThemeCard } from "../components/cards";
+import { BtnLink, ClosingQuiet } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { RESEARCH_THEMES, IMAGES } from "../lib/data";
-
-const ACADEMIC_PILLARS = [
-  {
-    title: "Research that answers practice",
-    body: "Faculty pursue questions drawn from real institutions, then carry answers back into the classroom and the boardroom.",
-  },
-  {
-    title: "Teaching by practitioners",
-    body: "Faculty work within the markets and organizations they teach, not at a distance from them.",
-  },
-  {
-    title: "A global conversation",
-    body: "Visiting scholars and partnerships connect GIBS to the wider academy. Details are published as confirmed.",
-  },
-];
+import { FACULTY_ADVISORS, GOVERNANCE_INFO, INSTITUTIONAL_DATA, IMAGES } from "../lib/data";
+import { CheckIcon } from "../components/icons";
 
 export default function Faculty() {
   useSeo({
-    title: "Faculty & Research — GIBS",
+    title: "Governance & Faculty Advisory Structure — GIBS",
     description:
-      "GIBS faculty research across leadership, markets, enterprise and organizations. Faculty directory and publications in preparation.",
+      "Governing Council of 4 Directors, Management Team of 20 Advisors & Experts, Academic Board, and Technical Partnerships.",
   });
 
   return (
     <>
       <PageHero
         image={IMAGES.library}
-        imageAlt="The GIBS library, where scholarship and practice meet"
-        eyebrow="Faculty & Research"
-        title="Knowledge with"
-        italic="consequence."
-        intro="GIBS faculty are scholar-practitioners who move between institutions of learning and the institutions their work describes. Their scholarship is judged by what it changes."
-        breadcrumbs={[{ label: "Faculty & Research" }]}
+        imageAlt="The GIBS academic and governance board"
+        eyebrow="Governance & Faculty"
+        title="Leadership with"
+        italic="integrity & purpose."
+        intro="Governing Council, management advisors, and academic coordinators guiding manpower development across Nigeria and international hubs."
+        breadcrumbs={[{ label: "Faculty & Governance" }]}
       />
 
-      {/* Research themes */}
-      <section className="bg-white">
-        <div className="container-x py-20 sm:py-24">
+      {/* Governing Council & Board Summary */}
+      <section className="border-b border-line bg-white">
+        <div className="container-x py-16 sm:py-20">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-7">
+              <Reveal>
+                <p className="eyebrow">Governing Council & Management</p>
+                <h2 className="display-serif type-h2 mt-4 text-ink">
+                  Institutional governance &amp; management structure
+                </h2>
+                <p className="mt-5 text-[16px] leading-relaxed text-ink/85">
+                  {GOVERNANCE_INFO.councilSummary}
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <span className="rounded-pill bg-forest-50 px-4 py-1.5 text-[12.5px] font-bold text-forest-800">
+                    Governing Council: 4 Directors
+                  </span>
+                  <span className="rounded-pill bg-stone px-4 py-1.5 text-[12.5px] font-bold text-ink">
+                    Management Team: 20 Advisors &amp; Experts
+                  </span>
+                  <span className="rounded-pill bg-gold-100 px-4 py-1.5 text-[12.5px] font-bold text-gold-800">
+                    Chairman of the Council
+                  </span>
+                </div>
+              </Reveal>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="border border-line bg-paper p-8 shadow-card">
+                <p className="eyebrow text-forest-700">Academic Technical Partner</p>
+                <h3 className="display-serif mt-3 text-xl text-ink">
+                  {INSTITUTIONAL_DATA.technicalPartner}
+                </h3>
+                <p className="mt-3 text-[13.5px] leading-relaxed text-muted">
+                  Technical collaboration ensuring global curriculum standards across international executive programmes.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Official Faculty / Advisors Designation Structure */}
+      <section className="paper-grain bg-paper py-20 sm:py-24">
+        <div className="container-x">
           <Reveal>
-            <p className="eyebrow">Research Areas</p>
-            <h2 className="display-serif type-h2 mt-5 max-w-3xl text-ink">
-              Four questions the institution
-              <em className="text-forest-700"> keeps returning to.</em>
+            <p className="eyebrow">Academic Board &amp; Advisory Structure</p>
+            <h2 className="display-serif type-h2 mt-4 text-ink">
+              14 Functional <em className="italic text-forest-700">Designations.</em>
             </h2>
+            <p className="mt-3 max-w-2xl type-body">
+              The operational governance framework coordinating academic activities, curriculum development, inter-agency relations, and international partnerships.
+            </p>
           </Reveal>
-          <div className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2">
-            {RESEARCH_THEMES.map((theme, i) => (
-              <Reveal key={theme.title} delay={i * 0.06}>
-                <ThemeCard number="" title={theme.title} blurb={theme.blurb} />
+
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+            {FACULTY_ADVISORS.map((advisor) => (
+              <Reveal key={advisor.id} delay={advisor.id * 0.03}>
+                <div className="flex items-center gap-4 border border-line bg-white p-5 shadow-crisp">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-pill bg-forest-600 font-serif text-sm font-bold text-ivory">
+                    {String(advisor.id).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <h3 className="text-[15px] font-bold text-ink">{advisor.designation}</h3>
+                    <span className="mt-0.5 inline-block text-[11px] font-bold uppercase tracking-[0.14em] text-forest-600">
+                      {advisor.category}
+                    </span>
+                  </div>
+                </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Academic pillars */}
-      <section className="paper-grain border-y border-line bg-paper">
-        <div className="container-x grid gap-px overflow-hidden border border-line bg-line lg:grid-cols-3">
-          {ACADEMIC_PILLARS.map((p) => (
-            <div key={p.title} className="bg-paper p-9 sm:p-11">
-              <h3 className="display-serif type-h3 text-ink">{p.title}</h3>
-              <p className="mt-4 type-body">{p.body}</p>
+      {/* Accreditations Banner */}
+      <section className="border-t border-line bg-white py-16">
+        <div className="container-x">
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-4">
+              <p className="eyebrow">Compliance & Recognition</p>
+              <h3 className="display-serif mt-2 text-2xl text-ink">Statutory Accreditations</h3>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Directory pending */}
-      <section className="bg-white">
-        <div className="container-x py-20 sm:py-24">
-          <Reveal>
-            <p className="eyebrow">The Directory</p>
-            <h2 className="display-serif type-h2 mt-5 text-ink">
-              Faculty profiles
-            </h2>
-          </Reveal>
-          <div className="mt-10">
-            <EmptyState
-              title="The faculty directory is in preparation"
-              body="Named chairs, biographies, research interests and publication records are published as appointments are confirmed. The directory contains no speculative names."
-              action={
-                <div className="flex flex-wrap justify-center gap-3">
-                  <BtnLink to="/research-insights" variant="primary" size="md">
-                    Research & insights
-                  </BtnLink>
-                  <BtnLink to="/contact?type=Media+%26+partnerships" variant="outline-ink" size="md">
-                    Enquire about faculty
-                  </BtnLink>
+            <div className="grid gap-4 sm:grid-cols-2 lg:col-span-8">
+              {INSTITUTIONAL_DATA.accreditations.map((acc) => (
+                <div key={acc} className="flex items-start gap-3 border border-line bg-paper p-4">
+                  <CheckIcon className="mt-0.5 h-4 w-4 shrink-0 text-forest-600" />
+                  <span className="text-[13.5px] font-semibold text-ink">{acc}</span>
                 </div>
-              }
-            />
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <ClosingQuiet
-        surface="white"
-        eyebrow="Faculty & Research"
-        title="Think"
-        italic="with us."
-        body="Follow research as it forms, or begin a conversation about doctoral study, executive partnerships and casework."
+        eyebrow="Faculty & Advisory"
+        title="Engage with our"
+        italic="advisors & team."
+        body="Discuss institutional capacity needs, custom in-plant programmes, or international technical partnerships with the GIBS Academic Board."
         actions={
           <>
-            <BtnLink to="/research-insights" variant="primary" size="lg">Research & insights</BtnLink>
-            <BtnLink to="/programmes/doctorate-business-administration" variant="outline-ink" size="lg">
-              Doctoral study
+            <BtnLink to="/programmes" variant="primary" size="lg">
+              2026 Training Calendar
+            </BtnLink>
+            <BtnLink to="/contact?type=Institutional+Partnership+%26+Accreditation" variant="outline-ink" size="lg">
+              Partnership Enquiries
             </BtnLink>
           </>
         }

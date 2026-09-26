@@ -5,31 +5,30 @@ import { ADMISSIONS_STEPS } from "../lib/data";
 
 export default function AdmissionsTeaser() {
   return (
-    <section id="admissions" className="cv-auto relative overflow-hidden bg-forest-800 text-ivory">
+    <section id="subscription" className="cv-auto relative overflow-hidden bg-forest-800 text-ivory">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_88%_-20%,rgba(235,211,117,0.16),transparent_50%)]" />
       <div className="container-x relative py-20 sm:py-24">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
-              <p className="eyebrow-light">Admissions</p>
+              <p className="eyebrow-light">Programme Subscription</p>
             </Reveal>
             <Reveal delay={0.08} y={28}>
               <h2 className="display-serif type-h2 mt-5">
-                The journey,
+                How to subscribe,
                 <br />
                 <em className="italic text-gold-300">step by step.</em>
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-7 max-w-lg type-body text-ivory/85">
-                Every candidate is guided personally by the admissions office —
-                no portals, no unanswered emails.
+                Sponsoring organizations and individual professionals are guided through a clear subscription and nomination process for our 2026 executive training calendar.
               </p>
             </Reveal>
             <Reveal delay={0.24}>
               <div className="mt-10">
                 <BtnLink to="/admissions" variant="gold" size="lg">
-                  Apply Now
+                  Subscribe to a Programme
                   <ArrowUpRight className="h-4 w-4" />
                 </BtnLink>
               </div>
@@ -49,8 +48,8 @@ export default function AdmissionsTeaser() {
               ))}
             </ol>
             <div className="mt-7">
-              <DataNote light label="Intake calendar to be published">
-                Deadlines, decision dates and tuition from the registrar.
+              <DataNote light label="2026 Calendar Open">
+                Active &amp; upcoming quarterly cohorts and custom in-plant workshops are accepting nominations.
               </DataNote>
             </div>
           </Reveal>

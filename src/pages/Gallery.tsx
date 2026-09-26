@@ -318,7 +318,7 @@ export default function Gallery() {
             )}
 
             {/* Two-column: classrooms + facilities */}
-            {filtered.length > 2 && (
+            {filtered.length > 1 && (
               <div className="grid gap-6 sm:grid-cols-2 sm:gap-8">
                 {filtered.slice(1, 3).map((item, i) => (
                   <Reveal key={item.id} delay={i * 0.06}>
@@ -346,7 +346,7 @@ export default function Gallery() {
             )}
 
             {/* Asymmetrical: large + stacked */}
-            {filtered.length > 4 && (
+            {filtered.length > 3 && (
               <div className="grid gap-6 sm:gap-8 lg:grid-cols-12">
                 <Reveal className="lg:col-span-7">
                   <button type="button" onClick={() => openLightbox(3)} className="group block w-full text-left">

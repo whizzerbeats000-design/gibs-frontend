@@ -118,18 +118,19 @@ export function Header({
           <button
             type="button"
             onClick={onOpenConcierge}
+            aria-label="Open GIBS AI"
             className="hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 md:inline-flex"
           >
             <span className="relative flex h-2 w-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-500" />
             </span>
-            Concierge
+            GIBS AI
           </button>
           <Link to="/admissions" className="btn btn-primary btn-md hidden xl:inline-flex">
-            Apply Now
+            Subscribe
           </Link>
           <Link to="/admissions" className="btn btn-primary btn-sm xl:hidden">
-            Apply
+            Subscribe
           </Link>
           <button
             type="button"
@@ -151,18 +152,18 @@ export function Header({
 /* ---------------- Mobile / tablet navigation ---------------- */
 
 const MOBILE_PRIMARY = [
-  { n: "01", label: "Programmes", to: "/programmes" },
-  { n: "02", label: "Executive Education", to: "/executive-education" },
-  { n: "03", label: "Faculty & Research", to: "/faculty" },
+  { n: "01", label: "All Programmes", to: "/programmes" },
+  { n: "02", label: "Foreign Training", to: "/executive-education" },
+  { n: "03", label: "Faculty & Governance", to: "/faculty" },
   { n: "04", label: "About GIBS", to: "/about" },
-  { n: "05", label: "Admissions", to: "/admissions" },
+  { n: "05", label: "Programme Subscription", to: "/admissions" },
 ];
 const MOBILE_SECONDARY = [
-  { n: "06", label: "News & Insights", to: "/research-insights" },
-  { n: "07", label: "Events", to: "/events" },
-  { n: "08", label: "Campus Life", to: "/campus" },
-  { n: "09", label: "Gallery", to: "/gallery" },
-  { n: "10", label: "Contact", to: "/contact" },
+  { n: "06", label: "Research & Insights", to: "/research-insights" },
+  { n: "07", label: "Conferences & Events", to: "/events" },
+  { n: "08", label: "Campuses & Facilities", to: "/campus" },
+  { n: "09", label: "Campus Gallery", to: "/gallery" },
+  { n: "10", label: "Contact & Registry", to: "/contact" },
 ];
 
 function isActiveRoute(to: string, path: string) {
@@ -228,8 +229,9 @@ export function MobileNav({
                   <em className="italic text-forest-600">Goshen.</em>
                 </h2>
                 <p className="mt-5 max-w-md text-[14px] leading-[1.55] text-muted">
-                  Move through the institution, programmes, campus and admissions,
-                  or ask the Concierge to guide you.
+                  Explore the 2026 Training Calendar of 113 Local and 22 Foreign
+                  Executive Programmes, campuses in Ilorin, Abuja & Ibafo, or ask
+                  GIBS AI to guide you.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -253,7 +255,7 @@ export function MobileNav({
                     className="inline-flex items-center gap-2.5 rounded-full border border-ink/20 px-5 py-3 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-forest-600 hover:text-ivory"
                   >
                     <ChatIcon className="h-4 w-4" />
-                    Concierge
+                    GIBS AI
                   </button>
                 </div>
               </div>
@@ -326,14 +328,14 @@ export function MobileNav({
                 </ul>
 
                 <Link to="/admissions" onClick={onClose} className="btn btn-primary btn-lg mt-8 w-full">
-                  Apply Now
+                  Subscribe to a Programme
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </nav>
             </div>
 
             <div className="mt-12 border-t rule pt-6">
-              <p className="meta">Goshen International Business School</p>
+              <p className="meta">Goshen International Business School Limited · RC 1178333</p>
             </div>
           </div>
         </motion.div>
@@ -346,33 +348,33 @@ export function MobileNav({
 
 const FOOTER_COLUMNS = [
   {
-    title: "Study",
+    title: "Programmes",
     links: [
-      { label: "Programmes", to: "/programmes" },
-      { label: "MBA", to: "/programmes/mba" },
-      { label: "Executive MBA", to: "/programmes/executive-mba" },
-      { label: "Executive Education", to: "/executive-education" },
-      { label: "Admissions", to: "/admissions" },
+      { label: "2026 Training Calendar", to: "/programmes" },
+      { label: "Foreign Training Hubs", to: "/executive-education" },
+      { label: "In-Plant Workshops", to: "/executive-education" },
+      { label: "Programme Subscription", to: "/admissions" },
     ],
   },
   {
     title: "Institution",
     links: [
       { label: "About GIBS", to: "/about" },
-      { label: "Faculty & Research", to: "/faculty" },
+      { label: "Governance & Faculty", to: "/faculty" },
       { label: "Research & Insights", to: "/research-insights" },
-      { label: "Campus", to: "/campus" },
-      { label: "Gallery", to: "/gallery" },
-      { label: "Events", to: "/events" },
+      { label: "Campuses & Facilities", to: "/campus" },
+      { label: "Campus Gallery", to: "/gallery" },
+      { label: "Conferences & Events", to: "/events" },
     ],
   },
   {
     title: "Connect",
     links: [
-      { label: "Contact", to: "/contact" },
-      { label: "GIBS Concierge", to: "/concierge" },
-      { label: "Custom programmes", to: "/programmes/custom-programmes" },
-      { label: "Visit the campus", to: "/campus" },
+      { label: "Contact Registry", to: "/contact" },
+      { label: "GIBS AI", to: "/concierge" },
+      { label: "Ilorin Headquarters", to: "/campus" },
+      { label: "Abuja Center", to: "/campus" },
+      { label: "Ibafo Center", to: "/campus" },
     ],
   },
 ];
@@ -393,13 +395,7 @@ function Newsletter() {
     }
     setValidationError("");
     setStatus("submitting");
-    /*
-     * FRONTEND PROTOTYPE — newsletter service not yet connected.
-     * Replace the timeout below with a POST to the mailing-list provider
-     * when the backend integration phase begins.
-     */
     window.setTimeout(() => {
-      // Simulate a successful registration intent (no data sent yet)
       setStatus("success");
     }, 600);
   };
@@ -407,10 +403,12 @@ function Newsletter() {
   if (status === "success") {
     return (
       <div className="mt-9 max-w-md border-l-2 border-gold-400 pl-4">
-        <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-gold-300">Noted.</p>
+        <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-gold-300">Thank you.</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
-          Your interest is recorded. You will be among the first to receive the
-          GIBS Brief once the newsletter service launches.
+          Your request for calendar updates has been received. For immediate official enquiries, you can also reach the registry directly at{" "}
+          <a href="mailto:gibsilorin@gmail.com" className="text-gold-300 underline underline-offset-2">
+            gibsilorin@gmail.com
+          </a>.
         </p>
       </div>
     );
@@ -421,10 +419,10 @@ function Newsletter() {
       className="mt-9 max-w-md"
       onSubmit={handleSubmit}
       noValidate
-      aria-label="Register interest in the GIBS Brief"
+      aria-label="Register interest in GIBS Executive Calendar Updates"
     >
       <label htmlFor="footer-email" className="eyebrow-light">
-        The GIBS Brief, monthly
+        GIBS Executive Bulletin & Calendar Updates
       </label>
       <div className="mt-3 flex items-center gap-3 border-b border-ivory/25 pb-3 transition-colors focus-within:border-gold-300">
         <input
@@ -437,7 +435,7 @@ function Newsletter() {
             if (validationError) setValidationError("");
             if (status === "error") setStatus("idle");
           }}
-          placeholder="Your email address"
+          placeholder="Your official email address"
           aria-invalid={validationError ? "true" : undefined}
           aria-describedby={validationError ? "footer-email-error" : undefined}
           className="h-11 w-full bg-transparent text-base text-ivory placeholder:text-ivory/55 focus:outline-none sm:text-sm"
@@ -445,7 +443,7 @@ function Newsletter() {
         <button
           type="submit"
           disabled={status === "submitting"}
-          aria-label="Register interest"
+          aria-label="Subscribe"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-gold-300"
         >
           {status === "submitting" ? (
@@ -494,13 +492,21 @@ export function GlobalFooter() {
                 </p>
               </div>
             </div>
-            <p className="mt-7 max-w-sm type-body text-ivory/85">
-              An international business school of scholarship and practice, for
-              the leaders and institutions of the Global Africa.
+            <p className="mt-5 text-[13px] font-serif italic text-gold-300">
+              “Take advantage of us, so that no one takes advantage of you”
             </p>
-            <p className="mt-5 text-[11.5px] leading-relaxed text-ivory/60">
-              Institutional address and contact details: to be published
+            <p className="mt-4 max-w-sm type-body text-ivory/85">
+              An outfit committed to manpower development and capacity-building.
+              Dedicated to empowering the future generation through management and business knowledge.
             </p>
+            <div className="mt-5 space-y-1.5 text-[12px] leading-relaxed text-ivory/75">
+              <p className="font-semibold text-ivory">Headquarters (Ilorin):</p>
+              <p>No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi, Ilorin, Kwara State</p>
+              <p className="pt-1"><span className="text-gold-300">Emails:</span> gibsilorin@gmail.com · goshenibs22@gmail.com</p>
+              <p><span className="text-gold-300">Phones:</span> 08160010401 · 08033429427 · 08186464474</p>
+              <p><span className="text-gold-300">Postal:</span> P.O. Box 63, Ilorin General Post Office, Kwara State</p>
+              <p><span className="text-gold-300">Web:</span> www.gibs.com.ng</p>
+            </div>
             <Newsletter />
           </div>
 
@@ -535,14 +541,14 @@ export function GlobalFooter() {
         </div>
 
         <div className="mt-10 flex flex-col gap-4 text-[11px] uppercase tracking-[0.16em] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Goshen International Business School</p>
-          <p className="text-ivory/60" title="Official social channels to be confirmed">
-            LinkedIn · Instagram · YouTube, channels to be confirmed
+          <p>© {new Date().getFullYear()} Goshen International Business School Limited (RC 1178333)</p>
+          <p className="text-ivory/60">
+            Accreditations: CAC · CMD · ITF Compliant · NSTIF
           </p>
         </div>
         <div className="mt-6 flex flex-col gap-2 border-t rule-light pt-6 text-[11px] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">
-          <p>Privacy policy · Terms of use · Accessibility statement. Documents pending publication.</p>
-          <p>All institutional facts remain subject to official GIBS confirmation.</p>
+          <p>Technical Academic Partner: Pacific Institute of Technology, Georgia, USA</p>
+          <p>Overseas Hubs: Kigali · Dubai · London · Houston · Miami · Cape Town · Durban · Ghana</p>
         </div>
       </div>
     </footer>

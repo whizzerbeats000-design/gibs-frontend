@@ -4,9 +4,12 @@ import { ArrowTextLink } from "../components/ui";
 import { Link } from "../lib/router";
 import { ArrowUpRight } from "../components/icons";
 import { ARTICLES } from "../lib/data";
+import { cn } from "../utils/cn";
 
 export default function InsightsTeaser() {
-  const [featured, second, third] = ARTICLES;
+  const [featured, ...others] = ARTICLES;
+
+  if (!featured) return null;
 
   return (
     <section id="insights" className="paper-grain cv-auto relative bg-paper">
@@ -63,31 +66,36 @@ export default function InsightsTeaser() {
         </Reveal>
 
         {/* Secondary — editorial rows, not identical cards */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-10% 0px" }}
-          className="mt-16 grid gap-px overflow-hidden border border-line bg-line lg:grid-cols-2"
-        >
-          {[second, third].map((post) => (
-            <motion.article key={post.slug} variants={staggerItem} className="bg-paper p-8 sm:p-10">
-              <Link to={`/research-insights/${post.slug}`} className="group block">
-                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600">
-                  {post.category}
-                </p>
-                <h3 className="display-serif type-h3 mt-4 text-ink transition-colors group-hover:text-forest-800">
-                  {post.title}
-                </h3>
-                <p className="mt-3 type-body">{post.dek}</p>
-                <span className="mt-5 inline-flex items-center gap-2 text-[12.5px] font-bold text-forest-700">
-                  Follow the research
-                  <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </span>
-              </Link>
-            </motion.article>
-          ))}
-        </motion.div>
+        {others.length > 0 && (
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-10% 0px" }}
+            className={cn(
+              "mt-16 grid gap-px overflow-hidden border border-line bg-line",
+              others.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"
+            )}
+          >
+            {others.slice(0, 2).map((post) => (
+              <motion.article key={post.slug} variants={staggerItem} className="bg-paper p-8 sm:p-10">
+                <Link to={`/research-insights/${post.slug}`} className="group block">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600">
+                    {post.category}
+                  </p>
+                  <h3 className="display-serif type-h3 mt-4 text-ink transition-colors group-hover:text-forest-800">
+                    {post.title}
+                  </h3>
+                  <p className="mt-3 type-body">{post.dek}</p>
+                  <span className="mt-5 inline-flex items-center gap-2 text-[12.5px] font-bold text-forest-700">
+                    Follow the research
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                  </span>
+                </Link>
+              </motion.article>
+            ))}
+          </motion.div>
+        )}
       </div>
     </section>
   );

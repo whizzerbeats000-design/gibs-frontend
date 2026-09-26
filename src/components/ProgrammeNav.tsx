@@ -76,7 +76,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
             ))}
           </select>
           <Link to="/admissions" className="btn btn-primary btn-md shrink-0">
-            Apply
+            Subscribe
           </Link>
         </div>
 
@@ -107,10 +107,10 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
           </ul>
           <div className="flex shrink-0 items-center gap-3">
             <Link to="/concierge" className="text-[12.5px] font-bold uppercase tracking-[0.12em] text-forest-700 hover:underline">
-              Ask the Concierge
+              Ask GIBS AI
             </Link>
             <Link to="/admissions" className="btn btn-primary btn-md">
-              Apply Now
+              Subscribe Now
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </div>

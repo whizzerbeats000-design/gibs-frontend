@@ -1,204 +1,218 @@
 import { PageHero } from "../components/PageHero";
-import { BtnLink, ClosingImmersive, DataNote, ArrowTextLink } from "../components/ui";
+import { BtnLink, ClosingImmersive } from "../components/ui";
 import { ProgramRow } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { useSeo } from "../lib/router";
-import { getProgramme, IMAGES } from "../lib/data";
+import { PROGRAMMES, IMAGES } from "../lib/data";
 
-const ENGAGEMENT = [
+const FOREIGN_HUBS = [
   {
-    n: "01",
-    title: "Diagnose",
-    body: "A confidential conversation to identify the real institutional question beneath the stated brief.",
+    city: "Kigali (Rwanda)",
+    coursesCount: 8,
+    fee: "$4,800 USD",
+    dates: "June – November 2026",
+    summary: "East Africa regional hub for service quality, ICT literacy, business process management, ethics, customer relationship, and regulatory compliance.",
   },
   {
-    n: "02",
-    title: "Design",
-    body: "A learning architecture built jointly: faculty, cases, rhythm and measures of success.",
+    city: "Dubai (UAE)",
+    coursesCount: 5,
+    fee: "$4,800 USD",
+    dates: "July – December 2026",
+    summary: "Middle East innovation hub for administrative management, secretarial techniques, utilities regulation, leadership innovation, and interpersonal skills.",
   },
   {
-    n: "03",
-    title: "Deliver",
-    body: "Faculty-led convening, coaching and application work woven into the organization's calendar.",
+    city: "London (UK)",
+    coursesCount: 4,
+    fee: "£4,800 GBP",
+    dates: "July – October 2026",
+    summary: "European executive hub for top utility regulators, telecom executives, ICT security awareness, and knowledge management.",
   },
   {
-    n: "04",
-    title: "Measure",
-    body: "Impact assessed against the institution's own outcomes. The measure of success is whether decisions changed.",
+    city: "Houston, Texas (USA)",
+    coursesCount: 5,
+    fee: "$5,000 – $9,500 USD",
+    dates: "June – November 2026",
+    summary: "North American technology & energy hub for smart cities, Big Data, AI/5G, knowledge management, and utilities regulatory management (1–2 week options).",
   },
 ];
 
 export default function ExecutiveEducation() {
   useSeo({
-    title: "Executive Education — GIBS",
+    title: "Foreign Executive Training & In-Plant Workshops (2026) — GIBS",
     description:
-      "Open-enrolment executive programmes and custom leadership journeys for boards, governments and fast-scaling organizations.",
+      "Explore 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston, plus customized in-plant workshops for organizations.",
   });
 
-  const open = getProgramme("executive-education")!;
-  const custom = getProgramme("custom-programmes")!;
+  const foreignProgrammes = PROGRAMMES.filter((p) => p.destination !== "Local");
 
   return (
     <>
       <PageHero
         image={IMAGES.boardroom}
-        imageAlt="The GIBS library — a quiet environment for executive learning"
-        eyebrow="Executive Education"
-        title="Leadership for those already"
-        italic="operating at scale."
-        intro="Open programmes for experienced professionals and custom journeys built around your organization's decision."
-        breadcrumbs={[{ label: "Executive Education" }]}
+        imageAlt="GIBS Foreign Executive Training Hubs"
+        eyebrow="International & Customized Training"
+        title="Global Perspectives."
+        italic="Institutional impact."
+        intro="22 foreign executive programmes across Kigali, Dubai, London, and Houston, alongside customized in-plant workshops tailored for your organization."
+        breadcrumbs={[{ label: "Foreign & Executive Training" }]}
+        meta={
+          <div className="flex flex-wrap gap-3">
+            <BtnLink
+              to="/contact?type=Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)"
+              variant="gold"
+              size="md"
+            >
+              Subscribe for Foreign Hubs
+              <ArrowUpRight className="h-3.5 w-3.5" />
+            </BtnLink>
+            <BtnLink
+              to="/contact?type=Customized+In-Plant+Workshop+Request"
+              variant="outline-light"
+              size="md"
+            >
+              Request In-Plant Workshop
+            </BtnLink>
+          </div>
+        }
       />
 
-      {/* Two tracks */}
-      <section className="bg-white">
-        <div className="container-x py-20 sm:py-24">
-          <div className="grid gap-px overflow-hidden border border-line bg-line lg:grid-cols-2">
-            {[
-              {
-                p: open,
-                eyebrowText: "For individuals",
-                body: "Short, intensive convenings for rising and senior leaders, focused, practical and taught by faculty who also work inside real institutions.",
-              },
-              {
-                p: custom,
-                eyebrowText: "For organizations",
-                body: "A custom engagement built with boards and executive committees around one institution's strategy, transition or transformation.",
-              },
-            ].map(({ p, eyebrowText, body }) => (
-              <div key={p.slug} className="bg-white p-8 sm:p-12">
-                <Reveal>
-                  <p className="eyebrow">{eyebrowText}</p>
-                  <h2 className="display-serif type-h2 mt-4 text-ink">{p.title}</h2>
-                  <p className="mt-5 type-body">{body}</p>
-                  <ul className="mt-6 space-y-3">
-                    {p.indicativeStructure.slice(0, 3).map((item) => (
-                      <li key={item} className="flex gap-3 type-body text-ink/80">
-                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-600" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link
-                    to={`/programmes/${p.slug}`}
-                    className="group link-underline mt-8 inline-flex text-sm font-semibold text-forest-700"
-                  >
-                    Programme detail
-                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                  </Link>
-                </Reveal>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-10">
-            <DataNote label="Executive calendar & fees to be published">
-              Dates, venues and fees follow the official executive calendar
-              once confirmed.
-            </DataNote>
-          </div>
-        </div>
-      </section>
-
-      {/* Custom engagement method */}
-      <section className="paper-grain bg-paper">
-        <div className="container-x py-20 sm:py-24">
+      {/* 4 International Hubs Grid */}
+      <section className="bg-white py-20 sm:py-24">
+        <div className="container-x">
           <Reveal>
-            <p className="eyebrow">The Method</p>
-            <h2 className="display-serif type-h2 mt-5 max-w-3xl text-ink">
-              Custom work begins with the question
-              <em className="text-forest-700"> beneath the question.</em>
+            <p className="eyebrow">4 International Destinations</p>
+            <h2 className="display-serif type-h2 mt-4 text-ink">
+              Foreign Executive Training <em className="italic text-forest-700">Hubs.</em>
             </h2>
+            <p className="mt-3 max-w-2xl type-body">
+              In technical partnership with the Pacific Institute of Technology, Georgia, USA.
+            </p>
           </Reveal>
-          <div className="mt-14 grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
-            {ENGAGEMENT.map((step) => (
-              <Reveal key={step.n} delay={0.05 * Number(step.n)}>
-                <p className="text-[11px] font-medium tracking-[0.14em] text-muted">{step.n}</p>
-                <h3 className="display-serif type-h3 mt-4 text-ink">{step.title}</h3>
-                <p className="mt-3 type-body">{step.body}</p>
-              </Reveal>
+
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {FOREIGN_HUBS.map((hub) => (
+              <div key={hub.city} className="flex flex-col border border-line bg-paper p-7 shadow-crisp">
+                <span className="rounded-pill bg-forest-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ivory self-start">
+                  {hub.coursesCount} Programmes
+                </span>
+                <h3 className="display-serif mt-4 text-2xl text-ink">{hub.city}</h3>
+                <p className="mt-1 text-[13px] font-bold text-forest-700">Fee: {hub.fee}</p>
+                <p className="text-[12px] font-medium text-muted">Schedule: {hub.dates}</p>
+                <p className="mt-4 flex-1 text-[13.5px] leading-relaxed text-ink/80">{hub.summary}</p>
+                <div className="mt-6 border-t rule pt-4">
+                  <Link
+                    to="/programmes"
+                    className="inline-flex items-center gap-1 text-[13px] font-bold text-forest-700 hover:text-forest-900"
+                  >
+                    View courses
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </Link>
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* All executive programmes */}
-      <section className="border-t border-line bg-white">
-        <div className="container-x py-20 sm:py-24">
-          <Reveal>
-            <p className="eyebrow">Executive pathways</p>
-          </Reveal>
-          <div className="mt-8 border-t rule">
-            <ProgramRow programme={open} index={0} />
-            <ProgramRow programme={custom} index={1} />
-          </div>
-          <div className="mt-10">
-            <ArrowTextLink to="/contact?type=Custom+programmes+for+my+organization">
-              Commission a conversation about custom work
-            </ArrowTextLink>
+      {/* In-Plant Customized Workshops */}
+      <section className="border-y border-line bg-forest-900 py-20 text-ivory">
+        <div className="container-x">
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-7">
+              <Reveal>
+                <p className="eyebrow-light">Customized In-Plant Delivery</p>
+                <h2 className="display-serif type-h2 mt-4">
+                  Bring GIBS faculty and curriculum directly to your organization
+                </h2>
+                <p className="mt-6 text-[15.5px] leading-relaxed text-ivory/85">
+                  GIBS designs and delivers customized in-plant workshops for government ministries,
+                  departments, agencies, and private corporate bodies. Courses can be tailored to
+                  address your specific operating challenges, scheduled at your preferred venue and dates.
+                </p>
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <BtnLink
+                    to="/contact?type=Customized+In-Plant+Workshop+Request"
+                    variant="gold"
+                    size="lg"
+                  >
+                    Request In-Plant Proposal
+                    <ArrowUpRight className="h-4 w-4" />
+                  </BtnLink>
+                  <BtnLink to="/contact" variant="outline-light" size="lg">
+                    Speak with Registry
+                  </BtnLink>
+                </div>
+              </Reveal>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="border border-ivory/20 bg-forest-950/70 p-8 shadow-lift">
+                <p className="eyebrow-light text-gold-300">In-Plant Advantages</p>
+                <ul className="mt-5 space-y-4 text-[14px] text-ivory/85">
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                    <span>Cost-effective team training at your institutional facility</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                    <span>Curriculum customized to internal SOPs, systems, and challenges</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                    <span>Flexible scheduling aligned with organizational calendars</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                    <span>Full GIBS &amp; CMD accredited certification for all participants</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Faculty expertise & learning environment */}
-      <section className="bg-white">
-        <div className="container-x grid items-center gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-14">
-          <Reveal y={36} className="lg:col-span-6 lg:order-2">
-            <div className="relative aspect-[4/3] overflow-hidden">
-              <img
-                src={IMAGES.library}
-                alt="The quiet executive learning environment with oak, brass and reading light"
-                loading="lazy"
-                decoding="async"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-forest-950/20" />
-              <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-            </div>
-          </Reveal>
-          <div className="lg:col-span-6 lg:order-1">
-            <Reveal>
-              <p className="eyebrow">Faculty Expertise</p>
-              <h2 className="display-serif type-h2 mt-5 text-ink">
-                Taught by people who still do the work
+      {/* All 22 Foreign Programmes List */}
+      <section className="bg-white py-20 sm:py-24">
+        <div className="container-x">
+          <div className="flex flex-wrap items-end justify-between gap-4 border-b rule pb-6">
+            <div>
+              <p className="eyebrow">2026 Overseas Calendar</p>
+              <h2 className="display-serif type-h2 mt-2 text-ink">
+                All 22 Foreign Training Programmes
               </h2>
-              <p className="mt-5 max-w-xl type-body">
-                Executive faculty move between the classroom and the boardroom;
-                they research, advise and lead, and bring current institutional
-                problems into every convening. Programmes are hosted in case
-                rooms and residential quarters designed for candour.
-              </p>
-              <div className="mt-8">
-                <DataNote label="Faculty assignments & venue schedules to be published">
-                  Named faculty biographies, programme dates and locations are
-                  published once confirmed.
-                </DataNote>
-              </div>
-              <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3">
-                <ArrowTextLink to="/faculty">Faculty & research</ArrowTextLink>
-                <ArrowTextLink to="/campus">The campus</ArrowTextLink>
-              </div>
-            </Reveal>
+            </div>
+            <p className="meta">{foreignProgrammes.length} International Courses</p>
+          </div>
+
+          <div className="mt-6 border-t rule">
+            {foreignProgrammes.map((p, idx) => (
+              <ProgramRow key={p.id} programme={p} index={idx} />
+            ))}
           </div>
         </div>
       </section>
 
       <ClosingImmersive
-        image={IMAGES.seminar}
-        alt="Executives in a GIBS convening, in discussion around a case room"
-        eyebrow="Executive Education"
-        title="Bring a leadership question."
-        italic="We'll bring the faculty."
-        body="Custom work begins with a confidential conversation about the decision your organization must take."
+        image={IMAGES.city}
+        alt="International Executive Training"
+        eyebrow="Overseas Subscription"
+        title="Elevate your leadership"
+        italic="on the global stage."
+        body="Contact the GIBS international desk for visa support letters, confirmed itinerary guides, and nomination confirmations."
         actions={
           <>
-            <BtnLink to="/contact?type=Executive+education" variant="gold" size="lg">
-              Speak with the team
+            <BtnLink
+              to="/contact?type=Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)"
+              variant="gold"
+              size="lg"
+            >
+              Subscribe for Foreign Hub
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="lg">
-              Ask the Concierge
+              Ask GIBS AI
             </BtnLink>
           </>
         }

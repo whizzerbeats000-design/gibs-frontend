@@ -21,7 +21,7 @@ export default function ResearchInsights() {
   // Count only what appears in the grid below the featured piece.
   // The featured article is always shown regardless of filter.
   const filteredCount = list.length;
-  const featuredMatchesFilter = active === "All" || featured.category === active;
+  const featuredMatchesFilter = active === "All" || (featured ? featured.category === active : false);
 
   return (
     <>
@@ -34,52 +34,54 @@ export default function ResearchInsights() {
       />
 
       {/* Featured */}
-      <section className="bg-white">
-        <div className="container-x py-20 sm:py-24">
-          <Reveal>
-            <p className="meta text-forest-600">{featured.kicker} · {featured.status}</p>
-          </Reveal>
-          <div className="mt-8 grid gap-12 lg:grid-cols-12 lg:gap-14">
-            <Reveal y={36} className="lg:col-span-7">
-              <Link
-                to={`/research-insights/${featured.slug}`}
-                className="group block"
-                aria-label={`Read the preview: ${featured.title}`}
-              >
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <img
-                    src={featured.image}
-                    alt={featured.alt}
-                    loading="lazy"
-                    decoding="async"
-                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-forest-900/25" />
-                  <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-                </div>
-              </Link>
+      {featured && (
+        <section className="bg-white">
+          <div className="container-x py-20 sm:py-24">
+            <Reveal>
+              <p className="meta text-forest-600">{featured.kicker} · {featured.status}</p>
             </Reveal>
-            <div className="flex flex-col justify-center lg:col-span-5">
-              <Reveal>
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
-                  {featured.category}
-                </p>
-                <Link to={`/research-insights/${featured.slug}`} className="group">
-                  <h2 className="display-serif type-h2 mt-5 text-ink transition-colors group-hover:text-forest-700">
-                    {featured.title}
-                  </h2>
+            <div className="mt-8 grid gap-12 lg:grid-cols-12 lg:gap-14">
+              <Reveal y={36} className="lg:col-span-7">
+                <Link
+                  to={`/research-insights/${featured.slug}`}
+                  className="group block"
+                  aria-label={`Read the preview: ${featured.title}`}
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={featured.image}
+                      alt={featured.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
+                    />
+                    <div className="absolute inset-0 bg-forest-900/25" />
+                    <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
+                  </div>
                 </Link>
-                <p className="mt-5 type-body">{featured.dek}</p>
-                <div className="mt-8">
-                  <ArrowTextLink to={`/research-insights/${featured.slug}`}>
-                    Read the editorial preview
-                  </ArrowTextLink>
-                </div>
               </Reveal>
+              <div className="flex flex-col justify-center lg:col-span-5">
+                <Reveal>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+                    {featured.category}
+                  </p>
+                  <Link to={`/research-insights/${featured.slug}`} className="group">
+                    <h2 className="display-serif type-h2 mt-5 text-ink transition-colors group-hover:text-forest-700">
+                      {featured.title}
+                    </h2>
+                  </Link>
+                  <p className="mt-5 type-body">{featured.dek}</p>
+                  <div className="mt-8">
+                    <ArrowTextLink to={`/research-insights/${featured.slug}`}>
+                      Read the editorial preview
+                    </ArrowTextLink>
+                  </div>
+                </Reveal>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Theme navigation */}
       <section className="paper-grain border-y border-line bg-paper">
@@ -151,13 +153,21 @@ export default function ResearchInsights() {
           ) : (
             <div className="mt-12">
               <EmptyState
-                title={featuredMatchesFilter ? "Featured above" : "No pieces in this theme yet"}
+                title={
+                  featuredMatchesFilter
+                    ? "Featured above"
+                    : ARTICLES.length === 0
+                    ? "Inaugural edition in preparation"
+                    : "No pieces in this theme yet"
+                }
                 body={
                   featuredMatchesFilter
                     ? `The ${active} piece in this first edition is featured at the top of this page. New pieces in this theme will appear here as the journal publishes.`
+                    : ARTICLES.length === 0
+                    ? "The inaugural edition of the GIBS Journal is currently in editorial preparation. Research essays, case studies, and faculty perspectives will be published here."
                     : `No pieces in the "${active}" theme have been published yet. More essays and perspectives are in preparation.`
                 }
-                action={<BtnLink to="/concierge" variant="outline-ink" size="md">Ask the Concierge</BtnLink>}
+                action={<BtnLink to="/concierge" variant="outline-ink" size="md">Ask GIBS AI</BtnLink>}
               />
             </div>
           )}
@@ -179,7 +189,7 @@ export default function ResearchInsights() {
         actions={
           <>
             <BtnLink to="/faculty" variant="gold" size="lg">Faculty & research</BtnLink>
-            <BtnLink to="/contact?type=Media+%26+partnerships" variant="outline-light" size="lg">
+            <BtnLink to="/contact?type=Institutional+Partnership+%26+Accreditation" variant="outline-light" size="lg">
               Contact the editors
             </BtnLink>
           </>

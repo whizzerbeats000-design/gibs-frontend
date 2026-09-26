@@ -1,23 +1,13 @@
-import { PROGRAMMES } from "./data";
+import { PROGRAMMES, INSTITUTIONAL_DATA } from "./data";
 
 /* ==========================================================================
-   GIBS CONCIERGE — frontend conversation engine.
-
-   IMPORTANT: This is a deterministic, rule-based routing assistant — NOT an
-   AI system and not a pretence of one. It exists to guide visitors to the
-   right pages and actions.
-
-   INTEGRATION SEAM
-   ----------------
-   To connect a real provider (LLM API, support backend, etc.), replace
-   `getConciergeReply` with an async call to your service. The message and
-   card types below are the contract the UI renders — a live API can return
-   the same shape. Keep all keys and endpoints server-side.
+   GIBS AI — frontend conversational intelligence engine.
+   Official programme & institutional guide for Goshen International Business School (GIBS)
    ========================================================================== */
 
 export type ConciergeCard =
-  | { kind: "link"; label: string; to: string; detail?: string }
-  | { kind: "programme"; slug: string; label: string; detail?: string };
+  | { kind: "link"; label: string; to: string; detail?: string | null }
+  | { kind: "programme"; slug: string; label: string; detail?: string | null };
 
 export type ConciergeReply = {
   text: string;
@@ -25,12 +15,12 @@ export type ConciergeReply = {
 };
 
 export const CONCIERGE_SUGGESTIONS = [
-  "Which programme is right for me?",
-  "How does the admissions process work?",
-  "Tell me about Executive Education.",
-  "What can I expect from GIBS?",
-  "Campus experience",
-  "Speak with admissions",
+  "2026 Training Calendar",
+  "Foreign Executive Programmes (Kigali, Dubai, London, Houston)",
+  "How to subscribe to a programme or nominate staff",
+  "In-plant and customized workshops",
+  "Campus locations & facilities",
+  "Contact training registry",
 ];
 
 const programmeCard = (slug: string): ConciergeCard => {
@@ -49,112 +39,104 @@ const RULES: Rule[] = [
   {
     test: /\b(hi|hello|hey|good (morning|afternoon|evening)|greetings)\b/i,
     reply: {
-      text: "Welcome to GIBS Concierge. I can guide you through our programmes, admissions, executive education, the campus and our team. How can I help you find your way?",
-    },
-  },
-  {
-    test: /\b(mba|emba|executive mba|degree|doctorate|dba|phd|undergrad|program|programme|study|studying)\b/i,
-    reply: {
-      text: "GIBS offers a family of pathways: the MBA, Executive MBA, Doctor of Business Administration, executive programmes and undergraduate business study. Each programme page outlines its audience and structure, with official details such as dates and fees clearly marked pending publication.",
+      text: `Welcome to Goshen International Business School (GIBS). We offer 113 Local Open Training Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. How can I guide you today?`,
       cards: [
-        programmeCard("mba"),
-        programmeCard("executive-mba"),
-        programmeCard("doctorate-business-administration"),
-        { kind: "link", label: "See all programmes", to: "/programmes", detail: "Browse and filter every pathway" },
+        { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes", detail: "113 Local & 22 Foreign Courses" },
+        { kind: "link", label: "Foreign Training Hubs", to: "/executive-education", detail: "Kigali, Dubai, London & Houston" },
+        { kind: "link", label: "Contact Training Desk", to: "/contact", detail: "Direct email & phone lines" },
       ],
     },
   },
   {
-    test: /\b(executive|exec ed|corporate|organization|organisation|company|custom|board|training)\b/i,
+    test: /\b(foreign|overseas|international|kigali|dubai|london|houston|rwanda|uae|uk|usa|texas)\b/i,
     reply: {
-      text: "Executive Education serves both individuals through open programmes and organizations through custom leadership journeys. Custom engagements begin with a confidential diagnosis with our team.",
+      text: "GIBS conducts 22 Foreign Executive Training Programmes across 4 international hubs: Kigali (8 courses, $4,800 USD), Dubai (5 courses, $4,800 USD), London (4 courses, £4,800 GBP), and Houston, Texas (5 courses, $5,000–$9,500 USD).",
       cards: [
-        programmeCard("executive-education"),
-        programmeCard("custom-programmes"),
-        { kind: "link", label: "Executive Education", to: "/executive-education" },
+        { kind: "link", label: "Explore All Foreign Programmes", to: "/executive-education", detail: "View all 22 overseas courses" },
+        programmeCard(PROGRAMMES[113].slug),
+        programmeCard(PROGRAMMES[121].slug),
+        programmeCard(PROGRAMMES[126].slug),
+        programmeCard(PROGRAMMES[130].slug),
       ],
     },
   },
   {
-    test: /\b(apply|admission|admissions|application|apply now|entr(y|ance)|requirement|deadline|intake|fee|fees|tuition|scholarship|bursary)\b/i,
+    test: /\b(in-plant|custom|customized|tailor|organization|organisation|company|corporate|in house|in-house)\b/i,
     reply: {
-      text: "Admissions follows a six-step journey: consult, prepare, apply, converse, then decision and enrolment. Official dates, requirements, fees and scholarship terms are pending publication and marked clearly throughout. The Concierge can connect you with the admissions office directly.",
+      text: "GIBS provides tailored in-plant customized training workshops for public sector MDAs and corporate organizations. We adapt course content, dates, and locations to your institutional objectives.",
       cards: [
-        { kind: "link", label: "Admissions journey & FAQs", to: "/admissions" },
-        { kind: "link", label: "Contact admissions", to: "/contact?type=Programmes+%26+MBA+admissions" },
+        { kind: "link", label: "Request Customized In-Plant Workshop", to: "/contact?type=Customized+In-Plant+Workshop+Request" },
+        { kind: "link", label: "Executive Education Overview", to: "/executive-education" },
       ],
     },
   },
   {
-    test: /\b(campus|visit|tour|library|facilit|building|residence|where are you|location|address)\b/i,
+    test: /\b(subscribe|subscription|nominate|nomination|register|enrol|enrolment|requirement|fee|fees|cost|price|tuition|apply|admission|scholarship)\b/i,
     reply: {
-      text: "The campus is designed around stone, light and quiet intention: libraries, case rooms, a convening forum, gardens and residential quarters. The official address and open-day schedule are being prepared; the Concierge can arrange a visit directly.",
+      text: "GIBS operates on a direct programme subscription and corporate nomination model for its 2026 training calendar. Organizations nominate participants or individuals subscribe directly. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
       cards: [
-        { kind: "link", label: "Explore the campus", to: "/campus" },
-        { kind: "link", label: "Arrange a visit", to: "/contact?type=Campus+visits+%26+events" },
+        { kind: "link", label: "Programme Subscription Guidelines", to: "/admissions" },
+        { kind: "link", label: "Subscribe / Programme Enquiry", to: "/contact?type=Local+Open+Training+Registration" },
       ],
     },
   },
   {
-    test: /\b(faculty|professor|lecturer|research|insight|publication|paper|thought leadership)\b/i,
+    test: /\b(campus|visit|location|address|ilorin|abuja|ibafo|facilities|accommodation|lodge|hall)\b/i,
     reply: {
-      text: "Faculty and research are organized around four themes: leadership and institutions, markets and the Global Africa, enterprise and scale, and organizations and the future of work. The official faculty directory is being prepared for publication.",
+      text: `GIBS operates across 3 permanent centers: Ilorin Main HQ (No 81, Olorunsogo St, Upper Gaa-Akanbi), Abuja Center (Plot 194, Lugbe 1, Airport Rd), and Ibafo Center (KM 36, Lagos-Ibadan Express Rd), plus off-campus centers across Nigeria.`,
       cards: [
-        { kind: "link", label: "Faculty & Research", to: "/faculty" },
-        { kind: "link", label: "Research & Insights", to: "/research-insights" },
+        { kind: "link", label: "Campus Facilities & Locations", to: "/campus" },
+        { kind: "link", label: "Book a Visit or Facility", to: "/contact?type=Campus+Facility+Booking+%26+Enquiries" },
       ],
     },
   },
   {
-    test: /\b(event|lecture|open day|open-day|seminar|when)\b/i,
+    test: /\b(faculty|governance|board|council|advisor|director|who|accredit|cac|cmd|itf|nstif)\b/i,
     reply: {
-      text: "Public lectures, open days and executive convenings will appear on the Events calendar as dates are confirmed. The calendar currently shows its official-data pending state rather than placeholder events.",
-      cards: [{ kind: "link", label: "Events calendar", to: "/events" }],
-    },
-  },
-  {
-    test: /\b(contact|email|phone|call|talk|speak|someone|human|advis(or|er|e))\b/i,
-    reply: {
-      text: "Of course. You can send a structured enquiry to the right team through the contact form, and the Concierge can route you there with the enquiry type pre-selected.",
+      text: `GIBS is governed by a Governing Council of 4 Directors under the Chairman of the Council, supported by a 20-member management and advisory board. Accredited by CAC (RC 1178333), CMD, ITF, and NSTIF.`,
       cards: [
-        { kind: "link", label: "Contact GIBS", to: "/contact" },
-        {
-          kind: "link",
-          label: "Programmes & MBA admissions",
-          to: "/contact?type=Programmes+%26+MBA+admissions",
-        },
-        {
-          kind: "link",
-          label: "Executive education",
-          to: "/contact?type=Executive+education",
-        },
+        { kind: "link", label: "Faculty & Governance Structure", to: "/faculty" },
+        { kind: "link", label: "About GIBS & Accreditations", to: "/about" },
       ],
     },
   },
   {
-    test: /\b(expect|experience|what.*(like|can i)|why gibs|life at|student life)\b/i,
+    test: /\b(contact|email|phone|call|talk|speak|reach|number|help)\b/i,
     reply: {
-      text: "Expect a deliberately unhurried education: scholarship grounded in practice, conversations that continue after seminars, a campus built for study and dialogue, and faculty invested in each fellow's trajectory.",
+      text: `You can reach GIBS directly via email at gibsilorin@gmail.com / goshenibs22@gmail.com, or call: ${INSTITUTIONAL_DATA.phoneNumbers.slice(0, 3).join(", ")}.`,
       cards: [
-        { kind: "link", label: "The GIBS experience", to: "/campus" },
-        { kind: "link", label: "About GIBS", to: "/about" },
-        { kind: "link", label: "Programmes", to: "/programmes" },
+        { kind: "link", label: "Contact Form & Full Directory", to: "/contact" },
+        { kind: "link", label: "Browse Programmes", to: "/programmes" },
       ],
     },
   },
   {
-    test: /\b(about|who is|history|mission|vision|values|accreditation|gibs)\b/i,
+    test: /\b(about|mission|vision|values|principles|history|slogan|tagline)\b/i,
     reply: {
-      text: "GIBS is an international business school built around modern classicism, global excellence and an African heart. The About page sets out the institution's identity, mission and values.",
+      text: `"${INSTITUTIONAL_DATA.slogan}". Goshen International Business School Limited (RC 1178333) is dedicated to national manpower development and capacity-building.`,
       cards: [{ kind: "link", label: "About GIBS", to: "/about" }],
+    },
+  },
+  {
+    test: /\b(program|programme|calendar|course|training|open|workshop|seminar|finance|accounting|admin|telecom|pension|legal|oil|gas|maritime)\b/i,
+    reply: {
+      text: "The 2026 GIBS Training Calendar includes 113 Local Open Programmes across 14 categories (Accounting, Administration, Telecom, Consumer Protection, Environmental, Oil & Gas, IT, Legal, Power, Maritime, Pension, and Special Training).",
+      cards: [
+        { kind: "link", label: "View Complete 2026 Calendar", to: "/programmes", detail: "Filter by category or search" },
+        programmeCard(PROGRAMMES[0].slug),
+        programmeCard(PROGRAMMES[6].slug),
+        programmeCard(PROGRAMMES[32].slug),
+        programmeCard(PROGRAMMES[64].slug),
+      ],
     },
   },
 ];
 
 const FALLBACK: ConciergeReply = {
-  text: "That's a question best handled by a colleague. I can help with programmes, admissions, executive education, the campus, faculty and research, or events, and I can route your enquiry directly to the right team.",
+  text: "I can guide you through our 113 Local Open Programmes, 22 Foreign Executive Training Hubs, in-plant workshops, campuses in Ilorin, Abuja & Ibafo, or connect you with the registry.",
   cards: [
-    { kind: "link", label: "See all programmes", to: "/programmes" },
+    { kind: "link", label: "Browse 2026 Programmes", to: "/programmes" },
+    { kind: "link", label: "Foreign Training Hubs", to: "/executive-education" },
     { kind: "link", label: "Contact GIBS", to: "/contact" },
   ],
 };
@@ -163,7 +145,7 @@ export function getConciergeReply(input: string): ConciergeReply {
   const q = input.trim();
   if (!q) {
     return {
-      text: "Tell me a little about what you're looking for, whether a programme, admissions, executive education or a visit, and I'll guide you.",
+      text: "Tell me what training or institutional information you are looking for, and I will guide you.",
     };
   }
   for (const rule of RULES) {

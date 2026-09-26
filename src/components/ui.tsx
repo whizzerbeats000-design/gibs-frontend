@@ -266,12 +266,16 @@ export function Field({
   return (
     <div>
       <label htmlFor={htmlFor} className="field-label">
-        {label} {required && <span className="text-gold-600">*</span>}
+        {label} {required && <span className="text-gold-600" aria-hidden="true">*</span>}
       </label>
       {children}
-      {hint && !error && <p className="mt-1.5 text-[13px] text-muted">{hint}</p>}
+      {hint && !error && (
+        <p id={`${htmlFor}-hint`} className="mt-1.5 text-[13px] text-muted">
+          {hint}
+        </p>
+      )}
       {error && (
-        <p id={`${htmlFor}-error`} className="mt-1.5 text-[13px] font-medium text-red-800">
+        <p id={`${htmlFor}-error`} role="alert" className="mt-1.5 text-[13px] font-medium text-red-800">
           {error}
         </p>
       )}

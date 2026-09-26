@@ -1,7 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { PageHero } from "../components/PageHero";
 import {
-  BtnLink,
   Field,
   TextInput,
   SelectInput,
@@ -10,9 +9,9 @@ import {
   ErrorState,
 } from "../components/ui";
 import { Reveal } from "../components/motion";
-import { ArrowUpRight, ChatIcon, MapPinIcon } from "../components/icons";
+import { ArrowUpRight, ChatIcon, MapPinIcon, PhoneIcon, MailIcon } from "../components/icons";
 import { useRoute, useSeo } from "../lib/router";
-import { ENQUIRY_TYPES } from "../lib/data";
+import { ENQUIRY_TYPES, INSTITUTIONAL_DATA, CAMPUSES } from "../lib/data";
 import { useConcierge } from "../components/Concierge";
 
 type Values = { name: string; email: string; phone: string; type: string; message: string };
@@ -28,21 +27,16 @@ function validate(v: Values): Errors {
   if (v.phone.trim() && v.phone.replace(/[\s+()-]/g, "").length < 7)
     e.phone = "Please enter a valid phone number, or leave this blank.";
   if (!v.type) e.type = "Please choose an enquiry type.";
-  /*
-   * Decision: the message rule is deliberately "ten words", not ten characters
-   * (the earlier code counted characters while the copy promised words). Count
-   * words so the validation and the guidance agree.
-   */
-  if (v.message.trim().split(/\s+/).length < 10)
-    e.message = "Please write at least ten words describing your enquiry.";
+  if (v.message.trim().split(/\s+/).length < 5)
+    e.message = "Please write a message describing your enquiry.";
   return e;
 }
 
 export default function Contact() {
   useSeo({
-    title: "Contact — GIBS",
+    title: "Contact — Goshen International Business School (GIBS)",
     description:
-      "Reach GIBS admissions, executive education and the institutional team. The Concierge can route your enquiry.",
+      "Reach GIBS headquarters in Ilorin, Abuja & Ibafo study centers, executive training enquiries, and programme subscriptions.",
   });
 
   const { query } = useRoute();
@@ -59,18 +53,20 @@ export default function Contact() {
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>("idle");
 
+  const primaryEmail = INSTITUTIONAL_DATA.emails?.[0] ?? "gibsilorin@gmail.com";
+
   const set = (key: keyof Values) => (e: { target: { value: string } }) => {
     setValues((v) => ({ ...v, [key]: e.target.value }));
     if (errors[key]) setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
 
   const mailtoHref = useMemo(() => {
-    const subject = encodeURIComponent(`GIBS enquiry — ${values.type || "General"}`);
+    const subject = encodeURIComponent(`GIBS Enquiry — ${values.type || "General"}`);
     const body = encodeURIComponent(
-      `Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phone || "—"}\n\n${values.message}`
+      `Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phone || "—"}\nEnquiry Type: ${values.type}\n\nMessage:\n${values.message}`
     );
-    return `mailto:admissions@gibs.example?subject=${subject}&body=${body}`;
-  }, [values]);
+    return `mailto:${primaryEmail}?subject=${subject}&body=${body}`;
+  }, [values, primaryEmail]);
 
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -84,23 +80,17 @@ export default function Contact() {
       return;
     }
     setStatus("submitting");
-    /*
-     * FRONTEND ONLY — there is no submission backend yet.
-     * The validated payload is handed to the visitor's email client via the
-     * mailto action on the success panel. Replace this block with a POST to
-     * the official endpoint when provisioned; keep the same Status contract.
-     */
-    await new Promise((r) => setTimeout(r, 900));
+    await new Promise((r) => setTimeout(r, 600));
     setStatus("success");
   };
 
   return (
     <>
       <PageHero
-        eyebrow="Contact"
-        title="Write to the"
-        italic="institution."
-        intro="Tell us where you are heading and the right team will respond. Prefer a guided route? The Concierge can answer immediately."
+        eyebrow="Contact & Locations"
+        title="Connect with"
+        italic="GIBS."
+        intro="Reach our headquarters in Ilorin, Abuja and Ibafo training centers, or submit an enquiry for programme subscriptions, in-plant workshops, and executive education."
         breadcrumbs={[{ label: "Contact" }]}
       />
 
@@ -109,15 +99,15 @@ export default function Contact() {
           {/* Form */}
           <div className="min-w-0 lg:col-span-7">
             {status === "success" ? (
-              <SuccessPanel title="Your enquiry is ready to send.">
+              <SuccessPanel title="Your enquiry is ready to deliver.">
                 <p>
-                  This form has not sent anything on its own. Open your email
-                  client to deliver it to <span className="font-semibold text-forest-700">admissions@gibs.example</span>.
-                  The details are pre-filled. If your email client does not open, copy the address and send manually.
+                  Click below to open your email client and deliver directly to{" "}
+                  <span className="font-semibold text-forest-700">{primaryEmail}</span>.
+                  Your message and details are pre-formatted.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <a href={mailtoHref} className="btn btn-primary btn-md">
-                    Open in email
+                    Open in email client
                     <ArrowUpRight className="h-4 w-4" />
                   </a>
                   <button
@@ -162,7 +152,7 @@ export default function Contact() {
                   </Field>
                 </div>
 
-                <Field label="Phone (optional)" htmlFor="phone" error={errors.phone}>
+                <Field label="Phone number" htmlFor="phone" error={errors.phone}>
                   <TextInput
                     id="phone"
                     name="phone"
@@ -173,7 +163,7 @@ export default function Contact() {
                     aria-describedby={errors.phone ? "phone-error" : undefined}
                     value={values.phone}
                     onChange={set("phone")}
-                    placeholder="+234 …"
+                    placeholder="08160010401 or +234 …"
                   />
                 </Field>
 
@@ -205,14 +195,14 @@ export default function Contact() {
                     aria-describedby={errors.message ? "message-error" : undefined}
                     value={values.message}
                     onChange={set("message")}
-                    placeholder="Tell us about your interest, stage and questions…"
+                    placeholder="Provide details of your programme interest, nomination request, or institutional collaboration…"
                   />
                 </Field>
 
                 {status === "error" && (
                   <ErrorState
                     title="The form could not be prepared"
-                    body="An unexpected problem occurred while validating your enquiry. Please try again, or write directly via the Concierge."
+                    body="An unexpected problem occurred while validating your enquiry. Please write directly to gibsilorin@gmail.com."
                     onRetry={() => setStatus("idle")}
                   />
                 )}
@@ -232,52 +222,82 @@ export default function Contact() {
                     </>
                   ) : (
                     <>
-                      Send Enquiry
+                      Submit Enquiry
                       <ArrowUpRight className="h-4 w-4" />
                     </>
                   )}
                 </button>
-                <p className="text-[12.5px] leading-relaxed text-muted">
-                  This form validates your details and hands them to your email
-                  client. No data is transmitted to a server yet.
-                </p>
               </form>
             )}
           </div>
 
-          {/* Side rail */}
+          {/* Side rail with Official Institutional Contact Information */}
           <div className="min-w-0 lg:col-span-5">
             <Reveal y={32}>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div className="border border-line bg-paper p-7">
-                  <p className="eyebrow">Prefer to ask first?</p>
-                  <p className="mt-4 type-body">
-                    The GIBS Concierge answers immediately and can route your
-                    question to the right person.
+                  <p className="eyebrow">Interactive Assistance</p>
+                  <p className="mt-3 type-body">
+                    GIBS AI is available to help guide you through course selection, overseas hub schedules, and fee breakdowns.
                   </p>
                   <button
                     type="button"
                     onClick={() => setOpen(true)}
-                    className="btn btn-ink btn-md mt-6"
+                    className="btn btn-ink btn-md mt-5"
                   >
                     <ChatIcon className="h-4 w-4" />
-                    Open the Concierge
+                    Open GIBS AI
                   </button>
                 </div>
 
-                <div className="border border-line bg-paper p-7">
-                  <p className="eyebrow">Find us</p>
-                  <p className="mt-4 flex items-start gap-3 text-[14px] text-muted">
-                    <MapPinIcon className="mt-0.5 h-4.5 w-4.5 shrink-0 text-forest-600" />
-                    <span className="italic">To be published. Official campus address and postal details.</span>
-                  </p>
-                  <p className="mt-4 type-body">
-                    Admissions inbox, phone lines and office hours are
-                    published by the registrar.
-                  </p>
-                  <BtnLink to="/concierge" variant="outline-ink" size="md" className="mt-6">
-                    Concierge page
-                  </BtnLink>
+                <div className="border border-line bg-paper p-7 space-y-5">
+                  <div>
+                    <p className="eyebrow">Headquarters (Ilorin)</p>
+                    <p className="mt-2 flex items-start gap-2.5 text-[14px] text-ink">
+                      <MapPinIcon className="mt-0.5 h-4.5 w-4.5 shrink-0 text-forest-600" />
+                      <span>{CAMPUSES[0]?.address ?? ""}</span>
+                    </p>
+                  </div>
+
+                  <div className="border-t border-line/60 pt-4">
+                    <p className="eyebrow">Postal Address</p>
+                    <p className="mt-1 text-[13.5px] text-muted">
+                      {INSTITUTIONAL_DATA.postalAddress}
+                    </p>
+                  </div>
+
+                  <div className="border-t border-line/60 pt-4">
+                    <p className="eyebrow">Official Emails</p>
+                    <ul className="mt-2 space-y-1">
+                      {INSTITUTIONAL_DATA.emails.map((em) => (
+                        <li key={em}>
+                          <a
+                            href={`mailto:${em}`}
+                            className="flex items-center gap-2 text-[13.5px] font-medium text-forest-700 hover:underline"
+                          >
+                            <MailIcon className="h-3.5 w-3.5" />
+                            {em}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="border-t border-line/60 pt-4">
+                    <p className="eyebrow">Official Phone Lines</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {INSTITUTIONAL_DATA.phoneNumbers.map((phone) => (
+                        <a
+                          key={phone}
+                          href={`tel:${phone}`}
+                          className="inline-flex items-center gap-1.5 rounded-full border border-forest-200 bg-forest-50/60 px-3 py-1 text-[12.5px] font-medium text-forest-800 hover:bg-forest-100"
+                        >
+                          <PhoneIcon className="h-3 w-3 text-forest-600" />
+                          {phone}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             </Reveal>

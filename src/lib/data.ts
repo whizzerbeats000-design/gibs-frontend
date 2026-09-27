@@ -7488,7 +7488,7 @@ export const STATIC_PAGES = [
   { title: "Gallery", to: "/gallery", blurb: "Campus infrastructure, lecture halls, guest lodges, and learning environments.", type: "Page" },
   { title: "Events & Conferences", to: "/events", blurb: "Annual capacity-building conferences and executive roundtables.", type: "Page" },
   { title: "Contact GIBS", to: "/contact", blurb: "Official emails, phone lines, Ilorin HQ, Abuja, and Ibafo addresses.", type: "Page" },
-  { title: "GIBS AI", to: "/concierge", blurb: "Intelligent assistant for instant programme discovery and enquiries.", type: "Page" },
+  { title: "GIBS AI", to: "/concierge", blurb: "Ask about programmes, campuses and how to subscribe.", type: "Page" },
 ];
 
 /* ---------------- 14. Consolidated Authoritative GIBS Data Exports ---------------- */

@@ -18,9 +18,8 @@ export default function Faculty() {
         image={IMAGES.library}
         imageAlt="The GIBS academic and governance board"
         eyebrow="Governance & Faculty"
-        title="Leadership with"
-        italic="integrity & purpose."
-        intro="Governing Council, management advisors, and academic coordinators guiding manpower development across Nigeria and international hubs."
+        title="Who governs and teaches here"
+        intro="The Governing Council, management advisors and academic coordinators responsible for manpower development in Nigeria and the overseas hubs."
         breadcrumbs={[{ label: "Faculty & Governance" }]}
       />
 
@@ -31,7 +30,7 @@ export default function Faculty() {
             <div className="lg:col-span-7">
               <Reveal>
                 <p className="eyebrow">Governing Council & Management</p>
-                <h2 className="display-serif type-h2 mt-4 text-ink">
+                <h2 className="type-h2 mt-4 text-ink">
                   Institutional governance &amp; management structure
                 </h2>
                 <p className="mt-5 text-[16px] leading-relaxed text-ink/85">
@@ -71,7 +70,7 @@ export default function Faculty() {
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">Academic Board &amp; Advisory Structure</p>
-            <h2 className="display-serif type-h2 mt-4 text-ink">
+            <h2 className="type-h2 mt-4 text-ink">
               14 Functional <em className="italic text-forest-700">Designations.</em>
             </h2>
             <p className="mt-3 max-w-2xl type-body">
@@ -79,19 +78,12 @@ export default function Faculty() {
             </p>
           </Reveal>
 
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+          <div className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2">
             {FACULTY_ADVISORS.map((advisor) => (
               <Reveal key={advisor.id} delay={advisor.id * 0.03}>
-                <div className="flex items-center gap-4 border border-line bg-white p-5 shadow-crisp">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-pill bg-forest-600 font-serif text-sm font-bold text-ivory">
-                    {String(advisor.id).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3 className="text-[15px] font-bold text-ink">{advisor.designation}</h3>
-                    <span className="mt-0.5 inline-block text-[11px] font-bold uppercase tracking-[0.14em] text-forest-600">
-                      {advisor.category}
-                    </span>
-                  </div>
+                <div className="border-t rule pt-5">
+                  <h3 className="text-[15px] font-bold text-ink">{advisor.designation}</h3>
+                  <p className="mt-1 type-body text-muted">{advisor.category}</p>
                 </div>
               </Reveal>
             ))}
@@ -121,9 +113,8 @@ export default function Faculty() {
 
       <ClosingQuiet
         eyebrow="Faculty & Advisory"
-        title="Engage with our"
-        italic="advisors & team."
-        body="Discuss institutional capacity needs, custom in-plant programmes, or international technical partnerships with the GIBS Academic Board."
+        title="Talk to the Academic Board"
+        body="Ask about capacity needs, a custom in-plant programme, or technical partnerships abroad."
         actions={
           <>
             <BtnLink to="/programmes" variant="primary" size="lg">

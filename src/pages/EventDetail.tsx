@@ -18,10 +18,8 @@ export default function EventDetail({ slug }: { slug: string }) {
     return (
       <>
         <PageHero
-          eyebrow="Events"
-          title="This event is not yet"
-          italic="published."
-          intro="The events calendar is being prepared. Confirmations will appear here with full detail and registration as dates are announced."
+          title="This event is not published yet"
+          intro="Dates and full detail appear here once the events office confirms them."
           breadcrumbs={[{ label: "Events", to: "/events" }, { label: "Event" }]}
         />
         <section className="bg-white">

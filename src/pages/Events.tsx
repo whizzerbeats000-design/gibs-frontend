@@ -37,10 +37,10 @@ function EventRow({ event }: { event: GIBS_EVENT }) {
         </p>
       </div>
       <div>
-        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+        <p className="eyebrow text-forest-600">
           {event.category}
         </p>
-        <h3 className="display-serif type-h3 mt-2 text-ink">{event.title}</h3>
+        <h3 className="type-h3 mt-2 text-ink">{event.title}</h3>
         <p className="mt-2 max-w-2xl type-body">{event.excerpt}</p>
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-[12.5px] text-muted">
           <span className="inline-flex items-center gap-2">
@@ -90,10 +90,8 @@ export default function Events() {
       <PageHero
         image={IMAGES.seminar}
         imageAlt="A GIBS convening in a modern hall"
-        eyebrow="Events"
-        title="Where the institution"
-        italic="meets the public."
-        intro="Public lectures, open days, executive convenings and research seminars, published the moment official dates are confirmed."
+        title="Public lectures, open days and seminars"
+        intro="Dates appear here once the events office confirms them."
         breadcrumbs={[{ label: "Events" }]}
       />
 
@@ -121,7 +119,7 @@ export default function Events() {
 
           {/* Calendar */}
           <Reveal>
-            <h2 className="display-serif type-h3 mt-12 text-ink">Upcoming</h2>
+            <h2 className="type-h3 mt-12 text-ink">Upcoming</h2>
           </Reveal>
           {upcoming.length > 0 ? (
             <div className="mt-4 border-t rule">
@@ -149,7 +147,7 @@ export default function Events() {
           )}
 
           <Reveal>
-            <h2 className="display-serif type-h3 mt-16 text-ink">Past events</h2>
+            <h2 className="type-h3 mt-16 text-ink">Past events</h2>
           </Reveal>
           {past.length > 0 ? (
             <div className="mt-4 border-t rule">

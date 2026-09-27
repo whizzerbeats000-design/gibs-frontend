@@ -4,7 +4,7 @@ import { Link } from "../lib/router";
 import { PROGRAMMES, RESEARCH_THEMES, STATIC_PAGES, ARTICLES } from "../lib/data";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { EASE } from "./motion";
-import { SearchIcon, CloseIcon, ArrowUpRight, Diamond } from "./icons";
+import { SearchIcon, CloseIcon, ArrowUpRight } from "./icons";
 
 type SearchItem = {
   title: string;
@@ -189,12 +189,11 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
               {/* No results */}
               {trimmed.length >= 2 && results.length === 0 && (
                 <div className="px-5 py-12 text-center">
-                  <Diamond className="mx-auto h-2.5 w-2.5 text-gold-600" />
-                  <p className="display-serif mt-4 text-xl text-ink">
+                  <p className="display-serif text-xl text-ink">
                     No results for “{trimmed}”
                   </p>
                   <p className="mx-auto mt-2 max-w-sm type-body text-muted">
-                    Nothing in the site index matches that search. Try a topic such as Accounting, Procurement, Kigali, Dubai, or ask GIBS AI.
+                    Nothing in the site index matches. Try Accounting, Procurement, Kigali or Dubai, or ask GIBS AI.
                   </p>
                   <Link
                     to="/concierge"
@@ -236,7 +235,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
               ))}
             </div>
 
-            <div className="flex items-center justify-between border-t border-line bg-stone/50 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted">
+            <div className="meta flex items-center justify-between border-t border-line bg-stone/50 px-5 py-2.5">
               <span>Esc to close</span>
               <span>Enter to open first result</span>
             </div>

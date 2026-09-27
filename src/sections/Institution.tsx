@@ -6,16 +6,16 @@ import { IMAGES } from "../lib/data";
 
 const PERSPECTIVES = [
   {
-    k: "Global excellence",
-    v: "International standards of scholarship, tested against the world's leading institutions.",
+    k: "Nigeria",
+    v: "Taught in Ilorin since 2014, with centres in Abuja and Ibafo, for the public and private sectors of the country.",
   },
   {
-    k: "African heart",
-    v: "Curriculum and cases rooted in the real economies, institutions and enterprise of the Global Africa.",
+    k: "Abroad",
+    v: "Overseas hubs in Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, the Netherlands and Ghana.",
   },
   {
-    k: "Modern classicism",
-    v: "The permanence of the academy expressed in contemporary form: architecture, method and manner.",
+    k: "Technical partner",
+    v: "Pacific Institute of Technology, Georgia, United States.",
   },
 ];
 
@@ -51,17 +51,14 @@ export default function GlobalPerspective() {
               <p className="eyebrow-light">Global Perspective</p>
             </Reveal>
             <Reveal delay={0.08} y={28}>
-              <h2 className="display-serif type-h2 mt-6">
-                Global excellence.
-                <br />
-                <em className="text-gold-300">African heart.</em>
+              <h2 className="type-h2 mt-2">
+                Where GIBS teaches
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-5 max-w-lg type-body text-ivory/85">
-                The next century of global business will be shaped in Africa.
-                GIBS prepares leaders fluent in both the world economy and the
-                markets where they work.
+                GIBS trains executives for the organisations they work in, at home
+                in Nigeria and in nine countries overseas.
               </p>
             </Reveal>
 
@@ -69,7 +66,7 @@ export default function GlobalPerspective() {
               {PERSPECTIVES.map((p) => (
                 <Reveal key={p.k} delay={0.1}>
                   <div className="grid grid-cols-1 gap-1 border-b rule-light py-6 sm:grid-cols-[11rem_1fr] sm:gap-8">
-                    <p className="text-[12px] font-medium uppercase tracking-[0.14em] text-gold-300">
+                    <p className="eyebrow-light">
                       {p.k}
                     </p>
                     <p className="type-body text-ivory/85">{p.v}</p>

@@ -14,17 +14,14 @@ export default function FacultyScholarship() {
               <p className="eyebrow">Faculty &amp; Scholarship</p>
             </Reveal>
             <Reveal delay={0.08} y={28}>
-              <h2 className="display-serif type-h2 mt-5 text-ink">
-                The scholarship, and the
-                <br />
-                people behind <em className="italic text-forest-700">it.</em>
+              <h2 className="type-h2 mt-5 text-ink">
+                Four research themes
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-7 max-w-md type-body">
-                GIBS faculty move between the academy and the institutions
-                their scholarship describes. Their work is organized around
-                four research themes.
+                GIBS faculty work across these four areas. The GIBS journal will
+                publish from them once the first edition is ready.
               </p>
             </Reveal>
             <Reveal delay={0.22}>
@@ -63,13 +60,9 @@ export default function FacultyScholarship() {
             viewport={{ once: true, margin: "-10% 0px" }}
             className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7"
           >
-            {RESEARCH_THEMES.map((theme, i) => (
+            {RESEARCH_THEMES.map((theme) => (
               <motion.div key={theme.title} variants={staggerItem}>
-                <ThemeCard
-                  number={String(i + 1).padStart(2, "0")}
-                  title={theme.title}
-                  blurb={theme.blurb}
-                />
+                <ThemeCard title={theme.title} blurb={theme.blurb} />
               </motion.div>
             ))}
           </motion.div>

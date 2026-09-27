@@ -26,10 +26,8 @@ export default function ResearchInsights() {
   return (
     <>
       <PageHero
-        eyebrow="Research & Insights"
-        title="The journal, in"
-        italic="formation."
-        intro="Research and thought leadership from GIBS faculty, moving between the academy and the market."
+        title="The GIBS journal"
+        intro="The first edition is still being prepared. Research essays, case studies and faculty perspectives will appear here once it publishes."
         breadcrumbs={[{ label: "Research & Insights" }]}
       />
 
@@ -62,11 +60,11 @@ export default function ResearchInsights() {
               </Reveal>
               <div className="flex flex-col justify-center lg:col-span-5">
                 <Reveal>
-                  <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+                  <p className="eyebrow text-forest-600">
                     {featured.category}
                   </p>
                   <Link to={`/research-insights/${featured.slug}`} className="group">
-                    <h2 className="display-serif type-h2 mt-5 text-ink transition-colors group-hover:text-forest-700">
+                    <h2 className="type-h2 mt-5 text-ink transition-colors group-hover:text-forest-700">
                       {featured.title}
                     </h2>
                   </Link>
@@ -92,7 +90,7 @@ export default function ResearchInsights() {
           <div className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
             {RESEARCH_THEMES.map((t, i) => (
               <Reveal key={t.title} delay={i * 0.05}>
-                <h3 className="display-serif type-h3 mt-3 text-ink">{t.title}</h3>
+                <h3 className="type-h3 mt-3 text-ink">{t.title}</h3>
                 <p className="mt-2 type-body">{t.blurb}</p>
               </Reveal>
             ))}
@@ -105,7 +103,7 @@ export default function ResearchInsights() {
         <div className="container-x py-20 sm:py-24">
           <Reveal>
             <p className="eyebrow">Forthcoming</p>
-            <h2 className="display-serif type-h2 mt-5 text-ink">
+            <h2 className="type-h2 mt-5 text-ink">
               The first edition
             </h2>
           </Reveal>

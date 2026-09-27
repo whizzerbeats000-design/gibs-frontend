@@ -14,7 +14,10 @@ const REDUCED_MOTION = "(prefers-reduced-motion: reduce)";
  *  - Attached only when (pointer: fine) AND (prefers-reduced-motion: reduce)
  *    are both false. On touch/coarse pointers or reduced-motion it is inert.
  *
- * The returned ref goes on the same element as `card-depth card-spot` classes.
+ * The returned ref must go on a plain element that also carries the
+ * `card-depth card-spot` classes. Do NOT put it on a framer-motion element:
+ * framer writes `style.transform` inline, and an inline transform overrides
+ * the `rotateX/rotateY` that `.card-depth` builds from these variables.
  */
 export function useCardDepth<T extends HTMLElement>(
   maxDeg = 2.5

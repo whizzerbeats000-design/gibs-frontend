@@ -4,7 +4,6 @@ import { Link, navigate, useRoute } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { HexMark } from "./Logo";
 import { MenuIcon, CloseIcon, SearchIcon, ChatIcon, ArrowUpRight } from "./icons";
-import { MeridianRule } from "./ui";
 import { NAV_LINKS } from "../lib/data";
 import { EASE } from "./motion";
 import { cn } from "../utils/cn";
@@ -69,14 +68,14 @@ export function Header({
             : "border-transparent bg-ivory/72 backdrop-blur-md"
         )}
       >
-      <div className="container-x flex h-[72px] min-w-0 items-center justify-between gap-4">
+      <div className="container-x flex h-[var(--header-height)] min-w-0 items-center justify-between gap-4">
         <Link to="/" className="flex min-w-0 shrink-0 items-center gap-3" aria-label="GIBS home">
           <HexMark compact className="h-11 w-11 shrink-0" />
           <span className="hidden leading-tight lg:block">
             <span className="block font-serif text-[14px] font-semibold tracking-wide text-forest-900">
               Goshen International
             </span>
-            <span className="block text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+            <span className="block eyebrow text-forest-600">
               Business School
             </span>
           </span>
@@ -152,18 +151,18 @@ export function Header({
 /* ---------------- Mobile / tablet navigation ---------------- */
 
 const MOBILE_PRIMARY = [
-  { n: "01", label: "All Programmes", to: "/programmes" },
-  { n: "02", label: "Foreign Training", to: "/executive-education" },
-  { n: "03", label: "Faculty & Governance", to: "/faculty" },
-  { n: "04", label: "About GIBS", to: "/about" },
-  { n: "05", label: "Programme Subscription", to: "/admissions" },
+  { label: "All Programmes", to: "/programmes" },
+  { label: "Foreign Training", to: "/executive-education" },
+  { label: "Faculty & Governance", to: "/faculty" },
+  { label: "About GIBS", to: "/about" },
+  { label: "Programme Subscription", to: "/admissions" },
 ];
 const MOBILE_SECONDARY = [
-  { n: "06", label: "Research & Insights", to: "/research-insights" },
-  { n: "07", label: "Conferences & Events", to: "/events" },
-  { n: "08", label: "Campuses & Facilities", to: "/campus" },
-  { n: "09", label: "Campus Gallery", to: "/gallery" },
-  { n: "10", label: "Contact & Registry", to: "/contact" },
+  { label: "Research & Insights", to: "/research-insights" },
+  { label: "Conferences & Events", to: "/events" },
+  { label: "Campuses & Facilities", to: "/campus" },
+  { label: "Campus Gallery", to: "/gallery" },
+  { label: "Contact & Registry", to: "/contact" },
 ];
 
 function isActiveRoute(to: string, path: string) {
@@ -220,7 +219,7 @@ export function MobileNav({
 
             <div className="grid flex-1 gap-10 lg:grid-cols-12">
               <div className="lg:col-span-5">
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+                <p className="eyebrow text-forest-600">
                   GIBS / Navigation
                 </p>
                 <h2 className="mt-6 font-baskerville text-[38px] leading-[0.95] tracking-[-0.02em] text-ink">
@@ -264,7 +263,7 @@ export function MobileNav({
                 <ul>
                   {MOBILE_PRIMARY.map((link, i) => (
                     <motion.li
-                      key={link.n}
+                      key={link.to}
                       className="border-b rule"
                       initial={{ opacity: 0, y: 22 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -276,9 +275,6 @@ export function MobileNav({
                         aria-current={isActiveRoute(link.to, routePath) ? "page" : undefined}
                         className="group flex items-center gap-5 py-5 sm:gap-8 sm:py-6"
                       >
-                        <span className="w-[30px] shrink-0 text-[11px] font-bold tracking-[0.16em] text-forest-600">
-                          {link.n}
-                        </span>
                         <span
                           className={cn(
                             "font-baskerville text-[27px] leading-none tracking-[-0.01em] text-ink transition-transform duration-300 group-hover:translate-x-2",
@@ -293,13 +289,13 @@ export function MobileNav({
                   ))}
                 </ul>
 
-                <p className="mt-8 text-[11px] font-bold uppercase tracking-[0.16em] text-muted">
+                <p className="mt-8 meta">
                   More from GIBS
                 </p>
                 <ul className="mt-3">
                   {MOBILE_SECONDARY.map((link, i) => (
                     <motion.li
-                      key={link.n}
+                      key={link.to}
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5, ease: EASE, delay: 0.4 + i * 0.05 }}
@@ -310,9 +306,6 @@ export function MobileNav({
                         aria-current={isActiveRoute(link.to, routePath) ? "page" : undefined}
                         className="group -mx-2 flex items-center gap-4 rounded-panel px-2 py-3"
                       >
-                        <span className="text-[11px] font-bold tracking-[0.16em] text-forest-600">
-                          {link.n}
-                        </span>
                         <span
                           className={cn(
                             "text-[15px] font-bold text-ink/75 transition-colors group-hover:text-forest-700",
@@ -403,7 +396,7 @@ function Newsletter() {
   if (status === "success") {
     return (
       <div className="mt-9 max-w-md border-l-2 border-gold-400 pl-4">
-        <p className="text-[12px] font-bold uppercase tracking-[0.16em] text-gold-300">Thank you.</p>
+        <p className="eyebrow-light">Thank you.</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
           Your request for calendar updates has been received. For immediate official enquiries, you can also reach the registry directly at{" "}
           <a href="mailto:gibsilorin@gmail.com" className="text-gold-300 underline underline-offset-2">
@@ -473,11 +466,6 @@ function Newsletter() {
 export function GlobalFooter() {
   return (
     <footer className="relative border-t-2 border-gold-500/30 bg-forest-950 text-ivory">
-      <div className="pointer-events-none absolute inset-x-0 top-0 hidden sm:block">
-        <div className="container-x py-0">
-          <MeridianRule light at="86%" />
-        </div>
-      </div>
       <div className="container-x py-20 sm:py-24">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
@@ -487,7 +475,7 @@ export function GlobalFooter() {
               </span>
               <div className="leading-tight">
                 <p className="fraunces font-semibold text-base text-ivory">Goshen International</p>
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-gold-300">
+                <p className="eyebrow-light">
                   Business School
                 </p>
               </div>
@@ -497,7 +485,6 @@ export function GlobalFooter() {
             </p>
             <p className="mt-4 max-w-sm type-body text-ivory/85">
               An outfit committed to manpower development and capacity-building.
-              Dedicated to empowering the future generation through management and business knowledge.
             </p>
             <div className="mt-5 space-y-1.5 text-[12px] leading-relaxed text-ivory/75">
               <p className="font-semibold text-ivory">Headquarters (Ilorin):</p>
@@ -513,7 +500,7 @@ export function GlobalFooter() {
           <div className="grid grid-cols-1 gap-10 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:col-span-7 lg:pl-10">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title}>
-                <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-gold-300">
+                <p className="eyebrow-light">
                   {col.title}
                 </p>
                 <ul className="mt-5 space-y-3.5">
@@ -540,7 +527,7 @@ export function GlobalFooter() {
           </p>
         </div>
 
-        <div className="mt-10 flex flex-col gap-4 text-[11px] uppercase tracking-[0.16em] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-10 flex flex-col gap-4 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/60 sm:flex-row sm:items-center sm:justify-between sm:text-[12px]">
           <p>© {new Date().getFullYear()} Goshen International Business School Limited (RC 1178333)</p>
           <p className="text-ivory/60">
             Accreditations: CAC · CMD · ITF Compliant · NSTIF

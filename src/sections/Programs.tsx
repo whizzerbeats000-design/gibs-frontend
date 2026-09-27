@@ -16,10 +16,10 @@ function ProgrammePanel({ slug }: { slug: string }) {
       className="group grid grid-cols-[1fr_auto] items-start gap-x-6 gap-y-1 border-t rule py-7 first:border-t-0 sm:gap-x-10"
     >
       <div className="min-w-0">
-        <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600">
+        <p className="eyebrow text-forest-600">
           {p.category}
         </p>
-        <h3 className="display-serif type-h3 mt-2 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5">
+        <h3 className="type-h3 mt-2 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5">
           {p.title}
         </h3>
         {description && <p className="mt-2 max-w-xl type-body">{description}</p>}
@@ -46,16 +46,14 @@ export default function ProgrammeDiscovery() {
               <Eyebrow>Programme Discovery</Eyebrow>
             </Reveal>
             <Reveal delay={0.08} y={28}>
-              <h2 className="display-serif type-h2 mt-5 text-ink">
-                Programmes designed to
-                <br />
-                <em className="italic text-forest-700">change what you decide.</em>
+              <h2 className="type-h2 mt-5 text-ink">
+                A sample of the 2026 catalogue
               </h2>
             </Reveal>
           </div>
           <Reveal delay={0.16} className="lg:col-span-4">
             <p className="max-w-sm type-body">
-              135 specialized management, finance, executive and international programmes designed for public and private sector leaders.
+              The full calendar lists 135 programmes in management, finance, executive training and international practice, for senior and middle-level managers, executive officers, legislators and administrators.
             </p>
           </Reveal>
         </div>
@@ -68,16 +66,14 @@ export default function ProgrammeDiscovery() {
           viewport={{ once: true, margin: "-10% 0px" }}
           className="mt-16 space-y-14 sm:mt-20"
         >
-          {HOME_PROGRAMME_BANDS.map((band, i) => (
+          {HOME_PROGRAMME_BANDS.map((band) => (
             <motion.section
               key={band.band}
               variants={staggerItem}
               className="grid gap-6 lg:grid-cols-12 lg:gap-10"
             >
               <div className="lg:col-span-4">
-                <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600">
-                  {String(i + 1).padStart(2, "0")} — {band.band}
-                </p>
+                <p className="eyebrow text-forest-600">{band.band}</p>
                 <p className="mt-3 max-w-[17rem] text-[13.5px] leading-relaxed text-muted lg:pr-2">
                   {band.note}
                 </p>

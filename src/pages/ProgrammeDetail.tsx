@@ -78,10 +78,10 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           <div className="lg:col-span-7">
             <Reveal>
               <div className="flex flex-wrap items-center gap-2.5">
-                <span className="rounded-pill bg-forest-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ivory">
+                <span className="pill pill-forest">
                   {programme.code}
                 </span>
-                <span className="rounded-pill bg-stone px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-forest-900">
+                <span className="pill pill-stone">
                   {programme.destination} Training
                 </span>
                 {programme.inPlantAvailable && (
@@ -147,7 +147,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         <div className="container-x grid gap-14 py-20 sm:py-24 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <p className="eyebrow">Target Participants</p>
-            <h2 className="display-serif type-h2 mt-4 text-ink">
+            <h2 className="type-h2 mt-4 text-ink">
               Who should <em className="italic text-forest-700">attend.</em>
             </h2>
             <ul className="mt-7 space-y-4">
@@ -162,7 +162,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
           <Reveal delay={0.1}>
             <p className="eyebrow">Learning Outcomes</p>
-            <h2 className="display-serif type-h2 mt-4 text-ink">
+            <h2 className="type-h2 mt-4 text-ink">
               Key <em className="italic text-gold-600">takeaways.</em>
             </h2>
             <ul className="mt-7 space-y-4">
@@ -230,15 +230,15 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
           <div className="mt-10 grid gap-8 sm:grid-cols-3">
             <div className="border border-line bg-paper p-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-forest-700">Format</p>
+              <p className="eyebrow">Format</p>
               <h3 className="display-serif mt-3 text-lg text-ink">{programme.format}</h3>
             </div>
             <div className="border border-line bg-paper p-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-forest-700">Duration</p>
+              <p className="eyebrow">Duration</p>
               <h3 className="display-serif mt-3 text-lg text-ink">{programme.duration ?? "5 Days"}</h3>
             </div>
             <div className="border border-line bg-paper p-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-forest-700">Tuition Fee</p>
+              <p className="eyebrow">Tuition Fee</p>
               <h3 className="display-serif mt-3 text-lg text-forest-900">{programme.fees}</h3>
             </div>
           </div>
@@ -266,7 +266,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         <div className="container-x relative flex flex-col items-start gap-8 py-16 sm:flex-row sm:items-center sm:justify-between sm:py-20">
           <div>
             <p className="eyebrow-light">Subscription Desk</p>
-            <h2 className="display-serif type-h2 mt-3">
+            <h2 className="type-h2 mt-3">
               Subscribe to {programme.code}.
             </h2>
             <p className="mt-2 text-[14px] text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
@@ -291,7 +291,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
       <section className="bg-forest-950 text-ivory">
         <div className="container-x py-16 sm:py-20">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="display-serif type-h2">Related 2026 Programmes</h2>
+            <h2 className="type-h2">Related 2026 Programmes</h2>
             <Link
               to="/programmes"
               className="group inline-flex items-center gap-2 text-sm font-bold text-gold-300"
@@ -311,7 +311,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   <p className="meta text-gold-300">{p.code}</p>
                   <span className="text-[12px] font-bold text-ivory/80">{p.fees}</span>
                 </div>
-                <h3 className="display-serif type-h3 mt-3">{p.title}</h3>
+                <h3 className="type-h3 mt-3">{p.title}</h3>
                 <p className="mt-3 text-[13px] text-ivory/70 line-clamp-2">{p.schedule}</p>
                 <span className="mt-5 inline-flex items-center gap-2 text-[13px] font-bold text-gold-300">
                   View details

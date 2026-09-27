@@ -1,19 +1,10 @@
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { ReactNode } from "react";
 
 export const EASE = [0.22, 1, 0.36, 1] as const;
 
 /** kinetic-typography: the premium enter ease — easeOutExpo cubic-bezier(0.16,1,0.3,1). */
 export const EASE_KINETIC = [0.16, 1, 0.3, 1] as const;
-
-export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 28 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.9, ease: EASE },
-  },
-};
 
 export const stagger: Variants = {
   hidden: {},
@@ -56,6 +47,20 @@ export function Reveal({
   y = 28,
   once = true,
 }: RevealProps) {
+  const reduce = useReducedMotion();
+
+  /* When the visitor prefers reduced motion, render the settled state and skip
+     the animation entirely. `MotionConfig reducedMotion="user"` is not enough on
+     its own: it suppresses transform animations but still runs the opacity
+     transition, so every reveal remained subject to the same fade-and-stagger
+     queue as a full-motion visit. A measured 9-second wait for a card deep in a
+     135-item list is exactly the kind of movement-and-delay burden reduced-motion
+     exists to remove, and depending on an IntersectionObserver for basic
+     legibility is fragile — if the observer never fires, the content stays at
+     opacity 0 permanently. Returning a plain element makes the final state the
+     default and the animation strictly additive. */
+  if (reduce) return <div className={className}>{children}</div>;
+
   return (
     <motion.div
       className={className}

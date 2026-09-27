@@ -1,16 +1,34 @@
 import { useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { ProgramRow } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
 import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
-import { Reveal, stagger, staggerItem } from "../components/motion";
+import { Reveal, staggerItem } from "../components/motion";
 import { useSeo } from "../lib/router";
 import { cn } from "../utils/cn";
 
 type DestinationFilter = "All" | "Local" | "Kigali" | "Dubai" | "London" | "Houston";
 
+/* Stagger that does not scale linearly with the length of the list.
+   `stagger` in components/motion uses a flat 0.12s per child, which is right for
+   a short editorial row and wrong for a 135-item catalogue: the last card did not
+   begin animating until ~16s after mount, so most of the list sat at opacity 0
+   for a very long time. The step shrinks once a list is long enough that the
+   cumulative delay stops reading as choreography, and the whole sequence is
+   capped at 0.5s. Short lists keep the original 0.12s rhythm. */
+const listStagger: Variants = {
+  hidden: {},
+  visible: (count: number) => ({
+    transition: {
+      staggerChildren: count > 12 ? Math.min(0.12, 0.5 / count) : 0.12,
+      delayChildren: 0.05,
+    },
+  }),
+};
+
 export default function ProgrammesPage() {
+  const reduceMotion = useReducedMotion();
   useSeo({
     title: "2026 Training Calendar (135 Programmes) — GIBS",
     description:
@@ -58,7 +76,7 @@ export default function ProgrammesPage() {
             <p className="eyebrow mt-4">2026 Executive Training Calendar</p>
           </Reveal>
           <Reveal delay={0.06} y={20}>
-            <h1 className="display-serif type-h1 mt-3 max-w-4xl text-ink">
+            <h1 className="type-h1 mt-3 max-w-4xl text-ink">
               135 Capacity-Building <em className="italic text-forest-700">Programmes.</em>
             </h1>
           </Reveal>
@@ -77,7 +95,7 @@ export default function ProgrammesPage() {
           {/* Scope / Destination Tabs */}
           <div className="border-b border-line pb-4">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-              <span className="shrink-0 mr-1 text-[11px] font-bold uppercase tracking-[0.14em] text-muted">
+              <span className="shrink-0 mr-1 meta">
                 Scope:
               </span>
               <button
@@ -87,7 +105,7 @@ export default function ProgrammesPage() {
                   setCategory("All");
                 }}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-[10px] px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "All"
                     ? "bg-forest-900 text-ivory border border-forest-950 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -102,7 +120,7 @@ export default function ProgrammesPage() {
                   if (category === "Foreign Executive Training") setCategory("All");
                 }}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-[10px] px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Local"
                     ? "bg-forest-600 text-ivory border border-forest-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -117,7 +135,7 @@ export default function ProgrammesPage() {
                   setCategory("All");
                 }}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-[10px] px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Kigali"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -132,7 +150,7 @@ export default function ProgrammesPage() {
                   setCategory("All");
                 }}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-[10px] px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Dubai"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -147,7 +165,7 @@ export default function ProgrammesPage() {
                   setCategory("All");
                 }}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-[10px] px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "London"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -162,7 +180,7 @@ export default function ProgrammesPage() {
                   setCategory("All");
                 }}
                 className={cn(
-                  "min-h-[36px] shrink-0 rounded-[10px] px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Houston"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -174,7 +192,7 @@ export default function ProgrammesPage() {
           </div>
 
           {/* Sticky filter & search container (Matching Admissions card elevation) */}
-          <div className="sticky top-[72px] z-20 -mx-5 mb-6 border-b border-line bg-paper/95 px-5 py-3.5 backdrop-blur-md sm:mx-0 sm:my-6 sm:rounded-[16px] sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
+          <div className="sticky top-[var(--sticky-top)] z-20 -mx-5 mb-6 border-b border-line bg-paper/95 px-5 py-3.5 backdrop-blur-md sm:mx-0 sm:my-6 sm:rounded-none sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
             <div className="flex flex-col gap-3">
               {/* Search bar with warm editorial border & subtle inset highlight */}
               <div className="relative w-full">
@@ -188,7 +206,7 @@ export default function ProgrammesPage() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search by programme title, course code, sector, venue or city…"
-                  className="w-full rounded-[10px] border border-line bg-paper/50 py-2.5 pl-10 pr-9 text-base text-ink placeholder:text-muted shadow-[inset_1px_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(18,18,18,0.03)] focus:border-forest-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-sm"
+                  className="w-full rounded-none border border-line bg-paper/50 py-2.5 pl-10 pr-9 text-base text-ink placeholder:text-muted shadow-[inset_1px_1px_0_rgba(255,255,255,0.9),0_1px_2px_rgba(18,18,18,0.03)] focus:border-forest-600 focus:bg-white focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-sm"
                 />
                 {query && (
                   <button
@@ -215,7 +233,7 @@ export default function ProgrammesPage() {
                     aria-pressed={category === cat}
                     onClick={() => setCategory(cat)}
                     className={cn(
-                      "shrink-0 rounded-[10px] px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap min-h-[32px] transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                      "shrink-0 rounded-none px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap min-h-[40px] transition-[transform,box-shadow,background-color] duration-150 ease-out",
                       category === cat
                         ? "bg-forest-600 text-ivory border border-forest-700 shadow-card"
                         : "bg-white text-muted hover:text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -243,7 +261,7 @@ export default function ProgrammesPage() {
                   setDestination("All");
                   setQuery("");
                 }}
-                className="text-[12px] font-bold uppercase tracking-wider text-forest-700 hover:text-forest-800 hover:underline"
+                className="text-[12px] font-semibold uppercase tracking-[0.12em] text-forest-700 hover:text-forest-800 hover:underline"
               >
                 Reset all filters
               </button>
@@ -252,9 +270,22 @@ export default function ProgrammesPage() {
 
           {/* Programme list with explicit card spacing */}
           {filtered.length > 0 ? (
+            reduceMotion ? (
+              /* Reduced motion: render the settled list directly. The stagger
+                 below is a nicety; it must never be load-bearing for
+                 legibility. */
+              <div className="grid grid-cols-1 gap-4 sm:gap-4.5">
+                {filtered.map((p, i) => (
+                  <div key={p.id}>
+                    <ProgramRow programme={p} index={i} />
+                  </div>
+                ))}
+              </div>
+            ) : (
             <motion.div
               key={`${category}-${destination}-${query}`}
-              variants={stagger}
+              custom={filtered.length}
+              variants={listStagger}
               initial="hidden"
               animate="visible"
               className="grid grid-cols-1 gap-4 sm:gap-4.5"
@@ -265,6 +296,7 @@ export default function ProgrammesPage() {
                 </motion.div>
               ))}
             </motion.div>
+            )
           ) : (
             <EmptyState
               title="No programmes match your filter"

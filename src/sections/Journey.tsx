@@ -14,15 +14,15 @@ export default function AdmissionsTeaser() {
               <p className="eyebrow-light">Programme Subscription</p>
             </Reveal>
             <Reveal delay={0.08} y={28}>
-              <h2 className="display-serif type-h2 mt-5">
-                How to subscribe,
-                <br />
-                <em className="italic text-gold-300">step by step.</em>
+              <h2 className="type-h2 mt-2">
+                How to subscribe
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-7 max-w-lg type-body text-ivory/85">
-                Sponsoring organizations and individual professionals are guided through a clear subscription and nomination process for our 2026 executive training calendar.
+                Organisations nominate staff by email or phone. Individual
+                professionals can register themselves. Either way, four steps get
+                you onto a programme in the 2026 calendar.
               </p>
             </Reveal>
             <Reveal delay={0.24}>
@@ -43,7 +43,7 @@ export default function AdmissionsTeaser() {
                   className="grid grid-cols-[3rem_1fr] items-baseline gap-x-5 border-b rule-light py-5 sm:grid-cols-[4rem_1fr] sm:gap-x-8"
                 >
                   <span className="text-[12px] font-medium tracking-[0.14em] text-gold-300">{step.n}</span>
-                  <h3 className="display-serif type-h3 text-ivory">{step.title}</h3>
+                  <h3 className="type-h3 text-ivory">{step.title}</h3>
                 </li>
               ))}
             </ol>

@@ -3,7 +3,7 @@
 
 /* ============================================================
    GIBS DESIGN SYSTEM — single source of truth
-   The Meridian Horizon · Modern Classicism
+   Modern Classicism
    Global Excellence, African Heart
    ============================================================ */
 @theme {
@@ -63,28 +63,40 @@
   /* Shape scale — architecture over pills */
   --radius-xs: 2px;
   --radius-panel: 4px;
+  --radius-card: 16px;
   --radius-pill: 9999px;
 
   /* Elevation — crisp and rare.
-     Hierarchy: L1 flat editorial → L2 cards → L3 interactive cards → L4 floating
-     surfaces (nav/dialog). Layered tight+soft pairs read as physical depth;
-     one huge blurred shadow reads as plastic — avoid. */
+     Hierarchy: L0 flat editorial → L1 tactile surface → L2 interactive cards → L3 floating/dialog.
+     Layered tight+soft pairs read as physical depth; one huge blurred shadow reads as plastic. */
   --shadow-crisp: 0 1px 2px rgba(18, 18, 18, 0.05);
-  --shadow-lift: 0 28px 60px -30px rgba(18, 18, 18, 0.35);
+  --shadow-lift: 0 24px 48px -20px rgba(0, 32, 9, 0.28), 0 8px 16px -6px rgba(18, 18, 18, 0.06);
   /* L2 — cards: a near contact edge, a brief falloff, a long soft ambient pool. */
   --shadow-card:
     0 1px 2px rgba(18, 18, 18, 0.05),
     0 3px 8px rgba(18, 18, 18, 0.04),
-    0 18px 36px -22px rgba(0, 40, 16, 0.22);
+    0 18px 36px -22px rgba(0, 40, 16, 0.18);
   /* L3 — interactive cards: raised + closer ambient pool. */
   --shadow-card-strong:
     0 2px 4px rgba(18, 18, 18, 0.06),
     0 8px 18px -8px rgba(18, 18, 18, 0.09),
-    0 28px 52px -24px rgba(0, 40, 16, 0.30);
+    0 28px 52px -24px rgba(0, 40, 16, 0.26);
+  /* Spatial architectural shadow for elevated photo planes */
+  --shadow-spatial:
+    0 1px 2px rgba(0, 20, 5, 0.08),
+    0 6px 14px -4px rgba(0, 32, 9, 0.12),
+    0 24px 48px -12px rgba(0, 32, 9, 0.24);
 
   /* Layout */
   --container-page: 1280px;
   --gutter: 1.25rem;
+
+  /* Header height. Single source of truth: the <header> itself, the sticky
+     sub-headers on /programmes and /gallery, and html scroll-padding-top all
+     derive from this. It previously existed only as a --sticky-top token that
+     no component actually referenced, so the real header height was hardcoded
+     in three places and could silently drift from the focus-offset rule. */
+  --header-height: 72px;
 
   /* Motion — durations and easing are inlined where used */
 
@@ -94,13 +106,12 @@
   --z-search: 70;
   --z-concierge: 80;
 
-  /* Sticky offsets (header: 72px; +36px utility bar on xl) */
-  --sticky-top: 72px;
-}
-@media (min-width: 1280px) {
-  :root {
-    --sticky-top: 108px;
-  }
+  /* Sticky offsets. The header is a single 72px bar at every breakpoint — the
+     xl nav moved inside it and the former 36px utility bar was removed, but a
+     stale `@media (min-width:1280px) { --sticky-top: 108px }` override survived
+     that removal. It left the sticky filter panel on /programmes and /gallery
+     floating 35px below the header on desktop while sitting flush on mobile. */
+  --sticky-top: var(--header-height);
 }
 
 /* ---- Semantic token aliases (consumed via arbitrary values) ---- */
@@ -124,6 +135,13 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   max-width: 100%;
+  /* WCAG 2.2 AA 2.4.11 (Focus Not Obscured). The header is `fixed`, so any
+     keyboard-focused element scrolled to the top of the viewport — on route
+     change, in-page anchor, or focus restoration — would land underneath it
+     and become invisible: the focus ring renders but is hidden. Offset by the
+     full sticky offset (not just the bar height) plus 8px so the ring itself
+     clears the header edge, not merely the element box. */
+  scroll-padding-top: calc(var(--sticky-top) + 8px);
 }
 
 /* WCAG 1.4.10: reflow without horizontal scroll at 320px / 200% zoom */
@@ -163,8 +181,11 @@ body {
   border-radius: 2px;
 }
 
+/* In-page anchor targets clear the fixed header. Aligned to --sticky-top so it
+   cannot drift from scroll-padding-top above; it was a hardcoded 120px, a
+   leftover sized for the removed 108px xl header. */
 [id] {
-  scroll-margin-top: 120px;
+  scroll-margin-top: calc(var(--sticky-top) + 8px);
 }
 
 @layer components {
@@ -177,25 +198,16 @@ body {
      GIBS type system — Instrument Serif for display (Modern Editorial), Fraunces fallback, Space Grotesk for UI/body.
      Display weights use Instrument Serif for high-contrast editorial impact; Fraunces remains for refined light cuts.
   ------------------------------------------------------------- */
-  .font-display {
-    font-family: var(--font-display);
-  }
   .fraunces {
     font-family: var(--font-serif);
     font-optical-sizing: auto;
     font-variation-settings: "SOFT" 0, "WONK" 0;
   }
+  /* Arbitrary-size editorial serif — for display moments that sit between the
+     type scale rungs (card titles, figure labels, quote pulls). When a heading
+     DOES match the scale, use .type-h1/h2/h3 alone: they declare family,
+     weight, tracking and line-height, so stacking both is redundant. */
   .display-serif {
-    font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 1.05;
-    text-wrap: balance;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  .type-display {
     font-family: var(--font-display);
     font-weight: 400;
     letter-spacing: -0.01em;
@@ -241,7 +253,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
-  /* Hero headline — Instrument Serif with 3D lighting */
+  /* Hero headline — Instrument Serif: crisp, authoritative editorial typography */
   .hero-title {
     font-family: var(--font-display);
     font-size: clamp(3.2rem, 6.5vw, 5.5rem);
@@ -258,28 +270,15 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    text-shadow:
-      0px 1px 0px rgba(255, 255, 255, 0.4),
-      0px 2px 1px rgba(0, 0, 0, 0.4),
-      0px 4px 3px rgba(0, 0, 0, 0.5),
-      0px 10px 20px rgba(0, 0, 0, 0.7);
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
   .hero-title-gold {
+    color: var(--color-gold-focus, #e2c06b);
     font-weight: 400;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    background: linear-gradient(180deg, #FFF8DC 0%, #E2C06B 40%, #B88E28 85%, #8A6814 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(1px 2px 0px #3d2b05) drop-shadow(2px 5px 10px rgba(0, 0, 0, 0.55));
-  }
-  .type-lead {
-    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
-    line-height: 1.55;
-    text-wrap: pretty;
-    @apply text-muted;
+    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
   .type-body {
     font-size: clamp(0.95rem, 1.5vw, 1.125rem);
@@ -344,14 +343,6 @@ body {
   /* Hero wordmark — architectural letterpress depth: a restrained offset
      edge in forest tones with a soft ambient pool of shadow beneath. Read
      as printed, dimensional type, never bevel or extrusion. */
-  .type-extrude-deep-ivory {
-    text-shadow:
-      0 1px 0 rgba(0, 0, 0, 0.42),
-      1px 2px 0 rgba(0, 24, 7, 0.34),
-      2px 3px 0 rgba(0, 24, 7, 0.24),
-      3px 4px 0 rgba(0, 24, 7, 0.16),
-      0 10px 26px rgba(0, 0, 0, 0.38);
-  }
 
   /* ---------------- Hairline rules ---------------- */
   .rule {
@@ -360,11 +351,7 @@ body {
   .rule-light {
     border-color: rgba(245, 245, 240, 0.18);
   }
-  .rule-gold {
-    border-color: rgba(198, 165, 68, 0.55);
-  }
 
-  /* The Meridian Horizon — signature hairline with meridian marker */
 @keyframes kenburns {
   from { transform: scale(1.02) translateY(0.2%); }
   to   { transform: scale(1.05) translateY(-0.6%); }
@@ -374,36 +361,6 @@ body {
   0% { transform: scale(1); opacity: 0.7; }
   80%, 100% { transform: scale(2.6); opacity: 0; }
 }
-  .meridian {
-    @apply relative block h-px w-full;
-    background: linear-gradient(
-      90deg,
-      transparent 0,
-      rgba(18, 18, 18, 0.18) 12%,
-      rgba(18, 18, 18, 0.18) 88%,
-      transparent 100%
-    );
-  }
-  .meridian::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: var(--meridian-at, 50%);
-    width: 7px;
-    height: 7px;
-    background: var(--color-gold-500);
-    transform: translate(-50%, -50%) rotate(45deg);
-  }
-  .meridian-light {
-    background: linear-gradient(
-      90deg,
-      transparent 0,
-      rgba(245, 245, 240, 0.22) 12%,
-      rgba(245, 245, 240, 0.22) 88%,
-      transparent 100%
-    );
-  }
-
   /* ---------------- Buttons — one system ---------------- */
   .btn {
     @apply inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-pill font-semibold transition-[background-color,color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-2 active:scale-[0.985];
@@ -442,27 +399,44 @@ body {
   }
   /* Hero CTA — the one elevated control. A thin contact edge plus a soft
      ambient drop reads as physically seated, never floating glass. */
-  .btn-lift {
-    @apply bg-forest-600 text-ivory hover:bg-forest-700;
-    box-shadow:
-      0 2px 0 rgba(0, 20, 5, 0.4),
-      0 18px 40px -18px rgba(0, 32, 9, 0.55);
-  }
-  .btn-lift:hover {
-    transform: translateY(-1px);
-    box-shadow:
-      0 2px 0 rgba(0, 20, 5, 0.4),
-      0 22px 48px -18px rgba(0, 32, 9, 0.6);
-  }
-  .btn-lift:active {
-    transform: translateY(0);
-  }
   .btn-gold {
     @apply bg-gold-300 text-forest-950 hover:bg-gold-400;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 0 0 1px rgba(180, 140, 40, 0.25),
+      0 2px 0 rgba(117, 87, 15, 0.35),
+      0 10px 22px -10px rgba(117, 87, 15, 0.35);
   }
+  .btn-gold:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      0 0 0 1px rgba(180, 140, 40, 0.35),
+      0 2px 0 rgba(117, 87, 15, 0.35),
+      0 14px 28px -12px rgba(117, 87, 15, 0.45);
+  }
+  .btn-gold:active {
+    transform: translateY(0) scale(0.985);
+  }
+
   .btn-ink {
     @apply bg-ink text-ivory hover:bg-forest-900;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.15),
+      0 2px 0 rgba(0, 0, 0, 0.4),
+      0 10px 22px -10px rgba(0, 0, 0, 0.45);
   }
+  .btn-ink:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.2),
+      0 2px 0 rgba(0, 0, 0, 0.4),
+      0 14px 28px -12px rgba(0, 0, 0, 0.5);
+  }
+  .btn-ink:active {
+    transform: translateY(0) scale(0.985);
+  }
+
   .btn-outline-light {
     @apply border border-ivory/35 text-ivory hover:border-gold-300 hover:text-gold-300;
   }
@@ -475,6 +449,16 @@ body {
   }
   .btn-outline-ink {
     @apply border border-ink/25 text-ink hover:border-forest-700 hover:bg-forest-600 hover:text-ivory;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 1px 2px rgba(18, 18, 18, 0.04);
+  }
+  .btn-outline-ink:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.18),
+      0 4px 12px -2px rgba(0, 70, 20, 0.22);
+  }
+  .btn-outline-ink:active {
+    transform: translateY(0) scale(0.985);
   }
 
   .link-underline {
@@ -492,8 +476,11 @@ body {
   }
 
   /* ---------------- Forms ---------------- */
+  /* Form labels share the .eyebrow scale — semibold rather than bold, and the
+     same 0.12em tracking — so form labels read as one system with section
+     labels instead of shouting in a different key. */
   .field-label {
-    @apply mb-2 block text-[12px] font-bold uppercase tracking-[0.16em] text-ink;
+    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-ink sm:text-[12px];
   }
   .field-input {
     @apply w-full rounded-panel border border-ink/20 bg-white px-4 py-3.5 text-base text-ink placeholder:text-muted/60 transition-colors duration-200 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-[15px];
@@ -512,13 +499,169 @@ body {
     @apply inline-flex min-h-[44px] items-center rounded-pill border px-4 py-2 text-[13px] font-bold transition-colors duration-200;
   }
 
+  /* Status / category pills — filled and outlined badges.
+     Bold is correct here and deliberately NOT normalised to .eyebrow: these sit
+     on solid colour and need the weight to hold contrast. Size and tracking are
+     pinned so every badge across the site is the same object. */
+  .pill {
+    @apply inline-flex shrink-0 items-center rounded-pill px-3 py-1 text-[11px] font-bold uppercase tracking-[0.12em];
+  }
+  .pill-forest {
+    @apply bg-forest-600 text-ivory;
+  }
+  .pill-stone {
+    @apply bg-stone text-forest-900;
+  }
+  .pill-ivory {
+    @apply border border-ivory/25 text-ivory/90;
+  }
+  .pill-gold-outline {
+    @apply border border-gold-600/50 text-gold-700;
+  }
+
+  /* ---------------- Programme Catalogue Card ----------------
+     Elevation lives in tokens (--shadow-card / --shadow-card-strong) so the
+     catalogue shares the same depth ladder as every other card. Hover and
+     focus-visible share one state: a keyboard user must see the same lift a
+     mouse user does. */
+  .programme-card {
+    border-radius: 0;
+    box-shadow: var(--shadow-card);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }  .programme-card:hover,
+  .programme-card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 1.5px 1.5px 0 #ffffff,
+      inset 0 0 0 1px rgba(0, 107, 27, 0.18),
+      var(--shadow-card-strong);
+  }
+  .programme-card:active {
+    transform: translateY(-1px) scale(0.995);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* Interactive card lift — for cards where the WHOLE surface is the target
+     (stretched link). Hover and focus-within share one state so a keyboard
+     user sees the same lift a mouse user does. Pairs with the reduced-motion
+     neutralisation below. */
+  .card-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card-lift:hover,
+  .card-lift:focus-within {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ---------------- Card typography scale ----------------
+     The catalogue carries denser information than the editorial cards, so it
+     gets its own rung instead of borrowing .type-h3. Both rungs live here so
+     the two card families can never drift apart again — this is what let the
+     programme card fall behind the homepage editorial card in the first place. */
+  .card-title {
+    @apply font-serif text-[16px] font-normal leading-[1.25] tracking-[-0.01em] text-ink transition-colors duration-150 group-hover:text-forest-700 sm:text-[17px];
+  }
+  /* Editorial card label — the single definition behind the homepage featured
+     card's category line. The programme catalogue pulls this same class so the
+     two card families can never drift apart again. It is deliberately
+     forest-600 (not the darker .eyebrow forest-700) because this is the louder,
+     more category-forward register that the editorial card already proved. */
+  .card-eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600 sm:text-[12px];
+  }
+  /* Field labels inside a dense card — one step below .card-eyebrow. */
+  .card-field-label {
+    @apply block text-[9.5px] font-medium uppercase tracking-[0.08em] text-muted;
+  }
+  /* Card action — one base, two registers. "solid" is the filled pill;
+     "ghost" is the outlined treatment that sits closer to the editorial
+     card's text-link register. Swapping the modifier swaps the whole look,
+     so the two can be compared without touching markup. */
+  .card-action {
+    @apply inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap text-[12px] font-medium tracking-[0.02em] transition-[background-color,color,border-color,box-shadow] duration-150 ease-out;
+  }
+  .card-action-solid {
+    @apply rounded-none bg-forest-900 px-3.5 py-1.5 text-ivory shadow-[0_1px_2px_rgba(0,32,9,0.2),inset_0_1px_0_rgba(255,255,255,0.12)] group-hover:bg-forest-600 sm:px-4 sm:py-2;
+  }
+  .card-action-ghost {
+    @apply rounded-none border border-forest-900/30 bg-transparent px-3.5 py-1.5 text-forest-900 group-hover:border-forest-700 group-hover:bg-forest-50 sm:px-4 sm:py-2;
+  }
+  .card-action-quiet {
+    @apply gap-2 rounded-none px-0 py-0 text-[13px] font-bold tracking-normal text-forest-700 group-hover:text-forest-800;
+  }
+
+  /* ---------------- Spatial Depth System (Levels 0–3) ----------------
+     L0: Flat editorial canvas (bg-paper, bg-white)
+     L1: (reserved) tactile surface with 1px top highlight + contact edge
+     L2: Raised architectural cards with dual-layer shadow & 3D preserve (.surface-depth-2, .card-depth)
+     L3: Spatial stages with controlled perspective and Z-axis layers (.perspective-stage, .layer-z-*)
+  ---------------------------------------------------------------------- */
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  /* Perspective Stages */
+  .perspective-stage {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+  }
+  .perspective-hero {
+    perspective: 1400px;
+    transform-style: preserve-3d;
+  }
+
+  /* Z-Plane Layers for multi-plane architectural compositions.
+     transform-origin is pinned to the anchored corner: a translateZ toward the
+     viewer scales the plane about its centre by perspective/(perspective-z),
+     which would slide left-aligned editorial type out of the container gutter
+     and break alignment with the sections below. */
+  .layer-z-deep {
+    transform: translateZ(-20px) scale(1.02);
+    transform-origin: center;
+  }
+  .layer-z-fore {
+    transform: translateZ(28px);
+    transform-origin: left center;
+  }
+  .layer-z-top {
+    transform: translateZ(44px);
+    transform-origin: left top;
+  }
+
+  /* Level 1: Tactile Surface (Clean structural framing) */
+
+  /* Level 2: Tactile Raised Architectural Card (Double-Bezel & Contact Drop) */
+  .surface-depth-2 {
+    background-color: #ffffff;
+    border: 1px solid rgba(18, 18, 18, 0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(0, 32, 9, 0.03),
+      0 1px 3px rgba(18, 18, 18, 0.04),
+      0 8px 20px -6px rgba(0, 32, 9, 0.08),
+      0 20px 40px -16px rgba(0, 40, 16, 0.12);
+    transform-style: preserve-3d;
+    transition:
+      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.35s ease;
+  }
+  .surface-depth-2:hover {
+    transform: translateY(-3px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 1),
+      0 2px 5px rgba(18, 18, 18, 0.05),
+      0 12px 28px -6px rgba(0, 48, 16, 0.12),
+      0 28px 56px -14px rgba(0, 40, 16, 0.18);
+  }
+
+  /* Tactile Floating Institutional Badge */
+
   /* ---------------- Dimensional cards ----------------
-     Fee examples — imprecise survivorship data.
      CARD DEPTH (L3): a physical, sub-3° tilt that trails the pointer; driven
      entirely by CSS variables set from a passive pointermove handler (no
      React re-renders, no layout reads). Disabled for coarse pointers and
-     prefers-reduced-motion (see media queries below).
-  ------------------------------------------------------------- */
+     prefers-reduced-motion. */
   .card-depth {
     transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
     transform-style: preserve-3d;
@@ -628,6 +771,15 @@ body {
   .btn { transform: none !important; }
   .kenburns { animation: none !important; }
   .card-depth { transform: none !important; }
+  .programme-card,
+  .programme-card:hover,
+  .programme-card:focus-visible,
+  .programme-card:active { transform: none !important; transition: none !important; }
+  .card-lift,
+  .card-lift:hover,
+  .card-lift:focus-within { transform: none !important; transition: none !important; }
+  .perspective-stage, .perspective-hero { perspective: none !important; }
+  .layer-z-deep, .layer-z-fore, .layer-z-top { transform: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
@@ -647,5 +799,8 @@ body {
   .kenburns {
     animation-duration: 60s;
     transform-origin: 50% 62%;
+  }
+  .layer-z-deep, .layer-z-fore, .layer-z-top {
+    transform: none !important;
   }
 }

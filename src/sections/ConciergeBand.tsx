@@ -2,7 +2,6 @@ import { Reveal } from "../components/motion";
 import { Link } from "../lib/router";
 import { ArrowUpRight } from "../components/icons";
 import { useConcierge } from "../components/Concierge";
-import { MeridianRule } from "../components/ui";
 
 export default function ConciergeBand() {
   const { setOpen } = useConcierge();
@@ -43,12 +42,11 @@ export default function ConciergeBand() {
           {/* Quote card — the single green moment of this section */}
           <Reveal delay={0.16} y={36} className="lg:col-span-5">
             <figure className="relative bg-forest-800 p-9 text-ivory shadow-card sm:p-12">
-              <MeridianRule light at="82%" className="absolute inset-x-9 top-7 w-auto sm:inset-x-12" />
               <blockquote className="display-serif mt-10 text-[1.55rem] leading-[1.4]">
                 “Welcome to GIBS AI. How can we help you find your way?”
               </blockquote>
               <figcaption className="mt-6 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/55">
-                Intelligent programme &amp; enquiry guide
+                Programme and enquiry guide
               </figcaption>
             </figure>
           </Reveal>

@@ -16,6 +16,11 @@ dist
 *.log
 npm-debug.log*
 
+# local review screenshots (visual evidence, not source)
+after-*.png
+programmes-catalogue-*.png
+comparison-*.png
+
 # OS / IDE
 .DS_Store
 .vscode

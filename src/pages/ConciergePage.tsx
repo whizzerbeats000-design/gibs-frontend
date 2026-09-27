@@ -1,5 +1,5 @@
 import { PageHero } from "../components/PageHero";
-import { BtnLink, MeridianRule } from "../components/ui";
+import { BtnLink } from "../components/ui";
 import { ConciergeConversation, useConcierge } from "../components/Concierge";
 import { Reveal } from "../components/motion";
 import { ChatIcon } from "../components/icons";
@@ -15,7 +15,7 @@ const TOPICS = [
 
 export default function ConciergePage() {
   useSeo({
-    title: "GIBS AI — Intelligent Programme & Institutional Guide",
+    title: "GIBS AI — Ask about programmes and campuses",
     description:
       "GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, campus facilities, and subscription enquiries.",
   });
@@ -24,10 +24,8 @@ export default function ConciergePage() {
   return (
     <>
       <PageHero
-        eyebrow="GIBS AI"
-        title="Intelligent programme"
-        italic="guide."
-        intro="Explore the GIBS 2026 training catalogue, foreign executive destinations, campus facilities, and subscription enquiries with verified official information."
+        title="Find the right programme"
+        intro="Ask about the 2026 training catalogue, overseas destinations, campus facilities or how to subscribe. Answers come from GIBS' own records."
         breadcrumbs={[{ label: "GIBS AI" }]}
       />
 
@@ -40,7 +38,7 @@ export default function ConciergePage() {
                 <span className="flex h-12 w-12 items-center justify-center rounded-pill bg-forest-700 text-gold-300">
                   <ChatIcon className="h-5 w-5" />
                 </span>
-                <h2 className="display-serif type-h2 mt-6 text-ink">
+                <h2 className="type-h2 mt-6 text-ink">
                   Welcome to GIBS AI. How can we help you find your way?
                 </h2>
                 <p className="mt-4 type-body">
@@ -50,13 +48,11 @@ export default function ConciergePage() {
                 </p>
               </div>
 
-              <MeridianRule at="14%" className="my-10" />
-
               <p className="eyebrow">Suggested topics</p>
               <ul className="mt-5 border-t rule">
                 {TOPICS.map((t) => (
                   <li key={t.title} className="border-b rule py-4">
-                    <p className="display-serif type-h3 text-ink">{t.title}</p>
+                    <p className="type-h3 text-ink">{t.title}</p>
                     <p className="mt-1 type-body">{t.body}</p>
                   </li>
                 ))}
@@ -86,10 +82,10 @@ export default function ConciergePage() {
                       GIBS AI
                     </p>
                     <p className="mt-0.5 text-[11px] text-ivory/75">
-                      Intelligent guide · typically replies instantly
+                      Programme and enquiry guide
                     </p>
                   </div>
-                  <span className="hidden rounded-pill border border-ivory/25 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-ivory/90 sm:block">
+                  <span className="pill pill-ivory hidden sm:block">
                     Official Guide
                   </span>
                 </div>

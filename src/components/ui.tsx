@@ -5,9 +5,9 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
-import { Link, useRoute } from "../lib/router";
+import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
-import { Diamond, ChevronRight, ArrowUpRight } from "./icons";
+import { ChevronRight, ArrowUpRight } from "./icons";
 import { Reveal } from "./motion";
 
 /* ---------- Buttons ---------- */
@@ -69,70 +69,12 @@ export function Eyebrow({ children, light = false }: { children: ReactNode; ligh
   return <p className={light ? "eyebrow-light" : "eyebrow"}>{children}</p>;
 }
 
-export function SectionHeading({
-  eyebrow,
-  title,
-  titleItalic,
-  intro,
-  align = "left",
-  light = false,
-  className,
-}: {
-  eyebrow?: string;
-  title: ReactNode;
-  titleItalic?: ReactNode;
-  intro?: ReactNode;
-  align?: "left" | "center";
-  light?: boolean;
-  className?: string;
-}) {
-  return (
-    <div
-      className={cn(
-        "max-w-3xl",
-        align === "center" && "mx-auto text-center",
-        className
-      )}
-    >
-      {eyebrow && (
-        <Reveal>
-          <Eyebrow light={light}>{eyebrow}</Eyebrow>
-        </Reveal>
-      )}
-      <Reveal delay={0.08} y={26}>
-        <h2
-          className={cn(
-            "display-serif type-h2 mt-5",
-            light ? "text-ivory" : "text-ink"
-          )}
-        >
-          {title} {titleItalic && <em className="italic text-forest-700">{titleItalic}</em>}
-        </h2>
-      </Reveal>
-      {intro && (
-        <Reveal delay={0.16} y={20}>
-          <p
-            className={cn(
-              "type-body mt-5",
-              align === "center" && "mx-auto",
-              "max-w-2xl",
-              light ? "text-ivory/85" : "text-muted"
-            )}
-          >
-            {intro}
-          </p>
-        </Reveal>
-      )}
-    </div>
-  );
-}
-
 /* ---------- Breadcrumbs ---------- */
 
 export function Breadcrumbs({ items }: { items: { label: string; to?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px] font-semibold uppercase tracking-[0.14em]">
+      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted sm:text-[12px]">
         <li>
           <Link to="/" className="text-muted transition-colors hover:text-forest-700">
             Home
@@ -171,13 +113,12 @@ export function DataNote({
   return (
     <div
       className={cn(
-        "flex items-start gap-3 border-l-2 pl-4 text-sm leading-relaxed",
+        "border-l-2 pl-4 text-sm leading-relaxed",
         light ? "border-gold-400/70 text-ivory/70" : "border-gold-600 text-muted"
       )}
     >
-      <Diamond className={cn("mt-1.5 h-1.5 w-1.5 shrink-0", light ? "text-gold-400" : "text-gold-600")} />
       <p>
-        <span className={cn("font-bold uppercase tracking-[0.12em]", light ? "text-gold-300" : "text-gold-700")}>
+        <span className={cn("font-semibold", light ? "text-gold-300" : "text-gold-700")}>
           {label}.
         </span>{" "}
         {children ?? "This information will be published by GIBS."}
@@ -202,10 +143,7 @@ export function EmptyState({
   const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
     <div className="flex flex-col items-center border border-line bg-ivory/55 px-6 py-16 text-center">
-      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold-600/40 bg-gold-100/70">
-        <Diamond className="h-2 w-2 text-gold-700" />
-      </span>
-      <Heading className="display-serif type-h3 mt-5 text-ink">{title}</Heading>
+      <Heading className="type-h3 text-ink">{title}</Heading>
       <p className="mt-3 max-w-md type-body text-muted">{body}</p>
       {action && <div className="mt-7">{action}</div>}
     </div>
@@ -223,7 +161,7 @@ export function ErrorState({
 }) {
   return (
     <div role="alert" className="border border-red-800/25 bg-red-50 px-6 py-10 text-center">
-      <h3 className="display-serif type-h3 text-ink">{title}</h3>
+      <h3 className="type-h3 text-ink">{title}</h3>
       <p className="mx-auto mt-3 max-w-md type-body text-muted">{body}</p>
       {onRetry && (
         <Btn variant="outline-ink" size="md" className="mt-6" onClick={onRetry}>
@@ -330,32 +268,6 @@ export function ArrowTextLink({
   );
 }
 
-/** Returns true when the given route is active (top-level match). */
-export function useIsActive(to: string) {
-  const { path } = useRoute();
-  if (to === "/") return path === "/";
-  return path === to || path.startsWith(to + "/");
-}
-
-/* ---------- The Meridian Horizon signature rule ---------- */
-
-export function MeridianRule({
-  light = false,
-  at = "50%",
-  className,
-}: {
-  light?: boolean;
-  at?: string;
-  className?: string;
-}) {
-  return (
-    <span
-      aria-hidden="true"
-      className={cn("meridian", light && "meridian-light", className)}
-      style={{ ["--meridian-at" as string]: at }}
-    />
-  );
-}
 
 /* ---------- Page closings — deliberately varied compositions ---------- */
 
@@ -402,7 +314,6 @@ export function ClosingQuiet({
             </Reveal>
           </div>
         </div>
-        <MeridianRule at="78%" className="mt-16" />
       </div>
     </section>
   );
@@ -479,12 +390,11 @@ export function ClosingJournal({
   return (
     <section className="relative overflow-hidden bg-forest-900 text-ivory">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_120%_at_12%_-20%,rgba(235,211,117,0.12),transparent_55%)]" />
-      <MeridianRule light at="22%" className="absolute inset-x-0 top-0" />
       <div className="container-x relative grid items-center gap-10 py-20 sm:py-24 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <Reveal>
             <Eyebrow light>{eyebrowText}</Eyebrow>
-            <h2 className="display-serif type-h2 mt-6">
+            <h2 className="type-h2 mt-6">
               {quote}
             </h2>
           </Reveal>

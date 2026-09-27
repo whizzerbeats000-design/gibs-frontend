@@ -57,7 +57,7 @@ export default function Admissions() {
         <div className="container-x py-20 sm:py-24">
           <Reveal>
             <p className="eyebrow">How to subscribe</p>
-            <h2 className="display-serif type-h2 mt-5 max-w-3xl text-ink">
+            <h2 className="type-h2 mt-5 max-w-3xl text-ink">
               Six deliberate steps to <em className="italic text-forest-700">capacity building.</em>
             </h2>
           </Reveal>
@@ -68,7 +68,7 @@ export default function Admissions() {
                 className="group grid grid-cols-[3.5rem_1fr] items-baseline gap-5 border-b rule py-7 sm:grid-cols-[5rem_auto_1fr] sm:gap-10"
               >
                 <span className="display-serif text-3xl text-gold-600 sm:text-4xl">{step.n}</span>
-                <h3 className="display-serif type-h3 w-44 shrink-0 text-ink sm:w-52">
+                <h3 className="type-h3 w-44 shrink-0 text-ink sm:w-52">
                   {step.title}
                 </h3>
                 <p className="col-start-2 max-w-xl type-body sm:col-start-auto">
@@ -86,7 +86,7 @@ export default function Admissions() {
           <div className="lg:col-span-7">
             <Reveal>
               <p className="eyebrow">Participation Guidelines</p>
-              <h2 className="display-serif type-h2 mt-5 text-ink">
+              <h2 className="type-h2 mt-5 text-ink">
                 Participant and organizational criteria
               </h2>
               <p className="mt-4 max-w-xl type-body">
@@ -106,18 +106,21 @@ export default function Admissions() {
                 <p className="eyebrow">2026 Training Calendar Cycles</p>
                 <dl className="mt-6">
                   {CALENDAR_CYCLES.map((d) => (
+                    /* dt/dd must be direct children of the grouping <div> inside
+                       a <dl>. They were previously nested one level deeper inside
+                       a flex wrapper, which axe flags as `dlitem` and which is
+                       invalid per the HTML spec — the status chip belongs inside
+                       the <dt> it describes. */
                     <div
                       key={d.k}
                       className="border-b rule py-4 last:border-b-0"
                     >
-                      <div className="flex items-center justify-between">
-                        <dt className="text-[12px] font-bold uppercase tracking-[0.14em] text-forest-800">
-                          {d.k}
-                        </dt>
+                      <dt className="flex items-center justify-between gap-3">
+                        <span className="eyebrow text-forest-800">{d.k}</span>
                         <span className="rounded-full bg-forest-100 px-2.5 py-0.5 text-[11px] font-semibold text-forest-800">
                           {d.status}
                         </span>
-                      </div>
+                      </dt>
                       <dd className="mt-1 text-[13.5px] text-muted">
                         {d.v}
                       </dd>
@@ -125,7 +128,7 @@ export default function Admissions() {
                   ))}
                 </dl>
                 <div className="mt-7 flex flex-wrap gap-4">
-                  <Link to="/programmes" className="group link-underline inline-flex text-sm font-semibold text-forest-700">
+                  <Link to="/programmes" className="group link-underline text-sm font-semibold text-forest-700">
                     Explore all 135 programmes
                   </Link>
                 </div>
@@ -139,7 +142,7 @@ export default function Admissions() {
       <section className="bg-forest-900 text-ivory">
         <div className="container-x grid gap-10 py-16 sm:py-20 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <h2 className="display-serif type-h2">Published Fee Structure</h2>
+            <h2 className="type-h2">Published Fee Structure</h2>
             <p className="mt-4 type-body text-ivory/80">
               All 135 programmes feature transparent, officially approved fees covering course delivery, study materials, executive luncheon, tea breaks, and certificates.
             </p>
@@ -147,7 +150,7 @@ export default function Admissions() {
           <div className="lg:col-span-8">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="border border-white/15 bg-forest-800/60 p-6">
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-gold-300">
+                <span className="eyebrow-light">
                   Domestic / Open Programmes (113)
                 </span>
                 <p className="mt-2 text-2xl font-bold text-white">₦300,000 — ₦800,000</p>
@@ -156,7 +159,7 @@ export default function Admissions() {
                 </p>
               </div>
               <div className="border border-white/15 bg-forest-800/60 p-6">
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-gold-300">
+                <span className="eyebrow-light">
                   Foreign Training Hubs (22)
                 </span>
                 <p className="mt-2 text-2xl font-bold text-white">USD $4,800+ / GBP £4,800</p>
@@ -183,7 +186,7 @@ export default function Admissions() {
         <div className="container-x grid gap-10 py-20 sm:py-24 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="eyebrow">Subscription &amp; Nominations FAQ</p>
-            <h2 className="display-serif type-h2 mt-5 text-ink">Frequently asked questions</h2>
+            <h2 className="type-h2 mt-5 text-ink">Frequently asked questions</h2>
           </div>
           <div className="lg:col-span-8">
             <FaqAccordion items={SUBSCRIPTION_FAQS} />
@@ -199,7 +202,7 @@ export default function Admissions() {
               <ChatIcon className="h-5 w-5" />
             </span>
             <div>
-              <h2 className="display-serif type-h2 text-ink">Need guidance on course selection?</h2>
+              <h2 className="type-h2 text-ink">Need guidance on course selection?</h2>
               <p className="mt-2 max-w-lg type-body">
                 GIBS AI answers instantly and can recommend courses based on sector, cadre, department, and calendar quarter.
               </p>

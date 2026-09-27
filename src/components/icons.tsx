@@ -36,15 +36,6 @@ export function ArrowLeft({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
-export function ArrowDown({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" {...base}>
-      <path d="M12 4v16" />
-      <path d="m6 14 6 6 6-6" />
-    </svg>
-  );
-}
-
 export function ChevronRight({ className = "h-4 w-4" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" {...base}>

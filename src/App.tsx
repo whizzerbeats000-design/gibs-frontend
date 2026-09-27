@@ -22,9 +22,17 @@ import Contact from "./pages/Contact";
 import ConciergePage from "./pages/ConciergePage";
 import NotFound from "./pages/NotFound";
 
-function CurrentRoute() {
-  const { path } = useRoute();
-
+/**
+ * Resolves a path to a page.
+ *
+ * `path` arrives as a prop rather than being read from the router context.
+ * AnimatePresence keeps an exiting child mounted for the length of its exit
+ * animation, and any context read below it would re-render that still-mounted
+ * subtree with the *incoming* path — so the new page would fade out and the
+ * outgoing one would never be seen. Reading the path from props lets React
+ * bail out of the untouched exiting subtree instead.
+ */
+function RouteView({ path }: { path: string }) {
   const programme = matchRoute("/programmes/:slug", path);
   if (programme?.slug) return <ProgrammeDetail slug={programme.slug} />;
 
@@ -137,7 +145,7 @@ function AnimatedRoutes() {
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       >
-        <CurrentRoute />
+        <RouteView path={path} />
       </motion.div>
     </AnimatePresence>
   );

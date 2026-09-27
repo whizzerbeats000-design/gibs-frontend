@@ -12,7 +12,7 @@ export function PageHero({
   imageAlt,
   meta,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: ReactNode;
   italic?: ReactNode;
   intro?: ReactNode;
@@ -41,11 +41,13 @@ export function PageHero({
               <Breadcrumbs items={breadcrumbs} />
             </div>
           )}
-          <Reveal>
-            <p className="eyebrow-light">{eyebrow}</p>
-          </Reveal>
+          {eyebrow && (
+            <Reveal>
+              <p className="eyebrow-light">{eyebrow}</p>
+            </Reveal>
+          )}
           <Reveal delay={0.08} y={28}>
-            <h1 className="display-serif type-h1 type-extrude-ivory mt-5 max-w-4xl">
+            <h1 className="type-h1 type-extrude-ivory mt-5 max-w-4xl">
               {title} {italic && <em className="text-gold-300">{italic}</em>}
             </h1>
           </Reveal>
@@ -66,11 +68,13 @@ export function PageHero({
     <section className="bg-paper">
       <div className="container-x pb-14 pt-[120px] sm:pb-20 sm:pt-[142px] xl:pt-[148px]">
         {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-        <Reveal>
-          <p className="eyebrow">{eyebrow}</p>
-        </Reveal>
+        {eyebrow && (
+          <Reveal>
+            <p className="eyebrow">{eyebrow}</p>
+          </Reveal>
+        )}
         <Reveal delay={0.08} y={28}>
-          <h1 className="display-serif type-h1 mt-5 max-w-4xl text-ink">
+          <h1 className="type-h1 mt-5 max-w-4xl text-ink">
             {title} {italic && <em className="text-forest-700">{italic}</em>}
           </h1>
         </Reveal>

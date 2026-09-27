@@ -1,4 +1,4 @@
-import { BtnLink, Breadcrumbs, MeridianRule } from "../components/ui";
+import { BtnLink, Breadcrumbs } from "../components/ui";
 import { EditorialCard } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { Link, useSeo } from "../lib/router";
@@ -33,7 +33,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
             <div className="lg:col-span-8">
               <Reveal>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                  <span className="rounded-pill border border-gold-600/50 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.16em] text-gold-700">
+                  <span className="pill pill-gold-outline">
                     {article.status}
                   </span>
                   <span className="meta text-forest-600">{article.kicker}</span>
@@ -103,8 +103,6 @@ export default function ArticleDetail({ slug }: { slug: string }) {
                 return <p key={i}>{block.text}</p>;
               })}
             </div>
-
-            <MeridianRule at="50%" className="my-14" />
 
             {/* Author pending */}
             <Reveal>

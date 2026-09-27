@@ -18,9 +18,8 @@ export default function Campus() {
         image={IMAGES.colonnade}
         imageAlt="GIBS Campus and training facilities"
         eyebrow="Campuses & Infrastructure"
-        title="Purpose-Built"
-        italic="learning centers."
-        intro="Modern lecture rooms, multi-purpose conference halls, syndicate breakout rooms, and executive guest facilities across Kwara, Abuja, and Ogun State."
+        title="Three training centres"
+        intro="Lecture rooms, conference halls, syndicate rooms and guest facilities in Ilorin, Abuja and Ibafo, Ogun State."
         breadcrumbs={[{ label: "Campuses" }]}
       />
 
@@ -29,7 +28,7 @@ export default function Campus() {
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">Permanent Centers</p>
-            <h2 className="display-serif type-h2 mt-4 text-ink">
+            <h2 className="type-h2 mt-4 text-ink">
               Three strategic <em className="italic text-forest-700">training hubs.</em>
             </h2>
           </Reveal>
@@ -37,10 +36,10 @@ export default function Campus() {
           <div className="mt-12 space-y-12">
             {CAMPUS_LOCATIONS.map((campus, idx) => (
               <Reveal key={campus.id} delay={idx * 0.08}>
-                <div className="border border-line bg-paper p-8 shadow-card sm:p-10">
+                <div className="surface-depth-2 rounded-panel p-8 sm:p-10">
                   <div className="flex flex-wrap items-center justify-between gap-4 border-b rule pb-6">
                     <div>
-                      <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+                      <span className="eyebrow text-forest-600">
                         Center 0{idx + 1}
                       </span>
                       <h3 className="display-serif mt-1 text-2xl text-ink sm:text-3xl">
@@ -100,7 +99,7 @@ export default function Campus() {
             <div className="lg:col-span-6">
               <Reveal>
                 <p className="eyebrow-light">Training Capacity &amp; Logistics</p>
-                <h2 className="display-serif type-h2 mt-4">
+                <h2 className="type-h2 mt-4">
                   Capacity built for both intensive syndicates &amp; large assemblies
                 </h2>
                 <p className="mt-6 text-[15px] leading-relaxed text-ivory/85">
@@ -137,7 +136,7 @@ export default function Campus() {
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">Infrastructure Overview</p>
-            <h2 className="display-serif type-h2 mt-4 text-ink">
+            <h2 className="type-h2 mt-4 text-ink">
               Comprehensive learning environment
             </h2>
           </Reveal>
@@ -158,9 +157,8 @@ export default function Campus() {
         image={IMAGES.hero}
         alt="GIBS Campus Headquarters"
         eyebrow="Visit GIBS"
-        title="Arrange a visit to"
-        italic="our centers."
-        body="Inspect our lecture rooms, executive conference halls, and guest lodge facilities in Ilorin, Abuja, or Ibafo."
+        title="Book a campus visit"
+        body="See the lecture rooms, conference halls and guest lodge in Ilorin, Abuja or Ibafo before you commit a team to a programme."
         actions={
           <>
             <BtnLink to="/contact?type=Campus+Facility+Booking+%26+Enquiries" variant="gold" size="lg">

@@ -40,7 +40,7 @@ const FOREIGN_HUBS = [
 
 export default function ExecutiveEducation() {
   useSeo({
-    title: "Foreign Executive Training & In-Plant Workshops (2026) — GIBS",
+    title: "Foreign Executive Training & In-Plant Workshops — GIBS",
     description:
       "Explore 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston, plus customized in-plant workshops for organizations.",
   });
@@ -53,9 +53,8 @@ export default function ExecutiveEducation() {
         image={IMAGES.boardroom}
         imageAlt="GIBS Foreign Executive Training Hubs"
         eyebrow="International & Customized Training"
-        title="Global Perspectives."
-        italic="Institutional impact."
-        intro="22 foreign executive programmes across Kigali, Dubai, London, and Houston, alongside customized in-plant workshops tailored for your organization."
+        title="Training abroad and in-plant"
+        intro="Twenty-two foreign executive programmes run in Kigali, Dubai, London and Houston, alongside in-plant workshops built around your organisation's own systems."
         breadcrumbs={[{ label: "Foreign & Executive Training" }]}
         meta={
           <div className="flex flex-wrap gap-3">
@@ -83,7 +82,7 @@ export default function ExecutiveEducation() {
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">4 International Destinations</p>
-            <h2 className="display-serif type-h2 mt-4 text-ink">
+            <h2 className="type-h2 mt-4 text-ink">
               Foreign Executive Training <em className="italic text-forest-700">Hubs.</em>
             </h2>
             <p className="mt-3 max-w-2xl type-body">
@@ -94,7 +93,7 @@ export default function ExecutiveEducation() {
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {FOREIGN_HUBS.map((hub) => (
               <div key={hub.city} className="flex flex-col border border-line bg-paper p-7 shadow-crisp">
-                <span className="rounded-pill bg-forest-600 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-ivory self-start">
+                <span className="pill pill-forest self-start">
                   {hub.coursesCount} Programmes
                 </span>
                 <h3 className="display-serif mt-4 text-2xl text-ink">{hub.city}</h3>
@@ -123,7 +122,7 @@ export default function ExecutiveEducation() {
             <div className="lg:col-span-7">
               <Reveal>
                 <p className="eyebrow-light">Customized In-Plant Delivery</p>
-                <h2 className="display-serif type-h2 mt-4">
+                <h2 className="type-h2 mt-4">
                   Bring GIBS faculty and curriculum directly to your organization
                 </h2>
                 <p className="mt-6 text-[15.5px] leading-relaxed text-ivory/85">
@@ -180,7 +179,7 @@ export default function ExecutiveEducation() {
           <div className="flex flex-wrap items-end justify-between gap-4 border-b rule pb-6">
             <div>
               <p className="eyebrow">2026 Overseas Calendar</p>
-              <h2 className="display-serif type-h2 mt-2 text-ink">
+              <h2 className="type-h2 mt-2 text-ink">
                 All 22 Foreign Training Programmes
               </h2>
             </div>
@@ -199,9 +198,8 @@ export default function ExecutiveEducation() {
         image={IMAGES.city}
         alt="International Executive Training"
         eyebrow="Overseas Subscription"
-        title="Elevate your leadership"
-        italic="on the global stage."
-        body="Contact the GIBS international desk for visa support letters, confirmed itinerary guides, and nomination confirmations."
+        title="Training outside Nigeria"
+        body="Our international desk can issue visa support letters, confirm itineraries and process nominations for the Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, Netherlands and Ghana hubs."
         actions={
           <>
             <BtnLink

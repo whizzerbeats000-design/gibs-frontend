@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link, navigate } from "../lib/router";
+import { Link } from "../lib/router";
 import {
   CONCIERGE_SUGGESTIONS,
   getConciergeReply,
@@ -206,7 +206,7 @@ export function ConciergeConversation({
               )}
             >
               {m.role === "concierge" && (
-                <p className="mb-1.5 text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">
+                <p className="mb-1.5 eyebrow text-forest-600">
                   GIBS AI
                 </p>
               )}
@@ -236,13 +236,13 @@ export function ConciergeConversation({
       <div className="border-t border-line px-4 pt-3">
         {controls && (
           <div className="mb-2 flex items-center justify-between">
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted">
+            <p className="meta">
               Suggested questions
             </p>
             <button
               type="button"
               onClick={reset}
-              className="min-h-[40px] items-center rounded-pill px-2 text-[11px] font-bold uppercase tracking-[0.14em] text-forest-700 underline-offset-2 transition-colors hover:text-forest-800 hover:underline"
+              className="min-h-[40px] items-center rounded-pill px-2 eyebrow underline-offset-2 transition-colors hover:text-forest-800 hover:underline"
             >
               Reset conversation
             </button>
@@ -290,7 +290,7 @@ export function ConciergeConversation({
         </button>
       </form>
       <p className="px-5 pb-3 text-[11px] leading-snug text-muted">
-        Intelligent programme assistant. For official enquiries, GIBS AI routes you directly to the GIBS registry.
+        Answers come from the GIBS programme records. For official enquiries, GIBS AI points you to the registry.
       </p>
     </div>
   );
@@ -363,7 +363,7 @@ export function ConciergeDialog() {
                   </span>
                   GIBS AI
                 </p>
-                <p className="mt-0.5 text-[11px] text-ivory/75">Intelligent guide · typically replies instantly</p>
+                <p className="mt-0.5 text-[11px] text-ivory/75">Programme and enquiry guide</p>
               </div>
               <div className="flex items-center gap-1">
                 <button
@@ -376,7 +376,7 @@ export function ConciergeDialog() {
                     }
                     window.dispatchEvent(new CustomEvent("gibs:concierge-reset"));
                   }}
-                  className="mr-1 min-h-[40px] hidden items-center rounded-pill px-3 text-[11px] font-bold uppercase tracking-[0.14em] text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory sm:inline-flex"
+                  className="mr-1 min-h-[40px] hidden items-center rounded-pill px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory sm:inline-flex"
                 >
                   Reset
                 </button>
@@ -398,8 +398,4 @@ export function ConciergeDialog() {
       )}
     </AnimatePresence>
   );
-}
-
-export function openConciergeRoute() {
-  navigate("/concierge");
 }

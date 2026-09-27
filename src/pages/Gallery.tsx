@@ -21,7 +21,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     id: "arch-1",
     category: "Architecture",
     title: "Sandstone and forest steel",
-    caption: "Travertine, oak and brushed brass — materials chosen to weather beautifully.",
+    caption: "Travertine, oak and brushed brass, chosen to age well in the heat.",
     image: IMAGES.hero,
     alt: "GIBS campus sandstone pavilions and reflecting pool at golden hour",
     aspect: "aspect-[16/9]",
@@ -39,7 +39,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     id: "class-1",
     category: "Classrooms",
     title: "Case rooms",
-    caption: "Where discussion becomes method.",
+    caption: "Case rooms built for discussion rather than lectures.",
     image: IMAGES.library,
     alt: "GIBS library with oak shelving and brass lamps",
     aspect: "aspect-[4/3]",
@@ -66,7 +66,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     id: "fac-2",
     category: "Facilities",
     title: "Convening rooms",
-    caption: "Executives, boards and public dialogue.",
+    caption: "Used for executive sessions, board meetings and public lectures.",
     image: IMAGES.hero,
     alt: "Campus convening space",
     aspect: "aspect-[4/3]",
@@ -163,7 +163,7 @@ function Lightbox({
         {/* Header */}
         <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3 sm:px-5">
           <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">{item.category}</p>
+            <p className="eyebrow text-forest-600">{item.category}</p>
             <h2 className="display-serif text-base text-ink sm:text-lg">{item.title}</h2>
           </div>
           <button
@@ -211,7 +211,7 @@ function Lightbox({
         {/* Caption */}
         <div className="shrink-0 border-t border-line bg-white px-4 py-3 sm:px-5 sm:py-4">
           <p className="text-[13px] leading-relaxed text-muted sm:text-[14px]">{item.caption}</p>
-          <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-muted">
+          <p className="mt-1 meta">
             {index + 1} of {items.length} — {item.category}
           </p>
         </div>
@@ -251,13 +251,12 @@ export default function Gallery() {
           </Reveal>
           <Reveal delay={0.06} y={20}>
             <h1 className="type-h1 mt-4 max-w-3xl text-ink">
-              The campus, <em className="italic text-forest-700">in light.</em>
+              The GIBS campus
             </h1>
           </Reveal>
           <Reveal delay={0.12} y={16}>
             <p className="mt-6 max-w-2xl type-body">
-              A visual journey through the GIBS campus — architecture, classrooms,
-              facilities, student life, events and outdoor spaces.
+              Architecture, classrooms, facilities, events and outdoor spaces at Ilorin, Abuja and Ibafo.
             </p>
           </Reveal>
           <Reveal delay={0.18}>
@@ -267,7 +266,7 @@ export default function Gallery() {
       </section>
 
       {/* Filters */}
-      <section className="sticky top-[72px] z-20 border-y border-line bg-white/95 backdrop-blur-md">
+      <section className="sticky top-[var(--sticky-top)] z-20 border-y border-line bg-white/95 backdrop-blur-md">
         <div className="container-x flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
           {CATEGORIES.map((cat) => (
             <button
@@ -309,8 +308,8 @@ export default function Gallery() {
                     <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
                   </div>
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent p-6 sm:p-8">
-                    <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-gold-300">{filtered[0].category}</p>
-                    <h2 className="display-serif type-h3 mt-2 text-ivory">{filtered[0].title}</h2>
+                    <p className="eyebrow-light">{filtered[0].category}</p>
+                    <h2 className="type-h3 mt-2 text-ivory">{filtered[0].title}</h2>
                     <p className="mt-1 max-w-xl text-[13px] text-ivory/80">{filtered[0].caption}</p>
                   </div>
                 </button>
@@ -335,7 +334,7 @@ export default function Gallery() {
                         <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
                       </div>
                       <div className="mt-4">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">{item.category}</p>
+                        <p className="eyebrow text-forest-600">{item.category}</p>
                         <h3 className="display-serif mt-1 text-lg text-ink">{item.title}</h3>
                         <p className="mt-1 text-[13px] text-muted">{item.caption}</p>
                       </div>
@@ -362,7 +361,7 @@ export default function Gallery() {
                       <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
                     </div>
                     <div className="mt-4">
-                      <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">{filtered[3].category}</p>
+                      <p className="eyebrow text-forest-600">{filtered[3].category}</p>
                       <h3 className="display-serif mt-1 text-lg text-ink">{filtered[3].title}</h3>
                       <p className="mt-1 text-[13px] text-muted">{filtered[3].caption}</p>
                     </div>
@@ -384,7 +383,7 @@ export default function Gallery() {
                           <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
                         </div>
                         <div className="mt-3">
-                          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">{item.category}</p>
+                          <p className="eyebrow text-forest-600">{item.category}</p>
                           <h3 className="display-serif mt-1 text-base text-ink">{item.title}</h3>
                         </div>
                       </button>
@@ -412,7 +411,7 @@ export default function Gallery() {
                         <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
                       </div>
                       <div className="mt-4">
-                        <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-forest-600">{item.category}</p>
+                        <p className="eyebrow text-forest-600">{item.category}</p>
                         <h3 className="display-serif mt-1 text-lg text-ink">{item.title}</h3>
                         <p className="mt-1 text-[13px] text-muted">{item.caption}</p>
                       </div>

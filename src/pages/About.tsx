@@ -31,7 +31,7 @@ export default function About() {
           <blockquote className="display-serif mt-3 text-2xl text-gold-300 sm:text-3xl">
             “{INSTITUTIONAL_DATA.slogan}”
           </blockquote>
-          <p className="mt-2 text-[12px] uppercase tracking-[0.16em] text-ivory/60">
+          <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/60 sm:text-[12px]">
             Goshen International Business School Limited · Incorporated March 17, 2014 (RC 1178333)
           </p>
         </div>
@@ -43,7 +43,7 @@ export default function About() {
           <div className="bg-white p-10 sm:p-14">
             <Reveal>
               <p className="eyebrow">Mission Statement</p>
-              <p className="display-serif type-h3 mt-6 text-ink">
+              <p className="type-h3 mt-6 text-ink">
                 {INSTITUTIONAL_DATA.mission}
               </p>
             </Reveal>
@@ -51,7 +51,7 @@ export default function About() {
           <div className="bg-white p-10 sm:p-14">
             <Reveal delay={0.08}>
               <p className="eyebrow">Vision Statement</p>
-              <p className="display-serif type-h3 mt-6 text-ink">
+              <p className="type-h3 mt-6 text-ink">
                 {INSTITUTIONAL_DATA.vision}
               </p>
             </Reveal>
@@ -64,7 +64,7 @@ export default function About() {
         <div className="container-x py-20 sm:py-24">
           <Reveal>
             <p className="eyebrow">4 Pillars</p>
-            <h2 className="display-serif type-h2 mt-4 text-ink">
+            <h2 className="type-h2 mt-4 text-ink">
               Guiding <em className="italic text-forest-700">Principles.</em>
             </h2>
           </Reveal>
@@ -93,7 +93,7 @@ export default function About() {
           <div className="lg:col-span-6">
             <Reveal>
               <p className="eyebrow">Core Values</p>
-              <h2 className="display-serif type-h2 mt-4 text-ink">What we stand for</h2>
+              <h2 className="type-h2 mt-4 text-ink">What we stand for</h2>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {INSTITUTIONAL_DATA.coreValues.map((val) => (
                   <div key={val} className="flex items-center gap-3 border border-line bg-paper px-4 py-3.5">
@@ -109,7 +109,7 @@ export default function About() {
           <div className="lg:col-span-6">
             <Reveal delay={0.1}>
               <p className="eyebrow">Strategic Focus Areas</p>
-              <h2 className="display-serif type-h2 mt-4 text-ink">Our Mandate</h2>
+              <h2 className="type-h2 mt-4 text-ink">Our Mandate</h2>
               <ul className="mt-8 space-y-4">
                 {INSTITUTIONAL_DATA.strategicFocusAreas.map((area, i) => (
                   <li key={area} className="flex items-start gap-4 border-b rule pb-4">
@@ -128,7 +128,7 @@ export default function About() {
         <div className="container-x">
           <Reveal>
             <p className="eyebrow-light">Official Accreditations &amp; Global Partnerships</p>
-            <h2 className="display-serif type-h2 mt-4">
+            <h2 className="type-h2 mt-4">
               Institutional standing and global reach
             </h2>
           </Reveal>
@@ -168,9 +168,8 @@ export default function About() {
 
       <ClosingQuiet
         eyebrow="Take Advantage of Us"
-        title="Ready to elevate"
-        italic="your workforce?"
-        body="Browse the complete 2026 Training Calendar of 113 Local and 22 Foreign Executive Programmes, or speak with our training advisors."
+        title="Train your team"
+        body="The 2026 Training Calendar lists 113 local and 22 foreign executive programmes. Organisations can nominate staff, or ask our training advisors what fits."
         actions={
           <>
             <BtnLink to="/programmes" variant="primary" size="lg">

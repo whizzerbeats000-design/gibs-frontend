@@ -7,7 +7,7 @@ type LogoProps = {
 };
 
 /**
- * GIBS official logo — served from /images/gibs-logo.png. Replaces the
+ * GIBS official logo — served from /images/gibs-logo.webp. Replaces the
  * hand-drawn SVG seal. Kept as a component so call sites (header, footer,
  * error boundary) share one surface. object-contain preserves the logo's
  * aspect ratio inside whichever box a call site supplies.
@@ -18,10 +18,10 @@ export function HexMark({
 }: LogoProps) {
   return (
     <img
-      src="/images/gibs-logo.png"
+      src="/images/gibs-logo.webp"
       alt={title}
-      width={1310}
-      height={1200}
+      width={256}
+      height={235}
       className={`${className} object-contain`}
     />
   );

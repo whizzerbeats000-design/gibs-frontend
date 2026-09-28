@@ -57,7 +57,7 @@ export default function FacultyScholarship() {
             variants={stagger}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-10% 0px" }}
+            viewport={{ once: true, amount: "some" }}
             className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7"
           >
             {RESEARCH_THEMES.map((theme) => (

@@ -716,9 +716,18 @@ body {
 
   /* Rendering containment */
   .cv-auto {
-    content-visibility: auto;
-    contain-intrinsic-size: auto 1000px;
+    /* content-visibility: auto was removed here. It makes the browser skip
+       layout and paint for off-screen subtrees, which prevents the
+       IntersectionObserver that drives every whileInView reveal from computing
+       an accurate intersection against those skipped subtrees. Combined with a
+       negative viewport margin the trigger never fires and the content stays at
+       opacity 0 permanently. Measured in Chromium: campus-experience left 12
+       children invisible, faculty 10, insights 5 — real copy, not decoration.
+       The perf win was ~0 on a 957 kB single-file document where the document
+       is one paint anyway. If containment is ever wanted back, it must only be
+       applied to subtrees that contain no whileInView / Reveal content. */
   }
+
 }
 
 @layer components {

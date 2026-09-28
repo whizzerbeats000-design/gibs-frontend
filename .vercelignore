@@ -1,0 +1,15 @@
+node_modules
+.git
+.env*
+*.log
+
+# local review screenshots — visual evidence, not part of the site
+after-*.png
+programmes-catalogue-*.png
+comparison-*.png
+
+# build output — Vercel builds from source
+dist
+
+# local browser-audit scripts
+scripts

@@ -39,21 +39,28 @@ export default function Hero() {
           The Z offset lives on a plain wrapper — framer-motion writes
           `style.transform` inline on the animated child, which would
           override a `translateZ` set by class on the same element.
+
+          BRAND NOTE: the campus photograph that lived here was removed. OCR of
+          the source file recovered signage reading "LAGOS BUS[INESS SCHOOL]"
+          on the building — a different institution — which is a brand
+          mismatch on a page whose entire job is establishing GIBS identity.
+          The layered forest-green treatment below is now the sole background.
+          When genuine GIBS photography is available, reintroduce it inside
+          .kenburns and verify it carries no third-party signage first.
         */}
         <div className="layer-z-deep absolute inset-0">
           <motion.div
             style={{ y: bgY, scale: bgScale }}
             className="absolute inset-0 will-change-transform"
           >
-            <div className="kenburns absolute inset-0">
-              <img
-                src="/images/hero-campus.jpg"
-                alt="The GIBS campus at golden hour, sandstone pavilions and reflecting pool with members of the school community walking the promenade"
-                className="h-full w-full object-cover"
-                fetchPriority="high"
-                decoding="async"
-              />
-            </div>
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(120% 90% at 22% 18%, #0d3a19 0%, #072a11 42%, #04170a 74%, #031107 100%)",
+              }}
+              aria-hidden="true"
+            />
             <div className="film-grain" aria-hidden="true" />
           </motion.div>
         </div>

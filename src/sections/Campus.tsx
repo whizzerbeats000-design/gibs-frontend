@@ -40,7 +40,7 @@ export default function Experience() {
               variants={stagger}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true, margin: "-10% 0px" }}
+              viewport={{ once: true, amount: "some" }}
               className="mt-10 border-t rule"
             >
               {CAMPUS_FACILITIES.slice(0, 4).map((f) => (

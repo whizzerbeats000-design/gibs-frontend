@@ -102,7 +102,7 @@ export default function InsightsTeaser() {
             variants={stagger}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-10% 0px" }}
+            viewport={{ once: true, amount: "some" }}
             className={cn(
               "mt-12 grid gap-6",
               others.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"

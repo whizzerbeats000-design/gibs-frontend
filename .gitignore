@@ -25,3 +25,8 @@ comparison-*.png
 .DS_Store
 .vscode
 .idea
+.vercel
+.env*
+
+# stray full-page captures
+scratch-*.png

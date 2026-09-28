@@ -63,7 +63,7 @@ export default function ProgrammeDiscovery() {
           variants={stagger}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-10% 0px" }}
+          viewport={{ once: true, amount: "some" }}
           className="mt-16 space-y-14 sm:mt-20"
         >
           {HOME_PROGRAMME_BANDS.map((band) => (

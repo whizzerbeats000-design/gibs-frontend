@@ -30,7 +30,7 @@ export default function Perspective() {
             variants={staggerSlow}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-10% 0px" }}
+            viewport={{ once: true, amount: "some" }}
             className="lg:col-span-4"
           >
             <motion.p variants={staggerItem} className="mt-1 max-w-md type-body">
@@ -47,7 +47,7 @@ export default function Perspective() {
             variants={stagger}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-8% 0px" }}
+            viewport={{ once: true, amount: "some" }}
             className="lg:col-span-8 lg:pl-10"
           >
             {COMMITMENTS.map((c) => (

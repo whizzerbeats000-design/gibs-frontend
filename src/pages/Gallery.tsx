@@ -245,7 +245,7 @@ export default function Gallery() {
     <>
       {/* Editorial intro */}
       <section className="bg-paper">
-        <div className="container-x pb-12 pt-[112px] sm:pb-16 sm:pt-[132px] lg:pb-20 lg:pt-[148px]">
+        <div className="container-x pb-12 pt-[var(--pt-page)] sm:pb-16 sm:pt-[var(--pt-page-sm)] lg:pb-20 lg:pt-[var(--pt-page-lg)]">
           <Breadcrumbs items={[{ label: "Gallery" }]} />
           <Reveal>
             <p className="eyebrow mt-6">Gallery</p>

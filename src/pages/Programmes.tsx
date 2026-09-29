@@ -70,7 +70,7 @@ export default function ProgrammesPage() {
     <>
       {/* Header section */}
       <section className="bg-paper">
-        <div className="container-x pb-10 pt-[112px] sm:pb-14 sm:pt-[132px] lg:pb-16 lg:pt-[148px]">
+        <div className="container-x pb-10 pt-[var(--pt-page)] sm:pb-14 sm:pt-[var(--pt-page-sm)] lg:pb-16 lg:pt-[var(--pt-page-lg)]">
           <Breadcrumbs items={[{ label: "2026 Training Calendar" }]} />
           <Reveal>
             <p className="eyebrow mt-4">2026 Executive Training Calendar</p>

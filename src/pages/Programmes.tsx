@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { ProgramRow, ProgrammeDirectoryStrip, colsFor } from "../components/cards";
+import { ProgramRow, ProgrammeDirectoryStrip, colsFor, DIRECTORY_GRID } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
 import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
@@ -257,11 +257,11 @@ export default function ProgrammesPage() {
 
           {/* Results summary bar */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-sm">
-            <p className="text-[12.5px] text-muted" aria-live="polite">
+            <h2 className="text-[12.5px] text-muted" aria-live="polite">
               Showing <span className="font-bold text-ink">{filtered.length}</span> of {PROGRAMMES.length} programmes
               {destination !== "All" ? ` · ${destination} Hub` : ""}
               {category !== "All" ? ` · ${category}` : ""}
-            </p>
+            </h2>
             {(category !== "All" || destination !== "All" || query) && (
               <button
                 type="button"
@@ -277,14 +277,14 @@ export default function ProgrammesPage() {
             )}
           </div>
 
-          {/* Programme list — three registers:
+          {/* Programme list — two registers:
               < 9 results: a colsFor(n)-balanced card grid (a handful of cards
                 deserve card substance, and colsFor stops the last row ending
                 in a lone orphan)
-              ≥ 9 results: a compact 3-column directory strip per programme —
-                Identity | when/duration | fee — with the columns aligned down
-                the page so the 135-row catalogue stays scannable. Strips are
-                FLAT on purpose: the pointer tilt stays on individual cards.
+              ≥ 9 results: the compact two-column directory (DIRECTORY_GRID) —
+                each strip is Identity on top with schedule + fee in a bottom
+                bar, so the 135-row catalogue scans by field down each column
+                and stands at roughly half its one-up height.
               Below lg the full ProgramRow card owns every row (single column
               on phones, two-up on tablet); the strip only exists at lg+. */}
           {(() => {
@@ -309,7 +309,7 @@ export default function ProgrammesPage() {
                 <div
                   className={
                     asDirectory
-                      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-1 lg:gap-y-3"
+                      ? DIRECTORY_GRID
                       : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
                   }
                 >
@@ -324,7 +324,7 @@ export default function ProgrammesPage() {
                   animate="visible"
                   className={
                     asDirectory
-                      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-1 lg:gap-y-3"
+                      ? DIRECTORY_GRID
                       : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
                   }
                 >

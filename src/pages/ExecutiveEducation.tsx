@@ -1,6 +1,6 @@
 import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingImmersive } from "../components/ui";
-import { ProgramRow, ProgrammeDirectoryStrip } from "../components/cards";
+import { ProgramRow, ProgrammeDirectoryStrip, DIRECTORY_GRID } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
@@ -78,7 +78,7 @@ export default function ExecutiveEducation() {
       />
 
       {/* 4 International Hubs Grid */}
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-white section-y">
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">4 International Destinations</p>
@@ -116,7 +116,7 @@ export default function ExecutiveEducation() {
       </section>
 
       {/* In-Plant Customized Workshops */}
-      <section className="border-y border-line bg-forest-900 py-20 text-ivory">
+      <section className="border-y border-line bg-forest-900 section-y text-ivory">
         <div className="container-x">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
@@ -174,7 +174,7 @@ export default function ExecutiveEducation() {
       </section>
 
       {/* All 22 Foreign Programmes List */}
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-white section-y">
         <div className="container-x">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b rule pb-6">
             <div>
@@ -186,7 +186,7 @@ export default function ExecutiveEducation() {
             <p className="meta">{foreignProgrammes.length} International Courses</p>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-4 border-t rule pt-6 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-1 lg:gap-y-3">
+          <div className={"mt-6 border-t rule pt-6 " + DIRECTORY_GRID}>
             {foreignProgrammes.map((p, idx) => (
               <div key={p.id}>
                 <div className="lg:hidden">

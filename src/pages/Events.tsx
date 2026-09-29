@@ -96,7 +96,7 @@ export default function Events() {
       />
 
       <section className="bg-white">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           {/* Filters */}
           <div className="flex flex-wrap gap-2.5" role="group" aria-label="Filter events by category">
             {CATEGORIES.map((cat) => (

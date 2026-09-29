@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 /* ============================================================
@@ -287,6 +286,16 @@ body {
   /* ---------------- Layout ---------------- */
   .container-x {
     @apply mx-auto w-full max-w-[1280px] px-(--gutter-x);
+  }
+  /* Section / band vertical rhythm — token-driven, responsive via @theme.
+     Sections set the fuller rhythm; bands (sub-sections, hero bodies, footer
+     bands) sit at the tighter band-y which is equal for sm+ so adjacent band
+     stacking stays even. */
+  .section-y {
+    padding-block: var(--section-y);
+  }
+  .band-y {
+    padding-block: var(--band-y);
   }
 
   /* ---------------- Typography roles ----------------

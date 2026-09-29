@@ -61,7 +61,7 @@ export default function About() {
 
       {/* Guiding Principles (4 Pillars) */}
       <section className="paper-grain bg-paper">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">4 Pillars</p>
             <h2 className="type-h2 mt-4 text-ink">
@@ -88,7 +88,7 @@ export default function About() {
 
       {/* Core Values & Strategic Focus */}
       <section className="border-y border-line bg-white">
-        <div className="container-x grid gap-14 py-20 sm:py-24 lg:grid-cols-12">
+        <div className="container-x section-y grid gap-14 lg:grid-cols-12">
           {/* Core Values */}
           <div className="lg:col-span-6">
             <Reveal>
@@ -124,7 +124,7 @@ export default function About() {
       </section>
 
       {/* Accreditations & Technical Partner */}
-      <section className="bg-forest-950 py-20 text-ivory">
+      <section className="bg-forest-950 section-y text-ivory">
         <div className="container-x">
           <Reveal>
             <p className="eyebrow-light">Official Accreditations &amp; Global Partnerships</p>

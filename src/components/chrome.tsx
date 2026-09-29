@@ -466,7 +466,7 @@ function Newsletter() {
 export function GlobalFooter() {
   return (
     <footer className="relative border-t-2 border-gold-500/30 bg-forest-950 text-ivory">
-      <div className="container-x py-20 sm:py-24">
+      <div className="container-x band-y">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <div className="flex items-center gap-4">

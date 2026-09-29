@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Reveal, stagger, staggerItem } from "../components/motion";
+import { Reveal, Stagger, staggerItem } from "../components/motion";
 import { ArrowTextLink, BtnLink, EmptyState } from "../components/ui";
 import { Link } from "../lib/router";
 import { ArrowUpRight } from "../components/icons";
@@ -14,7 +14,7 @@ export default function InsightsTeaser() {
   if (!featured) {
     return (
       <section id="insights" className="paper-grain cv-auto relative bg-paper">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow">News &amp; Insights</p>
@@ -42,7 +42,7 @@ export default function InsightsTeaser() {
 
   return (
     <section id="insights" className="paper-grain cv-auto relative bg-paper">
-      <div className="container-x py-20 sm:py-24">
+      <div className="container-x section-y">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <Reveal>
@@ -99,11 +99,7 @@ export default function InsightsTeaser() {
 
         {/* Secondary — editorial rows with subtle surface elevation */}
         {others.length > 0 && (
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: "some" }}
+          <Stagger
             className={cn(
               "mt-12 grid gap-6",
               others.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"
@@ -131,7 +127,7 @@ export default function InsightsTeaser() {
                 </span>
               </motion.article>
             ))}
-          </motion.div>
+          </Stagger>
         )}
       </div>
     </section>

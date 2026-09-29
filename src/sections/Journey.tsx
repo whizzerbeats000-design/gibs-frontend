@@ -7,7 +7,7 @@ export default function AdmissionsTeaser() {
   return (
     <section id="subscription" className="cv-auto relative overflow-hidden bg-forest-800 text-ivory">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_88%_-20%,rgba(235,211,117,0.16),transparent_50%)]" />
-      <div className="container-x relative py-20 sm:py-24">
+      <div className="container-x relative section-y">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>

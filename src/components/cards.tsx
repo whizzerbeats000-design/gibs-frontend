@@ -17,39 +17,50 @@ export function colsFor(n: number): 1 | 2 | 3 {
   return n % 3 === 1 ? 2 : 3;
 }
 
-/** Compact directory row used on the /programmes catalogue at lg+. Each row is
-    one programme split into three aligned columns — Identity | when/duration |
-    fee — so scans down a column line up. Unlike ProgramRow it never truncates
-    titles and carries no action chrome beyond the quiet arrow. Hidden
-    (lg:hidden) below lg where the full ProgramRow card stays in charge. */
+/** Grid used for the full-catalogue directory register (≥ 9 results). Below lg
+    ProgramRow cards run single-column on phones, two-up on tablet; at lg two
+    compact strip columns sit side by side so scanning stays aligned and the
+    page stays roughly half its one-up height. Single definition shared by
+    /programmes and /executive-education — keep it in sync here. */
+export const DIRECTORY_GRID =
+  "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-2 lg:gap-x-4 lg:gap-y-3";
+
+/** Compact directory card used on the /programmes catalogue at lg+. Each card
+    is one programme split into an identity block on top and a schedule + fee
+    bar below — a two-up-friendly shape (Identity | when/duration | fee cannot
+    fit three aligned full-width columns at half the page width). Unlike
+    ProgramRow it never truncates titles and carries no action chrome beyond the
+    quiet arrow. Hidden (lg:hidden) below lg where the full ProgramRow card
+    stays in charge. */
 export function ProgrammeDirectoryStrip({ programme }: { programme: Programme }) {
   const isForeign = programme.destination !== "Local";
   return (
     <Link
       to={`/programmes/${programme.slug}`}
-      className="group block border border-line bg-white shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card"
+      className="group flex h-full flex-col border border-line bg-white shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card"
     >
-      <div className="grid gap-x-8 gap-y-3 px-6 py-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,0.7fr)] lg:items-center">
-        {/* Identity */}
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span className="card-eyebrow">{programme.category}</span>
-            {isForeign && (
-              <>
-                <span className="meta text-muted/70" aria-hidden="true">
-                  ·
-                </span>
-                <span className="meta text-gold-700">{programme.destination} Hub</span>
-              </>
-            )}
-          </div>
-          <h3 className="card-title mt-1.5">{programme.title}</h3>
-          <p className="mt-1 font-serif text-[12px] tracking-[0.04em] text-gold-700">
-            {programme.code}
-          </p>
+      {/* Identity */}
+      <div className="px-5 pt-4">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="card-eyebrow">{programme.category}</span>
+          {isForeign && (
+            <>
+              <span className="meta text-muted/70" aria-hidden="true">
+                ·
+              </span>
+              <span className="meta text-gold-700">{programme.destination} Hub</span>
+            </>
+          )}
         </div>
+        <h3 className="card-title mt-1.5">{programme.title}</h3>
+        <p className="mt-1 font-serif text-[12px] tracking-[0.04em] text-gold-700">
+          {programme.code}
+        </p>
+      </div>
 
-        {/* When / duration */}
+      {/* When / duration + Fee — pinned to the card baseline so a row's pairs
+          line up regardless of how many lines the identity block ran. */}
+      <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-t border-line/70 px-5 py-3.5 transition-colors duration-150 group-hover:border-forest-600/35">
         <div className="min-w-0">
           <span className="card-field-label">Schedule &amp; Duration</span>
           <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink">
@@ -60,11 +71,10 @@ export function ProgrammeDirectoryStrip({ programme }: { programme: Programme })
           </p>
         </div>
 
-        {/* Fee */}
-        <div className="flex min-w-0 items-center justify-between gap-3 lg:justify-end">
-          <div className="min-w-0 lg:text-right">
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <div className="min-w-0 text-right">
             <span className="card-field-label">Standard Tuition</span>
-            <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink sm:text-[18px]">
+            <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink">
               {programme.fees}
             </span>
           </div>
@@ -159,7 +169,7 @@ export function ProgramRow({
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-line/70 pt-3 transition-colors duration-150 group-hover:border-forest-600/35">
         <div className="min-w-0 shrink">
           <span className="card-field-label">Standard Tuition</span>
-          <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink whitespace-nowrap sm:text-[18px]">
+          <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink sm:text-[18px]">
             {programme.fees}
           </span>
         </div>

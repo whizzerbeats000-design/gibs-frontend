@@ -179,11 +179,11 @@ export const FACULTY_ADVISORS: FacultyAdvisor[] = [
 /* ---------------- 4. Image Assets ---------------- */
 
 export const IMAGES = {
-  hero: "/images/hero-campus.webp",
+  hero: "/images/campus-colonnade.webp",
   colonnade: "/images/campus-colonnade.webp",
   library: "/images/library-interior.webp",
   boardroom: "/images/library-interior.webp",
-  city: "/images/hero-campus.webp",
+  city: "/images/campus-colonnade.webp",
   lecture: "/images/library-interior.webp",
   seminar: "/images/campus-colonnade.webp",
   books: "/images/library-interior.webp",
@@ -7319,7 +7319,7 @@ export const ARTICLES: Article[] = [
     title: "Regulatory Compliance Monitoring and Consumer Protection in Utility Sectors",
     dek: "Examining the intersections of tariff setting, quality of experience, and sustainable economic growth.",
     image: IMAGES.city,
-    alt: "Urban infrastructure and utilities governance in Nigeria",
+    alt: "GIBS campus sandstone architecture in focus",
     status: "Published",
     blocks: [
       {

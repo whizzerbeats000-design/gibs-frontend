@@ -74,7 +74,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Overview & Quick Facts */}
       <section id="overview" className="bg-paper">
-        <div className="container-x grid grid-cols-1 gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-14">
+        <div className="container-x section-y grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-7">
             <Reveal>
               <div className="flex flex-wrap items-center gap-2.5">
@@ -120,7 +120,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                     to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
                     variant="primary"
                     size="lg"
-                    className="mt-7 w-full"
+                    className="mt-7 w-full whitespace-normal px-4 text-sm sm:px-7 sm:text-[15px]"
                   >
                     Subscribe / Nominate Candidates
                     <ArrowUpRight className="h-4 w-4" />
@@ -130,7 +130,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                       to="/contact?type=Customized+In-Plant+Workshop+Request"
                       variant="outline-ink"
                       size="md"
-                      className="mt-3 w-full"
+                      className="mt-3 w-full whitespace-normal"
                     >
                       Request In-Plant Customized Edition
                     </BtnLink>
@@ -144,7 +144,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Audience & Outcomes */}
       <section id="audience" className="border-y border-line bg-white">
-        <div className="container-x grid grid-cols-1 gap-14 py-20 sm:py-24 lg:grid-cols-2 lg:gap-20">
+        <div className="container-x section-y grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <p className="eyebrow">Target Participants</p>
             <h2 className="type-h2 mt-4 text-ink">
@@ -179,7 +179,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Structure & Modules */}
       <section id="curriculum" className="paper-grain bg-paper">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Curriculum Architecture</p>
             <h2 className="type-h2 mt-4 max-w-3xl text-ink">
@@ -220,7 +220,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Delivery & Venues */}
       <section id="delivery" className="bg-white">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Delivery &amp; Venues</p>
             <h2 className="type-h2 mt-4 text-ink">
@@ -247,7 +247,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Enrolment & FAQs */}
       <section id="faq" className="border-t border-line bg-paper">
-        <div className="container-x grid gap-10 py-20 sm:py-24 lg:grid-cols-12">
+        <div className="container-x section-y grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="eyebrow">Frequently Asked Questions</p>
             <h2 className="type-h2 mt-4 text-ink">Registration &amp; logistics</h2>
@@ -263,7 +263,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Bottom CTA */}
       <section id="enrolment" className="relative overflow-hidden bg-forest-900 text-ivory">
-        <div className="container-x relative flex flex-col items-start gap-8 py-16 sm:flex-row sm:items-center sm:justify-between sm:py-20">
+        <div className="container-x band-y relative flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="eyebrow-light">Subscription Desk</p>
             <h2 className="type-h2 mt-3">
@@ -289,7 +289,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Related Programmes */}
       <section className="bg-forest-950 text-ivory">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="type-h2">Related 2026 Programmes</h2>
             <Link

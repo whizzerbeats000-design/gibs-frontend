@@ -25,7 +25,7 @@ export default function Faculty() {
 
       {/* Governing Council & Board Summary */}
       <section className="border-b border-line bg-white">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-7">
               <Reveal>
@@ -66,7 +66,7 @@ export default function Faculty() {
       </section>
 
       {/* Official Faculty / Advisors Designation Structure */}
-      <section className="paper-grain bg-paper py-20 sm:py-24">
+      <section className="paper-grain bg-paper section-y">
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">Academic Board &amp; Advisory Structure</p>
@@ -78,7 +78,7 @@ export default function Faculty() {
             </p>
           </Reveal>
 
-          <div className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+          <div className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
             {FACULTY_ADVISORS.map((advisor) => (
               <Reveal key={advisor.id} delay={advisor.id * 0.03}>
                 <div className="border-t rule pt-5">
@@ -92,7 +92,7 @@ export default function Faculty() {
       </section>
 
       {/* Accreditations Banner */}
-      <section className="border-t border-line bg-white py-16">
+      <section className="border-t border-line bg-white section-y">
         <div className="container-x">
           <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-4">

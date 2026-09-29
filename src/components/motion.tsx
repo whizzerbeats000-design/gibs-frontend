@@ -1,5 +1,5 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import type { ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 export const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -31,42 +31,79 @@ export const staggerSlow: Variants = {
   },
 };
 
+/* Reveal only waits on the observer as long as it takes to confirm position.
+   If the observer never fires — headless jumps, throttled tabs, interrupted
+   frames — this timer settles the content into its visible state anyway, so a
+   section can never stay at opacity 0 forever. */
+const REVEAL_FALLBACK_MS = 1200;
+
+function useRevealed() {
+  const reduce = useReducedMotion();
+  const [revealed, setRevealed] = useState(false);
+  const elRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (reduce) {
+      /* Reduced motion renders the settled state directly, skipping animation.
+         `MotionConfig reducedMotion="user"` is not enough on its own: it
+         suppresses transform animations but still runs the opacity transition,
+         so every reveal would remain subject to the same fade-and-stagger queue
+         as a full-motion visit. A measured 9-second wait for a card deep in a
+         135-item list is exactly the movement-and-delay burden reduced-motion
+         exists to remove. */
+      setRevealed(true);
+      return;
+    }
+    const el = elRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setRevealed(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setRevealed(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.01 }
+    );
+    io.observe(el);
+    const timer = window.setTimeout(() => {
+      setRevealed(true);
+      io.disconnect();
+    }, REVEAL_FALLBACK_MS);
+    return () => {
+      io.disconnect();
+      window.clearTimeout(timer);
+    };
+  }, [reduce]);
+
+  const setRef = useCallback((el: HTMLElement | null) => {
+    elRef.current = el;
+  }, []);
+
+  return { setRef, revealed, reduce };
+}
+
 type RevealProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
   y?: number;
-  once?: boolean;
-  as?: "div" | "section" | "li" | "span";
 };
 
-export function Reveal({
-  children,
-  className,
-  delay = 0,
-  y = 28,
-  once = true,
-}: RevealProps) {
-  const reduce = useReducedMotion();
+export function Reveal({ children, className, delay = 0, y = 28 }: RevealProps) {
+  const { setRef, revealed, reduce } = useRevealed();
 
-  /* When the visitor prefers reduced motion, render the settled state and skip
-     the animation entirely. `MotionConfig reducedMotion="user"` is not enough on
-     its own: it suppresses transform animations but still runs the opacity
-     transition, so every reveal remained subject to the same fade-and-stagger
-     queue as a full-motion visit. A measured 9-second wait for a card deep in a
-     135-item list is exactly the kind of movement-and-delay burden reduced-motion
-     exists to remove, and depending on an IntersectionObserver for basic
-     legibility is fragile — if the observer never fires, the content stays at
-     opacity 0 permanently. Returning a plain element makes the final state the
-     default and the animation strictly additive. */
   if (reduce) return <div className={className}>{children}</div>;
 
   return (
     <motion.div
+      ref={setRef}
       className={className}
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once, amount: "some" }}
+      initial={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y }}
+      animate={revealed ? { opacity: 1, y: 0 } : { opacity: 0, y }}
       transition={{ duration: 0.9, ease: EASE, delay }}
     >
       {children}
@@ -74,3 +111,42 @@ export function Reveal({
   );
 }
 
+type StaggerProps = {
+  children?: ReactNode;
+  className?: string;
+  variants?: Variants;
+  as?: "div" | "ul";
+};
+
+const staggerTags = { div: motion.div, ul: motion.ul } as const;
+
+/** Variant container with the same guaranteed-resolve behaviour as `Reveal`:
+ *  children holding `staggerItem` variants stay hidden only until the observer
+ *  (or the fallback timer) releases them. `as="ul"` keeps list children valid. */
+export function Stagger({ children, className, variants = stagger, as = "div" }: StaggerProps) {
+  const { setRef, revealed, reduce } = useRevealed();
+  const Tag = as;
+
+  if (reduce) return <Tag className={className}>{children}</Tag>;
+
+  const MotionTag = staggerTags[as];
+  return (
+    <MotionTag
+      ref={setRef}
+      className={className}
+      variants={variants}
+      initial="hidden"
+      animate={revealed ? "visible" : "hidden"}
+    >
+      {children}
+    </MotionTag>
+  );
+}
+
+export function StaggerSlow({ children, className }: { children?: ReactNode; className?: string }) {
+  return (
+    <Stagger className={className} variants={staggerSlow}>
+      {children}
+    </Stagger>
+  );
+}

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Link } from "../lib/router";
 import { PROGRAMMES, HOME_PROGRAMME_BANDS } from "../lib/data";
-import { Reveal, stagger, staggerItem } from "../components/motion";
+import { Reveal, Stagger, staggerItem } from "../components/motion";
 import { Eyebrow } from "../components/ui";
 import { ArrowUpRight } from "../components/icons";
 
@@ -39,7 +39,7 @@ function ProgrammePanel({ slug }: { slug: string }) {
 export default function ProgrammeDiscovery() {
   return (
     <section id="programmes" className="cv-auto relative bg-white">
-      <div className="container-x py-20 sm:py-24">
+      <div className="container-x section-y">
         <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
           <div className="lg:col-span-8">
             <Reveal>
@@ -59,13 +59,7 @@ export default function ProgrammeDiscovery() {
         </div>
 
         {/* Editorial category bands */}
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: "some" }}
-          className="mt-16 space-y-14 sm:mt-20"
-        >
+        <Stagger className="mt-16 space-y-14 sm:mt-20">
           {HOME_PROGRAMME_BANDS.map((band) => (
             <motion.section
               key={band.band}
@@ -85,7 +79,7 @@ export default function ProgrammeDiscovery() {
               </div>
             </motion.section>
           ))}
-        </motion.div>
+        </Stagger>
 
         <div className="mt-16 flex flex-wrap items-center gap-x-9 gap-y-4 border-t rule pt-9">
           <Link to="/programmes" className="btn btn-primary btn-lg">

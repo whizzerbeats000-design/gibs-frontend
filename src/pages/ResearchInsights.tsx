@@ -34,7 +34,7 @@ export default function ResearchInsights() {
       {/* Featured */}
       {featured && (
         <section className="bg-white">
-          <div className="container-x py-20 sm:py-24">
+          <div className="container-x section-y">
             <Reveal>
               <p className="meta text-forest-600">{featured.kicker} · {featured.status}</p>
             </Reveal>
@@ -84,7 +84,7 @@ export default function ResearchInsights() {
 
       {/* Theme navigation */}
       <section className="paper-grain border-y border-line bg-paper">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Browse by theme</p>
           </Reveal>
@@ -101,7 +101,7 @@ export default function ResearchInsights() {
 
       {/* Forthcoming listing */}
       <section className="bg-white">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Forthcoming</p>
             <h2 className="type-h2 mt-5 text-ink">

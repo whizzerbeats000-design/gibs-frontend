@@ -23,7 +23,7 @@ export default function EventDetail({ slug }: { slug: string }) {
           breadcrumbs={[{ label: "Events", to: "/events" }, { label: "Event" }]}
         />
         <section className="bg-white">
-          <div className="container-x py-16 sm:py-24">
+          <div className="container-x band-y">
             <EmptyState
               headingLevel={2}
               title="No official event found"
@@ -55,7 +55,7 @@ export default function EventDetail({ slug }: { slug: string }) {
         breadcrumbs={[{ label: "Events", to: "/events" }, { label: event.title }]}
       />
       <section className="bg-white">
-        <div className="container-x py-16 sm:py-24">
+        <div className="container-x band-y">
           <div className="grid gap-10 lg:grid-cols-12">
             <div className="lg:col-span-7">
               <dl className="border-t rule">

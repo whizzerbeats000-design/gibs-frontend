@@ -30,7 +30,7 @@ export default function ConciergePage() {
       />
 
       <section className="bg-white">
-        <div className="container-x grid gap-12 py-16 sm:py-20 lg:grid-cols-12 lg:gap-12">
+        <div className="container-x section-y grid gap-12 lg:grid-cols-12 lg:gap-12">
           {/* LEFT — identity and topics */}
           <div className="order-2 lg:order-1 lg:col-span-5">
             <Reveal>

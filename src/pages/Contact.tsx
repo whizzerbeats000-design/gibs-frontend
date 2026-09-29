@@ -95,7 +95,7 @@ export default function Contact() {
       />
 
       <section className="bg-white">
-        <div className="container-x grid min-w-0 gap-14 py-16 sm:py-24 lg:grid-cols-12 lg:gap-16">
+        <div className="container-x section-y grid min-w-0 gap-14 lg:grid-cols-12 lg:gap-16">
           {/* Form */}
           <div className="min-w-0 lg:col-span-7">
             {status === "success" ? (
@@ -273,7 +273,7 @@ export default function Contact() {
                         <li key={em}>
                           <a
                             href={`mailto:${em}`}
-                            className="flex items-center gap-2 text-[13.5px] font-medium text-forest-700 hover:underline"
+                            className="flex min-h-6 items-center gap-2 text-[13.5px] font-medium text-forest-700 hover:underline"
                           >
                             <MailIcon className="h-3.5 w-3.5" />
                             {em}

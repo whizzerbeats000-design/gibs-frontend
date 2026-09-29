@@ -82,7 +82,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
 
       {/* Body — editorial measure */}
       <article className="bg-paper">
-        <div className="container-x py-16 sm:py-24">
+        <div className="container-x band-y">
           <div className="mx-auto max-w-[68ch]">
             <Reveal>
               <div className="border-l-2 border-gold-500 bg-ivory/60 px-6 py-5 text-[14px] leading-[1.8] text-muted">
@@ -130,7 +130,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
 
       {/* Related reading */}
       <section className="border-t border-line bg-white">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="type-h3 text-ink">Continue reading</h2>
             <Link

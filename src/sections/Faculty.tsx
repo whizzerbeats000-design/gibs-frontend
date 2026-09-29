@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Reveal, stagger, staggerItem } from "../components/motion";
+import { Reveal, Stagger, staggerItem } from "../components/motion";
 import { ThemeCard } from "../components/cards";
 import { ArrowTextLink, DataNote } from "../components/ui";
 import { RESEARCH_THEMES, IMAGES, imageSet } from "../lib/data";
@@ -7,7 +7,7 @@ import { RESEARCH_THEMES, IMAGES, imageSet } from "../lib/data";
 export default function FacultyScholarship() {
   return (
     <section id="faculty" className="cv-auto relative bg-white">
-      <div className="container-x py-20 sm:py-24">
+      <div className="container-x section-y">
         <div className="grid gap-14 lg:grid-cols-12 lg:gap-12">
           <div className="lg:col-span-5">
             <Reveal>
@@ -54,19 +54,13 @@ export default function FacultyScholarship() {
             </Reveal>
           </div>
 
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: "some" }}
-            className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7"
-          >
+          <Stagger className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7">
             {RESEARCH_THEMES.map((theme) => (
               <motion.div key={theme.title} variants={staggerItem}>
                 <ThemeCard title={theme.title} blurb={theme.blurb} />
               </motion.div>
             ))}
-          </motion.div>
+          </Stagger>
         </div>
       </div>
     </section>

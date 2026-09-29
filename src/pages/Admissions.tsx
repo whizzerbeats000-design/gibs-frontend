@@ -54,7 +54,7 @@ export default function Admissions() {
 
       {/* Process timeline */}
       <section className="bg-paper">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">How to subscribe</p>
             <h2 className="type-h2 mt-5 max-w-3xl text-ink">
@@ -82,7 +82,7 @@ export default function Admissions() {
 
       {/* Requirements + dates */}
       <section className="border-y border-line bg-white">
-        <div className="container-x grid gap-14 py-20 sm:py-24 lg:grid-cols-12">
+        <div className="container-x section-y grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-7">
             <Reveal>
               <p className="eyebrow">Participation Guidelines</p>
@@ -140,7 +140,7 @@ export default function Admissions() {
 
       {/* Fees & Investment */}
       <section className="bg-forest-900 text-ivory">
-        <div className="container-x grid gap-10 py-16 sm:py-20 lg:grid-cols-12">
+        <div className="container-x section-y grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <h2 className="type-h2">Published Fee Structure</h2>
             <p className="mt-4 type-body text-ivory/80">
@@ -183,7 +183,7 @@ export default function Admissions() {
 
       {/* FAQs */}
       <section className="bg-paper">
-        <div className="container-x grid gap-10 py-20 sm:py-24 lg:grid-cols-12">
+        <div className="container-x section-y grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="eyebrow">Subscription &amp; Nominations FAQ</p>
             <h2 className="type-h2 mt-5 text-ink">Frequently asked questions</h2>
@@ -196,7 +196,7 @@ export default function Admissions() {
 
       {/* Concierge access */}
       <section className="border-y border-line bg-white">
-        <div className="container-x flex flex-col items-start gap-7 py-14 sm:flex-row sm:items-center sm:justify-between">
+        <div className="container-x band-y flex flex-col items-start gap-7 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-start gap-5">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-pill bg-forest-50 text-forest-700">
               <ChatIcon className="h-5 w-5" />

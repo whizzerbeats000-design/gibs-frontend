@@ -24,7 +24,7 @@ export default function Campus() {
       />
 
       {/* 3 Permanent Centers */}
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-white section-y">
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">Permanent Centers</p>
@@ -76,7 +76,7 @@ export default function Campus() {
 
                   <div className="mt-6 border-t rule pt-6">
                     <p className="meta mb-3">Facility Highlights</p>
-                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                       {campus.highlights.map((h) => (
                         <div key={h} className="flex items-center gap-2 text-[13.5px] text-muted">
                           <Diamond className="h-1.5 w-1.5 shrink-0 text-forest-600" />
@@ -93,7 +93,7 @@ export default function Campus() {
       </section>
 
       {/* Capacity & Off-Campus Logistics */}
-      <section className="border-y border-line bg-forest-900 py-20 text-ivory">
+      <section className="border-y border-line bg-forest-900 section-y text-ivory">
         <div className="container-x">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-6">
@@ -132,7 +132,7 @@ export default function Campus() {
       </section>
 
       {/* Standard Facilities Grid */}
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-white section-y">
         <div className="container-x">
           <Reveal>
             <p className="eyebrow">Infrastructure Overview</p>
@@ -141,7 +141,7 @@ export default function Campus() {
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {CAMPUS_FACILITIES.map((f) => (
               <div key={f.name} className="border border-line bg-paper p-6 shadow-crisp">
                 <Diamond className="h-2 w-2 text-forest-600" />

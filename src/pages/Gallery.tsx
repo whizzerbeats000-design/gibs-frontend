@@ -23,7 +23,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     title: "Sandstone and forest steel",
     caption: "Travertine, oak and brushed brass, chosen to age well in the heat.",
     image: IMAGES.hero,
-    alt: "GIBS campus sandstone pavilions and reflecting pool at golden hour",
+    alt: "GIBS sandstone architecture at golden hour",
     aspect: "aspect-[16/9]",
   },
   {
@@ -67,8 +67,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Facilities",
     title: "Convening rooms",
     caption: "Used for executive sessions, board meetings and public lectures.",
-    image: IMAGES.hero,
-    alt: "Campus convening space",
+    image: IMAGES.library,
+    alt: "GIBS interior convening space",
     aspect: "aspect-[4/3]",
   },
   {
@@ -94,8 +94,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Events",
     title: "The Forum",
     caption: "Lectures and public dialogue in the convening hall.",
-    image: IMAGES.hero,
-    alt: "Forum hall for public lectures",
+    image: IMAGES.library,
+    alt: "GIBS interior for lectures and public dialogue",
     aspect: "aspect-[16/9]",
   },
   {
@@ -285,7 +285,7 @@ export default function Gallery() {
 
       {/* Editorial image layouts */}
       <section className="bg-white">
-        <div className="container-x py-12 sm:py-16">
+        <div className="container-x band-y">
           {/* Sophisticated editorial layouts: mix of full-bleed, two-col, asymmetrical */}
           <div className="grid gap-6 sm:gap-8">
             {/* Feature: full-bleed architecture */}

@@ -5,10 +5,12 @@ import type {
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
+import { cloneElement, isValidElement } from "react";
 import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
-import { ChevronRight, ArrowUpRight } from "./icons";
+import { ChevronRight, ChevronDown, ArrowUpRight } from "./icons";
 import { Reveal } from "./motion";
+import { imageSet } from "../lib/data";
 
 /* ---------- Buttons ---------- */
 
@@ -160,7 +162,7 @@ export function ErrorState({
   onRetry?: () => void;
 }) {
   return (
-    <div role="alert" className="border border-red-800/25 bg-red-50 px-6 py-10 text-center">
+    <div role="alert" className="border border-error/25 bg-error-bg px-6 py-10 text-center">
       <h3 className="type-h3 text-ink">{title}</h3>
       <p className="mx-auto mt-3 max-w-md type-body text-muted">{body}</p>
       {onRetry && (
@@ -201,19 +203,30 @@ export function Field({
   hint?: string;
   children: ReactNode;
 }) {
+  const describedBy = error
+    ? `${htmlFor}-error`
+    : hint
+      ? `${htmlFor}-hint`
+      : undefined;
+  const control =
+    isValidElement<{ "aria-describedby"?: string }>(children) && describedBy
+      ? cloneElement(children, {
+          "aria-describedby": children.props["aria-describedby"] ?? describedBy,
+        })
+      : children;
   return (
     <div>
       <label htmlFor={htmlFor} className="field-label">
         {label} {required && <span className="text-gold-600" aria-hidden="true">*</span>}
       </label>
-      {children}
+      {control}
       {hint && !error && (
         <p id={`${htmlFor}-hint`} className="mt-1.5 text-[13px] text-muted">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${htmlFor}-error`} role="alert" className="mt-1.5 text-[13px] font-medium text-red-800">
+        <p id={`${htmlFor}-error`} role="alert" className="mt-1.5 text-[13px] font-medium text-error">
           {error}
         </p>
       )}
@@ -229,9 +242,17 @@ export function TextInput({ invalid, className, ...props }: InputProps) {
 type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & { invalid?: boolean };
 export function SelectInput({ invalid, className, children, ...props }: SelectProps) {
   return (
-    <select className={cn("field-input appearance-none", invalid && "field-input-error", className)} {...props}>
-      {children}
-    </select>
+    <div className="relative">
+      <select
+        className={cn("field-input appearance-none pr-10", invalid && "field-input-error", className)}
+        {...props}
+      >
+        {children}
+      </select>
+      <span aria-hidden="true" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted">
+        <ChevronDown className="h-4 w-4" />
+      </span>
+    </div>
   );
 }
 
@@ -340,10 +361,11 @@ export function ClosingImmersive({
   return (
     <section className="relative isolate overflow-hidden bg-forest-950">
       <img
-        src={image}
+        {...imageSet(image)}
         alt={alt}
         loading="lazy"
         decoding="async"
+        sizes="100vw"
         className="absolute inset-0 h-full w-full object-cover"
       />
       <div className="film-grain" aria-hidden="true" />

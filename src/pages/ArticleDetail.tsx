@@ -2,7 +2,7 @@ import { BtnLink, Breadcrumbs } from "../components/ui";
 import { EditorialCard } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { Link, useSeo } from "../lib/router";
-import { getArticle, relatedArticles, ARTICLES } from "../lib/data";
+import { getArticle, relatedArticles, ARTICLES, imageSet } from "../lib/data";
 import { ArrowLeft, ArrowUpRight } from "../components/icons";
 import NotFound from "./NotFound";
 
@@ -66,8 +66,9 @@ export default function ArticleDetail({ slug }: { slug: string }) {
             <figure>
               <div className="relative aspect-[21/9] overflow-hidden">
                 <img
-                  src={article.image}
+                  {...imageSet(article.image)}
                   alt={article.alt}
+                  sizes="100vw"
                   className="absolute inset-0 h-full w-full object-cover"
                   decoding="async"
                 />

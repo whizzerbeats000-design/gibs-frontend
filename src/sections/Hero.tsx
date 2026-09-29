@@ -125,7 +125,7 @@ export default function Hero() {
             className="max-w-[620px] pb-8 sm:pb-12 lg:pb-16"
           >
             <h1
-              className="hero-title"
+              className="type-h1"
               aria-label="Goshen International Business School"
             >
               <span className="block overflow-hidden pb-[0.1em] -mb-[0.1em]">

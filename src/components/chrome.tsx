@@ -20,7 +20,7 @@ export function SkipLink() {
         main?.focus();
         main?.scrollIntoView();
       }}
-      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-panel focus:bg-forest-600 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-ivory"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[var(--z-skip)] focus:rounded-panel focus:bg-forest-600 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-ivory"
     >
       Skip to content
     </a>
@@ -508,7 +508,7 @@ export function GlobalFooter() {
                     <li key={l.label}>
                       <Link
                         to={l.to}
-                        className="group inline-flex items-center gap-1.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory"
+                        className="group inline-flex min-h-[44px] items-center gap-1.5 py-2.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory"
                       >
                         <span className="h-px w-0 bg-gold-300 transition-all duration-300 group-hover:w-4" />
                         {l.label}

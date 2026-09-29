@@ -4,7 +4,7 @@ import { BtnLink, EmptyState, ArrowTextLink, ClosingJournal } from "../component
 import { Reveal } from "../components/motion";
 import { EditorialCard } from "../components/cards";
 import { Link, useSeo } from "../lib/router";
-import { RESEARCH_THEMES, ARTICLES } from "../lib/data";
+import { RESEARCH_THEMES, ARTICLES, imageSet } from "../lib/data";
 import { cn } from "../utils/cn";
 
 export default function ResearchInsights() {
@@ -47,10 +47,11 @@ export default function ResearchInsights() {
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <img
-                      src={featured.image}
+                      {...imageSet(featured.image)}
                       alt={featured.alt}
-                      loading="lazy"
+                      loading="eager"
                       decoding="async"
+                      sizes="(min-width: 1024px) 55vw, 100vw"
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
                     />
                     <div className="absolute inset-0 bg-forest-900/25" />

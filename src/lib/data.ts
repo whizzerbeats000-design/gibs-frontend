@@ -190,6 +190,18 @@ export const IMAGES = {
   study: "/images/library-interior.webp",
 };
 
+/* srcset for the 1376×768 photographic assets. A 640w derivative ships
+   alongside each original (same encoding settings, scaled down only); the
+   browser picks the closest candidate for the render slot — no resizing at
+   runtime and no 1.4MB of decoding on small screens. */
+export function imageSet(url: string) {
+  const w640 = url.replace(/\.webp$/, "-640.webp");
+  return {
+    src: url,
+    srcSet: `${w640} 640w, ${url} 1376w`,
+  };
+}
+
 /* ---------------- 5. Navigation Links ---------------- */
 
 export const NAV_LINKS = [

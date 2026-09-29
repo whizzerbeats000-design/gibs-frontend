@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import { Breadcrumbs } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { IMAGES } from "../lib/data";
+import { IMAGES, imageSet } from "../lib/data";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { CloseIcon, ArrowLeft, ArrowRight } from "../components/icons";
 
@@ -144,7 +144,7 @@ function Lightbox({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/90 p-3 backdrop-blur-sm sm:p-8">
+    <div className="fixed inset-0 z-[var(--z-lightbox)] flex items-center justify-center bg-ink/90 p-3 backdrop-blur-sm sm:p-8">
       {/* Backdrop close */}
       <button
         type="button"
@@ -183,8 +183,9 @@ function Lightbox({
           onTouchEnd={onTouchEnd}
         >
           <img
-            src={item.image}
+            {...imageSet(item.image)}
             alt={item.alt}
+            sizes="100vw"
             className="max-h-[55vh] w-full object-contain"
             style={{ maxHeight: "min(55vh, 55dvh)" }}
           />
@@ -266,7 +267,7 @@ export default function Gallery() {
       </section>
 
       {/* Filters */}
-      <section className="sticky top-[var(--sticky-top)] z-20 border-y border-line bg-white/95 backdrop-blur-md">
+      <section className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] border-y border-line bg-white/95 backdrop-blur-md">
         <div className="container-x flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
           {CATEGORIES.map((cat) => (
             <button
@@ -298,10 +299,11 @@ export default function Gallery() {
                 >
                   <div className={`relative ${filtered[0].aspect} w-full overflow-hidden`}>
                     <img
-                      src={filtered[0].image}
+                      {...imageSet(filtered[0].image)}
                       alt={filtered[0].alt}
                       loading="eager"
                       decoding="async"
+                      sizes="(min-width: 1024px) 50vw, 100vw"
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                     />
                     <div className="absolute inset-0 bg-forest-950/15 transition-colors group-hover:bg-forest-950/5" />
@@ -324,10 +326,11 @@ export default function Gallery() {
                     <button type="button" onClick={() => openLightbox(1 + i)} aria-label={`View ${item.title} — opens in lightbox`} className="group block w-full text-left">
                       <div className={`relative ${item.aspect} overflow-hidden`}>
                         <img
-                          src={item.image}
+                          {...imageSet(item.image)}
                           alt={item.alt}
                           loading="lazy"
                           decoding="async"
+                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                         />
                         <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-forest-950/5" />
@@ -351,10 +354,11 @@ export default function Gallery() {
                   <button type="button" onClick={() => openLightbox(3)} className="group block w-full text-left">
                     <div className={`relative ${filtered[3].aspect} overflow-hidden lg:aspect-[4/3]`}>
                       <img
-                        src={filtered[3].image}
+                        {...imageSet(filtered[3].image)}
                         alt={filtered[3].alt}
                         loading="lazy"
                         decoding="async"
+                        sizes="(min-width: 1024px) 55vw, 100vw"
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                       />
                       <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-transparent" />
@@ -373,10 +377,11 @@ export default function Gallery() {
                       <button type="button" onClick={() => openLightbox(4 + i)} aria-label={`View ${item.title} — opens in lightbox`} className="group block w-full text-left">
                         <div className={`relative ${item.aspect} overflow-hidden`}>
                           <img
-                            src={item.image}
+                            {...imageSet(item.image)}
                             alt={item.alt}
                             loading="lazy"
                             decoding="async"
+                            sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
                             className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                           />
                           <div className="absolute inset-0 bg-forest-950/10" />
@@ -401,10 +406,11 @@ export default function Gallery() {
                     <button type="button" onClick={() => openLightbox(6 + i)} className="group block w-full text-left">
                       <div className={`relative ${item.aspect} overflow-hidden`}>
                         <img
-                          src={item.image}
+                          {...imageSet(item.image)}
                           alt={item.alt}
                           loading="lazy"
                           decoding="async"
+                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                         />
                         <div className="absolute inset-0 bg-forest-950/10" />

@@ -192,7 +192,7 @@ export default function ProgrammesPage() {
           </div>
 
           {/* Sticky filter & search container (Matching Admissions card elevation) */}
-          <div className="sticky top-[var(--sticky-top)] z-20 -mx-5 mb-6 border-b border-line bg-paper/95 px-5 py-3.5 backdrop-blur-md sm:mx-0 sm:my-6 sm:rounded-none sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
+          <div className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] -mx-5 mb-6 border-b border-line bg-paper/95 px-5 py-3.5 backdrop-blur-md sm:mx-0 sm:my-6 sm:rounded-none sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
             <div className="flex flex-col gap-3">
               {/* Search bar with warm editorial border & subtle inset highlight */}
               <div className="relative w-full">

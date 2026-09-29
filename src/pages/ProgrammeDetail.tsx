@@ -74,7 +74,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Overview & Quick Facts */}
       <section id="overview" className="bg-paper">
-        <div className="container-x grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-14">
+        <div className="container-x grid grid-cols-1 gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-7">
             <Reveal>
               <div className="flex flex-wrap items-center gap-2.5">
@@ -103,7 +103,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + 16px)" }}>
+            <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + var(--subnav-height) + 16px)" }}>
               <Reveal y={32}>
                 <div className="border border-line bg-white p-7 shadow-card sm:p-8">
                   <p className="eyebrow">Programme Summary</p>
@@ -144,7 +144,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Audience & Outcomes */}
       <section id="audience" className="border-y border-line bg-white">
-        <div className="container-x grid gap-14 py-20 sm:py-24 lg:grid-cols-2 lg:gap-20">
+        <div className="container-x grid grid-cols-1 gap-14 py-20 sm:py-24 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <p className="eyebrow">Target Participants</p>
             <h2 className="type-h2 mt-4 text-ink">
@@ -187,7 +187,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <ol className="border-t rule lg:col-span-7">
               {programme.indicativeStructure?.map((item, i) => (
                 <li key={i} className="grid grid-cols-[2.75rem_1fr] gap-4 border-b rule py-6">

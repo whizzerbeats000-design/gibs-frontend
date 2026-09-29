@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Reveal, stagger, staggerItem } from "../components/motion";
 import { ThemeCard } from "../components/cards";
 import { ArrowTextLink, DataNote } from "../components/ui";
-import { RESEARCH_THEMES, IMAGES } from "../lib/data";
+import { RESEARCH_THEMES, IMAGES, imageSet } from "../lib/data";
 
 export default function FacultyScholarship() {
   return (
@@ -42,10 +42,11 @@ export default function FacultyScholarship() {
             <Reveal delay={0.3}>
               <div className="relative mt-12 aspect-[5/3] overflow-hidden">
                 <img
-                  src={IMAGES.lecture}
+                  {...imageSet(IMAGES.lecture)}
                   alt="The GIBS library — where scholarship and study meet"
                   loading="lazy"
                   decoding="async"
+                  sizes="(min-width: 1024px) 50vw, 100vw"
                   className="absolute inset-0 h-full w-full object-cover"
                 />
                 <div className="absolute inset-0 bg-forest-900/25" />

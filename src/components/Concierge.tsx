@@ -353,7 +353,7 @@ export function ConciergeDialog() {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 32, opacity: 0, scale: 0.99 }}
             transition={{ duration: 0.42, ease: EASE }}
-            className="absolute inset-x-0 bottom-0 flex h-[86dvh] flex-col border-t border-line bg-paper shadow-lift sm:bottom-8 sm:left-auto sm:right-8 sm:h-[640px] sm:max-h-[85vh] sm:w-[400px] sm:overflow-hidden sm:rounded-panel sm:border"
+            className="absolute inset-x-0 bottom-0 flex h-[86dvh] flex-col border-t border-line bg-paper shadow-lift sm:bottom-8 sm:left-auto sm:right-8 sm:h-[640px] sm:max-h-[85dvh] sm:w-[400px] sm:overflow-hidden sm:rounded-panel sm:border"
           >
             <div className="flex items-center justify-between gap-4 bg-forest-800 px-5 py-4 text-ivory">
               <div>

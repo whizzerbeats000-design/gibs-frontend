@@ -43,7 +43,7 @@ export default function Faculty() {
                   <span className="rounded-pill bg-stone px-4 py-1.5 text-[12.5px] font-bold text-ink">
                     Management Team: 20 Advisors &amp; Experts
                   </span>
-                  <span className="rounded-pill bg-gold-100 px-4 py-1.5 text-[12.5px] font-bold text-gold-800">
+                  <span className="rounded-pill bg-gold-100 px-4 py-1.5 text-[12.5px] font-bold text-gold-700">
                     Chairman of the Council
                   </span>
                 </div>

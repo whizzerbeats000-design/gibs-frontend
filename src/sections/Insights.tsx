@@ -3,7 +3,7 @@ import { Reveal, stagger, staggerItem } from "../components/motion";
 import { ArrowTextLink, BtnLink, EmptyState } from "../components/ui";
 import { Link } from "../lib/router";
 import { ArrowUpRight } from "../components/icons";
-import { ARTICLES } from "../lib/data";
+import { ARTICLES, imageSet } from "../lib/data";
 import { cn } from "../utils/cn";
 
 export default function InsightsTeaser() {
@@ -67,10 +67,11 @@ export default function InsightsTeaser() {
           >
             <div className="relative aspect-[16/10] overflow-hidden rounded-xs shadow-crisp lg:col-span-7">
               <img
-                src={featured.image}
+                {...imageSet(featured.image)}
                 alt={featured.alt}
                 loading="lazy"
                 decoding="async"
+                sizes="(min-width: 1024px) 55vw, 100vw"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-forest-950/20 transition-colors duration-300 group-hover:bg-forest-950/10" />

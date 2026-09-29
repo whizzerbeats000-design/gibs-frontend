@@ -101,7 +101,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[var(--z-search)] flex items-start justify-center px-4 pt-[8vh] sm:pt-[12vh]"
+          className="fixed inset-0 z-[var(--z-search)] flex items-start justify-center px-4 pt-[8dvh] sm:pt-[12dvh]"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -122,7 +122,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 12, opacity: 0 }}
             transition={{ duration: 0.35, ease: EASE }}
-            className="relative flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden border border-line bg-paper shadow-lift sm:rounded-panel"
+            className="relative flex max-h-[80dvh] w-full max-w-2xl flex-col overflow-hidden border border-line bg-paper shadow-lift sm:rounded-panel"
           >
             <div className="flex items-center gap-3 border-b border-line px-5 focus-within:border-forest-600/50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-forest-600/40">
               <SearchIcon className="h-5 w-5 shrink-0 text-forest-700" />

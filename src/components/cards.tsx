@@ -3,7 +3,7 @@ import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
 import { ArrowUpRight, ArrowRight, PlusIcon, CalendarIcon, UsersIcon } from "./icons";
 import { useCardDepth } from "./depth";
-import { type Programme } from "../lib/data";
+import { type Programme, imageSet } from "../lib/data";
 
 /* ---------- Programme card (index pages / programmes catalog) ---------- */
 
@@ -141,10 +141,11 @@ export function EditorialCard({
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-xs shadow-crisp">
         <img
-          src={image}
+          {...imageSet(image)}
           alt={alt}
           loading="lazy"
           decoding="async"
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
         />
         <div className="absolute inset-0 bg-forest-900/20 transition-colors duration-300 group-hover:bg-forest-900/10" />

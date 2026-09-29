@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Breadcrumbs } from "./ui";
 import { Reveal } from "./motion";
+import { imageSet } from "../lib/data";
 
 export function PageHero({
   eyebrow,
@@ -26,8 +27,9 @@ export function PageHero({
       <section className="relative overflow-hidden bg-forest-950 text-ivory">
         <div className="absolute inset-0">
           <img
-            src={image}
+            {...imageSet(image)}
             alt={imageAlt ?? ""}
+            sizes="100vw"
             className="h-full w-full object-cover"
             decoding="async"
           />

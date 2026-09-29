@@ -577,11 +577,24 @@ body {
      catalogue shares the same depth ladder as every other card. Hover and
      focus-visible share one state: a keyboard user must see the same lift a
      mouse user does. */
+  /* Individual programme cards carry a sub-3° pointer tilt (driven by the
+     useCardDepth --rx/--ry vars, not React) on FINE pointers only; the shadow
+     itself never depends on hover, so tablet/touch still reads as a raised
+     layered surface. Keyboard focus keeps the same lift without the tilt. */
   .programme-card {
     border-radius: 0;
     box-shadow: var(--shadow-card);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }  .programme-card:hover,
+  }
+  @media (hover: hover) {
+    .programme-card:hover {
+      transform: perspective(1100px) translateY(-3px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      box-shadow:
+        inset 1.5px 1.5px 0 #ffffff,
+        inset 0 0 0 1px rgba(0, 107, 27, 0.18),
+        var(--shadow-card-strong);
+    }
+    }
   .programme-card:focus-visible {
     transform: translateY(-3px);
     box-shadow:

@@ -1,6 +1,6 @@
 import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingImmersive } from "../components/ui";
-import { ProgramRow } from "../components/cards";
+import { ProgramRow, ProgrammeDirectoryStrip } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
@@ -186,9 +186,16 @@ export default function ExecutiveEducation() {
             <p className="meta">{foreignProgrammes.length} International Courses</p>
           </div>
 
-          <div className="mt-6 border-t rule">
+          <div className="mt-6 grid grid-cols-1 gap-4 border-t rule pt-6 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-1 lg:gap-y-3">
             {foreignProgrammes.map((p, idx) => (
-              <ProgramRow key={p.id} programme={p} index={idx} />
+              <div key={p.id}>
+                <div className="lg:hidden">
+                  <ProgramRow programme={p} index={idx} />
+                </div>
+                <div className="hidden lg:block">
+                  <ProgrammeDirectoryStrip programme={p} />
+                </div>
+              </div>
             ))}
           </div>
         </div>

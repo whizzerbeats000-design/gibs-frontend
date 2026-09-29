@@ -7,6 +7,77 @@ import { type Programme, imageSet } from "../lib/data";
 
 /* ---------- Programme card (index pages / programmes catalog) ---------- */
 
+/** Rebalance a small catalogue so the last row never ends in a lone orphan:
+    1 → full width, 2–4 → two-up, and the 3-column directory only when its
+    remainder is 0 or 2 (three-up otherwise leaves a single cell stranded at
+    the end of the last row). */
+export function colsFor(n: number): 1 | 2 | 3 {
+  if (n === 1) return 1;
+  if (n <= 4) return 2;
+  return n % 3 === 1 ? 2 : 3;
+}
+
+/** Compact directory row used on the /programmes catalogue at lg+. Each row is
+    one programme split into three aligned columns — Identity | when/duration |
+    fee — so scans down a column line up. Unlike ProgramRow it never truncates
+    titles and carries no action chrome beyond the quiet arrow. Hidden
+    (lg:hidden) below lg where the full ProgramRow card stays in charge. */
+export function ProgrammeDirectoryStrip({ programme }: { programme: Programme }) {
+  const isForeign = programme.destination !== "Local";
+  return (
+    <Link
+      to={`/programmes/${programme.slug}`}
+      className="group block border border-line bg-white shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card"
+    >
+      <div className="grid gap-x-8 gap-y-3 px-6 py-5 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,0.7fr)] lg:items-center">
+        {/* Identity */}
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span className="card-eyebrow">{programme.category}</span>
+            {isForeign && (
+              <>
+                <span className="meta text-muted/70" aria-hidden="true">
+                  ·
+                </span>
+                <span className="meta text-gold-700">{programme.destination} Hub</span>
+              </>
+            )}
+          </div>
+          <h3 className="card-title mt-1.5">{programme.title}</h3>
+          <p className="mt-1 font-serif text-[12px] tracking-[0.04em] text-gold-700">
+            {programme.code}
+          </p>
+        </div>
+
+        {/* When / duration */}
+        <div className="min-w-0">
+          <span className="card-field-label">Schedule &amp; Duration</span>
+          <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink">
+            {programme.schedule}
+            {programme.duration ? (
+              <span className="text-muted"> · {programme.duration}</span>
+            ) : null}
+          </p>
+        </div>
+
+        {/* Fee */}
+        <div className="flex min-w-0 items-center justify-between gap-3 lg:justify-end">
+          <div className="min-w-0 lg:text-right">
+            <span className="card-field-label">Standard Tuition</span>
+            <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink sm:text-[18px]">
+              {programme.fees}
+            </span>
+          </div>
+          <span className="card-action card-action-quiet shrink-0">
+            <span>View</span>
+            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export function ProgramRow({
   programme,
   action = "quiet",
@@ -22,12 +93,14 @@ export function ProgramRow({
   className?: string;
 }) {
   const isForeign = programme.destination !== "Local";
+  const depthRef = useCardDepth<HTMLAnchorElement>(2.25);
 
   return (
     <Link
+      ref={depthRef}
       to={`/programmes/${programme.slug}`}
       className={cn(
-        "programme-card group relative block overflow-hidden bg-white p-4 sm:p-5",
+        "programme-card card-depth card-spot group relative block overflow-hidden bg-white p-4 sm:p-5",
         className
       )}
     >

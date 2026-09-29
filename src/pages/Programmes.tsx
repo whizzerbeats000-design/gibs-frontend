@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { ProgramRow } from "../components/cards";
+import { ProgramRow, ProgrammeDirectoryStrip, colsFor } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
 import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
@@ -26,6 +26,15 @@ const listStagger: Variants = {
     },
   }),
 };
+
+/* Below this many results the catalogue renders as a colsFor(n)-balanced card
+   grid (a handful of hits deserve card substance); at/above it, as the compact
+   3-column directory strips. */
+const DIRECTORY_MIN = 9;
+
+/* Static class map so Tailwind sees the full literals (no runtime-constructed
+   class names). */
+const GRID_COLS = { 1: "lg:grid-cols-1", 2: "lg:grid-cols-2", 3: "lg:grid-cols-3" } as const;
 
 export default function ProgrammesPage() {
   const reduceMotion = useReducedMotion();
@@ -268,55 +277,96 @@ export default function ProgrammesPage() {
             )}
           </div>
 
-          {/* Programme list with explicit card spacing */}
-          {filtered.length > 0 ? (
-            reduceMotion ? (
-              /* Reduced motion: render the settled list directly. The stagger
-                 below is a nicety; it must never be load-bearing for
-                 legibility. */
-              <div className="grid grid-cols-1 gap-4 sm:gap-4.5">
-                {filtered.map((p, i) => (
-                  <div key={p.id}>
+          {/* Programme list — three registers:
+              < 9 results: a colsFor(n)-balanced card grid (a handful of cards
+                deserve card substance, and colsFor stops the last row ending
+                in a lone orphan)
+              ≥ 9 results: a compact 3-column directory strip per programme —
+                Identity | when/duration | fee — with the columns aligned down
+                the page so the 135-row catalogue stays scannable. Strips are
+                FLAT on purpose: the pointer tilt stays on individual cards.
+              Below lg the full ProgramRow card owns every row (single column
+              on phones, two-up on tablet); the strip only exists at lg+. */}
+          {(() => {
+            const asDirectory = filtered.length >= DIRECTORY_MIN;
+            const item = (p: (typeof PROGRAMMES)[number], i: number) =>
+              asDirectory ? (
+                <div key={p.id}>
+                  <div className="lg:hidden">
                     <ProgramRow programme={p} index={i} />
                   </div>
-                ))}
-              </div>
-            ) : (
-            <motion.div
-              key={`${category}-${destination}-${query}`}
-              custom={filtered.length}
-              variants={listStagger}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-1 gap-4 sm:gap-4.5"
-            >
-              {filtered.map((p, i) => (
-                <motion.div key={p.id} variants={staggerItem}>
+                  <div className="hidden lg:block">
+                    <ProgrammeDirectoryStrip programme={p} />
+                  </div>
+                </div>
+              ) : (
+                <div key={p.id}>
                   <ProgramRow programme={p} index={i} />
-                </motion.div>
-              ))}
-            </motion.div>
-            )
-          ) : (
-            <EmptyState
-              title="No programmes match your filter"
-              body="No programme matches that specific filter combination. Try clearing your search or switching destination to browse the full 2026 calendar."
-              action={
-                <BtnLink
-                  to="/programmes"
-                  variant="outline-ink"
-                  size="md"
-                  onClick={() => {
-                    setCategory("All");
-                    setDestination("All");
-                    setQuery("");
-                  }}
+                </div>
+              );
+            return filtered.length > 0 ? (
+              reduceMotion ? (
+                <div
+                  className={
+                    asDirectory
+                      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-1 lg:gap-y-3"
+                      : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
+                  }
                 >
-                  View All 135 Programmes
-                </BtnLink>
-              }
-            />
-          )}
+                  {filtered.map((p, i) => item(p, i))}
+                </div>
+              ) : (
+                <motion.div
+                  key={`${category}-${destination}-${query}`}
+                  custom={filtered.length}
+                  variants={listStagger}
+                  initial="hidden"
+                  animate="visible"
+                  className={
+                    asDirectory
+                      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-1 lg:gap-y-3"
+                      : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
+                  }
+                >
+                  {filtered.map((p, i) => (
+                    <motion.div key={p.id} variants={staggerItem}>
+                      {asDirectory ? (
+                        <>
+                          <div className="lg:hidden">
+                            <ProgramRow programme={p} index={i} />
+                          </div>
+                          <div className="hidden lg:block">
+                            <ProgrammeDirectoryStrip programme={p} />
+                          </div>
+                        </>
+                      ) : (
+                        <ProgramRow programme={p} index={i} />
+                      )}
+                    </motion.div>
+                  ))}
+                </motion.div>
+              )
+            ) : (
+              <EmptyState
+                title="No programmes match your filter"
+                body="No programme matches that specific filter combination. Try clearing your search or switching destination to browse the full 2026 calendar."
+                action={
+                  <BtnLink
+                    to="/programmes"
+                    variant="outline-ink"
+                    size="md"
+                    onClick={() => {
+                      setCategory("All");
+                      setDestination("All");
+                      setQuery("");
+                    }}
+                  >
+                    View All 135 Programmes
+                  </BtnLink>
+                }
+              />
+            );
+          })()}
 
           <div className="mt-14 flex flex-wrap items-center justify-between gap-6 border-t rule pt-10">
             <div>

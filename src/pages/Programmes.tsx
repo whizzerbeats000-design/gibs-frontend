@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { ProgramRow, ProgrammeDirectoryStrip, colsFor, DIRECTORY_GRID } from "../components/cards";
+import { ProgrammeCard, colsFor, DIRECTORY_GRID } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
 import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
@@ -289,21 +289,11 @@ export default function ProgrammesPage() {
               on phones, two-up on tablet); the strip only exists at lg+. */}
           {(() => {
             const asDirectory = filtered.length >= DIRECTORY_MIN;
-            const item = (p: (typeof PROGRAMMES)[number], i: number) =>
-              asDirectory ? (
-                <div key={p.id}>
-                  <div className="lg:hidden">
-                    <ProgramRow programme={p} index={i} />
-                  </div>
-                  <div className="hidden lg:block">
-                    <ProgrammeDirectoryStrip programme={p} />
-                  </div>
-                </div>
-              ) : (
-                <div key={p.id}>
-                  <ProgramRow programme={p} index={i} />
-                </div>
-              );
+            const item = (p: (typeof PROGRAMMES)[number], i: number) => (
+              <div key={p.id}>
+                <ProgrammeCard programme={p} index={i} />
+              </div>
+            );
             return filtered.length > 0 ? (
               reduceMotion ? (
                 <div
@@ -330,18 +320,7 @@ export default function ProgrammesPage() {
                 >
                   {filtered.map((p, i) => (
                     <motion.div key={p.id} variants={staggerItem}>
-                      {asDirectory ? (
-                        <>
-                          <div className="lg:hidden">
-                            <ProgramRow programme={p} index={i} />
-                          </div>
-                          <div className="hidden lg:block">
-                            <ProgrammeDirectoryStrip programme={p} />
-                          </div>
-                        </>
-                      ) : (
-                        <ProgramRow programme={p} index={i} />
-                      )}
+                      <ProgrammeCard programme={p} index={i} />
                     </motion.div>
                   ))}
                 </motion.div>

@@ -1,6 +1,6 @@
 import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingImmersive } from "../components/ui";
-import { ProgramRow, ProgrammeDirectoryStrip, DIRECTORY_GRID } from "../components/cards";
+import { ProgrammeCard, DIRECTORY_GRID } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
@@ -94,7 +94,7 @@ export default function ExecutiveEducation() {
 
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:col-span-7 lg:mt-0">
             {FOREIGN_HUBS.map((hub) => (
-              <div key={hub.city} className="flex flex-col border border-line bg-paper p-7 shadow-crisp max-w-card">
+              <div key={hub.city} className="flex flex-col border border-line bg-paper p-7 shadow-crisp">
                 <span className="pill pill-forest self-start">
                   {hub.coursesCount} Programmes
                 </span>
@@ -189,12 +189,7 @@ export default function ExecutiveEducation() {
           <div className={"mt-6 border-t rule pt-6 " + DIRECTORY_GRID}>
             {foreignProgrammes.map((p, idx) => (
               <div key={p.id}>
-                <div className="lg:hidden">
-                  <ProgramRow programme={p} index={idx} />
-                </div>
-                <div className="hidden lg:block">
-                  <ProgrammeDirectoryStrip programme={p} />
-                </div>
+                <ProgrammeCard programme={p} index={idx} />
               </div>
             ))}
           </div>

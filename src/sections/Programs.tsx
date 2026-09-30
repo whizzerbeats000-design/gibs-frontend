@@ -13,19 +13,19 @@ function ProgrammePanel({ slug }: { slug: string }) {
   return (
     <Link
       to={`/programmes/${p.slug}`}
-      className="group grid grid-cols-[1fr_auto] items-start gap-x-6 gap-y-1 border-t rule py-7 first:border-t-0 sm:gap-x-10"
+      className="group grid grid-cols-[1fr_auto] items-start gap-x-6 gap-y-2 border-t rule py-8 sm:py-10 first:border-t-0 sm:gap-x-10 text-left"
     >
       <div className="min-w-0">
-        <p className="eyebrow text-forest-600">
+        <p className="eyebrow text-forest-600 mb-2">
           {p.category}
         </p>
-        <h3 className="type-h3 mt-2 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5">
+        <h3 className="type-h3 mt-0 sm:mt-2 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5">
           {p.title}
         </h3>
-        {description && <p className="mt-2 max-w-xl type-body">{description}</p>}
+        {description && <p className="mt-3 max-w-xl type-body text-muted/80 lg:text-muted leading-relaxed sm:line-clamp-none">{description}</p>}
         {audienceText && (
-          <p className="mt-1.5 max-w-lg text-[13px] leading-relaxed text-muted line-clamp-2">
-            For {audienceText.charAt(0).toLowerCase() + audienceText.slice(1)}
+          <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-muted line-clamp-2">
+            <span className="hidden sm:inline font-semibold text-ink/40 uppercase tracking-wider text-[11px] mr-1">For</span> {audienceText.charAt(0).toLowerCase() + audienceText.slice(1)}
           </p>
         )}
       </div>
@@ -38,8 +38,8 @@ function ProgrammePanel({ slug }: { slug: string }) {
 
 export default function ProgrammeDiscovery() {
   return (
-    <section id="programmes" className="cv-auto relative bg-white">
-      <div className="container-x section-y grid lg:grid-cols-12">
+    <section id="programmes" className="cv-auto relative bg-white px-6 md:px-12 lg:px-16">
+      <div className="container-x mx-auto section-y grid lg:grid-cols-12 text-left">
         <div className="lg:col-span-5">
           <Reveal>
             <Eyebrow>Programme Discovery</Eyebrow>
@@ -58,15 +58,17 @@ export default function ProgrammeDiscovery() {
       </div>
 
       {/* Editorial category bands */}
-      <Stagger className="mt-14 space-y-12 sm:mt-16">
+      <Stagger className="mt-14 space-y-16 sm:mt-16 lg:space-y-0">
         {HOME_PROGRAMME_BANDS.map((band) => (
           <motion.section
             key={band.band}
             variants={staggerItem}
-            className="grid gap-6 lg:grid-cols-12 lg:gap-8"
+            className="grid gap-6 lg:grid-cols-12 lg:gap-8 last:mb-0 text-left"
           >
             <div className="lg:col-span-4">
-              <p className="eyebrow text-forest-600">{band.band}</p>
+              <p className="eyebrow text-forest-600 font-bold tracking-wide uppercase">
+                {band.band}
+              </p>
               <p className="mt-3 max-w-prose text-[13.5px] leading-relaxed text-muted lg:pr-2">
                 {band.note}
               </p>
@@ -80,7 +82,7 @@ export default function ProgrammeDiscovery() {
         ))}
       </Stagger>
 
-      <div className="mt-14 flex flex-wrap items-center gap-x-9 gap-y-4 border-t rule pt-8">
+      <div className="mt-14 flex flex-wrap items-center justify-start gap-x-9 gap-y-4 border-t rule pt-8">
         <Link to="/programmes" className="btn btn-primary btn-lg">
           Explore Programmes
           <ArrowUpRight className="h-4 w-4" />

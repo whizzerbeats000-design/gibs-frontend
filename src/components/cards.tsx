@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
-import { ArrowUpRight, ArrowRight, PlusIcon, CalendarIcon, UsersIcon } from "./icons";
+import { ArrowUpRight, PlusIcon, CalendarIcon, UsersIcon } from "./icons";
 import { useCardDepth } from "./depth";
 import { type Programme, imageSet } from "../lib/data";
 
@@ -25,83 +25,18 @@ export function colsFor(n: number): 1 | 2 | 3 {
 export const DIRECTORY_GRID =
   "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-3 xl:grid-cols-4 lg:gap-x-4 lg:gap-y-3";
 
-/** Compact directory card used on the /programmes catalogue at lg+. Each card
-    is one programme split into an identity block on top and a schedule + fee
-    bar below — a two-up-friendly shape (Identity | when/duration | fee cannot
-    fit three aligned full-width columns at half the page width). Unlike
-    ProgramRow it never truncates titles and carries no action chrome beyond the
-    quiet arrow. Hidden (lg:hidden) below lg where the full ProgramRow card
-    stays in charge. */
-export function ProgrammeDirectoryStrip({ programme }: { programme: Programme }) {
-  const isForeign = programme.destination !== "Local";
-  return (
-    <Link
-      to={`/programmes/${programme.slug}`}
-      className="group flex h-full flex-col border border-line bg-white shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card"
-    >
-      {/* Identity */}
-      <div className="px-5 pt-4">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="card-eyebrow">{programme.category}</span>
-          {isForeign && (
-            <>
-              <span className="meta text-muted/70" aria-hidden="true">
-                ·
-              </span>
-              <span className="meta text-gold-700">{programme.destination} Hub</span>
-            </>
-          )}
-        </div>
-        <h3 className="card-title mt-1.5">{programme.title}</h3>
-        <p className="mt-1 font-serif text-[12px] tracking-[0.04em] text-gold-700">
-          {programme.code}
-        </p>
-      </div>
-
-      {/* When / duration + Fee — a two-part ledger pinned to the card baseline
-          so a row's pairs line up regardless of how many lines the identity
-          block ran. The schedule block flexes into whatever space is left and
-          wraps in place (never truncates, never pushes the fee below); the fee
-          block stays shrink-0 top-aligned to the schedule label. */}
-      <div className="mt-auto flex items-start justify-between gap-x-6 border-t border-line/70 px-5 py-3 transition-colors duration-150 group-hover:border-forest-600/35">
-        <div className="min-w-0 flex-1">
-          <span className="card-field-label">Schedule &amp; Duration</span>
-          <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink">
-            {programme.schedule}
-            {programme.duration ? (
-              <span className="text-muted"> · {programme.duration}</span>
-            ) : null}
-          </p>
-        </div>
-
-        <div className="flex shrink-0 items-baseline gap-3">
-          <div className="text-right">
-            <span className="card-field-label">Standard Tuition</span>
-            <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink">
-              {programme.fees}
-            </span>
-          </div>
-          <span className="card-action card-action-quiet self-center shrink-0">
-            <span>View</span>
-            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
-}
-
-export function ProgramRow({
+/**
+ * Unified ProgrammeCard component.
+ * Replaces the legacy ProgramRow and ProgrammeDirectoryStrip.
+ * Maintains premium chrome (bg-white, border, shadow) across all viewports.
+ */
+export function ProgrammeCard({
   programme,
   action = "quiet",
   className,
 }: {
   programme: Programme;
   index?: number;
-  /** Which register the action takes. All three are tokenised in index.css.
-      Defaults to "quiet" — the editorial text-link register that matches the
-      homepage reference card. The whole card is already the link, so a filled
-      button was competing with it rather than helping it. */
   action?: "solid" | "ghost" | "quiet";
   className?: string;
 }) {
@@ -113,12 +48,11 @@ export function ProgramRow({
       ref={depthRef}
       to={`/programmes/${programme.slug}`}
       className={cn(
-        "programme-card card-depth card-spot group relative block overflow-hidden bg-white p-4 sm:p-5",
+        "group relative block overflow-hidden bg-white border border-line rounded-panel p-4 sm:p-5 shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card",
         className
       )}
     >
-      {/* Meta line — same register as the editorial card: quiet category,
-          middle-dot separated secondary. No pill, no border, no shout. */}
+      {/* Meta line */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <span className="card-eyebrow">{programme.category}</span>
         {isForeign && (
@@ -131,7 +65,7 @@ export function ProgramRow({
         )}
       </div>
 
-      {/* Primary title + signature gold serif code */}
+      {/* Primary Identity */}
       <div className="mt-2.5">
         <h3 className="card-title">{programme.title}</h3>
         <p className="mt-1 font-serif text-[12px] tracking-[0.04em] text-gold-700">
@@ -139,13 +73,13 @@ export function ProgramRow({
         </p>
       </div>
 
-      {/* Structured metadata */}
-      <div className="mt-3.5 space-y-2.5">
+      {/* Responsive Body: Compact metadata on mobile/tablet, streamlined on desktop */}
+      <div className="mt-3 space-y-3 lg:hidden">
         <div className="flex items-start gap-2.5">
           <UsersIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
-            <span className="card-field-label">Target Cohort</span>
-            <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink/90 line-clamp-2">
+            <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink/90 line-clamp-2">
+              <span className="font-semibold text-ink/50 text-[11px] uppercase tracking-wider block mb-0.5">Target Cohort</span>
               {programme.targetAudience}
             </p>
           </div>
@@ -154,8 +88,8 @@ export function ProgramRow({
         <div className="flex items-start gap-2.5">
           <CalendarIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
-            <span className="card-field-label">Schedule &amp; Duration</span>
-            <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink">
+            <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink">
+              <span className="font-semibold text-ink/50 text-[11px] uppercase tracking-wider block mb-0.5">Schedule &amp; Duration</span>
               {programme.schedule}
               {programme.duration ? (
                 <span className="text-muted"> · {programme.duration}</span>
@@ -165,10 +99,17 @@ export function ProgramRow({
         </div>
       </div>
 
-      {/* Fee + action. The rule above them tints on hover: in the "quiet"
-          register there is no button chrome to advertise the target, so the
-          hairline, the existing card lift, the title colour shift and the
-          arrow together carry it. */}
+      {/* Desktop-only simplified body (hidden on mobile/tablet) */}
+      <div className="hidden lg:block mt-3.5">
+        <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink">
+          {programme.schedule}
+          {programme.duration ? (
+            <span className="text-muted"> · {programme.duration}</span>
+          ) : null}
+        </p>
+      </div>
+
+      {/* Unified Footer: Tuition + Action */}
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-line/70 pt-3 transition-colors duration-150 group-hover:border-forest-600/35">
         <div className="min-w-0 shrink">
           <span className="card-field-label">Standard Tuition</span>
@@ -185,12 +126,8 @@ export function ProgramRow({
             action === "quiet" && "card-action-quiet"
           )}
         >
-          <span>View details</span>
-          {action === "quiet" ? (
-            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          ) : (
-            <ArrowRight className="h-3 w-3 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5" />
-          )}
+          <span className="hidden sm:inline">View details</span>
+          <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </span>
       </div>
     </Link>

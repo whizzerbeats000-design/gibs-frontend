@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Stagger, StaggerSlow, staggerItem } from "../components/motion";
 import { ArrowTextLink } from "../components/ui";
+import { cn } from "../utils/cn";
 
 const COMMITMENTS = [
   {
@@ -36,11 +37,14 @@ export default function Perspective() {
         </StaggerSlow>
 
         <Stagger className="lg:col-span-7 lg:mt-0">
-          {COMMITMENTS.map((c) => (
+          {COMMITMENTS.map((c, i) => (
             <motion.div
               key={c.title}
               variants={staggerItem}
-              className="border-t rule py-6 first:border-t-0 first:pt-0 sm:py-7 sm:first:pt-0"
+              className={cn(
+                "py-4 sm:py-7 first:pt-0",
+                i !== 0 && "border-t rule"
+              )}
             >
               <h3 className="type-h3 text-ink">{c.title}</h3>
               <p className="mt-3 max-w-prose type-body">{c.body}</p>

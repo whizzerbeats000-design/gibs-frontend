@@ -398,10 +398,11 @@ function Newsletter() {
       <div className="mt-9 max-w-md border-l-2 border-gold-400 pl-4">
         <p className="eyebrow-light">Thank you.</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
-          Your request for calendar updates has been received. For immediate official enquiries, you can also reach the registry directly at{" "}
+          This site does not send the address you entered anywhere. To join the executive calendar mailing list, email the registry at{" "}
           <a href="mailto:gibsilorin@gmail.com" className="text-gold-300 underline underline-offset-2">
             gibsilorin@gmail.com
-          </a>.
+          </a>{" "}
+          and ask to be added.
         </p>
       </div>
     );

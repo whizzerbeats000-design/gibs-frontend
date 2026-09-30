@@ -25,6 +25,7 @@ async function audit() {
             window.scrollBy(0, 500);
             if ((window.innerHeight + window.scrollY) >= document.body.scrollHeight) {
               clearInterval(interval);
+              r();
             }
           }, 100);
         });

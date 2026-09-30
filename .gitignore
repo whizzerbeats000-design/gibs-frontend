@@ -21,12 +21,15 @@ after-*.png
 programmes-catalogue-*.png
 comparison-*.png
 
+# python build artifacts
+__pycache__/
+*.py[cod]
+
 # OS / IDE
 .DS_Store
 .vscode
 .idea
 .vercel
-.env*
 
 # stray full-page captures
 scratch-*.png

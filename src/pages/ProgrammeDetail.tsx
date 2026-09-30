@@ -14,8 +14,8 @@ const SECTIONS: ProgrammeSection[] = [
   { id: "audience", label: "Who it is for" },
   { id: "curriculum", label: "Structure & Modules" },
   { id: "delivery", label: "Delivery & Venues" },
-  { id: "enrolment", label: "Enrolment & Fees" },
   { id: "faq", label: "FAQ" },
+  { id: "enrolment", label: "Enrolment & Fees" },
 ];
 
 function FactRow({ label, value }: { label: string; value?: string | null }) {

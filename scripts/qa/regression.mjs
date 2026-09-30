@@ -109,7 +109,7 @@ for (const [w, h] of VIEWPORTS) {
         }
         const cards = [];
         if (hashRoute === "/programmes" || hashRoute === "/executive-education") {
-          document.querySelectorAll(".programme-card").forEach((c) => {
+          document.querySelectorAll("[data-programme-card]").forEach((c) => {
             const fee = c.querySelector("span.block.font-serif");
             if (fee && fee.scrollWidth > fee.clientWidth + 2) cards.push("fee-clip");
           });

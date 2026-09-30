@@ -13,11 +13,26 @@ import {
   IMAGES,
 } from "../lib/data";
 
-const CALENDAR_CYCLES = [
-  { k: "Quarter 1 Cohorts", v: "January — March 2026", status: "Concluded" },
-  { k: "Quarter 2 Cohorts", v: "April — June 2026", status: "Concluded" },
-  { k: "Quarter 3 Cohorts", v: "July — September 2026", status: "Active Intake" },
-  { k: "Quarter 4 Cohorts", v: "October — December 2026", status: "Open for Nominations" },
+type CycleStatus = "Concluded" | "Active Intake" | "Open for Nominations";
+
+const QUARTER_CYCLES = [
+  { k: "Quarter 1 Cohorts", v: "January — March 2026", start: "2026-01-01", end: "2026-03-31" },
+  { k: "Quarter 2 Cohorts", v: "April — June 2026", start: "2026-04-01", end: "2026-06-30" },
+  { k: "Quarter 3 Cohorts", v: "July — September 2026", start: "2026-07-01", end: "2026-09-30" },
+  { k: "Quarter 4 Cohorts", v: "October — December 2026", start: "2026-10-01", end: "2026-12-31" },
+];
+
+/* Status follows the clock, not the copy — quarters before today are
+   Concluded, the quarter in progress is Active Intake, later ones Open. */
+function quarterStatus(start: string, end: string): CycleStatus {
+  const now = Date.now();
+  if (new Date(`${end}T23:59:59Z`).getTime() < now) return "Concluded";
+  if (new Date(`${start}T00:00:00Z`).getTime() <= now) return "Active Intake";
+  return "Open for Nominations";
+}
+
+const CALENDAR_CYCLES: { k: string; v: string; status: string }[] = [
+  ...QUARTER_CYCLES.map((c) => ({ k: c.k, v: c.v, status: quarterStatus(c.start, c.end) })),
   { k: "Custom In-Plant Workshops", v: "Tailored on Request", status: "Rolling Schedule" },
 ];
 

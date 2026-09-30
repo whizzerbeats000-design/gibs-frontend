@@ -9,9 +9,10 @@
 
 The desktop system inflates in three ways that read as oversized:
 
-1. **Every section carries `--section-y: 112px`** at `≥1024px`. Adjacent
-   differently-coloured sections stack `224px` of empty canvas between content
-   blocks — a large, hollow rhythm.
+1. **Every section carried `--section-y: 112px`** at `≥1024px` before the
+   desktop retune. Adjacent differently-coloured sections stacked `224px` of
+   empty canvas between content blocks — a large, hollow rhythm. (Shipped: the
+   base token is now `72px` at `lg`; see §3.)
 2. **Type rungs scale too far.** `type-h2` climbs to `54px`, `type-h1` to `88px`.
    Section headings compete with page titles; card titles (`type-h3`, `33.6px`)
    and body (`18px`) grow faster than the measure needs.
@@ -36,23 +37,26 @@ follow the same rule.
 ## 3. Vertical rhythm (`index.css` tokens)
 
 The site already has a semantic two-tier rhythm (`--section-y`, `--band-y`).
-We retune the desktop tier and stop there:
+We retuned the desktop tier and stopped there. As implemented in `index.css`:
 
 | Token | base | sm (640) | lg (1024) | previous lg |
 | --- | --- | --- | --- | --- |
-| `--section-y` | 64px | 80px | **88px** | 112px |
-| `--band-y` | 48px | 64px | **56px** | 64px |
+| `--section-y` | 64px | 80px | **72px** | 112px |
+| `--section-y-major` | 64px | 80px | **112px** | 112px |
+| `--band-y` | 48px | 64px | **64px** | 64px |
 
-- 88px sits inside the approved "major 80–112" band and keeps sections clearly
-  taller than bands, so the tier system keeps doing work.
-- 56px bands keep hero bodies, footer bands, the concierge band and the gallery
-  register quicker than full sections.
+- 72px keeps ordinary sections clearly taller than bands, so the tier system
+  keeps doing work.
+- `--section-y-major` was deliberately **not** retuned: it stays at `112px` at
+  `lg` so cinematic closings still read spacious while ordinary sections hold
+  the tighter tier. This is the only place `112px` survives.
+- `--band-y` was left at `64px`; the `56px` band proposed here did not ship.
 - The `--pt-page*` / `--pt-hero*` header-clearance tokens are **not changed** —
   they solve a different problem (clearing the fixed header) and already read
   tight.
 
 The dominant win is automatic: every `section-y` section site-wide tightens from
-112 → 88 at `lg`, while nothing on mobile or tablet moves.
+112 → 72 at `lg`, while nothing on mobile or tablet moves.
 
 ## 4. Typography ceilings (`index.css` `@utility` rungs)
 
@@ -138,7 +142,7 @@ schedule + fee bar), but the catalogue benefits automatically from the new
 
 | File | Change |
 | --- | --- |
-| `src/index.css` | lg `--section-y` 112→88, lg `--band-y` 64→56; `type-h1/h2/h3`/`type-body` clamps |
+| `src/index.css` | lg `--section-y` 112→72; `type-h1/h2/h3`/`type-body` clamps |
 | `src/sections/Approach.tsx` | 5/7 span, tighter gap, denser commitment rows |
 | `src/sections/Programs.tsx` | band rhythm `space-y-14→12`, heading/CTA spacing, `lg:pl-6→4` |
 | `src/sections/Insights.tsx` | featured card `p-6 gap-8` |

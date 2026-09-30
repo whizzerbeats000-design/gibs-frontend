@@ -17,6 +17,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
   if (!article) return <NotFound />;
 
   const related = relatedArticles(slug, 2);
+  const isForthcoming = article.status === "Forthcoming";
 
   return (
     <>
@@ -46,6 +47,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
               </Reveal>
             </div>
             <div className="lg:col-span-4 lg:pt-2">
+            {isForthcoming && (
               <Reveal delay={0.12}>
                 <dl className="border-l-2 border-forest-600 pl-6 text-[13px] leading-relaxed text-muted">
                   <dt className="meta">Publication date</dt>
@@ -54,6 +56,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
                   <dd className="mt-1 italic">To be published</dd>
                 </dl>
               </Reveal>
+            )}
             </div>
           </div>
         </div>
@@ -84,13 +87,15 @@ export default function ArticleDetail({ slug }: { slug: string }) {
       <article className="bg-paper">
         <div className="container-x band-y">
           <div className="mx-auto max-w-[68ch]">
-            <Reveal>
-              <div className="border-l-2 border-gold-500 bg-ivory/60 px-6 py-5 text-[14px] leading-[1.8] text-muted">
-                <strong className="font-bold text-forest-800">Editorial preview.</strong> This piece
-                is forthcoming. The argument is in formation and nothing is
-                shown until verified.
-              </div>
-            </Reveal>
+            {isForthcoming && (
+              <Reveal>
+                <div className="border-l-2 border-gold-500 bg-ivory/60 px-6 py-5 text-[14px] leading-[1.8] text-muted">
+                  <strong className="font-bold text-forest-800">Editorial preview.</strong> This piece
+                  is forthcoming. The argument is in formation and nothing is
+                  shown until verified.
+                </div>
+              </Reveal>
+            )}
 
             <div className="prose-editorial mt-12">
               {article.blocks.map((block, i) => {
@@ -149,10 +154,10 @@ export default function ArticleDetail({ slug }: { slug: string }) {
                 image={post.image}
                 alt={post.alt}
                 tag={post.category}
-                meta="Forthcoming"
+                meta={post.status}
                 title={post.title}
                 excerpt={post.dek}
-                cta="Read the preview"
+                cta={post.status === "Forthcoming" ? "Read the preview" : "Read the article"}
               />
             ))}
           </div>

@@ -1,5 +1,14 @@
 import json
 import re
+import sys
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = SCRIPT_DIR.parent
+OUTPUT_PATH = PROJECT_ROOT / "src" / "lib" / "data.ts"
+
+if str(SCRIPT_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPT_DIR))
 
 # Load the raw items from previous definitions
 from generate_gibs_data import local_raw, foreign_raw
@@ -154,6 +163,22 @@ for item in foreign_raw:
 print(f"Generated {len(programmes)} total programmes.")
 
 # Now let's generate the data.ts TypeScript content
+# Kept as a raw constant so the regex and template-literal braces survive
+# f-string interpolation of the surrounding ts_content template.
+IMAGE_SET_BLOCK = r'''
+/* srcset for the 1376×768 photographic assets. A 640w derivative ships
+   alongside each original (same encoding settings, scaled down only); the
+   browser picks the closest candidate for the render slot — no resizing at
+   runtime and no 1.4MB of decoding on small screens. */
+export function imageSet(url: string) {
+  const w640 = url.replace(/\.webp$/, "-640.webp");
+  return {
+    src: url,
+    srcSet: `${w640} 640w, ${url} 1376w`,
+  };
+}
+'''
+
 ts_content = f'''/* ==========================================================================
    GIBS OFFICIAL DATA LAYER (src/lib/data.ts)
    Goshen International Business School Limited (GIBS)
@@ -345,7 +370,7 @@ export const IMAGES = {{
   books: "/images/library-interior.webp",
   study: "/images/library-interior.webp",
 }};
-
+{IMAGE_SET_BLOCK}
 /* ---------------- 5. Navigation Links ---------------- */
 
 export const NAV_LINKS = [
@@ -353,7 +378,6 @@ export const NAV_LINKS = [
   {{ label: "Foreign Training", to: "/executive-education" }},
   {{ label: "Faculty & Governance", to: "/faculty" }},
   {{ label: "About GIBS", to: "/about" }},
-  {{ label: "Admissions & Enrolment", to: "/admissions" }},
 ];
 
 /* ---------------- 6. Events / Executive Sessions ---------------- */
@@ -363,6 +387,8 @@ export type GIBS_EVENT = {{
   title: string;
   category: "Public Lecture" | "Conference" | "Executive Session" | "Open Day" | "Research";
   date: string;
+  startDate?: string;
+  endDate?: string;
   time: string;
   location: string;
   excerpt: string;
@@ -374,21 +400,25 @@ export const EVENTS: GIBS_EVENT[] = [
     slug: "2026-national-manpower-capacity-building-conference",
     title: "2026 Annual Manpower Development & Capacity-Building Executive Conference",
     category: "Conference",
-    date: "May 4–8, 2026",
+    date: "4–8 May 2026",
+    startDate: "2026-05-04",
+    endDate: "2026-05-08",
     time: "09:00 AM – 04:00 PM WAT",
     location: "Abuja Center & Ilorin HQ",
     excerpt: "A national executive convening for public and private sector leaders on policy translation, economic transformation and workforce optimization.",
-    status: "upcoming",
+    status: new Date("2026-05-08T23:59:59Z").getTime() < Date.now() ? "past" : "upcoming",
   }},
   {{
     slug: "telecom-utilities-regulatory-roundtable",
     title: "Telecom & Utilities Regulation and Rate Setting Executive Roundtable",
     category: "Executive Session",
-    date: "July 13–17, 2026",
+    date: "13–17 July 2026",
+    startDate: "2026-07-13",
+    endDate: "2026-07-17",
     time: "10:00 AM – 03:30 PM WAT",
     location: "GIBS Abuja Center",
     excerpt: "High-level regulatory compliance, rates determination, and consumer protection engagement for executives and commissioners.",
-    status: "upcoming",
+    status: new Date("2026-07-17T23:59:59Z").getTime() < Date.now() ? "past" : "upcoming",
   }},
 ];
 
@@ -425,13 +455,11 @@ export const FOREIGN_DESTINATIONS: ProgrammeDestination[] = [
 export function getProgramme(slugOrId: string): Programme | undefined {{
   if (!slugOrId) return undefined;
   const target = slugOrId.toLowerCase().trim();
-  return PROGRAMMES.find(
-    (p) =>
-      p.slug.toLowerCase() === target ||
-      p.id.toLowerCase() === target ||
-      p.code.toLowerCase() === target ||
-      p.slug.endsWith("-" + target) ||
-      p.slug.includes(target)
+  return (
+    PROGRAMMES.find((p) => p.slug.toLowerCase() === target) ||
+    PROGRAMMES.find((p) => p.id.toLowerCase() === target) ||
+    PROGRAMMES.find((p) => p.code.toLowerCase() === target) ||
+    PROGRAMMES.find((p) => p.slug.toLowerCase().endsWith("-" + target))
   );
 }}
 
@@ -530,7 +558,7 @@ export const ARTICLES: Article[] = [
     title: "Regulatory Compliance Monitoring and Consumer Protection in Utility Sectors",
     dek: "Examining the intersections of tariff setting, quality of experience, and sustainable economic growth.",
     image: IMAGES.city,
-    alt: "Urban infrastructure and utilities governance in Nigeria",
+    alt: "GIBS campus sandstone architecture in focus",
     status: "Published",
     blocks: [
       {{
@@ -560,9 +588,9 @@ export function relatedArticles(slug: string, count = 2) {{
     .slice(0, count);
 }}
 
-/* ---------------- 10. Admissions & Enrolment Steps ---------------- */
+/* ---------------- 10. Programme Subscription & Enrolment Steps ---------------- */
 
-export const ADMISSIONS_STEPS = [
+export const SUBSCRIPTION_STEPS = [
   {{
     n: "01",
     title: "Select Programme",
@@ -570,13 +598,13 @@ export const ADMISSIONS_STEPS = [
   }},
   {{
     n: "02",
-    title: "Nomination & Application",
-    body: "Organizations submit participant nominations or individual candidates complete the enrolment registration.",
+    title: "Nomination & Subscription",
+    body: "Organizations submit participant nominations or individual candidates complete the programme subscription registration.",
   }},
   {{
     n: "03",
     title: "Confirmation & Invoicing",
-    body: "GIBS issues official admission letters, course schedule confirmation, and payment details.",
+    body: "GIBS issues official subscription confirmation letters, course schedule details, and invoice.",
   }},
   {{
     n: "04",
@@ -595,6 +623,8 @@ export const ADMISSIONS_STEPS = [
   }},
 ];
 
+export const ADMISSIONS_STEPS = SUBSCRIPTION_STEPS;
+
 export const REQUIREMENTS_ACCORDION = [
   {{
     q: "Participant Eligibility & Nominations",
@@ -606,7 +636,7 @@ export const REQUIREMENTS_ACCORDION = [
   }},
   {{
     q: "Overseas Training Travel Requirements",
-    a: "Participants in Kigali, Dubai, London, and Houston foreign training programmes must possess valid international passports. GIBS issues official visa support letters upon enrolment confirmation.",
+    a: "Participants in Kigali, Dubai, London, and Houston foreign training programmes must possess valid international passports. GIBS issues official visa support letters upon subscription confirmation.",
   }},
   {{
     q: "Course Materials & Logistics Support",
@@ -614,24 +644,26 @@ export const REQUIREMENTS_ACCORDION = [
   }},
 ];
 
-export const ADMISSIONS_FAQS = [
+export const SUBSCRIPTION_FAQS = [
   {{
-    q: "How do MDAs and corporate organizations nominate staff?",
-    a: "Organizations can send official nomination letters or emails to gibsilorin@gmail.com / goshenibs22@gmail.com, or contact the registrar's office via 08160010401 or 08033429427.",
+    q: "How do MDAs and corporate organizations nominate staff to subscribe?",
+    a: "Organizations can send official nomination letters or emails to gibsilorin@gmail.com / goshenibs22@gmail.com, or contact the training desk via 08160010401 or 08033429427.",
   }},
   {{
     q: "Where are the training venues located?",
-    a: "Domestic programmes are held at our Ilorin Headquarters, Abuja Center, Ibafo Center, and designated executive partner hotels in Lagos, Keffi, Kaduna, and Port Harcourt.",
+    a: "Domestic programmes are held at our Ilorin Headquarters, Abuja Center, Ibafo Center, and designated executive partner venues in Lagos, Keffi, Kaduna, and Port Harcourt.",
   }},
   {{
     q: "What accreditations back GIBS certificates?",
     a: "GIBS is incorporated under the Corporate Affairs Commission (RC 1178333) and accredited by the Centre For Management Development (CMD), with Industrial Training Fund (ITF) and NSTIF certifications.",
   }},
   {{
-    q: "Are discounts available for group nominations?",
+    q: "Are concessions available for group subscriptions and nominations?",
     a: "Yes. Group concessions and customized in-plant packages are available for organizations sponsoring multiple candidates.",
   }},
 ];
+
+export const ADMISSIONS_FAQS = SUBSCRIPTION_FAQS;
 
 /* ---------------- 11. Homepage Highlight Bands ---------------- */
 
@@ -644,40 +676,40 @@ export const HOME_PROGRAMME_BANDS: {{
     band: "Financial & Public Sector Management",
     note: "Public sector accounting, budgeting, CSR, and strategic financial control",
     slugs: [
-      programmes[0].slug,
-      programmes[1].slug,
-      programmes[2].slug,
-      programmes[3].slug,
+      PROGRAMMES[0].slug,
+      PROGRAMMES[1].slug,
+      PROGRAMMES[2].slug,
+      PROGRAMMES[3].slug,
     ],
   }},
   {{
     band: "General Administration & Leadership",
     note: "HR transformation, corporate governance, productivity, and leadership competencies",
     slugs: [
-      programmes[6].slug,
-      programmes[7].slug,
-      programmes[10].slug,
-      programmes[11].slug,
+      PROGRAMMES[6].slug,
+      PROGRAMMES[7].slug,
+      PROGRAMMES[10].slug,
+      PROGRAMMES[11].slug,
     ],
   }},
   {{
     band: "Utilities, Telecom & Consumer Protection",
     note: "Rate determination, compliance monitoring, and consumer satisfaction",
     slugs: [
-      programmes[32].slug,
-      programmes[35].slug,
-      programmes[36].slug,
-      programmes[37].slug,
+      PROGRAMMES[32].slug,
+      PROGRAMMES[35].slug,
+      PROGRAMMES[36].slug,
+      PROGRAMMES[37].slug,
     ],
   }},
   {{
     band: "Foreign Executive Training Hubs",
     note: "International executive study in Kigali, Dubai, London, and Houston",
     slugs: [
-      programmes[113].slug,
-      programmes[121].slug,
-      programmes[126].slug,
-      programmes[130].slug,
+      PROGRAMMES[113].slug,
+      PROGRAMMES[121].slug,
+      PROGRAMMES[126].slug,
+      PROGRAMMES[130].slug,
     ],
   }},
 ];
@@ -701,16 +733,37 @@ export const STATIC_PAGES = [
   {{ title: "About GIBS", to: "/about", blurb: "Official institutional profile, RC 1178333, mission, vision, guiding principles, and values.", type: "Page" }},
   {{ title: "Faculty & Governance", to: "/faculty", blurb: "Governing Council, management team of 20 Advisors, and Academic Board structure.", type: "Page" }},
   {{ title: "Campuses & Facilities", to: "/campus", blurb: "Ilorin Main HQ, Abuja Center, and Ibafo Center facilities and training capacities.", type: "Page" }},
-  {{ title: "Admissions & Enrolment", to: "/admissions", blurb: "Six-step nomination and enrolment process, requirements, and calendar.", type: "Page" }},
+  {{ title: "Programme Subscription", to: "/admissions", blurb: "Six-step nomination and programme subscription process, requirements, and calendar.", type: "Page" }},
   {{ title: "Research & Insights", to: "/research-insights", blurb: "Manpower development, public sector reforms, and regulatory research.", type: "Page" }},
   {{ title: "Gallery", to: "/gallery", blurb: "Campus infrastructure, lecture halls, guest lodges, and learning environments.", type: "Page" }},
   {{ title: "Events & Conferences", to: "/events", blurb: "Annual capacity-building conferences and executive roundtables.", type: "Page" }},
   {{ title: "Contact GIBS", to: "/contact", blurb: "Official emails, phone lines, Ilorin HQ, Abuja, and Ibafo addresses.", type: "Page" }},
-  {{ title: "GIBS Concierge", to: "/concierge", blurb: "Digital guided assistant for instant programme discovery and enquiries.", type: "Page" }},
+  {{ title: "GIBS AI", to: "/concierge", blurb: "Ask about programmes, campuses and how to subscribe.", type: "Page" }},
 ];
+
+/* ---------------- 14. Consolidated Authoritative GIBS Data Exports ---------------- */
+
+export const INSTITUTION = INSTITUTIONAL_DATA;
+export const CONTACTS = {{
+  website: INSTITUTIONAL_DATA.website,
+  emails: INSTITUTIONAL_DATA.emails,
+  phones: INSTITUTIONAL_DATA.phoneNumbers,
+  postalAddress: INSTITUTIONAL_DATA.postalAddress,
+}};
+export const CAMPUSES = CAMPUS_LOCATIONS;
+export const GOVERNANCE = GOVERNANCE_INFO;
+export const FACULTY = FACULTY_ADVISORS;
+export const ACCREDITATIONS = INSTITUTIONAL_DATA.accreditations;
+export const INTERNATIONAL = {{
+  technicalPartner: INSTITUTIONAL_DATA.technicalPartner,
+  overseasHubs: INSTITUTIONAL_DATA.overseasHubs,
+  foreignDestinations: FOREIGN_DESTINATIONS,
+}};
+export const LOCAL_PROGRAMMES = PROGRAMMES.filter((p) => p.destination === "Local");
+export const FOREIGN_PROGRAMMES = PROGRAMMES.filter((p) => p.destination !== "Local");
+
 '''
 
-with open("/root/gibs-frontend/src/lib/data.ts", "w") as f:
-    f.write(ts_content)
+OUTPUT_PATH.write_text(ts_content, encoding="utf-8")
 
-print("Successfully written /root/gibs-frontend/src/lib/data.ts")
+print(f"Successfully written {OUTPUT_PATH}")

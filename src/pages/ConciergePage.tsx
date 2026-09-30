@@ -42,9 +42,8 @@ export default function ConciergePage() {
                   Welcome to GIBS AI. How can we help you find your way?
                 </h2>
                 <p className="mt-4 max-w-prose type-body">
-                  An intelligent, verified programme assistant. It answers common questions
-                  instantly and routes official enquiries directly to the
-                  right GIBS team.
+                  A programme guide built on GIBS’ published records. It answers common
+                  questions instantly and points official enquiries to the registry.
                 </p>
               </div>
 

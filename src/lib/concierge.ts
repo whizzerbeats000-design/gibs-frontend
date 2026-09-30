@@ -133,7 +133,7 @@ const RULES: Rule[] = [
 ];
 
 const FALLBACK: ConciergeReply = {
-  text: "I can guide you through our 113 Local Open Programmes, 22 Foreign Executive Training Hubs, in-plant workshops, campuses in Ilorin, Abuja & Ibafo, or connect you with the registry.",
+  text: "I can guide you through our 113 Local Open Programmes, 22 Foreign Executive Training Programmes, in-plant workshops, campuses in Ilorin, Abuja & Ibafo, or connect you with the registry.",
   cards: [
     { kind: "link", label: "Browse 2026 Programmes", to: "/programmes" },
     { kind: "link", label: "Foreign Training Hubs", to: "/executive-education" },

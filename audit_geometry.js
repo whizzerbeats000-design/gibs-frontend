@@ -16,7 +16,7 @@ async function audit() {
   const results = [];
 
   for (const width of viewports) {
-    await page.setViewport({ width, height: 1080 });
+    await page.setViewportSize({ width, height: 1080 });
     try {
       await page.goto(url, { waitUntil: 'networkidle' });
       

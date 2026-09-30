@@ -47,6 +47,7 @@ export function ProgrammeCard({
     <Link
       ref={depthRef}
       to={`/programmes/${programme.slug}`}
+      data-programme-card
       className={cn(
         "group relative block overflow-hidden bg-white border border-line rounded-panel p-4 sm:p-5 shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card",
         className

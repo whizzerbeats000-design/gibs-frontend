@@ -39,22 +39,24 @@ export default function About() {
 
       {/* Mission & Vision */}
       <section className="border-b border-line bg-white">
-        <div className="container-x grid gap-px overflow-hidden bg-line lg:grid-cols-12">
-          <div className="bg-white p-10 sm:p-14 lg:col-span-6">
-            <Reveal>
-              <p className="eyebrow">Mission Statement</p>
-              <p className="type-h3 mt-6 text-ink max-w-prose">
-                {INSTITUTIONAL_DATA.mission}
-              </p>
-            </Reveal>
-          </div>
-          <div className="bg-white p-10 sm:p-14 lg:col-span-6">
-            <Reveal delay={0.08}>
-              <p className="eyebrow">Vision Statement</p>
-              <p className="type-h3 mt-6 text-ink max-w-prose">
-                {INSTITUTIONAL_DATA.vision}
-              </p>
-            </Reveal>
+        <div className="container-x">
+          <div className="grid gap-px overflow-hidden bg-line lg:grid-cols-12">
+            <div className="bg-white p-10 sm:p-14 lg:col-span-6">
+              <Reveal>
+                <p className="eyebrow">Mission Statement</p>
+                <p className="type-h3 mt-6 text-ink max-w-prose">
+                  {INSTITUTIONAL_DATA.mission}
+                </p>
+              </Reveal>
+            </div>
+            <div className="bg-white p-10 sm:p-14 lg:col-span-6">
+              <Reveal delay={0.08}>
+                <p className="eyebrow">Vision Statement</p>
+                <p className="type-h3 mt-6 text-ink max-w-prose">
+                  {INSTITUTIONAL_DATA.vision}
+                </p>
+              </Reveal>
+            </div>
           </div>
         </div>
       </section>

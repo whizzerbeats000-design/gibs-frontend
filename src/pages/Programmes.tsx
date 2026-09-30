@@ -73,7 +73,14 @@ export default function ProgrammesPage() {
     });
   }, [category, destination, query]);
 
-  const localCount = useMemo(() => PROGRAMMES.filter((p) => p.destination === "Local").length, []);
+  const destinationCounts = useMemo(
+    () =>
+      PROGRAMMES.reduce<Record<string, number>>((acc, p) => {
+        acc[p.destination] = (acc[p.destination] ?? 0) + 1;
+        return acc;
+      }, {}),
+    []
+  );
 
   return (
     <>
@@ -120,7 +127,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                All Programmes (135)
+                All Programmes ({PROGRAMMES.length})
               </button>
               <button
                 type="button"
@@ -135,7 +142,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Local / Open ({localCount})
+                Local / Open ({destinationCounts.Local ?? 0})
               </button>
               <button
                 type="button"
@@ -150,7 +157,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Kigali Hub (8)
+                Kigali Hub ({destinationCounts.Kigali ?? 0})
               </button>
               <button
                 type="button"
@@ -165,7 +172,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Dubai Hub (5)
+                Dubai Hub ({destinationCounts.Dubai ?? 0})
               </button>
               <button
                 type="button"
@@ -180,7 +187,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                London Hub (4)
+                London Hub ({destinationCounts.London ?? 0})
               </button>
               <button
                 type="button"
@@ -195,7 +202,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Houston Hub (5)
+                Houston Hub ({destinationCounts.Houston ?? 0})
               </button>
             </div>
           </div>
@@ -259,7 +266,11 @@ export default function ProgrammesPage() {
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-sm">
             <h2 className="text-[12.5px] text-muted" aria-live="polite">
               Showing <span className="font-bold text-ink">{filtered.length}</span> of {PROGRAMMES.length} programmes
-              {destination !== "All" ? ` · ${destination} Hub` : ""}
+              {destination === "Local"
+                ? " · Local / Open"
+                : destination !== "All"
+                ? ` · ${destination} Hub`
+                : ""}
               {category !== "All" ? ` · ${category}` : ""}
             </h2>
             {(category !== "All" || destination !== "All" || query) && (

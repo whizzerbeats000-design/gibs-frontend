@@ -38,7 +38,7 @@ export default function Campus() {
           <div className="mt-12 space-y-12 lg:col-span-7 lg:mt-0">
             {CAMPUS_LOCATIONS.map((campus, idx) => (
               <Reveal key={campus.id} delay={idx * 0.08}>
-                <div className="surface-depth-2 rounded-panel p-8 sm:p-10 max-w-card">
+                <div className="surface-depth-2 rounded-panel p-8 sm:p-10">
                   <div className="flex flex-wrap items-center justify-between gap-4 border-b rule pb-6">
                     <div>
                       <span className="eyebrow text-forest-600">

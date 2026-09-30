@@ -309,7 +309,7 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
       aria-expanded={open}
       tabIndex={hidden ? -1 : 0}
       className={cn(
-        "fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 z-[var(--z-concierge)] flex items-center gap-2.5 rounded-pill bg-forest-600 py-3 pl-3.5 pr-4.5 text-[13px] font-semibold text-ivory shadow-[0_8px_24px_rgba(0,32,9,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] ring-1 ring-forest-900/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-forest-700 sm:bottom-8 sm:right-8 sm:py-3.5 sm:pl-4 sm:pr-5 sm:text-sm xl:hidden",
+        "fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 z-[var(--z-concierge)] flex items-center gap-2.5 rounded-pill bg-forest-600 py-3.5 pl-4 pr-5 text-[13px] font-semibold text-ivory shadow-[0_8px_24px_rgba(0,32,9,0.35),inset_0_1px_0_rgba(255,255,255,0.2)] ring-1 ring-forest-900/20 transition-all duration-200 hover:-translate-y-0.5 hover:bg-forest-700 sm:bottom-8 sm:right-8 sm:py-4 sm:pl-4.5 sm:pr-5.5 sm:text-sm xl:hidden",
         hidden && "pointer-events-none opacity-0"
       )}
     >
@@ -353,7 +353,7 @@ export function ConciergeDialog() {
             animate={{ y: 0, opacity: 1, scale: 1 }}
             exit={{ y: 32, opacity: 0, scale: 0.99 }}
             transition={{ duration: 0.42, ease: EASE }}
-            className="absolute inset-x-0 bottom-0 flex h-[86dvh] flex-col border-t border-line bg-paper shadow-lift sm:bottom-8 sm:left-auto sm:right-8 sm:h-[640px] sm:max-h-[85vh] sm:w-[400px] sm:overflow-hidden sm:rounded-panel sm:border"
+            className="absolute inset-x-0 bottom-0 flex h-[86dvh] flex-col border-t border-line bg-paper shadow-lift sm:bottom-8 sm:left-auto sm:right-8 sm:h-[640px] sm:max-h-[85dvh] sm:w-[400px] sm:overflow-hidden sm:rounded-panel sm:border"
           >
             <div className="flex items-center justify-between gap-4 bg-forest-800 px-5 py-4 text-ivory">
               <div>

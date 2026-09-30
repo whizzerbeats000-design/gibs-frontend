@@ -44,6 +44,14 @@ export function ChevronRight({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
+export function ChevronDown({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" {...base}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
 export function MenuIcon({ className = "h-5 w-5" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" {...base}>

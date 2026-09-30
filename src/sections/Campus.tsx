@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { Reveal, stagger, staggerItem, EASE } from "../components/motion";
+import { Reveal, Stagger, staggerItem } from "../components/motion";
 import { Diamond, ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { CAMPUS_FACILITIES, IMAGES } from "../lib/data";
@@ -16,8 +16,8 @@ export default function Experience() {
 
   return (
     <section id="campus-experience" ref={ref} className="paper-grain cv-auto relative overflow-hidden bg-paper">
-      <div className="container-x py-20 sm:py-24">
-        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+      <div className="container-x section-y">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5 lg:pt-4">
             <Reveal>
               <p className="eyebrow">The GIBS Experience</p>
@@ -30,19 +30,13 @@ export default function Experience() {
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
-              <p className="mt-7 max-w-md type-body">
+              <p className="mt-7 max-w-prose type-body">
                 A piece of modern classicism: travertine, brass, oak and
                 forest-green steel, chosen to weather beautifully.
               </p>
             </Reveal>
 
-            <motion.ul
-              variants={stagger}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: "some" }}
-              className="mt-10 border-t rule"
-            >
+            <Stagger as="ul" className="mt-10 border-t rule">
               {CAMPUS_FACILITIES.slice(0, 4).map((f) => (
                 <motion.li
                   key={f.name}
@@ -53,7 +47,7 @@ export default function Experience() {
                   <span className="type-h3 text-ink">{f.name}</span>
                 </motion.li>
               ))}
-            </motion.ul>
+            </Stagger>
 
             <Reveal delay={0.1}>
               <Link
@@ -110,12 +104,7 @@ export default function Experience() {
 
             {/* Floating Dialogue Badge (Z: 44px) */}
             <div className="layer-z-top absolute -left-1 top-8 hidden max-w-[230px] rounded-panel border border-gold-400/30 bg-forest-900/95 px-6 py-5 text-ivory shadow-lift backdrop-blur-[6px] sm:block lg:left-0">
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.9, ease: EASE, delay: 0.35 }}
-              >
+              <Reveal delay={0.35} y={24}>
                 <p className="eyebrow-light leading-relaxed">
                   A campus built for
                   <br /> study and dialogue
@@ -123,7 +112,7 @@ export default function Experience() {
                 <p className="mt-2 text-[12px] leading-relaxed text-ivory/75">
                   Corners for quiet work and for conversation.
                 </p>
-              </motion.div>
+              </Reveal>
             </div>
           </div>
         </div>

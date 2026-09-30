@@ -21,9 +21,9 @@ const SECTIONS: ProgrammeSection[] = [
 function FactRow({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex items-start justify-between gap-6 border-b rule py-3.5 last:border-b-0">
+    <div className="flex items-start justify-between gap-4 border-b rule py-3.5 last:border-b-0 sm:gap-6">
       <dt className="meta shrink-0 text-muted">{label}</dt>
-      <dd className="text-right text-[13.5px] font-semibold text-ink">{value}</dd>
+      <dd className="min-w-0 text-right text-[13.5px] font-semibold text-ink">{value}</dd>
     </div>
   );
 }
@@ -74,7 +74,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Overview & Quick Facts */}
       <section id="overview" className="bg-paper">
-        <div className="container-x grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-14">
+        <div className="container-x section-y grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-7">
             <Reveal>
               <div className="flex flex-wrap items-center gap-2.5">
@@ -103,7 +103,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + 16px)" }}>
+            <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + var(--subnav-height) + 16px)" }}>
               <Reveal y={32}>
                 <div className="border border-line bg-white p-7 shadow-card sm:p-8">
                   <p className="eyebrow">Programme Summary</p>
@@ -120,7 +120,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                     to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
                     variant="primary"
                     size="lg"
-                    className="mt-7 w-full"
+                    className="mt-7 w-full whitespace-normal px-4 text-sm sm:px-7 sm:text-[15px]"
                   >
                     Subscribe / Nominate Candidates
                     <ArrowUpRight className="h-4 w-4" />
@@ -130,7 +130,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                       to="/contact?type=Customized+In-Plant+Workshop+Request"
                       variant="outline-ink"
                       size="md"
-                      className="mt-3 w-full"
+                      className="mt-3 w-full whitespace-normal"
                     >
                       Request In-Plant Customized Edition
                     </BtnLink>
@@ -144,7 +144,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Audience & Outcomes */}
       <section id="audience" className="border-y border-line bg-white">
-        <div className="container-x grid gap-14 py-20 sm:py-24 lg:grid-cols-2 lg:gap-20">
+        <div className="container-x section-y grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <p className="eyebrow">Target Participants</p>
             <h2 className="type-h2 mt-4 text-ink">
@@ -179,7 +179,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Structure & Modules */}
       <section id="curriculum" className="paper-grain bg-paper">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Curriculum Architecture</p>
             <h2 className="type-h2 mt-4 max-w-3xl text-ink">
@@ -187,7 +187,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <ol className="border-t rule lg:col-span-7">
               {programme.indicativeStructure?.map((item, i) => (
                 <li key={i} className="grid grid-cols-[2.75rem_1fr] gap-4 border-b rule py-6">
@@ -220,15 +220,13 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Delivery & Venues */}
       <section id="delivery" className="bg-white">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Delivery &amp; Venues</p>
-            <h2 className="type-h2 mt-4 text-ink">
-              2026 Schedule: <span className="text-forest-700">{programme.schedule}</span>
-            </h2>
+            <h2 className="type-h2 mt-4 text-ink">2026 Schedule.</h2>
           </Reveal>
 
-          <div className="mt-10 grid gap-8 sm:grid-cols-3">
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div className="border border-line bg-paper p-6">
               <p className="eyebrow">Format</p>
               <h3 className="display-serif mt-3 text-lg text-ink">{programme.format}</h3>
@@ -236,6 +234,10 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <div className="border border-line bg-paper p-6">
               <p className="eyebrow">Duration</p>
               <h3 className="display-serif mt-3 text-lg text-ink">{programme.duration ?? "5 Days"}</h3>
+            </div>
+            <div className="border border-line bg-paper p-6">
+              <p className="eyebrow">2026 Schedule</p>
+              <h3 className="display-serif mt-3 text-lg text-ink">{programme.schedule}</h3>
             </div>
             <div className="border border-line bg-paper p-6">
               <p className="eyebrow">Tuition Fee</p>
@@ -247,7 +249,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Enrolment & FAQs */}
       <section id="faq" className="border-t border-line bg-paper">
-        <div className="container-x grid gap-10 py-20 sm:py-24 lg:grid-cols-12">
+        <div className="container-x section-y grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="eyebrow">Frequently Asked Questions</p>
             <h2 className="type-h2 mt-4 text-ink">Registration &amp; logistics</h2>
@@ -263,7 +265,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Bottom CTA */}
       <section id="enrolment" className="relative overflow-hidden bg-forest-900 text-ivory">
-        <div className="container-x relative flex flex-col items-start gap-8 py-16 sm:flex-row sm:items-center sm:justify-between sm:py-20">
+        <div className="container-x band-y relative flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="eyebrow-light">Subscription Desk</p>
             <h2 className="type-h2 mt-3">
@@ -271,11 +273,12 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </h2>
             <p className="mt-2 text-[14px] text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex w-full flex-wrap items-center gap-4 sm:w-auto">
             <BtnLink
               to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
               variant="gold"
               size="lg"
+              className="min-w-0 w-full sm:w-auto"
             >
               Submit Subscription Enquiry
               <ArrowUpRight className="h-4 w-4" />
@@ -289,7 +292,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Related Programmes */}
       <section className="bg-forest-950 text-ivory">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="type-h2">Related 2026 Programmes</h2>
             <Link

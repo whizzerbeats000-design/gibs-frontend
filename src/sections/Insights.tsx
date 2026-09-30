@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { Reveal, stagger, staggerItem } from "../components/motion";
+import { Reveal, Stagger, staggerItem } from "../components/motion";
 import { ArrowTextLink, BtnLink, EmptyState } from "../components/ui";
 import { Link } from "../lib/router";
 import { ArrowUpRight } from "../components/icons";
-import { ARTICLES } from "../lib/data";
+import { ARTICLES, imageSet } from "../lib/data";
 import { cn } from "../utils/cn";
 
 export default function InsightsTeaser() {
@@ -14,7 +14,7 @@ export default function InsightsTeaser() {
   if (!featured) {
     return (
       <section id="insights" className="paper-grain cv-auto relative bg-paper">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow">News &amp; Insights</p>
@@ -42,7 +42,7 @@ export default function InsightsTeaser() {
 
   return (
     <section id="insights" className="paper-grain cv-auto relative bg-paper">
-      <div className="container-x py-20 sm:py-24">
+      <div className="container-x section-y">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <Reveal>
@@ -63,14 +63,15 @@ export default function InsightsTeaser() {
         <Reveal delay={0.1} y={36} className="mt-14">
           <Link
             to={`/research-insights/${featured.slug}`}
-            className="group grid gap-8 rounded-panel border border-line bg-white p-6 shadow-card transition-all duration-300 hover:shadow-card-strong lg:grid-cols-12 lg:gap-12 lg:p-8"
+            className="group grid gap-8 rounded-panel border border-line bg-white p-6 shadow-card transition-all duration-300 hover:shadow-card-strong lg:grid-cols-12 lg:gap-8 lg:p-6"
           >
             <div className="relative aspect-[16/10] overflow-hidden rounded-xs shadow-crisp lg:col-span-7">
               <img
-                src={featured.image}
+                {...imageSet(featured.image)}
                 alt={featured.alt}
                 loading="lazy"
                 decoding="async"
+                sizes="(min-width: 1024px) 55vw, 100vw"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-forest-950/20 transition-colors duration-300 group-hover:bg-forest-950/10" />
@@ -98,11 +99,7 @@ export default function InsightsTeaser() {
 
         {/* Secondary — editorial rows with subtle surface elevation */}
         {others.length > 0 && (
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: "some" }}
+          <Stagger
             className={cn(
               "mt-12 grid gap-6",
               others.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"
@@ -130,7 +127,7 @@ export default function InsightsTeaser() {
                 </span>
               </motion.article>
             ))}
-          </motion.div>
+          </Stagger>
         )}
       </div>
     </section>

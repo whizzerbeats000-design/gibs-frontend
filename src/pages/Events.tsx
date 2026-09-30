@@ -36,12 +36,12 @@ function EventRow({ event }: { event: GIBS_EVENT }) {
           {valid ? d.toLocaleDateString("en-GB", { year: "numeric" }) : "2026"}
         </p>
       </div>
-      <div>
+      <div className="max-w-editorial">
         <p className="eyebrow text-forest-600">
           {event.category}
         </p>
         <h3 className="type-h3 mt-2 text-ink">{event.title}</h3>
-        <p className="mt-2 max-w-2xl type-body">{event.excerpt}</p>
+        <p className="mt-2 max-w-prose type-body">{event.excerpt}</p>
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1.5 text-[12.5px] text-muted">
           <span className="inline-flex items-center gap-2">
             <ClockIcon className="h-3.5 w-3.5" /> {event.time}
@@ -96,7 +96,7 @@ export default function Events() {
       />
 
       <section className="bg-white">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           {/* Filters */}
           <div className="flex flex-wrap gap-2.5" role="group" aria-label="Filter events by category">
             {CATEGORIES.map((cat) => (

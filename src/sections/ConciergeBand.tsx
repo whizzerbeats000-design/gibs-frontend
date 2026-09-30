@@ -8,8 +8,8 @@ export default function ConciergeBand() {
 
   return (
     <section className="cv-auto relative border-t border-line bg-white">
-      <div className="container-x py-20 sm:py-24">
-        <div className="grid items-center gap-14 lg:grid-cols-12">
+      <div className="container-x band-y">
+        <div className="grid items-center gap-12 lg:grid-cols-12">
           {/* Editorial copy */}
           <div className="lg:col-span-7">
             <Reveal>
@@ -41,11 +41,11 @@ export default function ConciergeBand() {
 
           {/* Quote card — the single green moment of this section */}
           <Reveal delay={0.16} y={36} className="lg:col-span-5">
-            <figure className="relative bg-forest-800 p-9 text-ivory shadow-card sm:p-12">
+            <figure className="relative bg-forest-800 p-8 text-ivory shadow-card sm:p-10">
               <blockquote className="display-serif mt-10 text-[1.55rem] leading-[1.4]">
                 “Welcome to GIBS AI. How can we help you find your way?”
               </blockquote>
-              <figcaption className="mt-6 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/55">
+              <figcaption className="mt-6 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/70">
                 Programme and enquiry guide
               </figcaption>
             </figure>

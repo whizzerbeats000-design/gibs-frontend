@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import { Breadcrumbs } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { IMAGES } from "../lib/data";
+import { IMAGES, imageSet } from "../lib/data";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { CloseIcon, ArrowLeft, ArrowRight } from "../components/icons";
 
@@ -23,7 +23,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     title: "Sandstone and forest steel",
     caption: "Travertine, oak and brushed brass, chosen to age well in the heat.",
     image: IMAGES.hero,
-    alt: "GIBS campus sandstone pavilions and reflecting pool at golden hour",
+    alt: "GIBS sandstone architecture at golden hour",
     aspect: "aspect-[16/9]",
   },
   {
@@ -67,8 +67,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Facilities",
     title: "Convening rooms",
     caption: "Used for executive sessions, board meetings and public lectures.",
-    image: IMAGES.hero,
-    alt: "Campus convening space",
+    image: IMAGES.library,
+    alt: "GIBS interior convening space",
     aspect: "aspect-[4/3]",
   },
   {
@@ -94,8 +94,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Events",
     title: "The Forum",
     caption: "Lectures and public dialogue in the convening hall.",
-    image: IMAGES.hero,
-    alt: "Forum hall for public lectures",
+    image: IMAGES.library,
+    alt: "GIBS interior for lectures and public dialogue",
     aspect: "aspect-[16/9]",
   },
   {
@@ -144,7 +144,7 @@ function Lightbox({
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/90 p-3 backdrop-blur-sm sm:p-8">
+    <div className="fixed inset-0 z-[var(--z-lightbox)] flex items-center justify-center bg-ink/90 p-3 backdrop-blur-sm sm:p-8">
       {/* Backdrop close */}
       <button
         type="button"
@@ -183,8 +183,9 @@ function Lightbox({
           onTouchEnd={onTouchEnd}
         >
           <img
-            src={item.image}
+            {...imageSet(item.image)}
             alt={item.alt}
+            sizes="100vw"
             className="max-h-[55vh] w-full object-contain"
             style={{ maxHeight: "min(55vh, 55dvh)" }}
           />
@@ -244,29 +245,31 @@ export default function Gallery() {
     <>
       {/* Editorial intro */}
       <section className="bg-paper">
-        <div className="container-x pb-12 pt-[112px] sm:pb-16 sm:pt-[132px] lg:pb-20 lg:pt-[148px]">
-          <Breadcrumbs items={[{ label: "Gallery" }]} />
-          <Reveal>
-            <p className="eyebrow mt-6">Gallery</p>
-          </Reveal>
-          <Reveal delay={0.06} y={20}>
-            <h1 className="type-h1 mt-4 max-w-3xl text-ink">
-              The GIBS campus
-            </h1>
-          </Reveal>
-          <Reveal delay={0.12} y={16}>
-            <p className="mt-6 max-w-2xl type-body">
-              Architecture, classrooms, facilities, events and outdoor spaces at Ilorin, Abuja and Ibafo.
-            </p>
-          </Reveal>
-          <Reveal delay={0.18}>
-            <div className="mt-10 h-px w-full bg-line" />
-          </Reveal>
+        <div className="container-x pb-12 pt-[var(--pt-page)] sm:pb-16 sm:pt-[var(--pt-page-sm)] lg:pb-20 lg:pt-[var(--pt-page-lg)] grid lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Breadcrumbs items={[{ label: "Gallery" }]} />
+            <Reveal>
+              <p className="eyebrow mt-6">Gallery</p>
+            </Reveal>
+            <Reveal delay={0.06} y={20}>
+              <h1 className="type-h1 mt-4 max-w-editorial text-ink">
+                The GIBS campus
+              </h1>
+            </Reveal>
+            <Reveal delay={0.12} y={16}>
+              <p className="mt-6 max-w-prose type-body">
+                Architecture, classrooms, facilities, events and outdoor spaces at Ilorin, Abuja and Ibafo.
+              </p>
+            </Reveal>
+            <Reveal delay={0.18}>
+              <div className="mt-10 h-px w-full bg-line" />
+            </Reveal>
+          </div>
         </div>
       </section>
 
       {/* Filters */}
-      <section className="sticky top-[var(--sticky-top)] z-20 border-y border-line bg-white/95 backdrop-blur-md">
+      <section className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] border-y border-line bg-white/95 backdrop-blur-md">
         <div className="container-x flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
           {CATEGORIES.map((cat) => (
             <button
@@ -284,7 +287,7 @@ export default function Gallery() {
 
       {/* Editorial image layouts */}
       <section className="bg-white">
-        <div className="container-x py-12 sm:py-16">
+        <div className="container-x band-y">
           {/* Sophisticated editorial layouts: mix of full-bleed, two-col, asymmetrical */}
           <div className="grid gap-6 sm:gap-8">
             {/* Feature: full-bleed architecture */}
@@ -298,10 +301,11 @@ export default function Gallery() {
                 >
                   <div className={`relative ${filtered[0].aspect} w-full overflow-hidden`}>
                     <img
-                      src={filtered[0].image}
+                      {...imageSet(filtered[0].image)}
                       alt={filtered[0].alt}
                       loading="eager"
                       decoding="async"
+                      sizes="(min-width: 1024px) 50vw, 100vw"
                       className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
                     />
                     <div className="absolute inset-0 bg-forest-950/15 transition-colors group-hover:bg-forest-950/5" />
@@ -324,10 +328,11 @@ export default function Gallery() {
                     <button type="button" onClick={() => openLightbox(1 + i)} aria-label={`View ${item.title} — opens in lightbox`} className="group block w-full text-left">
                       <div className={`relative ${item.aspect} overflow-hidden`}>
                         <img
-                          src={item.image}
+                          {...imageSet(item.image)}
                           alt={item.alt}
                           loading="lazy"
                           decoding="async"
+                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                         />
                         <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-forest-950/5" />
@@ -351,10 +356,11 @@ export default function Gallery() {
                   <button type="button" onClick={() => openLightbox(3)} className="group block w-full text-left">
                     <div className={`relative ${filtered[3].aspect} overflow-hidden lg:aspect-[4/3]`}>
                       <img
-                        src={filtered[3].image}
+                        {...imageSet(filtered[3].image)}
                         alt={filtered[3].alt}
                         loading="lazy"
                         decoding="async"
+                        sizes="(min-width: 1024px) 55vw, 100vw"
                         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                       />
                       <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-transparent" />
@@ -373,10 +379,11 @@ export default function Gallery() {
                       <button type="button" onClick={() => openLightbox(4 + i)} aria-label={`View ${item.title} — opens in lightbox`} className="group block w-full text-left">
                         <div className={`relative ${item.aspect} overflow-hidden`}>
                           <img
-                            src={item.image}
+                            {...imageSet(item.image)}
                             alt={item.alt}
                             loading="lazy"
                             decoding="async"
+                            sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
                             className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                           />
                           <div className="absolute inset-0 bg-forest-950/10" />
@@ -401,10 +408,11 @@ export default function Gallery() {
                     <button type="button" onClick={() => openLightbox(6 + i)} className="group block w-full text-left">
                       <div className={`relative ${item.aspect} overflow-hidden`}>
                         <img
-                          src={item.image}
+                          {...imageSet(item.image)}
                           alt={item.alt}
                           loading="lazy"
                           decoding="async"
+                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                           className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                         />
                         <div className="absolute inset-0 bg-forest-950/10" />

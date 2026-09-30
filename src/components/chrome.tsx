@@ -20,7 +20,7 @@ export function SkipLink() {
         main?.focus();
         main?.scrollIntoView();
       }}
-      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-panel focus:bg-forest-600 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-ivory"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[var(--z-skip)] focus:rounded-panel focus:bg-forest-600 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-ivory"
     >
       Skip to content
     </a>
@@ -71,7 +71,7 @@ export function Header({
       <div className="container-x flex h-[var(--header-height)] min-w-0 items-center justify-between gap-4">
         <Link to="/" className="flex min-w-0 shrink-0 items-center gap-3" aria-label="GIBS home">
           <HexMark compact className="h-11 w-11 shrink-0" />
-          <span className="hidden leading-tight lg:block">
+          <span className="hidden leading-tight xl:block">
             <span className="block font-serif text-[14px] font-semibold tracking-wide text-forest-900">
               Goshen International
             </span>
@@ -82,7 +82,7 @@ export function Header({
         </Link>
 
         {/* Desktop nav */}
-        <nav aria-label="Primary" className="hidden items-center gap-7 xl:flex">
+        <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
           {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
@@ -118,17 +118,17 @@ export function Header({
             type="button"
             onClick={onOpenConcierge}
             aria-label="Open GIBS AI"
-            className="hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 md:inline-flex"
+            className="hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 xl:inline-flex"
           >
             <span className="relative flex h-2 w-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-500" />
             </span>
             GIBS AI
           </button>
-          <Link to="/admissions" className="btn btn-primary btn-md hidden xl:inline-flex">
+          <Link to="/admissions" className="btn btn-primary btn-md hidden lg:inline-flex">
             Subscribe
           </Link>
-          <Link to="/admissions" className="btn btn-primary btn-sm xl:hidden">
+          <Link to="/admissions" className="btn btn-primary btn-sm lg:hidden">
             Subscribe
           </Link>
           <button
@@ -137,7 +137,7 @@ export function Header({
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
-            className="flex h-11 w-11 items-center justify-center rounded-pill border border-forest-700/25 text-forest-800 transition-colors hover:border-forest-600 hover:bg-forest-600 hover:text-ivory xl:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-pill border border-forest-700/25 text-forest-800 transition-colors hover:border-forest-600 hover:bg-forest-600 hover:text-ivory lg:hidden"
           >
             <MenuIcon className="h-5 w-5" />
           </button>
@@ -466,7 +466,7 @@ function Newsletter() {
 export function GlobalFooter() {
   return (
     <footer className="relative border-t-2 border-gold-500/30 bg-forest-950 text-ivory">
-      <div className="container-x py-20 sm:py-24">
+      <div className="container-x band-y">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <div className="flex items-center gap-4">
@@ -508,7 +508,7 @@ export function GlobalFooter() {
                     <li key={l.label}>
                       <Link
                         to={l.to}
-                        className="group inline-flex items-center gap-1.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory"
+                        className="group inline-flex min-h-[44px] items-center gap-1.5 py-2.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory"
                       >
                         <span className="h-px w-0 bg-gold-300 transition-all duration-300 group-hover:w-4" />
                         {l.label}

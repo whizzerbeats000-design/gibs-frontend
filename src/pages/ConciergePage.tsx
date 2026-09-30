@@ -30,30 +30,30 @@ export default function ConciergePage() {
       />
 
       <section className="bg-white">
-        <div className="container-x grid gap-12 py-16 sm:py-20 lg:grid-cols-12 lg:gap-12">
+        <div className="container-x section-y grid gap-12 lg:grid-cols-12 lg:gap-12">
           {/* LEFT — identity and topics */}
           <div className="order-2 lg:order-1 lg:col-span-5">
             <Reveal>
-              <div className="border-t-2 border-forest-600 bg-paper p-8 sm:p-10">
+              <div className="border-t-2 border-forest-600 bg-paper p-8 sm:p-10 max-w-editorial">
                 <span className="flex h-12 w-12 items-center justify-center rounded-pill bg-forest-700 text-gold-300">
                   <ChatIcon className="h-5 w-5" />
                 </span>
                 <h2 className="type-h2 mt-6 text-ink">
                   Welcome to GIBS AI. How can we help you find your way?
                 </h2>
-                <p className="mt-4 type-body">
+                <p className="mt-4 max-w-prose type-body">
                   An intelligent, verified programme assistant. It answers common questions
                   instantly and routes official enquiries directly to the
                   right GIBS team.
                 </p>
               </div>
 
-              <p className="eyebrow">Suggested topics</p>
+              <p className="eyebrow mt-12">Suggested topics</p>
               <ul className="mt-5 border-t rule">
                 {TOPICS.map((t) => (
                   <li key={t.title} className="border-b rule py-4">
                     <p className="type-h3 text-ink">{t.title}</p>
-                    <p className="mt-1 type-body">{t.body}</p>
+                    <p className="mt-1 max-w-prose type-body">{t.body}</p>
                   </li>
                 ))}
               </ul>
@@ -72,7 +72,7 @@ export default function ConciergePage() {
           {/* RIGHT — conversation */}
           <div className="order-1 lg:order-2 lg:col-span-7">
             <Reveal y={28}>
-              <div className="flex h-[640px] flex-col overflow-hidden border border-line shadow-crisp sm:h-[700px]">
+              <div className="flex h-[640px] max-h-[85dvh] flex-col overflow-hidden border border-line shadow-crisp sm:h-[700px] sm:max-h-[85dvh]">
                 <div className="flex items-center justify-between gap-3 bg-forest-800 px-6 py-4 text-ivory">
                   <div>
                     <p className="flex items-center gap-2.5 font-serif text-[15px] font-semibold">

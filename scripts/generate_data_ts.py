@@ -335,15 +335,15 @@ export const FACULTY_ADVISORS: FacultyAdvisor[] = [
 /* ---------------- 4. Image Assets ---------------- */
 
 export const IMAGES = {{
-  hero: "/images/hero-campus.jpg",
-  colonnade: "/images/campus-colonnade.jpg",
-  library: "/images/library-interior.jpg",
-  boardroom: "/images/library-interior.jpg",
-  city: "/images/hero-campus.jpg",
-  lecture: "/images/library-interior.jpg",
-  seminar: "/images/campus-colonnade.jpg",
-  books: "/images/library-interior.jpg",
-  study: "/images/library-interior.jpg",
+  hero: "/images/campus-colonnade.webp",
+  colonnade: "/images/campus-colonnade.webp",
+  library: "/images/library-interior.webp",
+  boardroom: "/images/library-interior.webp",
+  city: "/images/campus-colonnade.webp",
+  lecture: "/images/library-interior.webp",
+  seminar: "/images/campus-colonnade.webp",
+  books: "/images/library-interior.webp",
+  study: "/images/library-interior.webp",
 }};
 
 /* ---------------- 5. Navigation Links ---------------- */

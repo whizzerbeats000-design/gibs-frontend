@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
 /* ============================================================
@@ -63,7 +62,6 @@
   /* Shape scale — architecture over pills */
   --radius-xs: 2px;
   --radius-panel: 4px;
-  --radius-card: 16px;
   --radius-pill: 9999px;
 
   /* Elevation — crisp and rare.
@@ -87,10 +85,9 @@
     0 6px 14px -4px rgba(0, 32, 9, 0.12),
     0 24px 48px -12px rgba(0, 32, 9, 0.24);
 
-  /* Layout */
-  --container-page: 1280px;
-  --gutter: 1.25rem;
-
+  /* Layout. --gutter-x and --section-y/--band-y are consumed by .container-x
+     and the section rhythm tokens (see the semantic aliases block); they live
+     here in @theme as documented values only. */
   /* Header height. Single source of truth: the <header> itself, the sticky
      sub-headers on /programmes and /gallery, and html scroll-padding-top all
      derive from this. It previously existed only as a --sticky-top token that
@@ -100,11 +97,19 @@
 
   /* Motion — durations and easing are inlined where used */
 
-  /* Z-index */
+  /* Z-index. App-level chrome owns 50–80. Sub-header layers (sticky filter
+     panels, scroll-spy nav) sit below the chrome in their own 20–30 band;
+     intra-section photo layering uses local z-10/z-[1] and is out of the
+     app-level scale. The skip link must clear the header (50) yet sit under
+     the search (70) and concierge (80) overlays, so it sits at 55. */
   --z-header: 50;
   --z-nav: 60;
   --z-search: 70;
   --z-concierge: 80;
+  --z-subnav: 30;
+  --z-sticky-panel: 20;
+  --z-skip: 55;
+  --z-lightbox: 100;
 
   /* Sticky offsets. The header is a single 72px bar at every breakpoint — the
      xl nav moved inside it and the former 36px utility bar was removed, but a
@@ -112,6 +117,13 @@
      that removal. It left the sticky filter panel on /programmes and /gallery
      floating 35px below the header on desktop while sitting flush on mobile. */
   --sticky-top: var(--header-height);
+  /* Height of the sticky scroll-spy bar on programme detail — measured 69px
+     at desktop (44px content + 24px container padding + 1px border). The bar
+     itself is pinned to this value (container lg:h = height − border) so the
+     token IS the bar. Everything that must clear it (the pinned summary card,
+     the scroll-spy root, section scroll targets) derives from this SAME token
+     — previously 72/88/136/150 were independently encoded in three files. */
+  --subnav-height: 69px;
 }
 
 /* ---- Semantic token aliases (consumed via arbitrary values) ---- */
@@ -129,6 +141,50 @@
   /* Focus outline must hold 3:1 against any surface; forest-600 passes on
      paper, ivory, stone and white — amber does not. */
   --focus: var(--color-forest-600);
+
+  /* Responsive rhythm — the canonical section & band scale (doc 06 §4).
+     Tiers: compact 64–80 · normal 80–96 · major 96–112.
+     Compact <640:   section 64  band 48  gutter 20
+     Medium  640–1023: section 80  band 64  gutter 32
+     Expanded ≥1024: section 72  band 64  gutter 48
+     Cinematic closings opt into .section-y-major (112px) so the scene-closes
+     read spacious while ordinary sections hold the normal tier. */
+  --section-y: 64px;
+  --band-y: 48px;
+  --section-y-major: 64px;
+  --gutter-x: 20px;
+
+  /* Reading measures — cap prose and display text width, never whole layouts. */
+  --measure-prose: 68ch;
+  --measure-hero: 22ch;
+
+  /* Page-top clearance under the fixed 72px header. Page shells and hero
+     heroes derive from --header-height so a header-height change retunes the
+     whole site; previously hardcoded as pt-[112/120/132/140/142/148px]
+     scattered across six files. */
+  --pt-page: calc(var(--header-height) + 40px); /* 112 — page shell, base   */
+  --pt-page-sm: calc(var(--header-height) + 60px); /* 132 — page shell, sm  */
+  --pt-page-lg: calc(var(--header-height) + 76px); /* 148 — page shell, lg  */
+  --pt-hero: calc(var(--header-height) + 48px); /* 120 — hero pages, base    */
+  --pt-hero-sm: calc(var(--header-height) + 70px); /* 142 — hero pages, sm   */
+  --pt-hero-lg: calc(var(--header-height) + 76px); /* 148 — hero pages, lg   */
+  --pt-404: calc(var(--header-height) + 68px); /* 140 — not-found page       */
+}
+@media (min-width: 640px) {
+  :root {
+    --section-y: 80px;
+    --band-y: 64px;
+    --section-y-major: 80px;
+    --gutter-x: 32px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --section-y: 72px;
+    --band-y: 64px;
+    --section-y-major: 112px;
+    --gutter-x: 48px;
+  }
 }
 
 html {
@@ -188,10 +244,103 @@ body {
   scroll-margin-top: calc(var(--sticky-top) + 8px);
 }
 
+/* Type scale rungs and the label base are @utility so other rules can
+   @apply them (Tailwind v4 only applies registered utilities). */
+@utility type-h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  /* Page-title rung — mobile floor held at 36px so the longest real programme
+     titles (~184 chars) render sanely at 320px; desktop caps at 56px (was 80px)
+     so page titles read controlled and stop climbing past ~1500px. The home
+     hero borrows .type-hero (68px) so the front page stays the loudest moment
+     while every routed page title sits one rung quieter (doc 06, §4). */
+  font-size: clamp(2.25rem, 3.75vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility type-h2 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  /* Desktop section headings stop at 40px (was 44px, then 54px) so sections
+     read exactly one quiet rung under the 56px page title. Floor held at
+     28px — mobile section headings stay focused, not shouting. */
+  font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility type-hero {
+  font-family: var(--font-display);
+  font-weight: 400;
+  /* The one loud rung — reserved for the full-bleed home hero. Caps at 68px
+     so even a 5rem cinematic headline equals the old H2 and the intellectual
+     serif stays premium, never poster-shout. Mobile floor held at 2.25rem. */
+  font-size: clamp(2.25rem, 5.5vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility type-h3 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  /* Card/row titles: floor held at 24px (mobile unchanged), flat 1.8vw slope
+     holds ≈22–24px across common desktop widths and caps at 26px — compact,
+     editorial card scale instead of 33.6px inflation. */
+  font-size: clamp(1.5rem, 1.6vw, 1.625rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility label-base {
+  @apply text-[11px] font-medium uppercase tracking-[0.12em] sm:text-[12px];
+}
+
 @layer components {
   /* ---------------- Layout ---------------- */
   .container-x {
-    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-12;
+    @apply mx-auto w-full max-w-[1280px] px-(--gutter-x);
+  }
+
+  .max-w-prose {
+    max-width: 68ch;
+  }
+
+  .max-w-card {
+    max-width: 420px;
+  }
+
+  .max-w-editorial {
+    max-width: 800px;
+  }
+
+  /* Section / band vertical rhythm — token-driven, responsive via @theme.
+     Sections set the fuller rhythm; bands (sub-sections, hero bodies, footer
+     bands) sit at the tighter band-y which is equal for sm+ so adjacent band
+     stacking stays even. */
+  .section-y {
+    padding-block: var(--section-y);
+  }
+  /* Major tier — cinematic scene-closes (full-bleed closings, journal close)
+     opt in to the 112px expanded rhythm instead of the normal 88px, so the
+     page breathes louder at its starts and ends but not in between. */
+  .section-y-major {
+    padding-block: var(--section-y-major);
+  }
+  .band-y {
+    padding-block: var(--band-y);
   }
 
   /* ---------------- Typography roles ----------------
@@ -217,53 +366,13 @@ body {
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
   }
-  .type-h1 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(3.2rem, 6.5vw, 5.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
   /* Section headings — large but not every heading at the same ceiling.
      The hero owns the biggest size; sections sit one rung quieter so the
-     full-page scale reads as an intentional climb, not an equal shout. */
-  .type-h2 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2.1rem, 4vw, 3.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
-    text-wrap: balance;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  .type-h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(1.5rem, 2.5vw, 2.1rem);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  /* Hero headline — Instrument Serif: crisp, authoritative editorial typography */
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.2rem, 6.5vw, 5.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    font-weight: 400;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
+     full-page scale reads as an intentional climb, not an equal shout.
+     (.type-h1/h2/h3 are @utility classes emitted from the block above;
+     they need no component-layer wrapper.) */
+  /* Hero headline — Instrument Serif (spans within a .type-h1 headline that
+     need the same family/size; the headline itself uses .type-h1 now). */
   .hero-title-white {
     color: #ffffff;
     font-weight: 400;
@@ -281,21 +390,25 @@ body {
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
   .type-body {
-    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
+    font-size: clamp(0.95rem, 1.2vw, 1.0625rem);
     line-height: 1.55;
     text-wrap: pretty;
     @apply text-muted;
   }
   /* Section labels — deliberately quiet: medium weight, tighter tracking.
-     Hierarchy comes from size and space, not from shouting labels. */
+     Hierarchy comes from size and space, not from shouting labels.
+     One base (label-base) owns the size/weight/letterspacing so `.eyebrow`,
+     `.eyebrow-light`, `.meta`, `.field-label` and `.card-eyebrow` can never
+     drift apart — they previously duplicated the same 11/12px scale five
+     times and did already (forest-700 vs 600 vs ink). */
   .eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-forest-700 sm:text-[12px];
+    @apply label-base text-forest-700;
   }
   .eyebrow-light {
-    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-gold-300 sm:text-[12px];
+    @apply label-base text-gold-300;
   }
   .meta {
-    @apply text-[11px] font-medium uppercase tracking-[0.1em] text-muted sm:text-[12px];
+    @apply label-base tracking-[0.1em] text-muted;
   }
   .prose-editorial {
     @apply text-[16.5px] leading-[1.9] text-ink/85;
@@ -304,15 +417,9 @@ body {
     margin-top: 1.6em;
   }
   .prose-editorial h2 {
-    font-family: var(--font-display);
-    font-size: clamp(2.1rem, 4vw, 3.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
+    @apply type-h2;
     color: var(--color-ink);
     margin: 2.2em 0 0.8em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
   }
   .prose-editorial blockquote {
     font-family: var(--font-serif);
@@ -480,7 +587,7 @@ body {
      same 0.12em tracking — so form labels read as one system with section
      labels instead of shouting in a different key. */
   .field-label {
-    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-ink sm:text-[12px];
+    @apply label-base mb-2 block font-semibold text-ink;
   }
   .field-input {
     @apply w-full rounded-panel border border-ink/20 bg-white px-4 py-3.5 text-base text-ink placeholder:text-muted/60 transition-colors duration-200 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-[15px];
@@ -524,11 +631,24 @@ body {
      catalogue shares the same depth ladder as every other card. Hover and
      focus-visible share one state: a keyboard user must see the same lift a
      mouse user does. */
+  /* Individual programme cards carry a sub-3° pointer tilt (driven by the
+     useCardDepth --rx/--ry vars, not React) on FINE pointers only; the shadow
+     itself never depends on hover, so tablet/touch still reads as a raised
+     layered surface. Keyboard focus keeps the same lift without the tilt. */
   .programme-card {
     border-radius: 0;
     box-shadow: var(--shadow-card);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }  .programme-card:hover,
+  }
+  @media (hover: hover) {
+    .programme-card:hover {
+      transform: perspective(1100px) translateY(-3px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      box-shadow:
+        inset 1.5px 1.5px 0 #ffffff,
+        inset 0 0 0 1px rgba(0, 107, 27, 0.18),
+        var(--shadow-card-strong);
+    }
+    }
   .programme-card:focus-visible {
     transform: translateY(-3px);
     box-shadow:
@@ -568,7 +688,7 @@ body {
      forest-600 (not the darker .eyebrow forest-700) because this is the louder,
      more category-forward register that the editorial card already proved. */
   .card-eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600 sm:text-[12px];
+    @apply label-base text-forest-600;
   }
   /* Field labels inside a dense card — one step below .card-eyebrow. */
   .card-field-label {
@@ -789,6 +909,10 @@ body {
   .card-lift:focus-within { transform: none !important; transition: none !important; }
   .perspective-stage, .perspective-hero { perspective: none !important; }
   .layer-z-deep, .layer-z-fore, .layer-z-top { transform: none !important; }
+  /* Variant-level hover transforms must also sit — the bare `.btn` rule above
+     covers .btn-* (they all carry .btn), but these surface variants do not. */
+  .surface-depth-2:hover { transform: none !important; }
+  .card-spot::before { opacity: 0 !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;

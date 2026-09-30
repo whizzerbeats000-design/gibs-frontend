@@ -2,7 +2,7 @@ import { BtnLink, Breadcrumbs } from "../components/ui";
 import { EditorialCard } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { Link, useSeo } from "../lib/router";
-import { getArticle, relatedArticles, ARTICLES } from "../lib/data";
+import { getArticle, relatedArticles, ARTICLES, imageSet } from "../lib/data";
 import { ArrowLeft, ArrowUpRight } from "../components/icons";
 import NotFound from "./NotFound";
 
@@ -22,7 +22,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
     <>
       {/* Article masthead */}
       <section className="bg-paper">
-        <div className="container-x pb-12 pt-[120px] sm:pb-14 sm:pt-[142px] xl:pt-[148px]">
+        <div className="container-x pb-12 pt-[var(--pt-hero)] sm:pb-14 sm:pt-[var(--pt-hero-sm)] xl:pt-[var(--pt-hero-lg)]">
           <Breadcrumbs
             items={[
               { label: "Research & Insights", to: "/research-insights" },
@@ -66,8 +66,9 @@ export default function ArticleDetail({ slug }: { slug: string }) {
             <figure>
               <div className="relative aspect-[21/9] overflow-hidden">
                 <img
-                  src={article.image}
+                  {...imageSet(article.image)}
                   alt={article.alt}
+                  sizes="100vw"
                   className="absolute inset-0 h-full w-full object-cover"
                   decoding="async"
                 />
@@ -81,7 +82,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
 
       {/* Body — editorial measure */}
       <article className="bg-paper">
-        <div className="container-x py-16 sm:py-24">
+        <div className="container-x band-y">
           <div className="mx-auto max-w-[68ch]">
             <Reveal>
               <div className="border-l-2 border-gold-500 bg-ivory/60 px-6 py-5 text-[14px] leading-[1.8] text-muted">
@@ -129,7 +130,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
 
       {/* Related reading */}
       <section className="border-t border-line bg-white">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <h2 className="type-h3 text-ink">Continue reading</h2>
             <Link

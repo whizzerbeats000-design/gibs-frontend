@@ -56,7 +56,7 @@ export default function GlobalPerspective() {
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
-              <p className="mt-5 max-w-lg type-body text-ivory/85">
+              <p className="mt-5 max-w-prose type-body text-ivory/85">
                 GIBS trains executives for the organisations they work in, at home
                 in Nigeria and in nine countries overseas.
               </p>

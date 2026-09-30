@@ -25,41 +25,39 @@ export default function Faculty() {
 
       {/* Governing Council & Board Summary */}
       <section className="border-b border-line bg-white">
-        <div className="container-x section-y">
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
-            <div className="lg:col-span-7">
-              <Reveal>
-                <p className="eyebrow">Governing Council & Management</p>
-                <h2 className="type-h2 mt-4 text-ink">
-                  Institutional governance &amp; management structure
-                </h2>
-                <p className="mt-5 text-[16px] leading-relaxed text-ink/85">
-                  {GOVERNANCE_INFO.councilSummary}
-                </p>
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <span className="rounded-pill bg-forest-50 px-4 py-1.5 text-[12.5px] font-bold text-forest-800">
-                    Governing Council: 4 Directors
-                  </span>
-                  <span className="rounded-pill bg-stone px-4 py-1.5 text-[12.5px] font-bold text-ink">
-                    Management Team: 20 Advisors &amp; Experts
-                  </span>
-                  <span className="rounded-pill bg-gold-100 px-4 py-1.5 text-[12.5px] font-bold text-gold-700">
-                    Chairman of the Council
-                  </span>
-                </div>
-              </Reveal>
-            </div>
-
-            <div className="lg:col-span-5">
-              <div className="border border-line bg-paper p-8 shadow-card">
-                <p className="eyebrow text-forest-700">Academic Technical Partner</p>
-                <h3 className="display-serif mt-3 text-xl text-ink">
-                  {INSTITUTIONAL_DATA.technicalPartner}
-                </h3>
-                <p className="mt-3 text-[13.5px] leading-relaxed text-muted">
-                  Technical collaboration ensuring global curriculum standards across international executive programmes.
-                </p>
+        <div className="container-x section-y grid lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <p className="eyebrow">Governing Council & Management</p>
+              <h2 className="type-h2 mt-4 text-ink">
+                Institutional governance &amp; management structure
+              </h2>
+              <p className="mt-5 text-[16px] leading-relaxed text-ink/85 max-w-prose">
+                {GOVERNANCE_INFO.councilSummary}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <span className="rounded-pill bg-forest-50 px-4 py-1.5 text-[12.5px] font-bold text-forest-800">
+                  Governing Council: 4 Directors
+                </span>
+                <span className="rounded-pill bg-stone px-4 py-1.5 text-[12.5px] font-bold text-ink">
+                  Management Team: 20 Advisors &amp; Experts
+                </span>
+                <span className="rounded-pill bg-gold-100 px-4 py-1.5 text-[12.5px] font-bold text-gold-700">
+                  Chairman of the Council
+                </span>
               </div>
+            </Reveal>
+          </div>
+
+          <div className="lg:col-span-5">
+            <div className="border border-line bg-paper p-8 shadow-card max-w-editorial">
+              <p className="eyebrow text-forest-700">Academic Technical Partner</p>
+              <h3 className="display-serif mt-3 text-xl text-ink">
+                {INSTITUTIONAL_DATA.technicalPartner}
+              </h3>
+              <p className="mt-3 text-[13.5px] leading-relaxed text-muted">
+                Technical collaboration ensuring global curriculum standards across international executive programmes.
+              </p>
             </div>
           </div>
         </div>
@@ -67,23 +65,25 @@ export default function Faculty() {
 
       {/* Official Faculty / Advisors Designation Structure */}
       <section className="paper-grain bg-paper section-y">
-        <div className="container-x">
-          <Reveal>
-            <p className="eyebrow">Academic Board &amp; Advisory Structure</p>
-            <h2 className="type-h2 mt-4 text-ink">
-              14 Functional <em className="italic text-forest-700">Designations.</em>
-            </h2>
-            <p className="mt-3 max-w-2xl type-body">
-              The operational governance framework coordinating academic activities, curriculum development, inter-agency relations, and international partnerships.
-            </p>
-          </Reveal>
+        <div className="container-x grid lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="eyebrow">Academic Board &amp; Advisory Structure</p>
+              <h2 className="type-h2 mt-4 text-ink">
+                14 Functional <em className="italic text-forest-700">Designations.</em>
+              </h2>
+              <p className="mt-3 max-w-prose type-body">
+                The operational governance framework coordinating academic activities, curriculum development, inter-agency relations, and international partnerships.
+              </p>
+            </Reveal>
+          </div>
 
-          <div className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:col-span-7 lg:mt-0">
             {FACULTY_ADVISORS.map((advisor) => (
               <Reveal key={advisor.id} delay={advisor.id * 0.03}>
-                <div className="border-t rule pt-5">
+                <div className="border-t rule pt-5 max-w-card">
                   <h3 className="text-[15px] font-bold text-ink">{advisor.designation}</h3>
-                  <p className="mt-1 type-body text-muted">{advisor.category}</p>
+                  <p className="mt-1 type-body text-muted max-w-prose">{advisor.category}</p>
                 </div>
               </Reveal>
             ))}

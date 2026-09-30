@@ -142,13 +142,16 @@
      paper, ivory, stone and white — amber does not. */
   --focus: var(--color-forest-600);
 
-  /* Responsive rhythm — the canonical section & band scale.
-     Compact <640:    section 64  band 48  gutter 20
+  /* Responsive rhythm — the canonical section & band scale (doc 06 §4).
+     Tiers: compact 64–80 · normal 80–96 · major 96–112.
+     Compact <640:   section 64  band 48  gutter 20
      Medium  640–1023: section 80  band 64  gutter 32
-     Expanded ≥1024:  section 112 band 64  gutter 48
-     These REPLACE the arbitrary py-16/20/24/36 mixture page by page. */
+     Expanded ≥1024: section 72  band 64  gutter 48
+     Cinematic closings opt into .section-y-major (112px) so the scene-closes
+     read spacious while ordinary sections hold the normal tier. */
   --section-y: 64px;
   --band-y: 48px;
+  --section-y-major: 64px;
   --gutter-x: 20px;
 
   /* Reading measures — cap prose and display text width, never whole layouts. */
@@ -171,13 +174,15 @@
   :root {
     --section-y: 80px;
     --band-y: 64px;
+    --section-y-major: 80px;
     --gutter-x: 32px;
   }
 }
 @media (min-width: 1024px) {
   :root {
-    --section-y: 112px;
+    --section-y: 72px;
     --band-y: 64px;
+    --section-y-major: 112px;
     --gutter-x: 48px;
   }
 }
@@ -244,11 +249,12 @@ body {
 @utility type-h1 {
   font-family: var(--font-display);
   font-weight: 400;
-  /* Floor lowered 3.2rem → 2.4rem (approved) so the longest real programme
-     titles (~184 chars) render sanely at 320px instead of ~14 lines; the
-     fluid term still dominates above ~788px, so desktop hero scale is
-     unchanged. */
-  font-size: clamp(2.4rem, 6.5vw, 5.5rem);
+  /* Page-title rung — mobile floor held at 36px so the longest real programme
+     titles (~184 chars) render sanely at 320px; desktop caps at 56px (was 80px)
+     so page titles read controlled and stop climbing past ~1500px. The home
+     hero borrows .type-hero (68px) so the front page stays the loudest moment
+     while every routed page title sits one rung quieter (doc 06, §4). */
+  font-size: clamp(2.25rem, 3.75vw, 3.5rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -259,9 +265,26 @@ body {
 @utility type-h2 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(2.1rem, 4vw, 3.4rem);
+  /* Desktop section headings stop at 40px (was 44px, then 54px) so sections
+     read exactly one quiet rung under the 56px page title. Floor held at
+     28px — mobile section headings stay focused, not shouting. */
+  font-size: clamp(1.75rem, 2.6vw, 2.5rem);
   line-height: 1.1;
   letter-spacing: -0.015em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility type-hero {
+  font-family: var(--font-display);
+  font-weight: 400;
+  /* The one loud rung — reserved for the full-bleed home hero. Caps at 68px
+     so even a 5rem cinematic headline equals the old H2 and the intellectual
+     serif stays premium, never poster-shout. Mobile floor held at 2.25rem. */
+  font-size: clamp(2.25rem, 5.5vw, 4.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -270,7 +293,10 @@ body {
 @utility type-h3 {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(1.5rem, 2.5vw, 2.1rem);
+  /* Card/row titles: floor held at 24px (mobile unchanged), flat 1.8vw slope
+     holds ≈22–24px across common desktop widths and caps at 26px — compact,
+     editorial card scale instead of 33.6px inflation. */
+  font-size: clamp(1.5rem, 1.6vw, 1.625rem);
   line-height: 1.2;
   letter-spacing: -0.01em;
   text-wrap: balance;
@@ -287,12 +313,31 @@ body {
   .container-x {
     @apply mx-auto w-full max-w-[1280px] px-(--gutter-x);
   }
+
+  .max-w-prose {
+    max-width: 68ch;
+  }
+
+  .max-w-card {
+    max-width: 420px;
+  }
+
+  .max-w-editorial {
+    max-width: 800px;
+  }
+
   /* Section / band vertical rhythm — token-driven, responsive via @theme.
      Sections set the fuller rhythm; bands (sub-sections, hero bodies, footer
      bands) sit at the tighter band-y which is equal for sm+ so adjacent band
      stacking stays even. */
   .section-y {
     padding-block: var(--section-y);
+  }
+  /* Major tier — cinematic scene-closes (full-bleed closings, journal close)
+     opt in to the 112px expanded rhythm instead of the normal 88px, so the
+     page breathes louder at its starts and ends but not in between. */
+  .section-y-major {
+    padding-block: var(--section-y-major);
   }
   .band-y {
     padding-block: var(--band-y);
@@ -345,7 +390,7 @@ body {
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
   .type-body {
-    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
+    font-size: clamp(0.95rem, 1.2vw, 1.0625rem);
     line-height: 1.55;
     text-wrap: pretty;
     @apply text-muted;

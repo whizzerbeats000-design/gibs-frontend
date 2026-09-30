@@ -8,7 +8,7 @@ export default function FacultyScholarship() {
   return (
     <section id="faculty" className="cv-auto relative bg-white">
       <div className="container-x section-y">
-        <div className="grid gap-14 lg:grid-cols-12 lg:gap-12">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
             <Reveal>
               <p className="eyebrow">Faculty &amp; Scholarship</p>
@@ -54,7 +54,7 @@ export default function FacultyScholarship() {
             </Reveal>
           </div>
 
-          <Stagger className="grid gap-x-10 gap-y-12 sm:grid-cols-2 lg:col-span-7">
+          <Stagger className="grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:col-span-7">
             {RESEARCH_THEMES.map((theme) => (
               <motion.div key={theme.title} variants={staggerItem}>
                 <ThemeCard title={theme.title} blurb={theme.blurb} />

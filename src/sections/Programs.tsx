@@ -39,57 +39,55 @@ function ProgrammePanel({ slug }: { slug: string }) {
 export default function ProgrammeDiscovery() {
   return (
     <section id="programmes" className="cv-auto relative bg-white">
-      <div className="container-x section-y">
-        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-8">
-            <Reveal>
-              <Eyebrow>Programme Discovery</Eyebrow>
-            </Reveal>
-            <Reveal delay={0.08} y={28}>
-              <h2 className="type-h2 mt-5 text-ink">
-                A sample of the 2026 catalogue
-              </h2>
-            </Reveal>
-          </div>
-          <Reveal delay={0.16} className="lg:col-span-4">
-            <p className="max-w-sm type-body">
-              The full calendar lists 135 programmes in management, finance, executive training and international practice, for senior and middle-level managers, executive officers, legislators and administrators.
-            </p>
+      <div className="container-x section-y grid lg:grid-cols-12">
+        <div className="lg:col-span-5">
+          <Reveal>
+            <Eyebrow>Programme Discovery</Eyebrow>
+          </Reveal>
+          <Reveal delay={0.08} y={28}>
+            <h2 className="type-h2 mt-5 text-ink">
+              A sample of the 2026 catalogue
+            </h2>
           </Reveal>
         </div>
+        <Reveal delay={0.16} className="lg:col-span-7 lg:pl-8">
+          <p className="max-w-prose type-body">
+            The full calendar lists 135 programmes in management, finance, executive training and international practice, for senior and middle-level managers, executive officers, legislators and administrators.
+          </p>
+        </Reveal>
+      </div>
 
-        {/* Editorial category bands */}
-        <Stagger className="mt-16 space-y-14 sm:mt-20">
-          {HOME_PROGRAMME_BANDS.map((band) => (
-            <motion.section
-              key={band.band}
-              variants={staggerItem}
-              className="grid gap-6 lg:grid-cols-12 lg:gap-10"
-            >
-              <div className="lg:col-span-4">
-                <p className="eyebrow text-forest-600">{band.band}</p>
-                <p className="mt-3 max-w-[17rem] text-[13.5px] leading-relaxed text-muted lg:pr-2">
-                  {band.note}
-                </p>
-              </div>
-              <div className="lg:col-span-8 lg:pl-6">
-                {band.slugs.map((slug) => (
-                  <ProgrammePanel key={slug} slug={slug} />
-                ))}
-              </div>
-            </motion.section>
-          ))}
-        </Stagger>
+      {/* Editorial category bands */}
+      <Stagger className="mt-14 space-y-12 sm:mt-16">
+        {HOME_PROGRAMME_BANDS.map((band) => (
+          <motion.section
+            key={band.band}
+            variants={staggerItem}
+            className="grid gap-6 lg:grid-cols-12 lg:gap-8"
+          >
+            <div className="lg:col-span-4">
+              <p className="eyebrow text-forest-600">{band.band}</p>
+              <p className="mt-3 max-w-prose text-[13.5px] leading-relaxed text-muted lg:pr-2">
+                {band.note}
+              </p>
+            </div>
+            <div className="lg:col-span-8 lg:pl-4">
+              {band.slugs.map((slug) => (
+                <ProgrammePanel key={slug} slug={slug} />
+              ))}
+            </div>
+          </motion.section>
+        ))}
+      </Stagger>
 
-        <div className="mt-16 flex flex-wrap items-center gap-x-9 gap-y-4 border-t rule pt-9">
-          <Link to="/programmes" className="btn btn-primary btn-lg">
-            Explore Programmes
-            <ArrowUpRight className="h-4 w-4" />
-          </Link>
-          <Link to="/executive-education" className="group link-underline text-sm font-semibold text-forest-700">
-            Executive education for organizations
-          </Link>
-        </div>
+      <div className="mt-14 flex flex-wrap items-center gap-x-9 gap-y-4 border-t rule pt-8">
+        <Link to="/programmes" className="btn btn-primary btn-lg">
+          Explore Programmes
+          <ArrowUpRight className="h-4 w-4" />
+        </Link>
+        <Link to="/executive-education" className="group link-underline text-sm font-semibold text-forest-700">
+          Executive education for organizations
+        </Link>
       </div>
     </section>
   );

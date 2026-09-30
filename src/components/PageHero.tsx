@@ -49,13 +49,13 @@ export function PageHero({
             </Reveal>
           )}
           <Reveal delay={0.08} y={28}>
-            <h1 className="type-h1 type-extrude-ivory mt-5 max-w-4xl">
+            <h1 className="type-h1 type-extrude-ivory mt-5 max-w-editorial">
               {title} {italic && <em className="text-gold-300">{italic}</em>}
             </h1>
           </Reveal>
           {intro && (
             <Reveal delay={0.16} y={20}>
-              <p className="mt-7 max-w-2xl type-body text-ivory/85">
+              <p className="mt-7 max-w-prose type-body text-ivory/85">
                 {intro}
               </p>
             </Reveal>
@@ -76,13 +76,13 @@ export function PageHero({
           </Reveal>
         )}
         <Reveal delay={0.08} y={28}>
-          <h1 className="type-h1 mt-5 max-w-4xl text-ink">
+          <h1 className="type-h1 mt-5 max-w-editorial text-ink">
             {title} {italic && <em className="text-forest-700">{italic}</em>}
           </h1>
         </Reveal>
         {intro && (
           <Reveal delay={0.16} y={20}>
-            <p className="mt-7 max-w-2xl type-body text-muted">{intro}</p>
+            <p className="mt-7 max-w-prose type-body text-muted">{intro}</p>
           </Reveal>
         )}
         {meta && <Reveal delay={0.22}><div className="mt-8">{meta}</div></Reveal>}

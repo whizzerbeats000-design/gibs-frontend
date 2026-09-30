@@ -100,7 +100,7 @@ export default function Contact() {
           <div className="min-w-0 lg:col-span-7">
             {status === "success" ? (
               <SuccessPanel title="Your enquiry is ready to deliver.">
-                <p>
+                <p className="max-w-prose">
                   Click below to open your email client and deliver directly to{" "}
                   <span className="font-semibold text-forest-700">{primaryEmail}</span>.
                   Your message and details are pre-formatted.
@@ -123,7 +123,7 @@ export default function Contact() {
                 </div>
               </SuccessPanel>
             ) : (
-              <form onSubmit={onSubmit} noValidate className="space-y-7">
+              <form onSubmit={onSubmit} noValidate className="space-y-7 max-w-editorial">
                 <div className="grid gap-7 sm:grid-cols-2">
                   <Field label="Full name" htmlFor="name" required error={errors.name}>
                     <TextInput
@@ -235,9 +235,9 @@ export default function Contact() {
           <div className="min-w-0 lg:col-span-5">
             <Reveal y={32}>
               <div className="space-y-6">
-                <div className="border border-line bg-paper p-7">
+                <div className="border border-line bg-paper p-7 max-w-card">
                   <p className="eyebrow">Interactive Assistance</p>
-                  <p className="mt-3 type-body">
+                  <p className="mt-3 type-body max-w-prose">
                     GIBS AI is available to help guide you through course selection, overseas hub schedules, and fee breakdowns.
                   </p>
                   <button
@@ -250,10 +250,10 @@ export default function Contact() {
                   </button>
                 </div>
 
-                <div className="border border-line bg-paper p-7 space-y-5">
+                <div className="border border-line bg-paper p-7 space-y-5 max-w-card">
                   <div>
                     <p className="eyebrow">Headquarters (Ilorin)</p>
-                    <p className="mt-2 flex items-start gap-2.5 text-[14px] text-ink">
+                    <p className="mt-2 flex items-start gap-2.5 text-[14px] text-ink max-w-prose">
                       <MapPinIcon className="mt-0.5 h-4.5 w-4.5 shrink-0 text-forest-600" />
                       <span>{CAMPUSES[0]?.address ?? ""}</span>
                     </p>
@@ -261,7 +261,7 @@ export default function Contact() {
 
                   <div className="border-t border-line/60 pt-4">
                     <p className="eyebrow">Postal Address</p>
-                    <p className="mt-1 text-[13.5px] text-muted">
+                    <p className="mt-1 text-[13.5px] text-muted max-w-prose">
                       {INSTITUTIONAL_DATA.postalAddress}
                     </p>
                   </div>

@@ -54,29 +54,33 @@ export default function Admissions() {
 
       {/* Process timeline */}
       <section className="bg-paper">
-        <div className="container-x section-y">
-          <Reveal>
-            <p className="eyebrow">How to subscribe</p>
-            <h2 className="type-h2 mt-5 max-w-3xl text-ink">
-              Six deliberate steps to <em className="italic text-forest-700">capacity building.</em>
-            </h2>
-          </Reveal>
-          <ol className="mt-14 border-t rule">
-            {SUBSCRIPTION_STEPS.map((step) => (
-              <li
-                key={step.n}
-                className="group grid grid-cols-[3.5rem_1fr] items-baseline gap-5 border-b rule py-7 sm:grid-cols-[5rem_auto_1fr] sm:gap-10"
-              >
-                <span className="display-serif text-3xl text-gold-600 sm:text-4xl">{step.n}</span>
-                <h3 className="type-h3 w-44 shrink-0 text-ink sm:w-52">
-                  {step.title}
-                </h3>
-                <p className="col-start-2 max-w-xl type-body sm:col-start-auto">
-                  {step.body}
-                </p>
-              </li>
-            ))}
-          </ol>
+        <div className="container-x section-y grid lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="eyebrow">How to subscribe</p>
+              <h2 className="type-h2 mt-5 max-w-prose text-ink">
+                Six deliberate steps to <em className="italic text-forest-700">capacity building.</em>
+              </h2>
+            </Reveal>
+          </div>
+          <div className="mt-14 border-t rule lg:col-span-7 lg:mt-0">
+            <ol className="grid gap-y-1">
+              {SUBSCRIPTION_STEPS.map((step) => (
+                <li
+                  key={step.n}
+                  className="group grid grid-cols-[3.5rem_1fr] items-baseline gap-5 border-b rule py-7 sm:grid-cols-[5rem_auto_1fr] sm:gap-10"
+                >
+                  <span className="display-serif text-3xl text-gold-600 sm:text-4xl">{step.n}</span>
+                  <h3 className="type-h3 w-44 shrink-0 text-ink sm:w-52">
+                    {step.title}
+                  </h3>
+                  <p className="col-start-2 max-w-prose type-body sm:col-start-auto">
+                    {step.body}
+                  </p>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 
@@ -89,7 +93,7 @@ export default function Admissions() {
               <h2 className="type-h2 mt-5 text-ink">
                 Participant and organizational criteria
               </h2>
-              <p className="mt-4 max-w-xl type-body">
+              <p className="mt-4 max-w-prose type-body">
                 GIBS programmes are tailored for career executives, civil servants, directors, managers, and specialized professionals across public and private sectors.
               </p>
             </Reveal>
@@ -102,7 +106,7 @@ export default function Admissions() {
 
           <div className="lg:col-span-5">
             <Reveal>
-              <div className="border border-line bg-paper p-7 sm:p-9">
+              <div className="border border-line bg-paper p-7 sm:p-9 max-w-editorial">
                 <p className="eyebrow">2026 Training Calendar Cycles</p>
                 <dl className="mt-6">
                   {CALENDAR_CYCLES.map((d) => (
@@ -143,27 +147,27 @@ export default function Admissions() {
         <div className="container-x section-y grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <h2 className="type-h2">Published Fee Structure</h2>
-            <p className="mt-4 type-body text-ivory/80">
+            <p className="mt-4 max-w-prose type-body text-ivory/80">
               All 135 programmes feature transparent, officially approved fees covering course delivery, study materials, executive luncheon, tea breaks, and certificates.
             </p>
           </div>
           <div className="lg:col-span-8">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="border border-white/15 bg-forest-800/60 p-6">
+              <div className="border border-white/15 bg-forest-800/60 p-6 max-w-card">
                 <span className="eyebrow-light">
                   Domestic / Open Programmes (113)
                 </span>
                 <p className="mt-2 text-2xl font-bold text-white">₦300,000 — ₦800,000</p>
-                <p className="mt-2 text-[13px] text-ivory/70">
+                <p className="mt-2 text-[13px] text-ivory/70 max-w-prose">
                   Delivered at Ilorin HQ, Abuja, Ibafo (Ogun State), or off-campus locations (Lagos, Port Harcourt, Kaduna, etc.).
                 </p>
               </div>
-              <div className="border border-white/15 bg-forest-800/60 p-6">
+              <div className="border border-white/15 bg-forest-800/60 p-6 max-w-card">
                 <span className="eyebrow-light">
                   Foreign Training Hubs (22)
                 </span>
                 <p className="mt-2 text-2xl font-bold text-white">USD $4,800+ / GBP £4,800</p>
-                <p className="mt-2 text-[13px] text-ivory/70">
+                <p className="mt-2 text-[13px] text-ivory/70 max-w-prose">
                   International training hubs in Kigali ($4,800), Dubai ($4,800), London (£4,800), and Houston ($5,000 - $9,500).
                 </p>
               </div>

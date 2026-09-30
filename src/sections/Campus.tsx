@@ -17,7 +17,7 @@ export default function Experience() {
   return (
     <section id="campus-experience" ref={ref} className="paper-grain cv-auto relative overflow-hidden bg-paper">
       <div className="container-x section-y">
-        <div className="grid gap-14 lg:grid-cols-12 lg:gap-10">
+        <div className="grid gap-12 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5 lg:pt-4">
             <Reveal>
               <p className="eyebrow">The GIBS Experience</p>
@@ -30,7 +30,7 @@ export default function Experience() {
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
-              <p className="mt-7 max-w-md type-body">
+              <p className="mt-7 max-w-prose type-body">
                 A piece of modern classicism: travertine, brass, oak and
                 forest-green steel, chosen to weather beautifully.
               </p>

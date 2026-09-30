@@ -63,7 +63,7 @@ export default function InsightsTeaser() {
         <Reveal delay={0.1} y={36} className="mt-14">
           <Link
             to={`/research-insights/${featured.slug}`}
-            className="group grid gap-8 rounded-panel border border-line bg-white p-6 shadow-card transition-all duration-300 hover:shadow-card-strong lg:grid-cols-12 lg:gap-12 lg:p-8"
+            className="group grid gap-8 rounded-panel border border-line bg-white p-6 shadow-card transition-all duration-300 hover:shadow-card-strong lg:grid-cols-12 lg:gap-8 lg:p-6"
           >
             <div className="relative aspect-[16/10] overflow-hidden rounded-xs shadow-crisp lg:col-span-7">
               <img

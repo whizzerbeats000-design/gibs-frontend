@@ -8,7 +8,7 @@ export default function AdmissionsTeaser() {
     <section id="subscription" className="cv-auto relative overflow-hidden bg-forest-800 text-ivory">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_88%_-20%,rgba(235,211,117,0.16),transparent_50%)]" />
       <div className="container-x relative section-y">
-        <div className="grid gap-14 lg:grid-cols-12">
+        <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
               <p className="eyebrow-light">Programme Subscription</p>
@@ -35,7 +35,7 @@ export default function AdmissionsTeaser() {
             </Reveal>
           </div>
 
-          <Reveal delay={0.2} className="lg:col-span-7 lg:pl-8">
+          <Reveal delay={0.2} className="lg:col-span-7 lg:pl-6">
             <ol className="border-t rule-light">
               {ADMISSIONS_STEPS.map((step) => (
                 <li

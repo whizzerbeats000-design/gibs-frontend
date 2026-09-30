@@ -245,24 +245,26 @@ export default function Gallery() {
     <>
       {/* Editorial intro */}
       <section className="bg-paper">
-        <div className="container-x pb-12 pt-[var(--pt-page)] sm:pb-16 sm:pt-[var(--pt-page-sm)] lg:pb-20 lg:pt-[var(--pt-page-lg)]">
-          <Breadcrumbs items={[{ label: "Gallery" }]} />
-          <Reveal>
-            <p className="eyebrow mt-6">Gallery</p>
-          </Reveal>
-          <Reveal delay={0.06} y={20}>
-            <h1 className="type-h1 mt-4 max-w-3xl text-ink">
-              The GIBS campus
-            </h1>
-          </Reveal>
-          <Reveal delay={0.12} y={16}>
-            <p className="mt-6 max-w-2xl type-body">
-              Architecture, classrooms, facilities, events and outdoor spaces at Ilorin, Abuja and Ibafo.
-            </p>
-          </Reveal>
-          <Reveal delay={0.18}>
-            <div className="mt-10 h-px w-full bg-line" />
-          </Reveal>
+        <div className="container-x pb-12 pt-[var(--pt-page)] sm:pb-16 sm:pt-[var(--pt-page-sm)] lg:pb-20 lg:pt-[var(--pt-page-lg)] grid lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Breadcrumbs items={[{ label: "Gallery" }]} />
+            <Reveal>
+              <p className="eyebrow mt-6">Gallery</p>
+            </Reveal>
+            <Reveal delay={0.06} y={20}>
+              <h1 className="type-h1 mt-4 max-w-editorial text-ink">
+                The GIBS campus
+              </h1>
+            </Reveal>
+            <Reveal delay={0.12} y={16}>
+              <p className="mt-6 max-w-prose type-body">
+                Architecture, classrooms, facilities, events and outdoor spaces at Ilorin, Abuja and Ibafo.
+              </p>
+            </Reveal>
+            <Reveal delay={0.18}>
+              <div className="mt-10 h-px w-full bg-line" />
+            </Reveal>
+          </div>
         </div>
       </section>
 

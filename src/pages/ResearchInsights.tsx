@@ -38,7 +38,7 @@ export default function ResearchInsights() {
             <Reveal>
               <p className="meta text-forest-600">{featured.kicker} · {featured.status}</p>
             </Reveal>
-            <div className="mt-8 grid gap-12 lg:grid-cols-12 lg:gap-14">
+            <div className="mt-8 grid gap-12 lg:grid-cols-12 lg:gap-10">
               <Reveal y={36} className="lg:col-span-7">
                 <Link
                   to={`/research-insights/${featured.slug}`}
@@ -84,15 +84,17 @@ export default function ResearchInsights() {
 
       {/* Theme navigation */}
       <section className="paper-grain border-y border-line bg-paper">
-        <div className="container-x section-y">
-          <Reveal>
-            <p className="eyebrow">Browse by theme</p>
-          </Reveal>
-          <div className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="container-x section-y grid lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="eyebrow">Browse by theme</p>
+            </Reveal>
+          </div>
+          <div className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:col-span-7 lg:mt-0">
             {RESEARCH_THEMES.map((t, i) => (
               <Reveal key={t.title} delay={i * 0.05}>
                 <h3 className="type-h3 mt-3 text-ink">{t.title}</h3>
-                <p className="mt-2 type-body">{t.blurb}</p>
+                <p className="mt-2 max-w-prose type-body">{t.blurb}</p>
               </Reveal>
             ))}
           </div>
@@ -101,82 +103,85 @@ export default function ResearchInsights() {
 
       {/* Forthcoming listing */}
       <section className="bg-white">
-        <div className="container-x section-y">
-          <Reveal>
-            <p className="eyebrow">Forthcoming</p>
-            <h2 className="type-h2 mt-5 text-ink">
-              The first edition
-            </h2>
-          </Reveal>
-
-          {/* Functional category filter */}
-          <div className="mt-9 flex flex-wrap items-center gap-2.5" role="group" aria-label="Filter insights by category">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                aria-pressed={active === cat}
-                onClick={() => setActive(cat)}
-                className={cn(
-                  "chip",
-                  active === cat
-                    ? "border-forest-600 bg-forest-600 text-ivory"
-                    : "border-ink/20 text-ink/70 hover:border-forest-600 hover:text-forest-700"
-                )}
-              >
-                {cat}
-              </button>
-            ))}
-            <span className="meta ml-1" aria-live="polite">
-              {featuredMatchesFilter ? filteredCount + 1 : filteredCount}{" "}
-              {(featuredMatchesFilter ? filteredCount + 1 : filteredCount) === 1 ? "piece" : "pieces"}
-            </span>
+        <div className="container-x section-y grid lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="eyebrow">Forthcoming</p>
+              <h2 className="type-h2 mt-5 text-ink">
+                The first edition
+              </h2>
+            </Reveal>
           </div>
-
-          {list.length > 0 ? (
-            <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-              {list.map((post) => (
-                <EditorialCard
-                  key={post.slug}
-                  to={`/research-insights/${post.slug}`}
-                  image={post.image}
-                  alt={post.alt}
-                  tag={post.category}
-                  meta="Forthcoming"
-                  title={post.title}
-                  excerpt={post.dek}
-                  cta="Read the preview"
-                />
+          <div className="lg:col-span-7">
+            {/* Functional category filter */}
+            <div className="mt-9 flex flex-wrap items-center gap-2.5" role="group" aria-label="Filter insights by category">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  aria-pressed={active === cat}
+                  onClick={() => setActive(cat)}
+                  className={cn(
+                    "chip",
+                    active === cat
+                      ? "border-forest-600 bg-forest-600 text-ivory"
+                      : "border-ink/20 text-ink/70 hover:border-forest-600 hover:text-forest-700"
+                  )}
+                >
+                  {cat}
+                </button>
               ))}
+              <span className="meta ml-1" aria-live="polite">
+                {featuredMatchesFilter ? filteredCount + 1 : filteredCount}{" "}
+                {(featuredMatchesFilter ? filteredCount + 1 : filteredCount) === 1 ? "piece" : "pieces"}
+              </span>
             </div>
-          ) : (
-            <div className="mt-12">
+
+            {list.length > 0 ? (
+              <div className="mt-12 grid gap-12 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                {list.map((post) => (
+                  <EditorialCard
+                    key={post.slug}
+                    to={`/research-insights/${post.slug}`}
+                    image={post.image}
+                    alt={post.alt}
+                    tag={post.category}
+                    meta="Forthcoming"
+                    title={post.title}
+                    excerpt={post.dek}
+                    cta="Read the preview"
+                  />
+                ))}
+              </div>
+            ) : (
+              <div className="mt-12">
+                <EmptyState
+                  title={
+                    featuredMatchesFilter
+                      ? "Featured above"
+                      : ARTICLES.length === 0
+                      ? "Inaugural edition in preparation"
+                      : "No pieces in this theme yet"
+                  }
+                  body={
+                    featuredMatchesFilter
+                      ? `The ${active} piece in this first edition is featured at the top of this page. New pieces in this theme will appear here as the journal publishes.`
+                      : ARTICLES.length === 0
+                      ? "The inaugural edition of the GIBS Journal is currently in editorial preparation. Research essays, case studies, and faculty perspectives will be published here."
+                      : `No pieces in the "${active}" theme have been published yet. More essays and perspectives are in preparation.`
+                  }
+                  action={<BtnLink to="/concierge" variant="outline-ink" size="md">Ask GIBS AI</BtnLink>}
+                />
+              </div>
+            )}
+
+            <div className="mt-16">
               <EmptyState
-                title={
-                  featuredMatchesFilter
-                    ? "Featured above"
-                    : ARTICLES.length === 0
-                    ? "Inaugural edition in preparation"
-                    : "No pieces in this theme yet"
-                }
-                body={
-                  featuredMatchesFilter
-                    ? `The ${active} piece in this first edition is featured at the top of this page. New pieces in this theme will appear here as the journal publishes.`
-                    : ARTICLES.length === 0
-                    ? "The inaugural edition of the GIBS Journal is currently in editorial preparation. Research essays, case studies, and faculty perspectives will be published here."
-                    : `No pieces in the "${active}" theme have been published yet. More essays and perspectives are in preparation.`
-                }
-                action={<BtnLink to="/concierge" variant="outline-ink" size="md">Ask GIBS AI</BtnLink>}
+                title="The full archive opens with the journal"
+                body="Published articles, case studies and research papers appear here with authorship, dates and citations once published."
+                action={<BtnLink to="/events" variant="outline-ink" size="md">See launch events</BtnLink>}
               />
             </div>
-          )}
-
-          <div className="mt-16">
-            <EmptyState
-              title="The full archive opens with the journal"
-              body="Published articles, case studies and research papers appear here with authorship, dates and citations once published."
-              action={<BtnLink to="/events" variant="outline-ink" size="md">See launch events</BtnLink>}
-            />
           </div>
         </div>
       </section>

@@ -20,36 +20,33 @@ const COMMITMENTS = [
 export default function Perspective() {
   return (
     <section id="perspective" className="paper-grain cv-auto relative bg-paper">
-      <div className="container-x section-y">
-        <div className="max-w-4xl">
-          <h2 className="type-h2 text-ink">What we ask of ourselves</h2>
-        </div>
+      <div className="container-x section-y grid lg:grid-cols-12">
+        <StaggerSlow className="lg:col-span-5">
+          <motion.h2 variants={staggerItem} className="type-h2 text-ink">
+            What we ask of ourselves
+          </motion.h2>
+          <motion.p variants={staggerItem} className="mt-6 max-w-prose type-body">
+            GIBS has taught in Ilorin since 2014. It now runs centres in Ilorin,
+            Abuja and Ibafo, and sends executives to hubs in Miami, Houston,
+            London, Dubai, Cape Town, Durban, Kigali, the Netherlands and Ghana.
+          </motion.p>
+          <motion.div variants={staggerItem} className="mt-8">
+            <ArrowTextLink to="/about">Read the institution's story</ArrowTextLink>
+          </motion.div>
+        </StaggerSlow>
 
-        <div className="mt-14 grid gap-12 sm:mt-16 lg:grid-cols-12 lg:gap-10">
-          <StaggerSlow className="lg:col-span-4">
-            <motion.p variants={staggerItem} className="mt-1 max-w-md type-body">
-              GIBS has taught in Ilorin since 2014. It now runs centres in Ilorin,
-              Abuja and Ibafo, and sends executives to hubs in Miami, Houston,
-              London, Dubai, Cape Town, Durban, Kigali, the Netherlands and Ghana.
-            </motion.p>
-            <motion.div variants={staggerItem} className="mt-8">
-              <ArrowTextLink to="/about">Read the institution's story</ArrowTextLink>
+        <Stagger className="lg:col-span-7 lg:mt-0">
+          {COMMITMENTS.map((c) => (
+            <motion.div
+              key={c.title}
+              variants={staggerItem}
+              className="border-t rule py-6 first:border-t-0 first:pt-0 sm:py-7 sm:first:pt-0"
+            >
+              <h3 className="type-h3 text-ink">{c.title}</h3>
+              <p className="mt-3 max-w-prose type-body">{c.body}</p>
             </motion.div>
-          </StaggerSlow>
-
-          <Stagger className="lg:col-span-8 lg:pl-10">
-            {COMMITMENTS.map((c) => (
-              <motion.div
-                key={c.title}
-                variants={staggerItem}
-                className="border-t rule py-8 first:border-t-0 first:pt-0 sm:py-9 sm:first:pt-0"
-              >
-                <h3 className="type-h3 text-ink">{c.title}</h3>
-                <p className="mt-3 max-w-xl type-body">{c.body}</p>
-              </motion.div>
-            ))}
-          </Stagger>
-        </div>
+          ))}
+        </Stagger>
       </div>
     </section>
   );

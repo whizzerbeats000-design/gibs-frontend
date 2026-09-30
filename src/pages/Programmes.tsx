@@ -100,7 +100,7 @@ export default function ProgrammesPage() {
       </section>
 
       <section className="bg-paper border-t border-line">
-        <div className="container-x pb-24 pt-6 sm:pb-32 sm:pt-8">
+        <div className="container-x pb-20 pt-6 sm:pb-24 sm:pt-8">
           {/* Scope / Destination Tabs */}
           <div className="border-b border-line pb-4">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">

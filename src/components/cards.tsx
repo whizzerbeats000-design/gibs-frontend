@@ -18,12 +18,12 @@ export function colsFor(n: number): 1 | 2 | 3 {
 }
 
 /** Grid used for the full-catalogue directory register (≥ 9 results). Below lg
-    ProgramRow cards run single-column on phones, two-up on tablet; at lg two
-    compact strip columns sit side by side so scanning stays aligned and the
-    page stays roughly half its one-up height. Single definition shared by
+    ProgramRow cards run single-column on phones, two-up on tablet; at lg three-up
+    and at xl four-up so scanning stays aligned and the page stays roughly
+    one third to one quarter of its one-up height. Single definition shared by
     /programmes and /executive-education — keep it in sync here. */
 export const DIRECTORY_GRID =
-  "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-2 lg:gap-x-4 lg:gap-y-3";
+  "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-3 xl:grid-cols-4 lg:gap-x-4 lg:gap-y-3";
 
 /** Compact directory card used on the /programmes catalogue at lg+. Each card
     is one programme split into an identity block on top and a schedule + fee
@@ -58,10 +58,13 @@ export function ProgrammeDirectoryStrip({ programme }: { programme: Programme })
         </p>
       </div>
 
-      {/* When / duration + Fee — pinned to the card baseline so a row's pairs
-          line up regardless of how many lines the identity block ran. */}
-      <div className="mt-auto flex flex-wrap items-end justify-between gap-x-6 gap-y-2 border-t border-line/70 px-5 py-3.5 transition-colors duration-150 group-hover:border-forest-600/35">
-        <div className="min-w-0">
+      {/* When / duration + Fee — a two-part ledger pinned to the card baseline
+          so a row's pairs line up regardless of how many lines the identity
+          block ran. The schedule block flexes into whatever space is left and
+          wraps in place (never truncates, never pushes the fee below); the fee
+          block stays shrink-0 top-aligned to the schedule label. */}
+      <div className="mt-auto flex items-start justify-between gap-x-6 border-t border-line/70 px-5 py-3 transition-colors duration-150 group-hover:border-forest-600/35">
+        <div className="min-w-0 flex-1">
           <span className="card-field-label">Schedule &amp; Duration</span>
           <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink">
             {programme.schedule}
@@ -71,14 +74,14 @@ export function ProgrammeDirectoryStrip({ programme }: { programme: Programme })
           </p>
         </div>
 
-        <div className="flex min-w-0 items-center justify-between gap-3">
-          <div className="min-w-0 text-right">
+        <div className="flex shrink-0 items-baseline gap-3">
+          <div className="text-right">
             <span className="card-field-label">Standard Tuition</span>
             <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink">
               {programme.fees}
             </span>
           </div>
-          <span className="card-action card-action-quiet shrink-0">
+          <span className="card-action card-action-quiet self-center shrink-0">
             <span>View</span>
             <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </span>
@@ -220,7 +223,7 @@ export function EditorialCard({
     <Link
       ref={depthRef}
       to={to}
-      className="group block card-depth card-spot rounded-panel bg-white p-4 shadow-card transition-all duration-300 hover:shadow-card-strong"
+      className="group block card-depth card-spot rounded-panel bg-white p-4 shadow-card transition-all duration-300 hover:shadow-card-strong max-w-card mx-auto lg:mx-0"
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-xs shadow-crisp">
         <img
@@ -245,7 +248,7 @@ export function EditorialCard({
         )}
       </div>
       <h3 className="type-h3 mt-3 text-ink transition-colors duration-200 group-hover:text-forest-700">{title}</h3>
-      <p className="mt-3 type-body text-muted line-clamp-3">{excerpt}</p>
+      <p className="mt-3 type-body text-muted line-clamp-3 max-w-prose">{excerpt}</p>
       <span className="card-action card-action-quiet mt-4">
         {cta}
         <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

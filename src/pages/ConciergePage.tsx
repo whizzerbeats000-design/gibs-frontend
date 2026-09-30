@@ -34,26 +34,26 @@ export default function ConciergePage() {
           {/* LEFT — identity and topics */}
           <div className="order-2 lg:order-1 lg:col-span-5">
             <Reveal>
-              <div className="border-t-2 border-forest-600 bg-paper p-8 sm:p-10">
+              <div className="border-t-2 border-forest-600 bg-paper p-8 sm:p-10 max-w-editorial">
                 <span className="flex h-12 w-12 items-center justify-center rounded-pill bg-forest-700 text-gold-300">
                   <ChatIcon className="h-5 w-5" />
                 </span>
                 <h2 className="type-h2 mt-6 text-ink">
                   Welcome to GIBS AI. How can we help you find your way?
                 </h2>
-                <p className="mt-4 type-body">
+                <p className="mt-4 max-w-prose type-body">
                   An intelligent, verified programme assistant. It answers common questions
                   instantly and routes official enquiries directly to the
                   right GIBS team.
                 </p>
               </div>
 
-              <p className="eyebrow">Suggested topics</p>
+              <p className="eyebrow mt-12">Suggested topics</p>
               <ul className="mt-5 border-t rule">
                 {TOPICS.map((t) => (
                   <li key={t.title} className="border-b rule py-4">
                     <p className="type-h3 text-ink">{t.title}</p>
-                    <p className="mt-1 type-body">{t.body}</p>
+                    <p className="mt-1 max-w-prose type-body">{t.body}</p>
                   </li>
                 ))}
               </ul>

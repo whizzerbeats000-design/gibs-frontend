@@ -311,7 +311,7 @@ export function ClosingQuiet({
   return (
     <section className={surface === "white" ? "bg-white" : "paper-grain bg-paper"}>
       <div className="container-x section-y">
-        <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
             <Reveal>
               <Eyebrow>{eyebrowText}</Eyebrow>
@@ -371,7 +371,7 @@ export function ClosingImmersive({
       <div className="film-grain" aria-hidden="true" />
       <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(0,32,9,0.92)_0%,rgba(0,38,12,0.72)_45%,rgba(0,32,9,0.45)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,32,9,0.7),transparent_55%)]" />
-      <div className="container-x section-y relative">
+      <div className="container-x section-y-major relative">
         <div className="max-w-2xl text-ivory">
           <Reveal>
             <Eyebrow light>{eyebrowText}</Eyebrow>
@@ -412,7 +412,7 @@ export function ClosingJournal({
   return (
     <section className="relative overflow-hidden bg-forest-900 text-ivory">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_120%_at_12%_-20%,rgba(235,211,117,0.12),transparent_55%)]" />
-      <div className="container-x section-y relative grid items-center gap-10 lg:grid-cols-12">
+      <div className="container-x section-y-major relative grid items-center gap-10 lg:grid-cols-12">
         <div className="lg:col-span-7">
           <Reveal>
             <Eyebrow light>{eyebrowText}</Eyebrow>

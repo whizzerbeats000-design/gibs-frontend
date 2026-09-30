@@ -39,19 +39,19 @@ export default function About() {
 
       {/* Mission & Vision */}
       <section className="border-b border-line bg-white">
-        <div className="container-x grid gap-px overflow-hidden bg-line lg:grid-cols-2">
-          <div className="bg-white p-10 sm:p-14">
+        <div className="container-x grid gap-px overflow-hidden bg-line lg:grid-cols-12">
+          <div className="bg-white p-10 sm:p-14 lg:col-span-6">
             <Reveal>
               <p className="eyebrow">Mission Statement</p>
-              <p className="type-h3 mt-6 text-ink">
+              <p className="type-h3 mt-6 text-ink max-w-prose">
                 {INSTITUTIONAL_DATA.mission}
               </p>
             </Reveal>
           </div>
-          <div className="bg-white p-10 sm:p-14">
+          <div className="bg-white p-10 sm:p-14 lg:col-span-6">
             <Reveal delay={0.08}>
               <p className="eyebrow">Vision Statement</p>
-              <p className="type-h3 mt-6 text-ink">
+              <p className="type-h3 mt-6 text-ink max-w-prose">
                 {INSTITUTIONAL_DATA.vision}
               </p>
             </Reveal>
@@ -61,17 +61,19 @@ export default function About() {
 
       {/* Guiding Principles (4 Pillars) */}
       <section className="paper-grain bg-paper">
-        <div className="container-x section-y">
-          <Reveal>
-            <p className="eyebrow">4 Pillars</p>
-            <h2 className="type-h2 mt-4 text-ink">
-              Guiding <em className="italic text-forest-700">Principles.</em>
-            </h2>
-          </Reveal>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="container-x section-y grid lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="eyebrow">4 Pillars</p>
+              <h2 className="type-h2 mt-4 text-ink">
+                Guiding <em className="italic text-forest-700">Principles.</em>
+              </h2>
+            </Reveal>
+          </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:col-span-7 lg:mt-0">
             {INSTITUTIONAL_DATA.guidingPrinciples.map((pillar, i) => (
               <Reveal key={pillar} delay={i * 0.06}>
-                <div className="border border-line bg-white p-8 shadow-crisp">
+                <div className="border border-line bg-white p-8 shadow-crisp max-w-card">
                   <span className="text-[11px] font-bold tracking-[0.16em] text-forest-600">
                     Pillar 0{i + 1}
                   </span>
@@ -90,13 +92,13 @@ export default function About() {
       <section className="border-y border-line bg-white">
         <div className="container-x section-y grid gap-14 lg:grid-cols-12">
           {/* Core Values */}
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-5">
             <Reveal>
               <p className="eyebrow">Core Values</p>
               <h2 className="type-h2 mt-4 text-ink">What we stand for</h2>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {INSTITUTIONAL_DATA.coreValues.map((val) => (
-                  <div key={val} className="flex items-center gap-3 border border-line bg-paper px-4 py-3.5">
+                  <div key={val} className="flex items-center gap-3 border border-line bg-paper px-4 py-3.5 max-w-card">
                     <Diamond className="h-2 w-2 shrink-0 text-gold-600" />
                     <span className="text-[14px] font-bold text-ink">{val}</span>
                   </div>
@@ -106,7 +108,7 @@ export default function About() {
           </div>
 
           {/* Strategic Focus Areas */}
-          <div className="lg:col-span-6">
+          <div className="lg:col-span-7">
             <Reveal delay={0.1}>
               <p className="eyebrow">Strategic Focus Areas</p>
               <h2 className="type-h2 mt-4 text-ink">Our Mandate</h2>
@@ -114,7 +116,7 @@ export default function About() {
                 {INSTITUTIONAL_DATA.strategicFocusAreas.map((area, i) => (
                   <li key={area} className="flex items-start gap-4 border-b rule pb-4">
                     <span className="text-[11px] font-bold text-forest-700">0{i + 1}</span>
-                    <span className="text-[14.5px] font-medium leading-snug text-ink/85">{area}</span>
+                    <span className="text-[14.5px] font-medium leading-snug text-ink/85 max-w-prose">{area}</span>
                   </li>
                 ))}
               </ul>
@@ -133,12 +135,12 @@ export default function About() {
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-8 lg:grid-cols-2">
-            <div className="border border-ivory/20 bg-forest-900/60 p-8 sm:p-10">
+          <div className="mt-12 grid gap-8 lg:grid-cols-12">
+            <div className="border border-ivory/20 bg-forest-900/60 p-8 sm:p-10 lg:col-span-7">
               <h3 className="display-serif text-2xl text-gold-300">National Accreditations</h3>
               <ul className="mt-6 space-y-3.5">
                 {INSTITUTIONAL_DATA.accreditations.map((acc) => (
-                  <li key={acc} className="flex items-start gap-3 text-[14.5px] text-ivory/85">
+                  <li key={acc} className="flex items-start gap-3 text-[14.5px] text-ivory/85 max-w-prose">
                     <CheckIcon className="mt-1 h-4 w-4 shrink-0 text-gold-300" />
                     {acc}
                   </li>
@@ -146,12 +148,12 @@ export default function About() {
               </ul>
             </div>
 
-            <div className="border border-ivory/20 bg-forest-900/60 p-8 sm:p-10">
+            <div className="border border-ivory/20 bg-forest-900/60 p-8 sm:p-10 lg:col-span-5">
               <h3 className="display-serif text-2xl text-gold-300">International Technical Partnership</h3>
               <p className="mt-4 text-[15px] font-bold text-ivory">
                 {INSTITUTIONAL_DATA.technicalPartner}
               </p>
-              <p className="mt-4 text-[13.5px] leading-relaxed text-ivory/70">
+              <p className="mt-4 text-[13.5px] leading-relaxed text-ivory/70 max-w-prose">
                 GIBS delivers executive training across global hubs:
               </p>
               <div className="mt-4 flex flex-wrap gap-2">

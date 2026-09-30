@@ -58,7 +58,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
   };
 
   return (
-    <div className="sticky z-[var(--z-subnav)] border-b border-line bg-paper/92 backdrop-blur-md" style={{ top: "var(--sticky-top, 72px)" }}>
+    <div className="sticky z-[var(--z-subnav)] border-b border-line bg-paper/95 backdrop-blur-md" style={{ top: "var(--sticky-top, 72px)" }}>
       <div className="container-x flex min-h-0 items-center gap-4 py-3 lg:h-[calc(var(--subnav-height)-1px)]">
         {/* Mobile / tablet compact selector */}
         <div className="flex w-full items-center gap-3 lg:hidden">

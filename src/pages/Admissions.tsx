@@ -169,7 +169,7 @@ export default function Admissions() {
               </div>
             </div>
             <div className="mt-8 flex flex-wrap gap-4">
-              <BtnLink to="/contact?type=Local+Open+Training+Registration" variant="gold" size="md">
+              <BtnLink to="/contact?type=Local+Open+Training+Registration" variant="gold" size="md" className="min-w-0 w-full sm:w-auto">
                 Request Nomination Information
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </BtnLink>

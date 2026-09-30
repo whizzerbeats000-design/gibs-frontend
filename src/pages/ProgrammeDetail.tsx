@@ -21,9 +21,9 @@ const SECTIONS: ProgrammeSection[] = [
 function FactRow({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex items-start justify-between gap-6 border-b rule py-3.5 last:border-b-0">
+    <div className="flex items-start justify-between gap-4 border-b rule py-3.5 last:border-b-0 sm:gap-6">
       <dt className="meta shrink-0 text-muted">{label}</dt>
-      <dd className="text-right text-[13.5px] font-semibold text-ink">{value}</dd>
+      <dd className="min-w-0 text-right text-[13.5px] font-semibold text-ink">{value}</dd>
     </div>
   );
 }
@@ -223,12 +223,10 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Delivery &amp; Venues</p>
-            <h2 className="type-h2 mt-4 text-ink">
-              2026 Schedule: <span className="text-forest-700">{programme.schedule}</span>
-            </h2>
+            <h2 className="type-h2 mt-4 text-ink">2026 Schedule.</h2>
           </Reveal>
 
-          <div className="mt-10 grid gap-8 sm:grid-cols-3">
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div className="border border-line bg-paper p-6">
               <p className="eyebrow">Format</p>
               <h3 className="display-serif mt-3 text-lg text-ink">{programme.format}</h3>
@@ -236,6 +234,10 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <div className="border border-line bg-paper p-6">
               <p className="eyebrow">Duration</p>
               <h3 className="display-serif mt-3 text-lg text-ink">{programme.duration ?? "5 Days"}</h3>
+            </div>
+            <div className="border border-line bg-paper p-6">
+              <p className="eyebrow">2026 Schedule</p>
+              <h3 className="display-serif mt-3 text-lg text-ink">{programme.schedule}</h3>
             </div>
             <div className="border border-line bg-paper p-6">
               <p className="eyebrow">Tuition Fee</p>
@@ -271,11 +273,12 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </h2>
             <p className="mt-2 text-[14px] text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex w-full flex-wrap items-center gap-4 sm:w-auto">
             <BtnLink
               to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
               variant="gold"
               size="lg"
+              className="min-w-0 w-full sm:w-auto"
             >
               Submit Subscription Enquiry
               <ArrowUpRight className="h-4 w-4" />

@@ -99,6 +99,39 @@ Residual risks unchanged from Section F (notably: probes live in `/tmp/opencode`
 
 ---
 
+## H. Final polish pass (2026-09-29): shared-component sweep + full-ladder geometry probe
+
+Second follow-up pass. Swept the remaining shared components not yet reviewed (`router.tsx`, `data.ts` design constants, `depth.tsx`, `Logo.tsx`, `ProgrammeNav.tsx`, `hooks.ts`, `Search.tsx`, `Concierge.tsx`, `chrome.tsx` footer/nav, `ui.tsx`/`cards.tsx`/`motion.tsx`); then re-probed the whole route matrix with a fast no-scroll geometry probe (`ref-audit.mjs`, 16 routes × 9 widths `[320…1920]`) plus two targeted tools that the earlier matrix could not see: **leaf-level overflow classification** and an **interactive-element clip scan**.
+
+The earlier document-level matrix (`ox=0`) cannot catch two failure modes: (a) an element overflowing inside an `overflow-hidden` section while emitting no page scroll, and (b) nowrap flex-button blowouts whose bounding box exceeds the viewport by single digits. Both were found to be real, hiding in plain sight at 320:
+
+| Defect | Before (evidence) | After | Probe |
+|---|---|---|---|
+| Course-detail Programme Summary facts row — Sector/Category @320 | `<dl>` row `sw=256 > cw=222`; long `dd` forced past the sticky summary box (clip visible) | `sw == cw`, 0 overflow | `ref-audit.mjs`, `ref-target-320.mjs` |
+| Course-detail "Delivery & Venues" heading @320 | `2026 Schedule: March 2–6 (Ibafo), April 13–17 (Ilorin)` wrapped to **4 lines** as a heavy `h2` | heading now one line; schedule promoted to its own spec card (Format · Duration · 2026 Schedule · Tuition) | `ref-audit.mjs` (HEADINGS), sightline |
+| Course-detail bottom CTA @320 | primary "Submit Subscription Enquiry" button spans `r=328 > viewport 320` — **8 px clipped** by the section's `overflow-hidden` | `r=300`, fully inside; action row `w-full sm:w-auto`, button `min-w-0 w-full sm:w-auto` | `ref-bottomcta.mjs` |
+| Admissions "fee bands" CTA @320 | "Request Nomination Information" spans `r=329 > 320` (9 px clipped) | `min-w-0 w-full sm:w-auto`, fully inside | `ref-interactive-320.mjs` |
+| Interactive-element sweep @320 | 3 real clipped CTAs (above) | **0** across all 16 routes; only intentional overflow remains (sr-only skip-link, `overflow-x-auto` filter strips on `/programmes`, `/gallery`) | `ref-interactive-320.mjs`, `ref-interactive-all.mjs` (360–1024) |
+| Sticky chrome consistency | `ProgrammeNav` `bg-paper/92` vs `/programmes` `bg-paper/95` / gallery `bg-white/95` | unified to `bg-paper/95` (`ProgrammeNav.tsx`) | code/stylus audit |
+
+**Re-confirmed clean (no regression):**
+
+- Document-level overflow `ox=0` on **16 routes × 9 widths** (attribute: every row of the final `ref-audit` log is `ox=0`); page heights unchanged for untouched routes (e.g. `/programmes` 50,866→16,500@1280/1440; `/` 18,645→12,412).
+- Course-detail `@320` height 9,141 px; residual inner-overflow flags are all classified benign: `label` = sr-only control labels, `div`/`p`/`ul` wrapping-flex `scrollWidth` artifacts, hero reveal in-flight at the 1,500 ms cadence.
+- axe at rest (reduced-motion, 2,600 ms settle): **NONE** — `a11y-rest.mjs` re-run on final build.
+- Typecheck / build: `tsc` 0 errors; `dist/index.html` 963.37 kB / gzip 200.07 kB.
+
+**Implementation notes:**
+
+- **FactRow** (`ProgrammeDetail.tsx`): the `dd` lacked `min-w-0`, so flex `min-width:auto` refused to wrap beneath the `dt` min-content; with `min-w-0` (+ `gap-4` @320 tightening to `sm:gap-6`) the value wraps instead of overflowing. No content changed.
+- **Bottom-CTA buttons** (`ProgrammeDetail.tsx`, `Admissions.tsx`): the row is a flex-item inside a column flex (`items-start`), so it sized to fit-content (a nowrap `.btn` min-width), exceeding the band and getting clipped by the section `overflow-hidden`. Row and button now use `w-full sm:w-auto` (button additionally `min-w-0`), the exact pattern already standardised at `Contact.tsx`; ≥`sm` is bit-for-bit the previous side-by-side layout.
+- **Delivery section** (`ProgrammeDetail.tsx`): schedule moved out of the mega-`h2` into the spec strip — grid `sm:grid-cols-2 lg:grid-cols-4` (Format · Duration · 2026 Schedule · Tuition). Same data, no content invented or lost (schedule remains in PageHero meta, summary box, and CTA line).
+- **Unify sticky chrome**: one opacity value, no behavioural change.
+
+Scope discipline held: the only changes are the three evidence-backed geometry fixes + one chrome unify. No re-litigating the established design language, no content edits, no invented styling — the delivery restructure is the one structural change and it only re-presents existing facts.
+
+---
+
 ### Anti-Slop Delivery Gate
 
 Six skills required by the brief were verified present and read before the work (paths under `/root/.agents/skills/<name>/SKILL.md` for `project-planning`, `ui-ux-pro-max`, `impeccable`, `frontend-design`, `clean-code`, `antislop`), and their rules were applied:

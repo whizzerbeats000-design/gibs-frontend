@@ -340,10 +340,10 @@ export const IMAGES = {{
   library: "/images/library-interior.webp",
   boardroom: "/images/library-interior.webp",
   city: "/images/campus-colonnade.webp",
-  lecture: "/images/library-interior.jpg",
-  seminar: "/images/campus-colonnade.jpg",
-  books: "/images/library-interior.jpg",
-  study: "/images/library-interior.jpg",
+  lecture: "/images/library-interior.webp",
+  seminar: "/images/campus-colonnade.webp",
+  books: "/images/library-interior.webp",
+  study: "/images/library-interior.webp",
 }};
 
 /* ---------------- 5. Navigation Links ---------------- */

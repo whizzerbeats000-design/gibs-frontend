@@ -172,7 +172,7 @@ for (const route of ROUTES) {
     const seq = [];
     document.querySelectorAll("h1,h2,h3,h4").forEach((h) => { if (h.offsetParent) seq.push(h.tagName); });
     const bad = seq.findIndex((t, i) => i > 0 && parseInt(t[1]) > parseInt(seq[i - 1][1]) + 1);
-    return { bad: bad >= 0 ? `H${seq[bad - 1]}->${seq[bad]}` : null };
+    return { bad: bad >= 0 ? `${seq[bad - 1]}->${seq[bad]}` : null };
   });
   if (info.bad) fail(`${route} heading skip ${info.bad}`);
   await page.close();

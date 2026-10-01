@@ -1,10 +1,17 @@
-import { Component, useEffect, useState, type FormEvent, type ReactNode } from "react";
+import {
+  Component,
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link, navigate, useRoute } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { HexMark } from "./Logo";
 import { MenuIcon, CloseIcon, SearchIcon, ChatIcon, ArrowUpRight } from "./icons";
-import { NAV_LINKS } from "../lib/data";
+import { NAV_LINKS, NAV_SECONDARY } from "../lib/data";
 import { EASE } from "./motion";
 import { cn } from "../utils/cn";
 
@@ -38,6 +45,148 @@ function useScrolled() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return scrolled;
+}
+
+/* ---------------- Desktop Explore disclosure ---------------- */
+
+/**
+ * Carries NAV_SECONDARY in the header at >= lg.
+ *
+ * A disclosure rather than a permanent second row: the primary bar keeps its
+ * single-line rhythm, and the six secondary destinations stay one click away
+ * instead of being dropped. Follows the WAI-ARIA disclosure pattern —
+ * aria-expanded on the trigger, Escape and outside-click to dismiss, focus
+ * returned to the trigger on Escape.
+ */
+function DesktopExplore({
+  path,
+  isActive,
+}: {
+  path: string;
+  isActive: (to: string) => boolean;
+}) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEscape(open, () => {
+    setOpen(false);
+    triggerRef.current?.focus();
+  });
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: globalThis.MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !wrapRef.current) return;
+      const focusable = wrapRef.current.querySelectorAll<HTMLElement>("a[href]");
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      // Wrap focus inside the panel so tabbing never escapes into the page
+      // behind an open menu.
+      if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      } else if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  // Navigating should never leave the panel hanging open.
+  useEffect(() => {
+    setOpen(false);
+  }, [path]);
+
+  const anyActive = NAV_SECONDARY.some((l) => isActive(l.to));
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <button
+        ref={triggerRef}
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-expanded={open}
+        aria-controls="nav-explore"
+        className={cn(
+          "relative flex items-center gap-1.5 py-2 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors duration-200",
+          anyActive || open ? "text-forest-700" : "text-ink/75 hover:text-forest-700"
+        )}
+      >
+        Explore
+        <span
+          aria-hidden="true"
+          className={cn(
+            "text-[9px] leading-none transition-transform duration-300",
+            open ? "rotate-180" : ""
+          )}
+        >
+          ▼
+        </span>
+        <span
+          className={cn(
+            "absolute inset-x-0 -bottom-0.5 h-[2px] origin-left bg-gold-500 transition-transform duration-300",
+            anyActive ? "scale-x-100" : "scale-x-0"
+          )}
+        />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            id="nav-explore"
+            key="panel"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.24, ease: EASE }}
+            className="absolute right-0 top-[calc(100%+10px)] z-50 w-[420px] border border-line bg-ivory shadow-[0_24px_60px_-30px_rgba(0,32,9,0.5)]"
+          >
+            <ul className="divide-y divide-ink/8">
+              {NAV_SECONDARY.map((link) => (
+                <li key={link.to}>
+                  <Link
+                    to={link.to}
+                    onClick={() => setOpen(false)}
+                    aria-current={isActive(link.to) ? "page" : undefined}
+                    className="group flex min-h-[56px] items-center gap-4 px-5 py-3.5 transition-colors hover:bg-forest-50"
+                  >
+                    <span className="min-w-0 flex-1">
+                      <span
+                        className={cn(
+                          "block text-[14.5px] font-semibold transition-colors group-hover:text-forest-700",
+                          isActive(link.to) ? "text-forest-700" : "text-ink"
+                        )}
+                      >
+                        {link.label}
+                      </span>
+                      <span className="mt-0.5 block text-[12.5px] leading-snug text-muted">
+                        {link.note}
+                      </span>
+                    </span>
+                    <ArrowUpRight
+                      aria-hidden="true"
+                      className="h-4 w-4 shrink-0 text-ink/45 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-forest-600"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
 
 export function Header({
@@ -81,7 +230,8 @@ export function Header({
           </span>
         </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop nav — primary bar plus an Explore disclosure carrying
+            NAV_SECONDARY, so no public section is lost at wider breakpoints. */}
         <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
           {NAV_LINKS.map((link) => (
             <Link
@@ -102,6 +252,7 @@ export function Header({
               />
             </Link>
           ))}
+          <DesktopExplore path={path} isActive={isActive} />
         </nav>
 
         {/* Actions */}
@@ -150,20 +301,15 @@ export function Header({
 
 /* ---------------- Mobile / tablet navigation ---------------- */
 
-const MOBILE_PRIMARY = [
-  { label: "All Programmes", to: "/programmes" },
-  { label: "Foreign Training", to: "/executive-education" },
-  { label: "Faculty & Governance", to: "/faculty" },
-  { label: "About GIBS", to: "/about" },
-  { label: "Programme Subscription", to: "/admissions" },
-];
-const MOBILE_SECONDARY = [
-  { label: "Research & Insights", to: "/research-insights" },
-  { label: "Conferences & Events", to: "/events" },
-  { label: "Campuses & Facilities", to: "/campus" },
-  { label: "Campus Gallery", to: "/gallery" },
-  { label: "Contact & Registry", to: "/contact" },
-];
+const MOBILE_PRIMARY = NAV_LINKS.map((l) =>
+  l.to === "/programmes" ? { ...l, label: "All Programmes" } : l
+);
+// Subscription already has its own "Subscribe to a Programme" button at the
+// foot of the sheet, so it is dropped from the secondary list to avoid showing
+// the same destination twice.
+const MOBILE_SECONDARY = NAV_SECONDARY.filter((l) => l.to !== "/admissions").map(
+  ({ label, to }) => ({ label, to })
+);
 
 function isActiveRoute(to: string, path: string) {
   return path === to || path.startsWith(to + "/");
@@ -191,6 +337,23 @@ export function MobileNav({
     const node = document.getElementById("mobile-navigation");
     if (node) node.scrollTop = 0;
   }, [open]);
+
+  // Rotating a tablet or resizing a narrow window past the `lg` breakpoint
+  // swaps the burger for the desktop bar, so the sheet must leave with it —
+  // otherwise it lingers as a full-screen modal over a layout it cannot close.
+  useEffect(() => {
+    if (!open) return;
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    if (desktop.matches) {
+      onClose();
+      return;
+    }
+    const onChange = (e: MediaQueryListEvent) => {
+      if (e.matches) onClose();
+    };
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
+  }, [open, onClose]);
 
   return (
     <AnimatePresence>
@@ -314,7 +477,7 @@ export function MobileNav({
                         >
                           {link.label}
                         </span>
-                        <ArrowUpRight className="ml-auto h-4 w-4 text-ink/40 transition-all group-hover:text-forest-600" />
+                        <ArrowUpRight className="ml-auto h-4 w-4 text-ink/60 transition-all group-hover:text-forest-600" />
                       </Link>
                     </motion.li>
                   ))}

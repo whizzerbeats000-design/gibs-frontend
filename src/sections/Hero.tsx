@@ -40,19 +40,31 @@ export default function Hero() {
           `style.transform` inline on the animated child, which would
           override a `translateZ` set by class on the same element.
 
-          BRAND NOTE: the campus photograph that lived here was removed. OCR of
-          the source file recovered signage reading "LAGOS BUS[INESS SCHOOL]"
-          on the building — a different institution — which is a brand
-          mismatch on a page whose entire job is establishing GIBS identity.
-          The layered forest-green treatment below is now the sole background.
-          When genuine GIBS photography is available, reintroduce it inside
-          .kenburns and verify it carries no third-party signage first.
+          TEMPORARY IMAGE — PENDING GENUINE GIBS PHOTOGRAPHY.
+          The image below is NOT GIBS-owned photography. It is the legacy stock
+          campus shot that was removed from this hero in c80e759 after OCR
+          recovered signage reading "LAGOS BUS[INESS SCHOOL]" on the building
+          (a different Nigerian business school). That sign region is already
+          blurred in this file; re-verified 0 matches for lagos|business school
+          at psm 6/11/12. It is reinstated temporarily to stop the hero
+          rendering as flat green while official photography is sourced.
+
+          Known limit: 1376x768 is the largest version of this file in git
+          history, so the full-bleed hero is upscaled on large and hi-dpi
+          viewports. Acceptable for a placeholder; a replacement asset at
+          >=2400px wide is the real fix.
+
+          TO REPLACE: drop the new asset in public/images/ and point
+          src/srcSet at it. Nothing else needs to change — the crop classes and
+          the overlay stack below are asset-agnostic.
         */}
         <div className="layer-z-deep absolute inset-0">
           <motion.div
             style={{ y: bgY, scale: bgScale }}
             className="absolute inset-0 will-change-transform"
           >
+            {/* Fallback wash: shows through only if the photograph fails to
+                decode, so a dead asset never presents as a blank green void. */}
             <div
               className="absolute inset-0"
               style={{
@@ -61,6 +73,19 @@ export default function Hero() {
               }}
               aria-hidden="true"
             />
+            <div className="kenburns absolute inset-0">
+              <img
+                src="/images/hero-campus.webp"
+                srcSet="/images/hero-campus-640.webp 640w, /images/hero-campus.webp 1376w"
+                sizes="100vw"
+                alt="Sandstone campus pavilions and colonnade at golden hour, with the reflecting pool and grounds in the foreground"
+                className="h-full w-full object-cover object-[62%_58%] sm:object-[58%_55%] lg:object-center"
+                width={1376}
+                height={768}
+                fetchPriority="high"
+                decoding="async"
+              />
+            </div>
             <div className="film-grain" aria-hidden="true" />
           </motion.div>
         </div>

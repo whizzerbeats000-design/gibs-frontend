@@ -226,7 +226,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
                               <Highlight text={item.blurb} query={trimmed} />
                             </span>
                           </span>
-                          <ArrowUpRight className="ml-auto mt-1 h-4 w-4 shrink-0 text-ink/40 transition-all duration-200 group-hover:text-forest-700" />
+                          <ArrowUpRight className="ml-auto mt-1 h-4 w-4 shrink-0 text-ink/60 transition-all duration-200 group-hover:text-forest-700" />
                         </Link>
                       </li>
                     ))}

@@ -5,6 +5,137 @@
    Modern Classicism
    Global Excellence, African Heart
    ============================================================ */
+
+/* ---------------- Self-hosted web fonts ----------------
+   These seven faces are the exact woff2 binaries Google Fonts serves for this
+   project's families, copied locally so the page no longer depends on a
+   render-blocking third-party stylesheet.
+
+   Why this matters: the site used to ship
+   <link href="https://fonts.googleapis.com/css2?..." rel="stylesheet"> in <head>.
+   A stylesheet link is render-blocking, so first paint could not begin until
+   that request finished — measured in Chromium, that single request was the
+   critical path to FCP on every route (e.g. 1440x900 home: request resolved
+   at 1728ms, the render-blocking task started at 1741ms, first paint at
+   2152ms). It also put a third-party DNS + TLS + RTT chain in front of every
+   first visit, for both the CSS and every font file behind it.
+
+   Self-hosting removes the blocking chain entirely and keeps the rendering
+   identical: same binaries, same descriptors, same `font-display: swap`, so
+   the fallback-then-swap behaviour the site already had is unchanged.
+
+   Every one of the seven woff2 files below is byte-identical (sha256) to the
+   file Google Fonts serves for the same family/style/weight/latin subset, so
+   rendering is unchanged — this is a delivery change, not a design change.
+
+   What actually got dropped is the non-latin subsets. Google's stylesheet
+   declares 19 @font-face blocks across vietnamese, latin-ext and latin; only
+   the 8 latin faces are ever needed for this site's copy, so the other 11 are
+   gone (~130 kB of woff2 that a browser could still prefetch). Libre Baskerville
+   700 was also dropped as a separate declaration, though it resolves to the
+   same variable file as 400, so it saved no bytes — it is declared as
+   `font-weight: 400 700` on one face.
+
+   One thing to know when comparing screenshots against the old build: this is a
+   visual *fix*, not just a delivery change. With the Google stylesheet, the
+   latin faces for Fraunces and Libre Baskerville were still `loading` 3.5s
+   after load in a throttled local run, so those families rendered in system
+   fallback. Served from /fonts they are loaded (verified via the CSS Font
+   Loading API: Instrument Serif, Fraunces and Space Grotesk all reach
+   `loaded`). Any screenshot delta on Fraunces-bearing text is the old build
+   showing fallback metrics, not this build regressing — check
+   `document.fonts` status before treating a diff as real.
+
+   The currency sign U+20A6 (naira) is outside the latin `unicode-range` and
+   outside every subset Google declares, so it renders from a system font in
+   both builds. That is unchanged behaviour.
+
+   `unicode-range` is kept per-face and matches Google's latin range exactly.
+   It is what lets the browser skip a face entirely when no glyph on the page
+   needs it, which is how Libre Baskerville (mobile-nav sheet only) stays off
+   the critical path.
+   ------------------------------------------------------------- */
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/instrument-serif-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Instrument Serif italic is needed: PageHero renders its `italic` slot as a
+   bare <em> inside a `.type-hero` h1, and `.type-hero` is Instrument Serif
+   (--font-display). So "Business School." on /about and "programme." on
+   /admissions are set in true italic Instrument Serif. An earlier revision of
+   this file dropped this face on the assumption no caller passed `italic` —
+   which is true of the prop, but the <em> default font-style still applies. */
+@font-face {
+  font-family: "Instrument Serif";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/instrument-serif-italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Space Grotesk";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/space-grotesk-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/fraunces-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Fraunces";
+  font-style: italic;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url("/fonts/fraunces-italic-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Libre Baskerville";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/libre-baskerville-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* Libre Baskerville italic is a genuinely separate face, not a slanted copy of
+   the roman, and the mobile-nav "Goshen." heading renders <em class="italic">
+   inside `font-baskerville` (src/components/chrome.tsx). Without this face the
+   browser would synthesise an oblique and the wordmark's slant would change. */
+@font-face {
+  font-family: "Libre Baskerville";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/libre-baskerville-italic-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
   /* Fraunces — variable display serif (weight 300–700, optical size 9–144).
       SOFT/WONK are pinned to 0 so the family reads controlled and architectural
@@ -631,35 +762,15 @@ body {
      catalogue shares the same depth ladder as every other card. Hover and
      focus-visible share one state: a keyboard user must see the same lift a
      mouse user does. */
-  /* Individual programme cards carry a sub-3° pointer tilt (driven by the
-     useCardDepth --rx/--ry vars, not React) on FINE pointers only; the shadow
-     itself never depends on hover, so tablet/touch still reads as a raised
-     layered surface. Keyboard focus keeps the same lift without the tilt. */
-  .programme-card {
-    border-radius: 0;
-    box-shadow: var(--shadow-card);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  @media (hover: hover) {
-    .programme-card:hover {
-      transform: perspective(1100px) translateY(-3px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-      box-shadow:
-        inset 1.5px 1.5px 0 #ffffff,
-        inset 0 0 0 1px rgba(0, 107, 27, 0.18),
-        var(--shadow-card-strong);
-    }
-    }
-  .programme-card:focus-visible {
-    transform: translateY(-3px);
-    box-shadow:
-      inset 1.5px 1.5px 0 #ffffff,
-      inset 0 0 0 1px rgba(0, 107, 27, 0.18),
-      var(--shadow-card-strong);
-  }
-  .programme-card:active {
-    transform: translateY(-1px) scale(0.995);
-    box-shadow: var(--shadow-card);
-  }
+  /* NOTE: the former `.programme-card` block lived here and has been removed.
+     No component ever applied the class — ProgrammeCard keys itself off the
+     `data-programme-card` attribute (used by the QA harness) and styles itself
+     with Tailwind utilities plus `.card-depth` / `.card-spot`. The block was
+     dead weight that also contradicted the card: it declared `border-radius: 0`
+     and `--shadow-card` where the component ships `rounded-panel` and
+     `shadow-crisp`, so adopting it would have changed the card. The elevation
+     ladder those rules referenced (--shadow-card / --shadow-card-strong) is
+     still live via `.card-lift` and `.card-depth:hover` and stays in @theme. */
 
   /* Interactive card lift — for cards where the WHOLE surface is the target
      (stretched link). Hover and focus-within share one state so a keyboard
@@ -777,6 +888,26 @@ body {
 
   /* Tactile Floating Institutional Badge */
 
+  /* ---------------- Scroll reveal ----------------
+     Drives <Reveal> in src/components/motion.tsx. Kept as plain CSS so the
+     105 reveal instances on a page cost no JavaScript per frame — see the
+     comment on Reveal for the measured numbers this replaced.
+
+     [data-reveal="hidden"] is the pre-trigger state; the component adds
+     data-reveal="shown" when its IntersectionObserver (or its 1200ms
+     guaranteed-resolve fallback) fires, and the transition runs. */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(var(--reveal-y, 28px));
+    transition-property: opacity, transform;
+    transition-duration: 900ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="shown"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   /* ---------------- Dimensional cards ----------------
      CARD DEPTH (L3): a physical, sub-3° tilt that trails the pointer; driven
      entirely by CSS variables set from a passive pointermove handler (no
@@ -834,19 +965,15 @@ body {
     animation: kenburns 46s ease-in-out infinite alternate;
   }
 
-  /* Rendering containment */
-  .cv-auto {
-    /* content-visibility: auto was removed here. It makes the browser skip
-       layout and paint for off-screen subtrees, which prevents the
-       IntersectionObserver that drives every whileInView reveal from computing
-       an accurate intersection against those skipped subtrees. Combined with a
-       negative viewport margin the trigger never fires and the content stays at
-       opacity 0 permanently. Measured in Chromium: campus-experience left 12
-       children invisible, faculty 10, insights 5 — real copy, not decoration.
-       The perf win was ~0 on a 957 kB single-file document where the document
-       is one paint anyway. If containment is ever wanted back, it must only be
-       applied to subtrees that contain no whileInView / Reveal content. */
-  }
+  /* NOTE: there is deliberately no `content-visibility: auto` utility here.
+     It was tried and removed — do not reintroduce it blindly. `cv-auto` made
+     the browser skip layout and paint for off-screen subtrees, which starves
+     the IntersectionObserver behind every `Reveal` (src/components/motion.tsx)
+     of an accurate intersection: the trigger never fired and real copy stayed
+     pinned at opacity 0. Measured in Chromium at the time — campus-experience
+     left 12 children invisible, faculty 10, insights 5. The perf win was ~0 on
+     a single-file document that paints as one anyway. If containment is ever
+     wanted back it must only wrap subtrees proven to contain no Reveal. */
 
 }
 

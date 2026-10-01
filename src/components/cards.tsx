@@ -80,7 +80,7 @@ export function ProgrammeCard({
           <UsersIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
             <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink/90 line-clamp-2">
-              <span className="font-semibold text-ink/50 text-[11px] uppercase tracking-wider block mb-0.5">Target Cohort</span>
+              <span className="font-semibold text-muted text-[11px] uppercase tracking-wider block mb-0.5">Target Cohort</span>
               {programme.targetAudience}
             </p>
           </div>
@@ -90,7 +90,7 @@ export function ProgrammeCard({
           <CalendarIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
             <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink">
-              <span className="font-semibold text-ink/50 text-[11px] uppercase tracking-wider block mb-0.5">Schedule &amp; Duration</span>
+              <span className="font-semibold text-muted text-[11px] uppercase tracking-wider block mb-0.5">Schedule &amp; Duration</span>
               {programme.schedule}
               {programme.duration ? (
                 <span className="text-muted"> · {programme.duration}</span>

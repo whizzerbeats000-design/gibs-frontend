@@ -28,11 +28,31 @@
     <meta name="twitter:image" content="https://www.gibs.com.ng/images/campus-colonnade.webp" />
 
     <link rel="icon" type="image/webp" href="/images/gibs-logo.webp" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Fonts are self-hosted (see the @font-face block at the top of src/index.css).
+         These two faces are the ones that paint the first screen — Instrument Serif
+         for the display headings, Space Grotesk for UI and body copy — so they are
+         preloaded to start downloading with the HTML instead of waiting for the
+         stylesheet to be parsed. crossorigin is required on a font preload even for
+         same-origin files, because the fetch is made in CORS mode.
+
+         Fraunces and Libre Baskerville are deliberately NOT preloaded: Fraunces is
+         used by card titles and the footer motto (below the first screen) and
+         Libre Baskerville only by the mobile-nav sheet. Letting them load on first
+         use keeps them off the critical path. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Space+Grotesk:wght@300..700&family=Instrument+Serif:ital@0;1&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/instrument-serif-400-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/space-grotesk-var-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
 
     <script type="application/ld+json">

@@ -25,7 +25,7 @@ function ProgrammePanel({ slug }: { slug: string }) {
         {description && <p className="mt-3 max-w-xl type-body text-muted/80 lg:text-muted leading-relaxed sm:line-clamp-none">{description}</p>}
         {audienceText && (
           <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-muted line-clamp-2">
-            <span className="hidden sm:inline font-semibold text-ink/40 uppercase tracking-wider text-[11px] mr-1">For</span> {audienceText.charAt(0).toLowerCase() + audienceText.slice(1)}
+            <span className="hidden sm:inline font-semibold text-ink/60 uppercase tracking-wider text-[11px] mr-1">For</span> {audienceText.charAt(0).toLowerCase() + audienceText.slice(1)}
           </p>
         )}
       </div>

@@ -106,8 +106,11 @@ export default function ProgrammesPage() {
         </div>
       </section>
 
-      <section className="bg-paper border-t border-line">
+      <section className="bg-paper border-t border-line" aria-labelledby="programme-results-heading">
         <div className="container-x pb-20 pt-6 sm:pb-24 sm:pt-8">
+          <h2 id="programme-results-heading" className="sr-only">
+            Programme catalogue
+          </h2>
           {/* Scope / Destination Tabs */}
           <div className="border-b border-line pb-4">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -264,7 +267,7 @@ export default function ProgrammesPage() {
 
           {/* Results summary bar */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-sm">
-            <h2 className="text-[12.5px] text-muted" aria-live="polite">
+            <p className="text-[12.5px] text-muted" aria-live="polite">
               Showing <span className="font-bold text-ink">{filtered.length}</span> of {PROGRAMMES.length} programmes
               {destination === "Local"
                 ? " · Local / Open"
@@ -272,7 +275,7 @@ export default function ProgrammesPage() {
                 ? ` · ${destination} Hub`
                 : ""}
               {category !== "All" ? ` · ${category}` : ""}
-            </h2>
+            </p>
             {(category !== "All" || destination !== "All" || query) && (
               <button
                 type="button"

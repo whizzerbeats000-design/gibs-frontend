@@ -54,7 +54,7 @@ export default function ExecutiveEducation() {
         imageAlt="GIBS Foreign Executive Training Hubs"
         eyebrow="International & Customized Training"
         title="Training abroad and in-plant"
-        intro="Twenty-two foreign executive programmes run in Kigali, Dubai, London and Houston, alongside in-plant workshops built around your organisation's own systems."
+        intro="22 foreign executive programmes run in Kigali, Dubai, London and Houston, alongside in-plant workshops built around your organisation's own systems."
         breadcrumbs={[{ label: "Foreign & Executive Training" }]}
         meta={
           <div className="flex flex-wrap gap-3">

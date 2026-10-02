@@ -30,7 +30,7 @@ export default function EventDetail({ slug }: { slug: string }) {
               body={`Event reference "${slug}" has no published record yet. Register your interest and receive the official programme the moment it is confirmed.`}
               action={
                 <div className="flex flex-wrap justify-center gap-3">
-                  <BtnLink to="/contact?type=Campus+Facility+Booking+%26+Enquiries" variant="primary" size="md">
+                  <BtnLink to="/contact" variant="primary" size="md">
                     Register interest
                   </BtnLink>
                   <BtnLink to="/events" variant="outline-ink" size="md">
@@ -91,7 +91,7 @@ export default function EventDetail({ slug }: { slug: string }) {
                       To attend or register your interest, contact the events team directly.
                     </p>
                     <BtnLink
-                      to="/contact?type=Campus+Facility+Booking+%26+Enquiries"
+                      to="/contact"
                       variant="primary"
                       size="lg"
                       className="mt-6 w-full"

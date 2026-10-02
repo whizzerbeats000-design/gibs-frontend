@@ -110,7 +110,14 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   <dl className="mt-5">
                     <FactRow label="Course Code" value={programme.code} />
                     <FactRow label="Sector / Category" value={programme.category} />
-                    <FactRow label="Scope / Location" value={`${programme.destination} Hub`} />
+                    <FactRow
+                      label="Scope / Location"
+                      value={
+                        programme.destination === "Local"
+                          ? "Local / Open"
+                          : `${programme.destination} Hub`
+                      }
+                    />
                     <FactRow label="Duration" value={programme.duration ?? "5 Days"} />
                     <FactRow label="2026 Schedule" value={programme.schedule} />
                     <FactRow label="Official Fee" value={programme.fees} />

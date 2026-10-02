@@ -43,7 +43,7 @@ export default function ConciergeBand() {
           <Reveal delay={0.16} y={36} className="lg:col-span-5">
             <figure className="relative bg-forest-800 p-8 text-ivory shadow-card sm:p-10">
               <blockquote className="display-serif mt-10 text-[1.55rem] leading-[1.4]">
-                “Welcome to GIBS AI. How can we help you find your way?”
+                “Welcome to GIBS AI. How can we help?”
               </blockquote>
               <figcaption className="mt-6 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/70">
                 Programme and enquiry guide

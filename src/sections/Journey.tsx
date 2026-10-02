@@ -21,7 +21,7 @@ export default function AdmissionsTeaser() {
             <Reveal delay={0.16}>
               <p className="mt-7 max-w-lg type-body text-ivory/85">
                 Organisations nominate staff by email or phone. Individual
-                professionals can register themselves. Either way, four steps get
+                professionals can register themselves. Either way, six steps get
                 you onto a programme in the 2026 calendar.
               </p>
             </Reveal>

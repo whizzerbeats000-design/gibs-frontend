@@ -52,7 +52,7 @@ function EventRow({ event }: { event: GIBS_EVENT }) {
         </div>
       </div>
       <BtnLink
-        to={event.status === "upcoming" ? "/contact?type=Campus+Facility+Booking+%26+Enquiries" : "/research-insights"}
+        to={event.status === "upcoming" ? "/contact" : "/research-insights"}
         variant="outline-ink"
         size="md"
         className="sm:self-center"
@@ -131,10 +131,10 @@ export default function Events() {
             <div className="mt-6">
               <EmptyState
                 title="The official calendar opens soon"
-                body="Dates, locations and registration appear here as they are confirmed by the events office."
+                body="Dates, locations and registration appear here once the events office confirms them."
                 action={
                   <div className="flex flex-wrap justify-center gap-3">
-                    <BtnLink to="/contact?type=Campus+Facility+Booking+%26+Enquiries" variant="primary" size="md">
+                    <BtnLink to="/contact" variant="primary" size="md">
                       Register your interest
                     </BtnLink>
                     <BtnLink to="/concierge" variant="outline-ink" size="md">

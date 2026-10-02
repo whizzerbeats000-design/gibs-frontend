@@ -120,7 +120,7 @@ export default function ArticleDetail({ slug }: { slug: string }) {
                   </p>
                 </div>
                 <BtnLink
-                  to="/contact?type=Institutional+Partnership+%26+Accreditation"
+                  to="/contact"
                   variant="outline-ink"
                   size="md"
                 >

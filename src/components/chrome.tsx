@@ -6,7 +6,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { Link, navigate, useRoute } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { HexMark } from "./Logo";
@@ -58,6 +58,9 @@ function useScrolled() {
  * aria-expanded on the trigger, Escape and outside-click to dismiss, focus
  * returned to the trigger on Escape.
  */
+/** Matches the panel's fade duration below, so nothing is cut short. */
+const EXPLORE_EXIT_MS = 240;
+
 function DesktopExplore({
   path,
   isActive,
@@ -66,6 +69,7 @@ function DesktopExplore({
   isActive: (to: string) => boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const [rendered, setRendered] = useState(open);
   const wrapRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -108,6 +112,20 @@ function DesktopExplore({
     setOpen(false);
   }, [path]);
 
+  // Unmount on a timer rather than relying on the exit animation to signal
+  // completion. AnimatePresence waits for that signal, and when the animation
+  // is dropped (busy or software-rendered frame) it keeps the panel mounted —
+  // leaving a visible panel of focusable links under a trigger that already
+  // reports `aria-expanded="false"`. The timer makes teardown deterministic.
+  useEffect(() => {
+    if (open) {
+      setRendered(true);
+      return;
+    }
+    const t = window.setTimeout(() => setRendered(false), EXPLORE_EXIT_MS);
+    return () => window.clearTimeout(t);
+  }, [open]);
+
   const anyActive = NAV_SECONDARY.some((l) => isActive(l.to));
 
   return (
@@ -141,17 +159,14 @@ function DesktopExplore({
         />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            id="nav-explore"
-            key="panel"
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.24, ease: EASE }}
-            className="absolute right-0 top-[calc(100%+10px)] z-50 w-[420px] border border-line bg-ivory shadow-[0_24px_60px_-30px_rgba(0,32,9,0.5)]"
-          >
+      {rendered && (
+        <motion.div
+          id="nav-explore"
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: open ? 1 : 0, y: open ? 0 : -6 }}
+          transition={{ duration: 0.24, ease: EASE }}
+          className="absolute right-0 top-[calc(100%+10px)] z-50 w-[420px] border border-line bg-ivory shadow-[0_24px_60px_-30px_rgba(0,32,9,0.5)]"
+        >
             <ul className="divide-y divide-ink/8">
               {NAV_SECONDARY.map((link) => (
                 <li key={link.to}>
@@ -182,9 +197,8 @@ function DesktopExplore({
                 </li>
               ))}
             </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        </motion.div>
+      )}
     </div>
   );
 }
@@ -315,6 +329,9 @@ function isActiveRoute(to: string, path: string) {
   return path === to || path.startsWith(to + "/");
 }
 
+/** Matches the sheet's slide-out duration below, so nothing is cut short. */
+const EXIT_MS = 450;
+
 export function MobileNav({
   open,
   onClose,
@@ -326,6 +343,7 @@ export function MobileNav({
   onOpenSearch: () => void;
   onOpenConcierge: () => void;
 }) {
+  const [rendered, setRendered] = useState(open);
   useBodyScrollLock(open);
   useEscape(open, onClose);
   const ref = useFocusTrap<HTMLDivElement>(open);
@@ -355,21 +373,34 @@ export function MobileNav({
     return () => desktop.removeEventListener("change", onChange);
   }, [open, onClose]);
 
+  // Unmount on a timer rather than relying on the exit animation to signal
+  // completion. AnimatePresence waits for that signal, and when the animation
+  // is dropped (busy or software-rendered frame) it keeps the sheet mounted —
+  // leaving a live aria-modal overlay that traps focus and locks scrolling
+  // after Escape. The timer makes the teardown deterministic.
+  useEffect(() => {
+    if (open) {
+      setRendered(true);
+      return;
+    }
+    const t = window.setTimeout(() => setRendered(false), EXIT_MS);
+    return () => window.clearTimeout(t);
+  }, [open]);
+
+  if (!rendered) return null;
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          ref={ref}
-          id="mobile-navigation"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Menu"
-          className="mobile-nav-sheet paper-grain overflow-y-auto overscroll-contain bg-paper z-[var(--z-nav)]"
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -16 }}
-          transition={{ duration: 0.45, ease: EASE }}
-        >
+    <motion.div
+      ref={ref}
+      id="mobile-navigation"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
+      className="mobile-nav-sheet paper-grain overflow-y-auto overscroll-contain bg-paper z-[var(--z-nav)]"
+      initial={{ opacity: 0, y: -16 }}
+      animate={{ opacity: open ? 1 : 0, y: open ? 0 : -16 }}
+      transition={{ duration: 0.45, ease: EASE }}
+    >
           <div className="container-x flex min-h-full flex-col pb-10 pt-[92px]">
             <button
               type="button"
@@ -494,9 +525,7 @@ export function MobileNav({
               <p className="meta">Goshen International Business School Limited · RC 1178333</p>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </motion.div>
   );
 }
 

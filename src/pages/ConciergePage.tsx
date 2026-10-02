@@ -25,7 +25,7 @@ export default function ConciergePage() {
     <>
       <PageHero
         title="Find the right programme"
-        intro="Ask about the 2026 training catalogue, overseas destinations, campus facilities or how to subscribe. Answers come from GIBS' own records."
+        intro="Ask about the 2026 training catalogue, overseas destinations, campus facilities or how to subscribe."
         breadcrumbs={[{ label: "GIBS AI" }]}
       />
 
@@ -39,11 +39,11 @@ export default function ConciergePage() {
                   <ChatIcon className="h-5 w-5" />
                 </span>
                 <h2 className="type-h2 mt-6 text-ink">
-                  Welcome to GIBS AI. How can we help you find your way?
+                  Welcome to GIBS AI. How can we help?
                 </h2>
                 <p className="mt-4 max-w-prose type-body">
                   A programme guide built on GIBS’ published records. It answers common
-                  questions instantly and points official enquiries to the registry.
+                  questions instantly.
                 </p>
               </div>
 
@@ -89,7 +89,7 @@ export default function ConciergePage() {
                   </span>
                 </div>
                 <div className="min-h-0 flex-1">
-                  <ConciergeConversation controls />
+                  <ConciergeConversation controls label="GIBS AI conversation on this page" />
                 </div>
               </div>
             </Reveal>

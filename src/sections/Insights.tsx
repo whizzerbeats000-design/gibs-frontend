@@ -27,7 +27,7 @@ export default function InsightsTeaser() {
           <div className="mt-14">
             <EmptyState
               title="The first edition is in preparation"
-              body="The first edition is in editorial preparation. Research essays, case studies and faculty perspectives will appear here once it publishes."
+              body="Research essays, case studies and faculty perspectives will appear here once it publishes."
               action={
                 <BtnLink to="/research-insights" variant="outline-ink" size="md">
                   Visit the journal

@@ -35,7 +35,7 @@ export const INSTITUTIONAL_DATA: InstitutionalMetadata = {
   legalName: "Goshen International Business School Limited (GIBS)",
   cacRegistration: "Registered at Corporate Affairs Commission, Ilorin, Certificate of Incorporation RC 1178333 (Dated March 17, 2014)",
   slogan: "Take advantage of us, so that no one takes advantage of you",
-  positioningStatement: "An outfit committed to manpower development and capacity-building. Our uniqueness is in our dedication to capacity-building exercise.",
+  positioningStatement: "An outfit committed to manpower development and capacity-building. Our uniqueness is in this dedication.",
   mission: "Goshen International Business School (GIBS) is dedicated to empowering the future generation through acquisition and communication of management and business knowledge relevant to the development of Nigeria and the world at large. We are a world-class Business School impacting positively on the public and private sectors of the economy.",
   vision: "To support the development of National Manpower and Economic Development Policies for the emancipation of the people.",
   guidingPrinciples: ["Thoroughness", "Fair", "Firm", "Forthright"],

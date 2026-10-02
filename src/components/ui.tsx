@@ -78,7 +78,10 @@ export function Breadcrumbs({ items }: { items: { label: string; to?: string }[]
     <nav aria-label="Breadcrumb" className="mb-6">
       <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted sm:text-[12px]">
         <li>
-          <Link to="/" className="text-muted transition-colors hover:text-forest-700">
+          <Link
+            to="/"
+            className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700"
+          >
             Home
           </Link>
         </li>
@@ -86,7 +89,10 @@ export function Breadcrumbs({ items }: { items: { label: string; to?: string }[]
           <li key={item.label} className="flex items-center gap-1.5">
             <ChevronRight className="h-3 w-3 text-muted/60" />
             {item.to ? (
-              <Link to={item.to} className="text-muted transition-colors hover:text-forest-700">
+              <Link
+                to={item.to}
+                className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700"
+              >
                 {item.label}
               </Link>
             ) : (

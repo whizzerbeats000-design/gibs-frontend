@@ -27,7 +27,7 @@ export default function ResearchInsights() {
     <>
       <PageHero
         title="The GIBS journal"
-        intro="The first edition is still being prepared. Research essays, case studies and faculty perspectives will appear here once it publishes."
+        intro="The first edition is in editorial preparation. Research essays, case studies and faculty perspectives will appear here once it publishes."
         breadcrumbs={[{ label: "Research & Insights" }]}
       />
 
@@ -167,7 +167,7 @@ export default function ResearchInsights() {
                     featuredMatchesFilter
                       ? `The ${active} piece in this first edition is featured at the top of this page. New pieces in this theme will appear here as the journal publishes.`
                       : ARTICLES.length === 0
-                      ? "The inaugural edition of the GIBS Journal is currently in editorial preparation. Research essays, case studies, and faculty perspectives will be published here."
+                      ? "The first edition is in editorial preparation. Research essays, case studies and faculty perspectives will appear here once it publishes."
                       : `No pieces in the "${active}" theme have been published yet. More essays and perspectives are in preparation.`
                   }
                   action={<BtnLink to="/concierge" variant="outline-ink" size="md">Ask GIBS AI</BtnLink>}
@@ -178,7 +178,7 @@ export default function ResearchInsights() {
             <div className="mt-16">
               <EmptyState
                 title="The full archive opens with the journal"
-                body="Published articles, case studies and research papers appear here with authorship, dates and citations once published."
+                body="Published articles, case studies and research papers appear here with their authors, dates and citations."
                 action={<BtnLink to="/events" variant="outline-ink" size="md">See launch events</BtnLink>}
               />
             </div>
@@ -193,7 +193,7 @@ export default function ResearchInsights() {
         actions={
           <>
             <BtnLink to="/faculty" variant="gold" size="lg">Faculty & research</BtnLink>
-            <BtnLink to="/contact?type=Institutional+Partnership+%26+Accreditation" variant="outline-light" size="lg">
+            <BtnLink to="/contact" variant="outline-light" size="lg">
               Contact the editors
             </BtnLink>
           </>

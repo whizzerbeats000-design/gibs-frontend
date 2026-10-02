@@ -1,95 +1,119 @@
-import { motion } from "framer-motion";
-import { Link } from "../lib/router";
-import { PROGRAMMES, HOME_PROGRAMME_BANDS } from "../lib/data";
-import { Reveal, Stagger, staggerItem } from "../components/motion";
-import { Eyebrow } from "../components/ui";
+import { Reveal } from "../components/motion";
+import { BtnLink, Eyebrow } from "../components/ui";
 import { ArrowUpRight } from "../components/icons";
+import { Link } from "../lib/router";
+import {
+  PROGRAMMES,
+  LOCAL_PROGRAMMES,
+  FOREIGN_PROGRAMMES,
+  HOME_PROGRAMME_BANDS,
+  type Programme,
+} from "../lib/data";
 
-function ProgrammePanel({ slug }: { slug: string }) {
-  const p = PROGRAMMES.find((x) => x.slug === slug);
-  if (!p) return null;
-  const description = p.tagline || p.summary;
-  const audienceText = p.audience?.[0] || p.targetAudience;
+/*
+ * The curated homepage selection, resolved to real programme records.
+ *
+ * `HOME_PROGRAMME_BANDS` is the four editorial bands this section has always
+ * drawn from — three local, one covering the four foreign hubs — each a list of
+ * slugs. Flattening and resolving them keeps the selection canonical: titles,
+ * codes and destinations come straight from PROGRAMMES, and partitioning on
+ * `destination` yields the twelve local and four foreign programmes with no
+ * slug hard-coded here. Group totals are read from the derived LOCAL/FOREIGN
+ * arrays the catalogue pages use, so the copy cannot drift from PROGRAMMES.
+ */
+const SELECTED_PROGRAMMES = HOME_PROGRAMME_BANDS.flatMap((band) => band.slugs)
+  .map((slug) => PROGRAMMES.find((p) => p.slug === slug))
+  .filter((p): p is Programme => Boolean(p));
+
+const PROGRAMME_GROUPS = [
+  {
+    title: "Local Programmes",
+    body: `${LOCAL_PROGRAMMES.length} programmes across Nigeria, with training locations including Ilorin, Abuja and Ibafo.`,
+    cta: "Explore Local Programmes",
+    to: "/programmes",
+    selected: SELECTED_PROGRAMMES.filter((p) => p.destination === "Local"),
+  },
+  {
+    title: "Foreign Executive Programmes",
+    body: `${FOREIGN_PROGRAMMES.length} international executive programmes across Kigali, Dubai, London and Houston.`,
+    cta: "Explore Foreign Executive Programmes",
+    to: "/executive-education",
+    selected: SELECTED_PROGRAMMES.filter((p) => p.destination !== "Local"),
+  },
+];
+
+/** One row of the editorial list: real title, quiet provenance, detail link.
+    Sized to scan rather than to describe — the catalogue carries the copy. */
+function ProgrammeListItem({ programme }: { programme: Programme }) {
+  const isForeign = programme.destination !== "Local";
   return (
-    <Link
-      to={`/programmes/${p.slug}`}
-      className="group grid grid-cols-[1fr_auto] items-start gap-x-6 gap-y-2 border-t rule py-8 sm:py-10 first:border-t-0 sm:gap-x-10 text-left"
-    >
-      <div className="min-w-0">
-        <p className="eyebrow text-forest-600 mb-2">
-          {p.category}
-        </p>
-        <h3 className="type-h3 mt-0 sm:mt-2 text-ink transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:translate-x-1.5">
-          {p.title}
-        </h3>
-        {description && <p className="mt-3 max-w-xl type-body text-muted/80 lg:text-muted leading-relaxed sm:line-clamp-none">{description}</p>}
-        {audienceText && (
-          <p className="mt-2 max-w-lg text-[13px] leading-relaxed text-muted line-clamp-2">
-            <span className="hidden sm:inline font-semibold text-ink/60 uppercase tracking-wider text-[11px] mr-1">For</span> {audienceText.charAt(0).toLowerCase() + audienceText.slice(1)}
-          </p>
-        )}
-      </div>
-      <span className="mt-8 flex h-9 w-9 shrink-0 items-center justify-center text-forest-700 transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
-        <ArrowUpRight className="h-5 w-5" />
-      </span>
-    </Link>
+    <li className="border-t rule">
+      <Link to={`/programmes/${programme.slug}`} className="group flex items-start gap-3 py-3 sm:py-4">
+        <span className="min-w-0">
+          <span className="card-title block">{programme.title}</span>
+          <span className="meta mt-1 block">
+            {isForeign ? `${programme.destination} Hub · ` : ""}
+            {programme.code}
+          </span>
+        </span>
+        <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-forest-600 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      </Link>
+    </li>
   );
 }
 
 export default function ProgrammeDiscovery() {
   return (
     <section id="programmes" className="cv-auto relative bg-white px-6 md:px-12 lg:px-16">
-      <div className="container-x mx-auto section-y grid lg:grid-cols-12 text-left">
-        <div className="lg:col-span-5">
-          <Reveal>
-            <Eyebrow>Programme Discovery</Eyebrow>
-          </Reveal>
-          <Reveal delay={0.08} y={28}>
-            <h2 className="type-h2 mt-5 text-ink">
-              A sample of the 2026 catalogue
-            </h2>
+      <div className="container-x mx-auto section-y text-left">
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <Eyebrow>Programme Discovery</Eyebrow>
+            </Reveal>
+            <Reveal delay={0.08} y={28}>
+              <h2 className="type-h2 mt-5 text-ink">
+                Explore our programmes
+              </h2>
+            </Reveal>
+          </div>
+          <Reveal delay={0.16} className="lg:col-span-6 lg:col-start-7">
+            <p className="max-w-prose type-body">
+              Professional development programmes in Nigeria and international
+              executive training.
+            </p>
           </Reveal>
         </div>
-        <Reveal delay={0.16} className="lg:col-span-7 lg:pl-8">
-          <p className="max-w-prose type-body">
-            The full calendar lists 135 programmes in management, finance, executive training and international practice, for senior and middle-level managers, executive officers, legislators and administrators.
-          </p>
-        </Reveal>
-      </div>
 
-      {/* Editorial category bands */}
-      <Stagger className="mt-14 space-y-16 sm:mt-16 lg:space-y-0">
-        {HOME_PROGRAMME_BANDS.map((band) => (
-          <motion.section
-            key={band.band}
-            variants={staggerItem}
-            className="grid gap-6 lg:grid-cols-12 lg:gap-8 last:mb-0 text-left"
-          >
-            <div className="lg:col-span-4">
-              <p className="eyebrow text-forest-600 font-bold tracking-wide uppercase">
-                {band.band}
-              </p>
-              <p className="mt-3 max-w-prose text-[13.5px] leading-relaxed text-muted lg:pr-2">
-                {band.note}
-              </p>
-            </div>
-            <div className="lg:col-span-8 lg:pl-4">
-              {band.slugs.map((slug) => (
-                <ProgrammePanel key={slug} slug={slug} />
-              ))}
-            </div>
-          </motion.section>
-        ))}
-      </Stagger>
+        <div className="mt-14 space-y-12 sm:mt-16 sm:space-y-14">
+          {PROGRAMME_GROUPS.map((group) => (
+            <Reveal key={group.title} delay={0.08}>
+              <h3 className="type-h3 text-ink">{group.title}</h3>
+              <p className="mt-3 max-w-prose type-body text-muted">{group.body}</p>
 
-      <div className="mt-14 flex flex-wrap items-center justify-start gap-x-9 gap-y-4 border-t rule pt-8">
-        <Link to="/programmes" className="btn btn-primary btn-lg">
-          Explore Programmes
-          <ArrowUpRight className="h-4 w-4" />
-        </Link>
-        <Link to="/executive-education" className="group link-underline text-sm font-semibold text-forest-700">
-          Executive education for organizations
-        </Link>
+              <ul className="mt-8 grid gap-x-12 sm:grid-cols-2">
+                {group.selected.map((programme) => (
+                  <ProgrammeListItem key={programme.slug} programme={programme} />
+                ))}
+              </ul>
+
+              {/* Long label on the foreign CTA would overrun 320px, so it wraps
+                  to a full-width pill on phones and returns to auto-width from
+                  sm up. */}
+              <div className="mt-8">
+                <BtnLink
+                  to={group.to}
+                  variant="primary"
+                  size="lg"
+                  className="w-full justify-center whitespace-normal px-5 text-center text-sm sm:w-auto sm:whitespace-nowrap sm:px-7 sm:text-[15px]"
+                >
+                  {group.cta}
+                  <ArrowUpRight className="h-4 w-4" />
+                </BtnLink>
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );

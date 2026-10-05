@@ -22,6 +22,7 @@ export function HexMark({
       alt={title}
       width={256}
       height={235}
+      decoding="async"
       className={`${className} object-contain`}
     />
   );

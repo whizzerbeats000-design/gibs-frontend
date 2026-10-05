@@ -296,9 +296,9 @@ export default function ProgrammesPage() {
               on phones, two-up on tablet); the strip only exists at lg+. */}
           {(() => {
             const asDirectory = filtered.length >= DIRECTORY_MIN;
-            const item = (p: (typeof PROGRAMMES)[number], i: number) => (
+            const item = (p: (typeof PROGRAMMES)[number]) => (
               <div key={p.id}>
-                <ProgrammeCard programme={p} index={i} />
+                <ProgrammeCard programme={p} />
               </div>
             );
             return filtered.length > 0 ? (
@@ -310,7 +310,7 @@ export default function ProgrammesPage() {
                       : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
                   }
                 >
-                  {filtered.map((p, i) => item(p, i))}
+                  {filtered.map((p) => item(p))}
                 </div>
               ) : (
                 <motion.div
@@ -325,9 +325,9 @@ export default function ProgrammesPage() {
                       : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
                   }
                 >
-                  {filtered.map((p, i) => (
+                  {filtered.map((p) => (
                     <motion.div key={p.id} variants={staggerItem}>
-                      <ProgrammeCard programme={p} index={i} />
+                      <ProgrammeCard programme={p} />
                     </motion.div>
                   ))}
                 </motion.div>

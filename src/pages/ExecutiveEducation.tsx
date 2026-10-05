@@ -187,9 +187,9 @@ export default function ExecutiveEducation() {
           </div>
 
           <div className={"mt-6 border-t rule pt-6 " + DIRECTORY_GRID}>
-            {foreignProgrammes.map((p, idx) => (
+            {foreignProgrammes.map((p) => (
               <div key={p.id}>
-                <ProgrammeCard programme={p} index={idx} />
+                <ProgrammeCard programme={p} />
               </div>
             ))}
           </div>

@@ -36,16 +36,13 @@ export function ProgrammeCard({
   className,
 }: {
   programme: Programme;
-  index?: number;
   action?: "solid" | "ghost" | "quiet";
   className?: string;
 }) {
   const isForeign = programme.destination !== "Local";
-  const depthRef = useCardDepth<HTMLAnchorElement>(2.25);
 
   return (
     <Link
-      ref={depthRef}
       to={`/programmes/${programme.slug}`}
       data-programme-card
       className={cn(

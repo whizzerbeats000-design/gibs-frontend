@@ -365,7 +365,6 @@ body {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
 /* In-page anchor targets clear the fixed header. Aligned to --sticky-top so it
@@ -601,7 +600,7 @@ body {
 }
   /* ---------------- Buttons — one system ---------------- */
   .btn {
-    @apply inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-pill font-semibold transition-[background-color,color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-2 active:scale-[0.985];
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2.5 whitespace-nowrap rounded-pill font-semibold transition-[background-color,color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-2 active:scale-[0.985];
   }
   .btn-lg {
     @apply px-7 py-4 text-[15px];
@@ -1027,10 +1026,6 @@ body {
   .btn { transform: none !important; }
   .kenburns { animation: none !important; }
   .card-depth { transform: none !important; }
-  .programme-card,
-  .programme-card:hover,
-  .programme-card:focus-visible,
-  .programme-card:active { transform: none !important; transition: none !important; }
   .card-lift,
   .card-lift:hover,
   .card-lift:focus-within { transform: none !important; transition: none !important; }

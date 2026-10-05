@@ -11,13 +11,7 @@ import ProgrammeDetail from "./pages/ProgrammeDetail";
 import ExecutiveEducation from "./pages/ExecutiveEducation";
 import Admissions from "./pages/Admissions";
 import About from "./pages/About";
-import Faculty from "./pages/Faculty";
-import ResearchInsights from "./pages/ResearchInsights";
-import ArticleDetail from "./pages/ArticleDetail";
-import CampusPage from "./pages/Campus";
 import Gallery from "./pages/Gallery";
-import Events from "./pages/Events";
-import EventDetail from "./pages/EventDetail";
 import Contact from "./pages/Contact";
 import ConciergePage from "./pages/ConciergePage";
 import NotFound from "./pages/NotFound";
@@ -36,12 +30,6 @@ function RouteView({ path }: { path: string }) {
   const programme = matchRoute("/programmes/:slug", path);
   if (programme?.slug) return <ProgrammeDetail slug={programme.slug} />;
 
-  const article = matchRoute("/research-insights/:slug", path);
-  if (article?.slug) return <ArticleDetail slug={article.slug} />;
-
-  const event = matchRoute("/events/:slug", path);
-  if (event?.slug) return <EventDetail slug={event.slug} />;
-
   switch (path) {
     case "/":
       return <Home />;
@@ -53,16 +41,8 @@ function RouteView({ path }: { path: string }) {
       return <Admissions />;
     case "/about":
       return <About />;
-    case "/faculty":
-      return <Faculty />;
-    case "/research-insights":
-      return <ResearchInsights />;
-    case "/campus":
-      return <CampusPage />;
     case "/gallery":
       return <Gallery />;
-    case "/events":
-      return <Events />;
     case "/contact":
       return <Contact />;
     case "/concierge":

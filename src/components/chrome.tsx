@@ -15,6 +15,31 @@ import { NAV_LINKS, NAV_SECONDARY } from "../lib/data";
 import { EASE } from "./motion";
 import { cn } from "../utils/cn";
 
+/* ---------------- Navigation simplification ----------------
+ * The site architecture has been simplified to four primary
+ * destinations — Programmes, About, Gallery, Contact — plus
+ * the utility (Search, GIBS AI). The data layer (data.ts)
+ * still contains the full historical navigation set; this
+ * filter removes destinations that are no longer primary.
+ * Removed routes: /faculty, /research-insights, /events,
+ * /campus. De-emphasised from primary nav: /executive-education,
+ * /admissions, /concierge — still reachable via CTAs.
+ */
+const REMOVED_ROUTES = new Set([
+  "/faculty",
+  "/research-insights",
+  "/events",
+  "/campus",
+]);
+
+/** Desktop header primary bar — keeps only top-level destinations. */
+const PRIMARY_NAV = NAV_LINKS.filter((l) => !REMOVED_ROUTES.has(l.to) && l.to !== "/executive-education");
+
+/** "Explore" dropdown — keeps Gallery and Contact & Registry. */
+const EXPLORE_NAV = NAV_SECONDARY.filter(
+  (l) => !REMOVED_ROUTES.has(l.to) && l.to !== "/admissions" && l.to !== "/concierge"
+);
+
 /* ---------------- Skip link ---------------- */
 
 export function SkipLink() {
@@ -51,10 +76,10 @@ function useScrolled() {
 /* ---------------- Desktop Explore disclosure ---------------- */
 
 /**
- * Carries NAV_SECONDARY in the header at >= lg.
+ * Carries the secondary destinations in the header at >= lg.
  *
  * A disclosure rather than a permanent second row: the primary bar keeps its
- * single-line rhythm, and the six secondary destinations stay one click away
+ * single-line rhythm, and the secondary destinations stay one click away
  * instead of being dropped. Follows the WAI-ARIA disclosure pattern —
  * aria-expanded on the trigger, Escape and outside-click to dismiss, focus
  * returned to the trigger on Escape.
@@ -127,7 +152,7 @@ function DesktopExplore({
     return () => window.clearTimeout(t);
   }, [open]);
 
-  const anyActive = NAV_SECONDARY.some((l) => isActive(l.to));
+  const anyActive = EXPLORE_NAV.some((l) => isActive(l.to));
 
   return (
     <div ref={wrapRef} className="relative">
@@ -169,7 +194,7 @@ function DesktopExplore({
           className="absolute right-0 top-[calc(100%+10px)] z-50 w-[420px] border border-line bg-ivory shadow-[0_24px_60px_-30px_rgba(0,32,9,0.5)]"
         >
             <ul className="divide-y divide-ink/8">
-              {NAV_SECONDARY.map((link) => (
+              {EXPLORE_NAV.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
@@ -246,9 +271,9 @@ export function Header({
         </Link>
 
         {/* Desktop nav — primary bar plus an Explore disclosure carrying
-            NAV_SECONDARY, so no public section is lost at wider breakpoints. */}
+            the secondary destinations, so no public section is lost at wider breakpoints. */}
         <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
-          {NAV_LINKS.map((link) => (
+          {PRIMARY_NAV.map((link) => (
             <Link
               key={link.to}
               to={link.to}
@@ -292,10 +317,10 @@ export function Header({
             GIBS AI
           </button>
           <Link to="/admissions" className="btn btn-primary btn-md hidden lg:inline-flex">
-            Subscribe
+            Enquire
           </Link>
           <Link to="/admissions" className="btn btn-primary btn-sm lg:hidden">
-            Subscribe
+            Enquire
           </Link>
           <button
             type="button"
@@ -316,15 +341,11 @@ export function Header({
 
 /* ---------------- Mobile / tablet navigation ---------------- */
 
-const MOBILE_PRIMARY = NAV_LINKS.map((l) =>
+const MOBILE_PRIMARY = PRIMARY_NAV.map((l) =>
   l.to === "/programmes" ? { ...l, label: "All Programmes" } : l
 );
-// Subscription already has its own "Subscribe to a Programme" button at the
-// foot of the sheet, so it is dropped from the secondary list to avoid showing
-// the same destination twice.
-const MOBILE_SECONDARY = NAV_SECONDARY.filter((l) => l.to !== "/admissions").map(
-  ({ label, to }) => ({ label, to })
-);
+
+const MOBILE_SECONDARY = EXPLORE_NAV.map(({ label, to }) => ({ label, to }));
 
 function isActiveRoute(to: string, path: string) {
   return path === to || path.startsWith(to + "/");
@@ -435,8 +456,7 @@ export function MobileNav({
                 </h2>
                 <p className="mt-5 max-w-md text-[14px] leading-[1.55] text-muted">
                   Explore the 2026 Training Calendar of 113 Local and 22 Foreign
-                  Executive Programmes, campuses in Ilorin, Abuja & Ibafo, or ask
-                  GIBS AI to guide you.
+                  Executive Programmes, or ask GIBS AI to guide you.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -527,7 +547,7 @@ export function MobileNav({
                 </ul>
 
                 <Link to="/admissions" onClick={onClose} className="btn btn-primary btn-lg mt-8 w-full">
-                  Subscribe to a Programme
+                  Make an Enquiry
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </nav>
@@ -547,21 +567,14 @@ const FOOTER_COLUMNS = [
   {
     title: "Programmes",
     links: [
-      { label: "2026 Training Calendar", to: "/programmes" },
-      { label: "Foreign Training Hubs", to: "/executive-education" },
-      { label: "In-Plant Workshops", to: "/executive-education" },
-      { label: "Programme Subscription", to: "/admissions" },
+      { label: "All Programmes", to: "/programmes" },
     ],
   },
   {
-    title: "Institution",
+    title: "About GIBS",
     links: [
       { label: "About GIBS", to: "/about" },
-      { label: "Governance & Faculty", to: "/faculty" },
-      { label: "Research & Insights", to: "/research-insights" },
-      { label: "Campuses & Facilities", to: "/campus" },
-      { label: "Campus Gallery", to: "/gallery" },
-      { label: "Conferences & Events", to: "/events" },
+      { label: "Gallery", to: "/gallery" },
     ],
   },
   {
@@ -569,9 +582,6 @@ const FOOTER_COLUMNS = [
     links: [
       { label: "Contact Registry", to: "/contact" },
       { label: "GIBS AI", to: "/concierge" },
-      { label: "Ilorin Headquarters", to: "/campus" },
-      { label: "Abuja Center", to: "/campus" },
-      { label: "Ibafo Center", to: "/campus" },
     ],
   },
 ];

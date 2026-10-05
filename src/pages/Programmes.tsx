@@ -373,7 +373,7 @@ export default function ProgrammesPage() {
                 Request In-Plant Workshop
               </BtnLink>
               <BtnLink to="/contact" variant="outline-ink" size="md">
-                Nominate Candidates
+                Make an Enquiry
               </BtnLink>
             </div>
           </div>

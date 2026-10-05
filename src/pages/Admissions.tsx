@@ -50,14 +50,14 @@ export default function Admissions() {
         image={IMAGES.colonnade}
         imageAlt="The GIBS training facility"
         eyebrow="Programme Subscription & Enquiries"
-        title="Subscribe to a"
+        title="Enquire About a"
         italic="programme."
         intro="GIBS operates on a programme subscription and corporate nomination model for its 2026 training calendar. Whether subscribing individually or nominating organizational teams, participants and sponsoring institutions are guided through a transparent registration process."
         breadcrumbs={[{ label: "Programme Subscription" }]}
         meta={
           <div className="flex flex-wrap gap-3">
             <BtnLink to="/contact?type=Local+Open+Training+Registration" variant="gold" size="md">
-              Subscribe or Nominate
+              Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="md">
@@ -243,7 +243,7 @@ export default function Admissions() {
         actions={
           <>
             <BtnLink to="/contact?type=Local+Open+Training+Registration" variant="primary" size="lg">
-              Subscribe to a Programme
+              Make an Enquiry
             </BtnLink>
             <BtnLink to="/programmes" variant="outline-ink" size="lg">Browse 135 Programmes</BtnLink>
           </>

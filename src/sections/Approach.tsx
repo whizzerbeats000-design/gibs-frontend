@@ -27,7 +27,7 @@ export default function Perspective() {
             What we ask of ourselves
           </motion.h2>
           <motion.p variants={staggerItem} className="mt-6 max-w-prose type-body">
-            GIBS has taught in Ilorin since 2014. It now runs centres in Ilorin,
+            GIBS has trained in Ilorin since 2014. It now runs centres in Ilorin,
             Abuja and Ibafo, and sends executives to hubs in Miami, Houston,
             London, Dubai, Cape Town, Durban, Kigali, the Netherlands and Ghana.
           </motion.p>

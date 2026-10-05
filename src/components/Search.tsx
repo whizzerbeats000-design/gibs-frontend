@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "../lib/router";
-import { PROGRAMMES, RESEARCH_THEMES, STATIC_PAGES, ARTICLES } from "../lib/data";
+import { PROGRAMMES, STATIC_PAGES } from "../lib/data";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { EASE } from "./motion";
 import { SearchIcon, CloseIcon, ArrowUpRight } from "./icons";
@@ -10,7 +10,7 @@ type SearchItem = {
   title: string;
   blurb: string;
   to: string;
-  group: "Programmes" | "Pages" | "Research" | "Insights";
+  group: "Programmes" | "Pages";
   keywords: string;
 };
 
@@ -22,32 +22,18 @@ const INDEX: SearchItem[] = [
     group: "Programmes" as const,
     keywords: `${p.code} ${p.title} ${p.category} ${p.destination} ${p.targetAudience} ${p.schedule} ${p.fees} ${p.summary} ${p.duration}`,
   })),
-  ...STATIC_PAGES.map((p) => ({
+  ...STATIC_PAGES.filter(
+    (p) => !["/faculty", "/research-insights", "/events", "/campus"].includes(p.to)
+  ).map((p) => ({
     title: p.title,
     blurb: p.blurb,
     to: p.to,
     group: "Pages" as const,
     keywords: `${p.title} ${p.blurb}`,
   })),
-  ...RESEARCH_THEMES.map((t, i) => ({
-    title: t.title,
-    blurb: t.blurb,
-    to: "/research-insights",
-    group: "Research" as const,
-    keywords: `faculty scholarship theme ${t.title} ${t.blurb} ${i}`,
-  })),
-  ...ARTICLES.map((a) => ({
-    title: a.title,
-    blurb: a.dek,
-    to: `/research-insights/${a.slug}`,
-    group: "Insights" as const,
-    keywords: `${a.category} ${a.kicker} essay article insight journal ${a.blocks
-      .map((b) => ("text" in b ? b.text : ""))
-      .join(" ")}`,
-  })),
 ];
 
-const GROUP_ORDER: SearchItem["group"][] = ["Programmes", "Insights", "Pages", "Research"];
+const GROUP_ORDER: SearchItem["group"][] = ["Programmes", "Pages"];
 
 function Highlight({ text, query }: { text: string; query: string }) {
   if (!query) return <>{text}</>;
@@ -151,7 +137,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
         <div className="flex items-center gap-3 border-b border-line px-5 focus-within:border-forest-600/50 focus-within:ring-2 focus-within:ring-inset focus-within:ring-forest-600/40">
           <SearchIcon className="h-5 w-5 shrink-0 text-forest-700" />
           <label htmlFor="global-search" className="sr-only">
-            Search programmes, pages and research
+            Search programmes and pages
           </label>
           <input
             ref={inputRef}

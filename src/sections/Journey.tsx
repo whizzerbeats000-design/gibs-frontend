@@ -28,7 +28,7 @@ export default function AdmissionsTeaser() {
             <Reveal delay={0.24}>
               <div className="mt-10">
                 <BtnLink to="/admissions" variant="gold" size="lg">
-                  Subscribe to a Programme
+                  Make an Enquiry
                   <ArrowUpRight className="h-4 w-4" />
                 </BtnLink>
               </div>

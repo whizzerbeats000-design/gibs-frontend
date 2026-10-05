@@ -64,10 +64,10 @@ const RULES: Rule[] = [
   {
     test: /\b(subscribe|subscription|nominate|nomination|register|enrol|enrolment|requirement|fee|fees|cost|price|tuition|apply|admission|scholarship)\b/i,
     reply: {
-      text: "GIBS operates on a direct programme subscription and corporate nomination model for its 2026 training calendar. Organizations nominate participants or individuals subscribe directly. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
+      text: "GIBS operates on a direct programme subscription and corporate nomination model for its 2026 training calendar. Organizations nominate participants; individuals enquire to subscribe. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
       cards: [
         { kind: "link", label: "Programme Subscription Guidelines", to: "/admissions" },
-        { kind: "link", label: "Subscribe / Programme Enquiry", to: "/contact?type=Local+Open+Training+Registration" },
+        { kind: "link", label: "Enquire About Programme Subscription", to: "/contact?type=Local+Open+Training+Registration" },
       ],
     },
   },
@@ -76,7 +76,7 @@ const RULES: Rule[] = [
     reply: {
       text: `GIBS operates across 3 permanent centers: Ilorin Main HQ (No 81, Olorunsogo St, Upper Gaa-Akanbi), Abuja Center (Plot 194, Lugbe 1, Airport Rd), and Ibafo Center (KM 36, Lagos-Ibadan Express Rd), plus off-campus centers across Nigeria.`,
       cards: [
-        { kind: "link", label: "Campus Facilities & Locations", to: "/campus" },
+        { kind: "link", label: "Campus Locations", to: "/about", detail: "Ilorin, Abuja and Ibafo addresses" },
         { kind: "link", label: "Book a Visit or Facility", to: "/contact?type=Campus+Facility+Booking+%26+Enquiries" },
       ],
     },
@@ -86,8 +86,8 @@ const RULES: Rule[] = [
     reply: {
       text: `GIBS is governed by a Governing Council of 4 Directors under the Chairman of the Council, supported by a 20-member management and advisory board. Accredited by CAC (RC 1178333), CMD, ITF, and NSTIF.`,
       cards: [
-        { kind: "link", label: "Faculty & Governance Structure", to: "/faculty" },
-        { kind: "link", label: "About GIBS & Accreditations", to: "/about" },
+        { kind: "link", label: "Governance & Accreditations", to: "/about" },
+        { kind: "link", label: "Contact GIBS", to: "/contact" },
       ],
     },
   },

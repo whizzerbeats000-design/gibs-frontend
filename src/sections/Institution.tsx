@@ -7,7 +7,7 @@ import { IMAGES } from "../lib/data";
 const PERSPECTIVES = [
   {
     k: "Nigeria",
-    v: "Taught in Ilorin since 2014, with centres in Abuja and Ibafo, for the public and private sectors of the country.",
+    v: "Trained in Ilorin since 2014, with centres in Abuja and Ibafo, for the public and private sectors of the country.",
   },
   {
     k: "Abroad",

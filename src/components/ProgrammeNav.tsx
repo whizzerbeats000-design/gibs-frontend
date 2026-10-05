@@ -78,7 +78,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
             ))}
           </select>
           <Link to="/admissions" className="btn btn-primary btn-md shrink-0">
-            Subscribe
+            Make an Enquiry
           </Link>
         </div>
 
@@ -112,7 +112,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
               Ask GIBS AI
             </Link>
             <Link to="/admissions" className="btn btn-primary btn-md">
-              Subscribe Now
+              Enquire
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </div>

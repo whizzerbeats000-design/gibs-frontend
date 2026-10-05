@@ -63,7 +63,7 @@ export default function ExecutiveEducation() {
               variant="gold"
               size="md"
             >
-              Subscribe for Foreign Hubs
+              Enquire
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
             <BtnLink
@@ -209,7 +209,7 @@ export default function ExecutiveEducation() {
               variant="gold"
               size="lg"
             >
-              Subscribe for Foreign Hub
+              Enquire
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="lg">
               Ask GIBS AI

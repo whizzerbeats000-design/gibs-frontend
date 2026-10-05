@@ -60,7 +60,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               variant="gold"
               size="md"
             >
-              Subscribe / Nominate
+              Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="md">
@@ -129,7 +129,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                     size="lg"
                     className="mt-7 w-full whitespace-normal px-4 text-sm sm:px-7 sm:text-[15px]"
                   >
-                    Subscribe / Nominate Candidates
+                    Make an Enquiry
                     <ArrowUpRight className="h-4 w-4" />
                   </BtnLink>
                   {programme.inPlantAvailable && (
@@ -276,7 +276,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           <div>
             <p className="eyebrow-light">Subscription Desk</p>
             <h2 className="type-h2 mt-3">
-              Subscribe to {programme.code}.
+              Enquire About {programme.code}.
             </h2>
             <p className="mt-2 text-[14px] text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
           </div>

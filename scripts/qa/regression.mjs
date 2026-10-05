@@ -49,16 +49,10 @@ const ROUTES = [
   "/executive-education",
   "/admissions",
   "/about",
-  "/faculty",
-  "/research-insights",
-  "/campus",
   "/gallery",
-  "/events",
   "/contact",
   "/concierge",
   "/programmes/course-1-public-sector-accounting-procedure-and-standards",
-  "/research-insights/capacity-building-and-national-manpower-development",
-  "/events/telecom-utilities-regulatory-roundtable",
   "/definitely-not-a-real-page",
 ];
 
@@ -181,8 +175,8 @@ for (const route of ROUTES) {
 /* ---------- 4. Geometry visual QA (clip / tiny / target) ---------- */
 console.log("4. Geometry visual QA (320/390/768/920/1440/1920)");
 let hiddenTotal = 0;
-const gqaRoutes = ["/", "/programmes", "/about", "/admissions", "/contact", "/campus",
-  "/executive-education", "/research-insights", "/gallery", "/events", "/concierge",
+const gqaRoutes = ["/", "/programmes", "/about", "/admissions", "/contact",
+  "/executive-education", "/gallery", "/concierge",
   "/programmes/course-1-public-sector-accounting-procedure-and-standards"];
 for (const w of [320, 390, 768, 920, 1440, 1920]) {
   for (const route of gqaRoutes) {

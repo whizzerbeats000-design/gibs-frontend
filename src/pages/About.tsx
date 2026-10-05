@@ -2,8 +2,8 @@ import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingQuiet } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { INSTITUTIONAL_DATA, IMAGES } from "../lib/data";
-import { Diamond, CheckIcon } from "../components/icons";
+import { INSTITUTIONAL_DATA, GOVERNANCE_INFO, FACULTY_ADVISORS, CAMPUS_LOCATIONS, IMAGES } from "../lib/data";
+import { Diamond, CheckIcon, MapPinIcon } from "../components/icons";
 
 export default function About() {
   useSeo({
@@ -166,6 +166,100 @@ export default function About() {
                 ))}
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Governance & Advisory */}
+      <section className="border-t border-line bg-white section-y">
+        <div className="container-x grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <p className="eyebrow">Governance &amp; Advisory</p>
+              <h2 className="type-h2 mt-4 text-ink">
+                Institutional governance &amp; management structure
+              </h2>
+              <p className="mt-5 text-[16px] leading-relaxed text-ink/85 max-w-prose">
+                {GOVERNANCE_INFO.councilSummary}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <span className="rounded-pill bg-forest-50 px-4 py-1.5 text-[12.5px] font-bold text-forest-800">
+                  Governing Council: 4 Directors
+                </span>
+                <span className="rounded-pill bg-stone px-4 py-1.5 text-[12.5px] font-bold text-ink">
+                  Management Team: 20 Advisors &amp; Experts
+                </span>
+                <span className="rounded-pill bg-gold-100 px-4 py-1.5 text-[12.5px] font-bold text-gold-700">
+                  {GOVERNANCE_INFO.boardChairman}
+                </span>
+              </div>
+            </Reveal>
+          </div>
+
+          <div className="mt-12 lg:col-span-5 lg:mt-0">
+            <Reveal delay={0.08}>
+              <p className="eyebrow">Academic Board &amp; Advisory Structure</p>
+              <h3 className="display-serif mt-3 text-xl text-ink">
+                14 Functional Designations
+              </h3>
+              <p className="mt-3 type-body text-muted">
+                The operational governance framework coordinating academic
+                activities, curriculum development, inter-agency relations, and
+                international partnerships.
+              </p>
+            </Reveal>
+            <div className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2">
+              {FACULTY_ADVISORS.map((advisor) => (
+                <Reveal key={advisor.id} delay={advisor.id * 0.03}>
+                  <div className="border-t rule pt-5 max-w-card">
+                    <h4 className="text-[15px] font-bold text-ink">{advisor.designation}</h4>
+                    <p className="mt-1 type-body text-muted max-w-prose">{advisor.category}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Training Locations */}
+      <section className="border-y border-line bg-paper section-y">
+        <div className="container-x grid gap-14 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="eyebrow">Training Locations</p>
+              <h2 className="type-h2 mt-4 text-ink">
+                Three <em className="italic text-forest-700">training hubs.</em>
+              </h2>
+              <p className="mt-5 max-w-prose type-body text-muted">
+                Permanent training centres in Ilorin, Abuja and Ibafo, with
+                additional off-campus delivery across Nigeria.
+              </p>
+            </Reveal>
+          </div>
+
+          <div className="mt-12 space-y-8 lg:col-span-7 lg:mt-0">
+            {CAMPUS_LOCATIONS.map((campus, idx) => (
+              <Reveal key={campus.id} delay={idx * 0.08}>
+                <div className="border border-line bg-white p-8 shadow-crisp lg:p-10">
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-b rule pb-5">
+                    <h3 className="display-serif text-2xl text-ink sm:text-3xl">
+                      {campus.name}
+                    </h3>
+                    <span className="rounded-pill bg-forest-600 px-4 py-1.5 text-[12px] font-bold text-ivory">
+                      Active Training Center
+                    </span>
+                  </div>
+                  <div className="mt-5 flex items-start gap-3 text-[14.5px] text-ink/90">
+                    <MapPinIcon className="mt-0.5 h-5 w-5 shrink-0 text-forest-600" />
+                    <p className="font-semibold max-w-prose">{campus.address}</p>
+                  </div>
+                  <p className="mt-4 text-[13.5px] leading-relaxed text-muted max-w-prose">
+                    {campus.academicFacilities}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

@@ -51,7 +51,7 @@ type Message = {
 const WELCOME: Message = {
   id: 0,
   role: "concierge",
-  text: "Welcome to GIBS AI. I can help with 2026 programmes, foreign training hubs, campus facilities, and subscription enquiries. How can I help?",
+  text: "Welcome to GIBS AI. I can help with 2026 programmes, foreign training hubs, training locations, and subscription enquiries. How can I help?",
 };
 
 const STORAGE_KEY = "gibs-concierge-v2";

@@ -1,7 +1,6 @@
 import {
   Component,
   useEffect,
-  useRef,
   useState,
   type FormEvent,
   type ReactNode,
@@ -11,34 +10,22 @@ import { Link, navigate, useRoute } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { HexMark } from "./Logo";
 import { MenuIcon, CloseIcon, SearchIcon, ChatIcon, ArrowUpRight } from "./icons";
-import { NAV_LINKS, NAV_SECONDARY } from "../lib/data";
 import { EASE } from "./motion";
 import { cn } from "../utils/cn";
 
 /* ---------------- Navigation simplification ----------------
  * The site architecture has been simplified to four primary
- * destinations — Programmes, About, Gallery, Contact — plus
- * the utility (Search, GIBS AI). The data layer (data.ts)
- * still contains the full historical navigation set; this
- * filter removes destinations that are no longer primary.
- * Removed routes: /faculty, /research-insights, /events,
- * /campus. De-emphasised from primary nav: /executive-education,
- * /admissions, /concierge — still reachable via CTAs.
+ * destinations — All Programmes, About GIBS, Gallery,
+ * Contact & Registry — plus the utility (Search, GIBS AI).
+ * All four destinations receive equal visual weight in both
+ * the desktop header and the mobile sheet.
  */
-const REMOVED_ROUTES = new Set([
-  "/faculty",
-  "/research-insights",
-  "/events",
-  "/campus",
-]);
-
-/** Desktop header primary bar — keeps only top-level destinations. */
-const PRIMARY_NAV = NAV_LINKS.filter((l) => !REMOVED_ROUTES.has(l.to) && l.to !== "/executive-education");
-
-/** "Explore" dropdown — keeps Gallery and Contact & Registry. */
-const EXPLORE_NAV = NAV_SECONDARY.filter(
-  (l) => !REMOVED_ROUTES.has(l.to) && l.to !== "/admissions" && l.to !== "/concierge"
-);
+const CORE_NAV = [
+  { label: "All Programmes", to: "/programmes" },
+  { label: "About GIBS", to: "/about" },
+  { label: "Gallery", to: "/gallery" },
+  { label: "Contact & Registry", to: "/contact" },
+];
 
 /* ---------------- Skip link ---------------- */
 
@@ -71,162 +58,6 @@ function useScrolled() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   return scrolled;
-}
-
-/* ---------------- Desktop Explore disclosure ---------------- */
-
-/**
- * Carries the secondary destinations in the header at >= lg.
- *
- * A disclosure rather than a permanent second row: the primary bar keeps its
- * single-line rhythm, and the secondary destinations stay one click away
- * instead of being dropped. Follows the WAI-ARIA disclosure pattern —
- * aria-expanded on the trigger, Escape and outside-click to dismiss, focus
- * returned to the trigger on Escape.
- */
-/** Matches the panel's fade duration below, so nothing is cut short. */
-const EXPLORE_EXIT_MS = 240;
-
-function DesktopExplore({
-  path,
-  isActive,
-}: {
-  path: string;
-  isActive: (to: string) => boolean;
-}) {
-  const [open, setOpen] = useState(false);
-  const [rendered, setRendered] = useState(open);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const triggerRef = useRef<HTMLButtonElement>(null);
-
-  useEscape(open, () => {
-    setOpen(false);
-    triggerRef.current?.focus();
-  });
-
-  useEffect(() => {
-    if (!open) return;
-    const onDown = (e: globalThis.MouseEvent) => {
-      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== "Tab" || !wrapRef.current) return;
-      const focusable = wrapRef.current.querySelectorAll<HTMLElement>("a[href]");
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      // Wrap focus inside the panel so tabbing never escapes into the page
-      // behind an open menu.
-      if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault();
-        first.focus();
-      } else if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault();
-        last.focus();
-      }
-    };
-    document.addEventListener("mousedown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("mousedown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [open]);
-
-  // Navigating should never leave the panel hanging open.
-  useEffect(() => {
-    setOpen(false);
-  }, [path]);
-
-  // Unmount on a timer rather than relying on the exit animation to signal
-  // completion. AnimatePresence waits for that signal, and when the animation
-  // is dropped (busy or software-rendered frame) it keeps the panel mounted —
-  // leaving a visible panel of focusable links under a trigger that already
-  // reports `aria-expanded="false"`. The timer makes teardown deterministic.
-  useEffect(() => {
-    if (open) {
-      setRendered(true);
-      return;
-    }
-    const t = window.setTimeout(() => setRendered(false), EXPLORE_EXIT_MS);
-    return () => window.clearTimeout(t);
-  }, [open]);
-
-  const anyActive = EXPLORE_NAV.some((l) => isActive(l.to));
-
-  return (
-    <div ref={wrapRef} className="relative">
-      <button
-        ref={triggerRef}
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-expanded={open}
-        aria-controls="nav-explore"
-        className={cn(
-          "relative flex items-center gap-1.5 py-2 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors duration-200",
-          anyActive || open ? "text-forest-700" : "text-ink/75 hover:text-forest-700"
-        )}
-      >
-        Explore
-        <span
-          aria-hidden="true"
-          className={cn(
-            "text-[9px] leading-none transition-transform duration-300",
-            open ? "rotate-180" : ""
-          )}
-        >
-          ▼
-        </span>
-        <span
-          className={cn(
-            "absolute inset-x-0 -bottom-0.5 h-[2px] origin-left bg-gold-500 transition-transform duration-300",
-            anyActive ? "scale-x-100" : "scale-x-0"
-          )}
-        />
-      </button>
-
-      {rendered && (
-        <motion.div
-          id="nav-explore"
-          initial={{ opacity: 0, y: -6 }}
-          animate={{ opacity: open ? 1 : 0, y: open ? 0 : -6 }}
-          transition={{ duration: 0.24, ease: EASE }}
-          className="absolute right-0 top-[calc(100%+10px)] z-50 w-[420px] border border-line bg-ivory shadow-[0_24px_60px_-30px_rgba(0,32,9,0.5)]"
-        >
-            <ul className="divide-y divide-ink/8">
-              {EXPLORE_NAV.map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    onClick={() => setOpen(false)}
-                    aria-current={isActive(link.to) ? "page" : undefined}
-                    className="group flex min-h-[56px] items-center gap-4 px-5 py-3.5 transition-colors hover:bg-forest-50"
-                  >
-                    <span className="min-w-0 flex-1">
-                      <span
-                        className={cn(
-                          "block text-[14.5px] font-semibold transition-colors group-hover:text-forest-700",
-                          isActive(link.to) ? "text-forest-700" : "text-ink"
-                        )}
-                      >
-                        {link.label}
-                      </span>
-                      <span className="mt-0.5 block text-[12.5px] leading-snug text-muted">
-                        {link.note}
-                      </span>
-                    </span>
-                    <ArrowUpRight
-                      aria-hidden="true"
-                      className="h-4 w-4 shrink-0 text-ink/45 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-forest-600"
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-        </motion.div>
-      )}
-    </div>
-  );
 }
 
 export function Header({
@@ -273,7 +104,7 @@ export function Header({
         {/* Desktop nav — primary bar plus an Explore disclosure carrying
             the secondary destinations, so no public section is lost at wider breakpoints. */}
         <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
-          {PRIMARY_NAV.map((link) => (
+          {CORE_NAV.map((link) => (
             <Link
               key={link.to}
               to={link.to}
@@ -292,7 +123,6 @@ export function Header({
               />
             </Link>
           ))}
-          <DesktopExplore path={path} isActive={isActive} />
         </nav>
 
         {/* Actions */}
@@ -340,12 +170,6 @@ export function Header({
 }
 
 /* ---------------- Mobile / tablet navigation ---------------- */
-
-const MOBILE_PRIMARY = PRIMARY_NAV.map((l) =>
-  l.to === "/programmes" ? { ...l, label: "All Programmes" } : l
-);
-
-const MOBILE_SECONDARY = EXPLORE_NAV.map(({ label, to }) => ({ label, to }));
 
 function isActiveRoute(to: string, path: string) {
   return path === to || path.startsWith(to + "/");
@@ -487,7 +311,7 @@ export function MobileNav({
 
               <nav className="border-t rule lg:col-span-7" aria-label="Mobile primary">
                 <ul>
-                  {MOBILE_PRIMARY.map((link, i) => (
+                  {CORE_NAV.map((link, i) => (
                     <motion.li
                       key={link.to}
                       className="border-b rule"
@@ -510,37 +334,6 @@ export function MobileNav({
                           {link.label}
                         </span>
                         <ArrowUpRight className="ml-auto h-5 w-5 text-ink/60 transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1 group-hover:text-forest-600" />
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
-
-                <p className="mt-8 meta">
-                  More from GIBS
-                </p>
-                <ul className="mt-3">
-                  {MOBILE_SECONDARY.map((link, i) => (
-                    <motion.li
-                      key={link.to}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, ease: EASE, delay: 0.4 + i * 0.05 }}
-                    >
-                      <Link
-                        to={link.to}
-                        onClick={onClose}
-                        aria-current={isActiveRoute(link.to, routePath) ? "page" : undefined}
-                        className="group -mx-2 flex items-center gap-4 rounded-panel px-2 py-3"
-                      >
-                        <span
-                          className={cn(
-                            "text-[15px] font-bold text-ink/75 transition-colors group-hover:text-forest-700",
-                            isActiveRoute(link.to, routePath) && "text-forest-700"
-                          )}
-                        >
-                          {link.label}
-                        </span>
-                        <ArrowUpRight className="ml-auto h-4 w-4 text-ink/60 transition-all group-hover:text-forest-600" />
                       </Link>
                     </motion.li>
                   ))}

@@ -23,7 +23,7 @@ export default function ConciergeBand() {
             <Reveal delay={0.12}>
               <p className="mt-5 max-w-xl type-body">
                 GIBS AI answers questions directly about the 2026 programme catalogue,
-                overseas training hubs, and campus facilities.
+                overseas training hubs, and training locations.
               </p>
             </Reveal>
             <Reveal delay={0.18}>

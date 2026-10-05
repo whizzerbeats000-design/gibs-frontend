@@ -258,7 +258,7 @@ export function MobileNav({
       animate={{ opacity: open ? 1 : 0, y: open ? 0 : -16 }}
       transition={{ duration: 0.45, ease: EASE }}
     >
-          <div className="container-x flex min-h-full flex-col pb-10 pt-[92px]">
+          <div className="container-x flex flex-col pb-10 pt-[92px]">
             <button
               type="button"
               onClick={onClose}
@@ -268,7 +268,7 @@ export function MobileNav({
               <CloseIcon className="h-5 w-5" />
             </button>
 
-            <div className="grid flex-1 gap-10 lg:grid-cols-12">
+            <div className="grid gap-10 lg:grid-cols-12">
               <div className="lg:col-span-5">
                 <p className="eyebrow text-forest-600">
                   GIBS / Navigation
@@ -485,7 +485,7 @@ export function GlobalFooter() {
             <Newsletter />
           </div>
 
-          <div className="grid grid-cols-1 gap-10 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:col-span-7 lg:pl-10">
+          <div className="grid grid-cols-1 gap-5 min-[400px]:grid-cols-2 sm:grid-cols-3 sm:gap-10 lg:col-span-7 lg:pl-10">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title}>
                 <p className="eyebrow-light">

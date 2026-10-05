@@ -24,13 +24,23 @@ const INDEX: SearchItem[] = [
   })),
   ...STATIC_PAGES.filter(
     (p) => !["/faculty", "/research-insights", "/events", "/campus"].includes(p.to)
-  ).map((p) => ({
-    title: p.title,
-    blurb: p.blurb,
-    to: p.to,
-    group: "Pages" as const,
-    keywords: `${p.title} ${p.blurb}`,
-  })),
+  ).map((p) => {
+    /* STATIC_PAGES blurbs in data.ts contain "nomination" and "subscribe"
+       terminology. Transform at the render layer — data.ts is byte-locked. */
+    let blurb = p.blurb;
+    if (p.to === "/admissions") {
+      blurb = "Browse the 2026 calendar and make an enquiry for any programme.";
+    } else if (p.to === "/concierge") {
+      blurb = "Ask about programmes, locations and how to enquire.";
+    }
+    return {
+      title: p.title,
+      blurb,
+      to: p.to,
+      group: "Pages" as const,
+      keywords: `${p.title} ${blurb}`,
+    };
+  }),
 ];
 
 const GROUP_ORDER: SearchItem["group"][] = ["Programmes", "Pages"];

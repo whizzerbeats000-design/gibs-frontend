@@ -63,7 +63,7 @@ export default function ExecutiveEducation() {
               variant="gold"
               size="md"
             >
-              Enquire
+              Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
             <BtnLink
@@ -124,7 +124,7 @@ export default function ExecutiveEducation() {
             <Reveal>
               <p className="eyebrow-light">Customized In-Plant Delivery</p>
               <h2 className="type-h2 mt-4">
-                Bring GIBS faculty and curriculum directly to your organization
+                Bring GIBS training and curriculum directly to your organisation
               </h2>
               <p className="mt-6 text-[15.5px] leading-relaxed text-ivory/85 max-w-prose">
                 GIBS designs and delivers customized in-plant workshops for government ministries,
@@ -199,9 +199,9 @@ export default function ExecutiveEducation() {
       <ClosingImmersive
         image={IMAGES.city}
         alt="International Executive Training"
-        eyebrow="Overseas Subscription"
+        eyebrow="Overseas Training"
         title="Training outside Nigeria"
-        body="Our international desk can issue visa support letters, confirm itineraries and process nominations for the Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, Netherlands and Ghana hubs."
+        body="Our international desk can issue visa support letters, confirm itineraries, and process enrolments for the Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, Netherlands and Ghana hubs."
         actions={
           <>
             <BtnLink
@@ -209,7 +209,7 @@ export default function ExecutiveEducation() {
               variant="gold"
               size="lg"
             >
-              Enquire
+              Make an Enquiry
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="lg">
               Ask GIBS AI

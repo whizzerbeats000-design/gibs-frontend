@@ -14,8 +14,7 @@ export default function NotFound() {
         <p className="eyebrow-light">Error 404</p>
         <h1 className="type-h1 mt-6 max-w-3xl">Page not found</h1>
         <p className="mt-7 max-w-lg type-body text-ivory/85">
-          We could not find that page. The address may be mistyped, or the page
-          may have moved. Try the programme catalogue, or search from the home page.
+          We could not find that page. The address may be mistyped or moved.
         </p>
         <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
           <BtnLink to="/" variant="gold" size="lg">

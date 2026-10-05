@@ -147,10 +147,10 @@ export function Header({
             GIBS AI
           </button>
           <Link to="/admissions" className="btn btn-primary btn-md hidden lg:inline-flex">
-            Enquire
+            Make an Enquiry
           </Link>
           <Link to="/admissions" className="btn btn-primary btn-sm lg:hidden">
-            Enquire
+            Make an Enquiry
           </Link>
           <button
             type="button"
@@ -402,8 +402,7 @@ function Newsletter() {
       <div className="mt-9 max-w-md border-l-2 border-gold-400 pl-4">
         <p className="eyebrow-light">How to join the mailing list</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
-          Online subscription is not yet available. To join the executive
-          calendar mailing list, email the registry at{" "}
+          To join the GIBS Executive Bulletin, email the registry at{" "}
           <a href="mailto:gibsilorin@gmail.com" className="text-gold-300 underline underline-offset-2">
             gibsilorin@gmail.com
           </a>{" "}
@@ -475,9 +474,6 @@ export function GlobalFooter() {
             <p className="mt-5 text-[13px] font-serif italic text-gold-300">
               “Take advantage of us, so that no one takes advantage of you”
             </p>
-            <p className="mt-4 max-w-sm type-body text-ivory/85">
-              An outfit committed to manpower development and capacity-building.
-            </p>
             <div className="mt-5 space-y-1.5 text-[12px] leading-relaxed text-ivory/75">
               <p className="font-semibold text-ivory">Headquarters (Ilorin):</p>
               <p>No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi, Ilorin, Kwara State</p>
@@ -522,7 +518,7 @@ export function GlobalFooter() {
         <div className="mt-10 flex flex-col gap-4 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/60 sm:flex-row sm:items-center sm:justify-between sm:text-[12px]">
           <p>© {new Date().getFullYear()} Goshen International Business School Limited (RC 1178333)</p>
           <p className="text-ivory/60">
-            Accreditations: CAC · CMD · ITF Compliant · NSTIF
+            Accredited by: CAC · CMD · ITF · NSTIF
           </p>
         </div>
         <div className="mt-6 flex flex-col gap-2 border-t rule-light pt-6 text-[11px] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">

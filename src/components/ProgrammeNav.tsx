@@ -112,7 +112,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
               Ask GIBS AI
             </Link>
             <Link to="/admissions" className="btn btn-primary btn-md">
-              Enquire
+              Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </div>

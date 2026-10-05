@@ -7,7 +7,7 @@ import { useSeo } from "../lib/router";
 
 const TOPICS = [
   { title: "Programmes & Training", body: "113 Local / Open training courses and 22 Foreign executive training programmes across Kigali, Dubai, London, and Houston." },
-  { title: "Programme Subscription & Enquiries", body: "Programme selection, corporate nomination process, published fee schedules, and registration details." },
+  { title: "Programme Enquiries", body: "Programme selection, enrolment process, published fee schedules, and registration details." },
   { title: "Executive Education", body: "Overseas training hubs (Kigali, Dubai, London, Houston) and customized in-plant workshops." },
   { title: "Training Locations", body: "Ilorin Headquarters, Abuja Center, Ibafo (Ogun State) Center, and off-campus domestic venues." },
   { title: "Institutional Team", body: "Governing Council, 20 Advisors and subject matter experts, and Pacific Institute of Technology technical partnership." },
@@ -17,7 +17,7 @@ export default function ConciergePage() {
   useSeo({
     title: "GIBS AI — Ask about programmes and locations",
     description:
-      "GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and subscription enquiries.",
+      "GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.",
   });
   const { setOpen } = useConcierge();
 
@@ -25,7 +25,7 @@ export default function ConciergePage() {
     <>
       <PageHero
         title="Find the right programme"
-        intro="Ask about the 2026 training catalogue, overseas destinations, training locations or how to subscribe."
+        intro="Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire."
         breadcrumbs={[{ label: "GIBS AI" }]}
       />
 
@@ -42,8 +42,7 @@ export default function ConciergePage() {
                   Welcome to GIBS AI. How can we help?
                 </h2>
                 <p className="mt-4 max-w-prose type-body">
-                  A programme guide built on GIBS’ published records. It answers common
-                  questions instantly.
+                  A programme guide built on GIBS’ published records.
                 </p>
               </div>
 
@@ -81,12 +80,9 @@ export default function ConciergePage() {
                       GIBS AI
                     </p>
                     <p className="mt-0.5 text-[11px] text-ivory/75">
-                      Programme and enquiry guide
+                      Programme guide
                     </p>
                   </div>
-                  <span className="pill pill-ivory hidden sm:block">
-                    Official Guide
-                  </span>
                 </div>
                 <div className="min-h-0 flex-1">
                   <ConciergeConversation label="GIBS AI conversation on this page" />

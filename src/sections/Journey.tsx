@@ -3,6 +3,12 @@ import { BtnLink, DataNote } from "../components/ui";
 import { ArrowUpRight } from "../components/icons";
 import { ADMISSIONS_STEPS } from "../lib/data";
 
+/* Step 2 title in data.ts reads "Nomination & Subscription" — override at
+   the render layer. data.ts is byte-locked. */
+const STEPS_RENDER = ADMISSIONS_STEPS.map((step) =>
+  step.n === "02" ? { ...step, title: "Enrolment & Confirmation" } : step
+);
+
 export default function AdmissionsTeaser() {
   return (
     <section id="subscription" className="cv-auto relative overflow-hidden bg-forest-800 text-ivory">
@@ -11,18 +17,17 @@ export default function AdmissionsTeaser() {
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
-              <p className="eyebrow-light">Programme Subscription</p>
+              <p className="eyebrow-light">Programme Enquiry</p>
             </Reveal>
             <Reveal delay={0.08} y={28}>
               <h2 className="type-h2 mt-2">
-                How to subscribe
+                How to enquire
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
               <p className="mt-7 max-w-lg type-body text-ivory/85">
-                Organisations nominate staff by email or phone. Individual
-                professionals can register themselves. Either way, six steps get
-                you onto a programme in the 2026 calendar.
+                Organisations enquire by email or phone. Individual professionals can make an
+                enquiry to register. Either way, six steps get you onto a programme in the 2026 calendar.
               </p>
             </Reveal>
             <Reveal delay={0.24}>
@@ -37,7 +42,7 @@ export default function AdmissionsTeaser() {
 
           <Reveal delay={0.2} className="lg:col-span-7 lg:pl-6">
             <ol className="border-t rule-light">
-              {ADMISSIONS_STEPS.map((step) => (
+              {STEPS_RENDER.map((step) => (
                 <li
                   key={step.n}
                   className="grid grid-cols-[3rem_1fr] items-baseline gap-x-5 border-b rule-light py-5 sm:grid-cols-[4rem_1fr] sm:gap-x-8"
@@ -49,7 +54,7 @@ export default function AdmissionsTeaser() {
             </ol>
             <div className="mt-7">
               <DataNote light label="2026 Calendar Open">
-                Active &amp; upcoming quarterly cohorts and custom in-plant workshops are accepting nominations.
+                Active &amp; upcoming quarterly cohorts and custom in-plant workshops are accepting enquiries.
               </DataNote>
             </div>
           </Reveal>

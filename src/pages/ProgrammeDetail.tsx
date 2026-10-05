@@ -259,9 +259,9 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         <div className="container-x section-y grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="eyebrow">Frequently Asked Questions</p>
-            <h2 className="type-h2 mt-4 text-ink">Registration &amp; logistics</h2>
+            <h2 className="type-h2 mt-4 text-ink">Enrolment &amp; logistics</h2>
             <p className="mt-4 type-body">
-              Questions regarding nomination procedures, in-plant arrangements, or international logistics.
+              Questions about in-plant arrangements, international logistics, or programme enrolment.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -274,7 +274,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
       <section id="enrolment" className="relative overflow-hidden bg-forest-900 text-ivory">
         <div className="container-x band-y relative flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="eyebrow-light">Subscription Desk</p>
+            <p className="eyebrow-light">Enrolment Desk</p>
             <h2 className="type-h2 mt-3">
               Enquire About {programme.code}.
             </h2>
@@ -287,7 +287,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               size="lg"
               className="min-w-0 w-full sm:w-auto"
             >
-              Submit Subscription Enquiry
+              Make an Enquiry
               <ArrowUpRight className="h-4 w-4" />
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="lg">

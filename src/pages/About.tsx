@@ -9,7 +9,7 @@ export default function About() {
   useSeo({
     title: "About GIBS — Goshen International Business School Limited (RC 1178333)",
     description:
-      "Official institutional profile, mission, vision, 4 guiding principles, core values, and strategic focus areas of Goshen International Business School.",
+      "Institutional profile, founding history, governing council, accreditations, and training locations for Goshen International Business School.",
   });
 
   return (
@@ -20,46 +20,9 @@ export default function About() {
         eyebrow="Institutional Profile"
         title="Goshen International"
         italic="Business School."
-        intro={INSTITUTIONAL_DATA.positioningStatement}
+        intro="Founded in 2014, GIBS offers executive training across three Nigerian centres and four overseas hubs."
         breadcrumbs={[{ label: "About GIBS" }]}
       />
-
-      {/* Slogan Banner */}
-      <section className="border-b border-line bg-forest-900 py-10 text-ivory">
-        <div className="container-x text-center">
-          <p className="eyebrow-light">Official Slogan</p>
-          <blockquote className="display-serif mt-3 text-2xl text-gold-300 sm:text-3xl">
-            “{INSTITUTIONAL_DATA.slogan}”
-          </blockquote>
-          <p className="mt-2 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/60 sm:text-[12px]">
-            Goshen International Business School Limited · Incorporated March 17, 2014 (RC 1178333)
-          </p>
-        </div>
-      </section>
-
-      {/* Mission & Vision */}
-      <section className="border-b border-line bg-white">
-        <div className="container-x">
-          <div className="grid gap-px overflow-hidden bg-line lg:grid-cols-12">
-            <div className="bg-white p-10 sm:p-14 lg:col-span-6">
-              <Reveal>
-                <p className="eyebrow">Mission Statement</p>
-                <p className="type-h3 mt-6 text-ink max-w-prose">
-                  {INSTITUTIONAL_DATA.mission}
-                </p>
-              </Reveal>
-            </div>
-            <div className="bg-white p-10 sm:p-14 lg:col-span-6">
-              <Reveal delay={0.08}>
-                <p className="eyebrow">Vision Statement</p>
-                <p className="type-h3 mt-6 text-ink max-w-prose">
-                  {INSTITUTIONAL_DATA.vision}
-                </p>
-              </Reveal>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Guiding Principles (4 Pillars) */}
       <section className="paper-grain bg-paper">
@@ -80,9 +43,6 @@ export default function About() {
                     Pillar 0{i + 1}
                   </span>
                   <h3 className="display-serif mt-4 text-2xl text-ink">{pillar}</h3>
-                  <p className="mt-2 text-[13.5px] leading-relaxed text-muted">
-                    Core institutional anchor upholding standards across all GIBS capacity-building exercises.
-                  </p>
                 </div>
               </Reveal>
             ))}
@@ -154,9 +114,6 @@ export default function About() {
               <h3 className="display-serif text-2xl text-gold-300">International Technical Partnership</h3>
               <p className="mt-4 text-[15px] font-bold text-ivory">
                 {INSTITUTIONAL_DATA.technicalPartner}
-              </p>
-              <p className="mt-4 text-[13.5px] leading-relaxed text-ivory/70 max-w-prose">
-                GIBS delivers executive training across global hubs:
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {INSTITUTIONAL_DATA.overseasHubs.map((hub) => (
@@ -267,7 +224,7 @@ export default function About() {
       <ClosingQuiet
         eyebrow="Take Advantage of Us"
         title="Train your team"
-        body="The 2026 Training Calendar lists 113 local and 22 foreign executive programmes. Organisations can nominate staff, or ask our training advisors what fits."
+        body="The 2026 Training Calendar lists 113 local and 22 foreign executive programmes. Organisations can enquire about training for their staff, or ask our training advisors what fits."
         actions={
           <>
             <BtnLink to="/programmes" variant="primary" size="lg">

@@ -51,7 +51,7 @@ type Message = {
 const WELCOME: Message = {
   id: 0,
   role: "concierge",
-  text: "Welcome to GIBS AI. I can help with 2026 programmes, foreign training hubs, training locations, and subscription enquiries. How can I help?",
+  text: "Welcome to GIBS AI. I can help with 2026 programmes, foreign training hubs, training locations, and programme enquiries. What would you like to explore?",
 };
 
 const STORAGE_KEY = "gibs-concierge-v2";
@@ -250,7 +250,7 @@ export function ConciergeConversation({
           id={compact ? "concierge-input-modal" : "concierge-input-page"}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about programmes, schedules, fees, campuses…"
+          placeholder="Ask about programmes, schedules, fees, locations…"
           className="field-input py-3"
         />
         <button
@@ -263,7 +263,7 @@ export function ConciergeConversation({
         </button>
       </form>
       <p className="px-5 pb-3 text-[11px] leading-snug text-muted">
-        Answers come from the GIBS programme records. For official enquiries, GIBS AI points you to the registry.
+        Answers come from the GIBS programme records. For official enquiries, GIBS AI directs you to the registry.
       </p>
     </div>
   );

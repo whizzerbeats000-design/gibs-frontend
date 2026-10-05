@@ -96,13 +96,6 @@ export default function ProgrammesPage() {
               135 Capacity-Building <em className="italic text-forest-700">Programmes.</em>
             </h1>
           </Reveal>
-          <Reveal delay={0.12} y={16}>
-            <p className="mt-5 max-w-3xl type-body text-ink/80">
-              113 Local Open Training Programmes delivered across our Ilorin Headquarters, Abuja,
-              and Ibafo Centers, plus 22 Foreign Executive Training Programmes across Kigali,
-              Dubai, London, and Houston.
-            </p>
-          </Reveal>
         </div>
       </section>
 

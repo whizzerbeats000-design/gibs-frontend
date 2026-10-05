@@ -64,10 +64,10 @@ const RULES: Rule[] = [
   {
     test: /\b(subscribe|subscription|nominate|nomination|register|enrol|enrolment|requirement|fee|fees|cost|price|tuition|apply|admission|scholarship)\b/i,
     reply: {
-      text: "GIBS operates on a direct programme subscription and corporate nomination model for its 2026 training calendar. Organizations nominate participants; individuals enquire to subscribe. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
+      text: "GIBS offers 113 Local Open and 22 Foreign Executive Programmes across its 2026 training calendar. Organisations enquire about training for staff; individuals make an enquiry to join. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
       cards: [
-        { kind: "link", label: "Programme Subscription Guidelines", to: "/admissions" },
-        { kind: "link", label: "Enquire About Programme Subscription", to: "/contact?type=Local+Open+Training+Registration" },
+        { kind: "link", label: "Enrolment Guidelines", to: "/admissions" },
+        { kind: "link", label: "Make an Enquiry", to: "/contact?type=Local+Open+Training+Registration" },
       ],
     },
   },

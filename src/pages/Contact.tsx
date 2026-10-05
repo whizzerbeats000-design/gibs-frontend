@@ -35,7 +35,7 @@ export default function Contact() {
   useSeo({
     title: "Contact — Goshen International Business School (GIBS)",
     description:
-      "Reach GIBS headquarters in Ilorin, Abuja & Ibafo study centers, executive training enquiries, and programme subscriptions.",
+      "Reach GIBS headquarters in Ilorin, Abuja & Ibafo study centers and make an enquiry for any programme, in-plant workshop, or executive education question.",
   });
 
   const { query } = useRoute();
@@ -87,7 +87,7 @@ export default function Contact() {
         eyebrow="Contact & Locations"
         title="Connect with"
         italic="GIBS."
-        intro="Reach our headquarters in Ilorin, Abuja and Ibafo training centers, or submit an enquiry for programme subscriptions, in-plant workshops, and executive education."
+        intro="Reach our headquarters in Ilorin, Abuja and Ibafo training centers, or make an enquiry below for any programme, in-plant workshop, or executive education question. GIBS AI is also available to help."
         breadcrumbs={[{ label: "Contact" }]}
       />
 
@@ -196,7 +196,7 @@ export default function Contact() {
                     aria-describedby={errors.message ? "message-error" : undefined}
                     value={values.message}
                     onChange={set("message")}
-                    placeholder="Provide details of your programme interest, nomination request, or institutional collaboration…"
+                    placeholder="Provide details of your programme interest, staff training enquiry, or institutional collaboration…"
                   />
                 </Field>
 
@@ -204,7 +204,7 @@ export default function Contact() {
                   type="submit"
                   className="btn btn-primary btn-lg w-full sm:w-auto"
                 >
-                  Prepare Enquiry
+                  Make an Enquiry
                   <ArrowUpRight className="h-4 w-4" />
                 </button>
               </form>
@@ -216,9 +216,9 @@ export default function Contact() {
             <Reveal y={32}>
               <div className="space-y-6">
                 <div className="border border-line bg-paper p-7 max-w-card">
-                  <p className="eyebrow">Interactive Assistance</p>
+                  <p className="eyebrow">GIBS AI</p>
                   <p className="mt-3 type-body max-w-prose">
-                    GIBS AI is available to help guide you through course selection, overseas hub schedules, and fee breakdowns.
+                    GIBS AI is available to help guide you through programme selection, overseas hub schedules, and fee breakdowns.
                   </p>
                   <button
                     type="button"

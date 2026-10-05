@@ -267,7 +267,7 @@ export default function ProgrammesPage() {
 
           {/* Results summary bar */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-sm">
-            <p className="text-[12.5px] text-muted" aria-live="polite">
+            <p className="text-[13px] text-muted" aria-live="polite">
               Showing <span className="font-bold text-ink">{filtered.length}</span> of {PROGRAMMES.length} programmes
               {destination === "Local"
                 ? " · Local / Open"

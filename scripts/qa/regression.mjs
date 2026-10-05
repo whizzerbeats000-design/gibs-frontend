@@ -38,8 +38,8 @@ await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const BASE = `http://127.0.0.1:${server.address().port}`;
 
 const VIEWPORTS = [
-  [320, 720], [360, 800], [390, 844], [430, 932],
-  [600, 960], [768, 1024], [1024, 768],
+  [320, 720], [360, 800], [375, 812], [390, 844], [412, 915], [430, 932],
+  [600, 960], [640, 960], [768, 1024], [834, 1112], [1024, 768],
   [1280, 800], [1440, 900], [1920, 1080],
 ];
 
@@ -73,7 +73,7 @@ if (!executablePath) {
 }
 const browser = await chromium.launch({
   executablePath,
-  args: ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"],
+  args: ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu", "--js-flags=--max_old_space_size=4096"],
 });
 
 let failures = 0;
@@ -180,6 +180,7 @@ for (const route of ROUTES) {
 
 /* ---------- 4. Geometry visual QA (clip / tiny / target) ---------- */
 console.log("4. Geometry visual QA (320/390/768/920/1440/1920)");
+let hiddenTotal = 0;
 const gqaRoutes = ["/", "/programmes", "/about", "/admissions", "/contact", "/campus",
   "/executive-education", "/research-insights", "/gallery", "/events", "/concierge",
   "/programmes/course-1-public-sector-accounting-procedure-and-standards"];
@@ -190,16 +191,31 @@ for (const w of [320, 390, 768, 920, 1440, 1920]) {
     await page.waitForTimeout(1000);
     const finds = await page.evaluate(() => {
       const out = [];
+      let hiddenSkipped = 0;
       const SELECTOR = "h1,h2,h3,h4,p,li,button,a,label,span,td,th";
       document.querySelectorAll(SELECTOR).forEach((el) => {
         if (!el.offsetParent) return;
+        const cs = getComputedStyle(el);
+        // Text that is deliberately hidden from sighted users — skip links,
+        // sr-only labels, collapsed panels — is rendered as a 1x1px clipped
+        // box. Its scrollWidth is necessarily wider than its box, which is not a
+        // layout defect. The !el.offsetParent test above does not catch these
+        // because the box is still laid out. Exclude them on the actual pattern
+        // rather than on a loose width threshold, and count them so a growing
+        // exclusion count stays visible instead of quietly passing.
+        const srOnly =
+          cs.clipPath !== "none" ||
+          cs.clip !== "auto" ||
+          (cs.overflow === "hidden" && el.clientWidth <= 1 && el.clientHeight <= 1);
+        if (srOnly) { hiddenSkipped++; return; }
         if (el.scrollWidth > el.clientWidth + 2) {
           out.push({ t: (el.textContent || "").trim().slice(0, 40), w: el.clientWidth, s: el.scrollWidth });
         }
       });
-      return out;
+      return { out, hiddenSkipped };
     });
-    for (const f of finds) fail(`${w} ${route} clip "${f.t}" (${f.w}<=${f.s})`);
+    hiddenTotal += finds.hiddenSkipped;
+    for (const f of finds.out) fail(`${w} ${route} clip "${f.t}" (${f.w}<=${f.s})`);
     await page.close();
   }
 }
@@ -227,8 +243,83 @@ for (const w of [320, 360, 375, 390]) {
   await c.close();
 }
 
+/* ---------- 6. Overlay contract: focus containment, restoration, aria-modal lifetime ----------
+   Every overlay declares role="dialog" + aria-modal="true". That is only truthful if
+   focus is actually moved in, cannot escape while open, and returns to the trigger on
+   close. This section is the regression guard for exactly that: the mobile nav sheet
+   once bound its focus trap and scroll lock to `open` while mounting off a separate
+   `rendered` flag, so the trap's effect ran against a null ref, never re-ran, and
+   keyboard focus walked straight out into #main behind a full-viewport sheet.
+   Each overlay is opened, tab-cycled, closed with Escape, and checked for restoration. */
+console.log("6. Overlay contract (focus containment / restoration / Escape)");
+const overlaySpec = [
+  { name: "mobile-nav", vp: [390, 844], open: 'button[aria-controls="mobile-navigation"]', dialog: "#mobile-navigation", trigger: 'button[aria-controls="mobile-navigation"]', tabs: 24 },
+  { name: "search", vp: [1280, 900], open: 'button[aria-label="Search GIBS"]', dialog: '[role="dialog"][aria-label="Search GIBS"]', trigger: 'button[aria-label="Search GIBS"]', tabs: 24 },
+  { name: "concierge", vp: [1280, 900], open: 'button[aria-label*="GIBS AI" i]', dialog: '[role="dialog"][aria-modal="true"]', trigger: 'button[aria-label*="GIBS AI" i]', tabs: 20 },
+  { name: "gallery-lightbox", vp: [1280, 900], open: 'button[aria-label*="lightbox" i]', dialog: '[role="dialog"][aria-modal="true"]', trigger: null, tabs: 16 },
+];
+for (const spec of overlaySpec) {
+  const page = await browser.newPage({ viewport: { width: spec.vp[0], height: spec.vp[1] }, reducedMotion: "reduce" });
+  const startRoute = spec.name === "gallery-lightbox" ? "/gallery" : "/";
+  await page.goto(`${BASE}/#${startRoute}`, { waitUntil: "domcontentloaded" });
+  await page.waitForTimeout(1400);
+  const openLoc = page.locator(spec.open).locator("visible=true").first();
+  if (!(await openLoc.count())) { fail(`${spec.name} trigger not found`); await page.close(); continue; }
+  await openLoc.click();
+  await page.waitForTimeout(750);
+
+  const opened = await page.evaluate((sel) => {
+    const d = document.querySelector(sel);
+    return {
+      mounted: !!d,
+      role: d?.getAttribute("role") ?? null,
+      ariaModal: d?.getAttribute("aria-modal") ?? null,
+      scrollLocked: document.body.style.overflow === "hidden",
+      focusInside: !!document.activeElement?.closest(sel.replace(/^\[role="dialog"\]\[aria-modal="true"\]$/, '[role="dialog"]')),
+    };
+  }, spec.dialog);
+  if (!opened.mounted) fail(`${spec.name} did not mount`);
+  else {
+    if (opened.role !== "dialog") fail(`${spec.name} role=${opened.role} (expected dialog)`);
+    if (opened.ariaModal !== "true") fail(`${spec.name} aria-modal=${opened.ariaModal} (expected true)`);
+    if (!opened.scrollLocked) fail(`${spec.name} did not lock background scroll`);
+    if (!opened.focusInside) fail(`${spec.name} focus did not move into the overlay`);
+  }
+
+  // Focus must not be able to leave while the modal is open.
+  const container = spec.dialog === "#mobile-navigation" ? "#mobile-navigation" : '[role="dialog"]';
+  let escaped = 0;
+  for (let i = 0; i < spec.tabs; i++) {
+    await page.keyboard.press("Tab");
+    if (!(await page.evaluate((c) => !!document.activeElement?.closest(c), container))) escaped++;
+  }
+  if (escaped) fail(`${spec.name} focus escaped the overlay ${escaped}/${spec.tabs} times while open`);
+
+  // aria-modal must not outlive the trap: while still mounted, the lock must hold.
+  const midClose = await page.evaluate(() => ({ ariaModal: document.querySelectorAll('[aria-modal="true"]').length, overflow: document.body.style.overflow }));
+  if (midClose.ariaModal > 0 && midClose.overflow !== "hidden") {
+    fail(`${spec.name} aria-modal present but background scroll already released`);
+  }
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(900);
+  const closed = await page.evaluate((sel) => !!document.querySelector(sel), spec.dialog);
+  if (closed) fail(`${spec.name} did not close on Escape`);
+  const unlocked = await page.evaluate(() => document.body.style.overflow !== "hidden");
+  if (!unlocked) fail(`${spec.name} left background scroll locked after close`);
+  if (spec.trigger) {
+    const restored = await page.evaluate((sel) => {
+      const t = [...document.querySelectorAll("button")].find((b) => b.matches(sel));
+      return !!t && document.activeElement === t;
+    }, spec.trigger);
+    if (!restored) fail(`${spec.name} focus was not restored to its trigger on close`);
+  }
+  await page.close();
+}
+
 await browser.close();
 server.close();
 
 console.log(failures ? `\nREGRESSION FAILURES: ${failures}` : "\nALL REGRESSION CHECKS PASS");
+console.log(`(deliberately visually-hidden elements excluded from clip checks: ${hiddenTotal})`);
 process.exit(failures ? 1 : 0);

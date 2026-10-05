@@ -373,11 +373,34 @@ export const IMAGES = {{
 {IMAGE_SET_BLOCK}
 /* ---------------- 5. Navigation Links ---------------- */
 
+/*
+ * Single authoritative navigation inventory.
+ *
+ * NAV_LINKS renders in the desktop header bar. NAV_SECONDARY holds the
+ * remaining public sections and is surfaced by the header's "Explore"
+ * disclosure on desktop, and by MOBILE_SECONDARY in the mobile sheet.
+ *
+ * These were previously two unrelated literals: the desktop bar had 4 entries
+ * and the mobile sheet had 10, so widening the viewport silently dropped six
+ * destinations with no dropdown or overflow to recover them. Every public route
+ * must appear in exactly one of these two arrays so no section becomes
+ * unreachable at a wider breakpoint.
+ */
 export const NAV_LINKS = [
   {{ label: "Programmes", to: "/programmes" }},
   {{ label: "Foreign Training", to: "/executive-education" }},
   {{ label: "Faculty & Governance", to: "/faculty" }},
   {{ label: "About GIBS", to: "/about" }},
+];
+
+export const NAV_SECONDARY = [
+  {{ label: "Research & Insights", to: "/research-insights", note: "Journal, briefs and think-pieces" }},
+  {{ label: "Conferences & Events", to: "/events", note: "Sessions, calendars and registration" }},
+  {{ label: "Campuses & Facilities", to: "/campus", note: "Ilorin, Abuja and Ibafo" }},
+  {{ label: "Campus Gallery", to: "/gallery", note: "The campus in pictures" }},
+  {{ label: "Contact & Registry", to: "/contact", note: "Enquiries and registry details" }},
+  {{ label: "Programme Subscription", to: "/admissions", note: "Join the 2026 calendar" }},
+  {{ label: "GIBS AI", to: "/concierge", note: "Ask the school assistant" }},
 ];
 
 /* ---------------- 6. Events / Executive Sessions ---------------- */

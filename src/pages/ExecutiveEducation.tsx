@@ -105,7 +105,7 @@ export default function ExecutiveEducation() {
                 <div className="mt-6 border-t rule pt-4">
                   <Link
                     to="/programmes"
-                    className="inline-flex items-center gap-1 text-[13px] font-bold text-forest-700 hover:text-forest-900"
+                    className="inline-flex min-h-[24px] items-center gap-1 text-[13px] font-bold text-forest-700 hover:text-forest-900"
                   >
                     View courses
                     <ArrowUpRight className="h-3.5 w-3.5" />

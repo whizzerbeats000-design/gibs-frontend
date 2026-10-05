@@ -11,11 +11,7 @@ import {
 } from "react";
 import { motion } from "framer-motion";
 import { Link } from "../lib/router";
-import {
-  CONCIERGE_SUGGESTIONS,
-  getConciergeReply,
-  type ConciergeCard,
-} from "../lib/concierge";
+import { getConciergeReply, type ConciergeCard } from "../lib/concierge";
 import { EASE } from "./motion";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { ChatIcon, CloseIcon, SendIcon, ArrowUpRight } from "./icons";
@@ -95,11 +91,9 @@ function CardView({ card, onNavigate }: { card: ConciergeCard; onNavigate?: () =
 
 export function ConciergeConversation({
   compact = false,
-  controls = false,
   label = "GIBS AI conversation",
 }: {
   compact?: boolean;
-  controls?: boolean;
   /**
    * Accessible name for the transcript region. Two instances can be mounted at
    * once — the /concierge page panel and the floating dialog — so callers pass a
@@ -239,36 +233,6 @@ export function ConciergeConversation({
             </div>
           </div>
         )}
-      </div>
-
-      {/* Suggestions */}
-      <div className="border-t border-line px-4 pt-3">
-        {controls && (
-          <div className="mb-2 flex items-center justify-between">
-            <p className="meta">
-              Suggested questions
-            </p>
-            <button
-              type="button"
-              onClick={reset}
-              className="min-h-[40px] items-center rounded-pill px-2 eyebrow underline-offset-2 transition-colors hover:text-forest-800 hover:underline"
-            >
-              Reset conversation
-            </button>
-          </div>
-        )}
-        <div className="flex flex-wrap gap-2">
-          {CONCIERGE_SUGGESTIONS.map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => send(s)}
-              className="min-h-[40px] rounded-pill border border-forest-700/25 px-4 py-2 text-[12px] font-semibold text-forest-700 transition-colors duration-200 hover:border-forest-600 hover:bg-forest-50"
-            >
-              {s}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Composer */}

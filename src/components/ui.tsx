@@ -76,7 +76,7 @@ export function Eyebrow({ children, light = false }: { children: ReactNode; ligh
 export function Breadcrumbs({ items }: { items: { label: string; to?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted sm:text-[12px]">
+      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px] font-medium uppercase tracking-[0.12em] text-muted">
         <li>
           <Link
             to="/"

@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "qa": "python3 scripts/qa/parity_check.py && python3 scripts/qa/generator_drift_check.py && python3 scripts/import/export_snapshot.py --check",
+    "qa:browser": "node scripts/qa/regression.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

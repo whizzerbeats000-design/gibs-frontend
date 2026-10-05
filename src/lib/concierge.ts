@@ -14,15 +14,6 @@ export type ConciergeReply = {
   cards?: ConciergeCard[];
 };
 
-export const CONCIERGE_SUGGESTIONS = [
-  "2026 Training Calendar",
-  "Foreign Executive Programmes (Kigali, Dubai, London, Houston)",
-  "How to subscribe to a programme or nominate staff",
-  "In-plant and customized workshops",
-  "Campus locations & facilities",
-  "Contact training registry",
-];
-
 const programmeCard = (slug: string): ConciergeCard => {
   const p = PROGRAMMES.find((x) => x.slug === slug);
   return {

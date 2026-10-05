@@ -90,7 +90,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
                 <button
                   type="button"
                   onClick={() => go(s.id)}
-                  aria-current={active === s.id ? "true" : undefined}
+                  aria-current={active === s.id ? "location" : undefined}
                   className={cn(
                     "relative whitespace-nowrap px-3.5 py-2 text-[12.5px] font-bold uppercase tracking-[0.12em] transition-colors duration-200",
                     active === s.id ? "text-forest-700" : "text-muted hover:text-ink"

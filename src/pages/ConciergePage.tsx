@@ -89,7 +89,7 @@ export default function ConciergePage() {
                   </span>
                 </div>
                 <div className="min-h-0 flex-1">
-                  <ConciergeConversation controls label="GIBS AI conversation on this page" />
+                  <ConciergeConversation label="GIBS AI conversation on this page" />
                 </div>
               </div>
             </Reveal>

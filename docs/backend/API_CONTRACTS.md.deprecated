@@ -1,0 +1,291 @@
+# GIBS API Contracts — ARCHIVED, NOT IMPLEMENTED
+
+> **Status: ARCHIVED HISTORICAL MATERIAL. NOTHING HERE IS IMPLEMENTED.**
+>
+> These contracts describe a Vercel serverless API and a PostgreSQL database that
+> **are not part of the current GIBS product and are not deployed.** No API
+> endpoint exists in the current architecture. The frontend has zero `/api/`
+> dependency and renders entirely from `src/lib/data.ts`.
+>
+> Do not read this file as a description of the current system. It is retained
+> only to record what was once designed.
+>
+> **The implementation has since been deleted.** The `api/` tree
+> (`catalogue.ts`, `programmes/[slug].ts`, `_lib/db.ts`, `_lib/shared.ts`) was
+> removed on 2026-10-04: it was fully orphaned, and `pg` / `@vercel/node` were
+> never installed. Every endpoint specified below no longer exists in any form.
+>
+> The current architecture is documented in `docs/PROGRAMME_CATALOGUE_RULES.md`
+> and `docs/backend/README.md`.
+>
+> Do not implement any of this without a confirmed GIBS requirement, and do not
+> add `pg` or `@vercel/node` to make it build.
+
+## Base URL
+
+- Production: `https://<domain>/api`
+- Local: `http://localhost:3000/api` (via `vercel dev`)
+
+## Authentication
+
+All endpoints are **public**. No authentication token is required for reads or form submissions.
+The serverless functions connect to PostgreSQL using the `service_role` via `GIBS_DATABASE_URL` (server-only).
+
+## Error Envelope
+
+All errors follow a consistent shape:
+
+```json
+{
+  "error": "Human-readable message",
+  "code": "MACHINE_READABLE_CODE",
+  "requestId": "uuid",
+  "details": "optional extra context",
+  "fields": { "fieldName": "per-field error" }
+}
+```
+
+---
+
+## GET /api/catalogue
+
+Returns the currently published catalogue year with all listed programmes and fees.
+
+### Response (200)
+
+```json
+{
+  "year": 2026,
+  "catalogueYearId": "uuid",
+  "programmes": [
+    {
+      "id": "uuid",
+      "code": "GIBS-LOC-001",
+      "title": "...",
+      "slug": "...",
+      "category": "...",
+      "destination": "Local",
+      "targetAudience": "...",
+      "scheduleText": "...",
+      "durationLabel": "...",
+      "inPlantAvailable": true,
+      "tagline": "...",
+      "summary": "...",
+      "fees": [
+        { "tier": "standard", "amount": 250000, "currency": "NGN", "label": "..." }
+      ]
+    }
+  ]
+}
+```
+
+### Errors
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| 404 | NO_PUBLISHED_CATALOGUE | No catalogue year is currently published |
+| 500 | INTERNAL_ERROR | Server error |
+
+### Caching
+
+`Cache-Control: public, s-maxage=300, stale-while-revalidate=60`
+
+---
+
+## GET /api/programmes/:slug
+
+Resolves a programme by its public URL slug.
+
+### Query Parameters
+
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `year` | integer | No | Historical year (2000–2100). Without this, returns the current published programme. |
+
+### Response (200)
+
+```json
+{
+  "slug": "001-programme-name",
+  "year": 2026,
+  "resolution": "current",
+  "programme": {
+    "id": "uuid",
+    "code": "GIBS-LOC-001",
+    "title": "...",
+    "category": "...",
+    "destination": "...",
+    "targetAudience": "...",
+    "scheduleText": "...",
+    "durationLabel": "...",
+    "inPlantAvailable": true,
+    "feeNotes": "...",
+    "tagline": "...",
+    "summary": "...",
+    "format": [...],
+    "audience": [...],
+    "indicativeStructure": [...],
+    "outcomes": [...],
+    "faqs": [...],
+    "fees": [...]
+  }
+}
+```
+
+### Resolution Outcomes
+
+| `resolution` | Meaning |
+|-------------|---------|
+| `current` | The live published programme for this slug |
+| `historical` | The programme for the explicitly requested year |
+
+### Redirect (301)
+
+If the slug was superseded:
+
+```json
+{ "redirect": true, "slug": "new-slug", "requestId": "uuid" }
+```
+
+`Location` header points to the new slug.
+
+### Errors
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| 400 | INVALID_SLUG | Slug format is invalid |
+| 400 | INVALID_YEAR | Year is not a valid integer in range |
+| 404 | NOT_FOUND | No programme for this slug (or year) |
+
+### Caching
+
+- Current: `s-maxage=300, stale-while-revalidate=60`
+- Historical: `s-maxage=86400, stale-while-revalidate=3600`
+
+---
+
+## POST /api/enquiries
+
+Submits a programme enquiry or general enquiry.
+
+### Request Body
+
+```json
+{
+  "name": "string (2-200 chars, required)",
+  "email": "string (valid email, required)",
+  "phone": "string (optional, max 40 chars)",
+  "enquiryType": "string (one of 6 allowed types, required)",
+  "message": "string (5-5000 chars, required)",
+  "programmeId": "uuid (optional, must be published if provided)",
+  "sourcePage": "string (optional, max 512 chars)",
+  "sourcePath": "string (optional, max 512 chars)",
+  "consent": true
+}
+```
+
+### Allowed Enquiry Types
+
+1. `Local Open Training Registration`
+2. `Foreign Training Programmes (Kigali, Dubai, London, Houston)`
+3. `Customized In-Plant Workshop Request`
+4. `Institutional Partnership & Accreditation`
+5. `Campus Facility Booking & Enquiries`
+6. `General Administration & Registry`
+
+### Response (201)
+
+```json
+{
+  "id": "uuid",
+  "requestId": "uuid",
+  "message": "Enquiry received. The GIBS registry will respond to the email address provided."
+}
+```
+
+### Errors
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| 400 | VALIDATION_ERROR | Field validation failures (with `fields` object) |
+| 400 | UNKNOWN_FIELDS | Request contained unexpected fields |
+| 400 | INVALID_PROGRAMME_ID | programmeId is not a valid UUID |
+| 400 | PROGRAMME_NOT_FOUND | programmeId doesn't match any programme |
+| 400 | PROGRAMME_NOT_PUBLISHED | Programme is not in a published catalogue |
+| 409 | DUPLICATE_ENQUIRY | Same email + type submitted within 60 seconds |
+| 413 | PAYLOAD_TOO_LARGE | Request body exceeds 16KB |
+| 429 | RATE_LIMITED | More than 10 enquiries per IP in 5 minutes |
+
+### Security Notes
+
+- Unknown fields are rejected, not silently ignored.
+- `programmeId` is resolved server-side. Client-sent title/code/year are ignored.
+- A programme-specific enquiry is never silently downgraded to a general one.
+- Enquiries are not delivered by email — the API persists them for registry staff review.
+
+---
+
+## POST /api/subscribers
+
+Registers interest in the GIBS executive bulletin.
+
+### Request Body
+
+```json
+{
+  "email": "string (valid email, required)",
+  "consent": true
+}
+```
+
+### Response (201 or 200)
+
+```json
+{
+  "requestId": "uuid",
+  "message": "Thank you for your interest in GIBS updates."
+}
+```
+
+**Privacy**: The response is identical whether the email is new, already active, or reactivated.
+The API does not reveal whether an email address is already subscribed.
+
+### Errors
+
+| Status | Code | Meaning |
+|--------|------|---------|
+| 400 | VALIDATION_ERROR | Email or consent validation failed |
+| 400 | UNKNOWN_FIELDS | Request contained unexpected fields |
+| 413 | PAYLOAD_TOO_LARGE | Request body exceeds 4KB |
+| 429 | RATE_LIMITED | More than 5 subscriptions per IP in 5 minutes |
+
+### Security Notes
+
+- Newsletter emails are NOT sent by this API. Delivery is not yet implemented.
+- Duplicate handling is privacy-aware: no information leakage about existing subscribers.
+
+---
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `GIBS_DATABASE_URL` | Yes | PostgreSQL connection string (service_role) |
+| `GIBS_DATABASE_SSL` | No | Set to `false` to disable SSL (local dev only) |
+| `GIBS_CORS_ORIGIN` | No | Allowed origin for CORS. Defaults to `*`. |
+
+---
+
+## Future Frontend Integration
+
+When authorized, the frontend integration task should:
+
+1. Add `fetch('/api/enquiries', ...)` to the contact form's `onSubmit` handler
+2. Add `fetch('/api/subscribers', ...)` to the newsletter form's `handleSubmit`
+3. Optionally fetch `/api/catalogue` for server-rendered programme data
+4. Handle all error codes documented above
+5. Display the `requestId` in error states for support reference
+
+The frontend forms are already structured for this: validation runs client-side,
+and the submission handler is a single function that currently transitions to a
+mailto preparation state. Replacing that with an API call is a contained change.

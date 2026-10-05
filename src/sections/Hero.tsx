@@ -206,7 +206,7 @@ export default function Hero() {
               </Link>
               <Link
                 to="/about"
-                className="inline-flex items-center gap-1.5 text-[15px] font-medium text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white focus-visible:outline-gold-300"
+                className="inline-flex min-h-[24px] items-center gap-1.5 text-[15px] font-medium text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-white focus-visible:outline-gold-300"
               >
                 Our story
               </Link>

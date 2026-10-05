@@ -6,7 +6,6 @@ import {
   SelectInput,
   TextArea,
   SuccessPanel,
-  ErrorState,
 } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight, ChatIcon, MapPinIcon, PhoneIcon, MailIcon } from "../components/icons";
@@ -16,7 +15,7 @@ import { useConcierge } from "../components/Concierge";
 
 type Values = { name: string; email: string; phone: string; type: string; message: string };
 type Errors = Partial<Record<keyof Values, string>>;
-type Status = "idle" | "submitting" | "success" | "error";
+type Status = "idle" | "ready";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -68,7 +67,7 @@ export default function Contact() {
     return `mailto:${primaryEmail}?subject=${subject}&body=${body}`;
   }, [values, primaryEmail]);
 
-  const onSubmit = async (e: FormEvent) => {
+  const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const found = validate(values);
     setErrors(found);
@@ -79,9 +78,7 @@ export default function Contact() {
       first?.focus();
       return;
     }
-    setStatus("submitting");
-    await new Promise((r) => setTimeout(r, 600));
-    setStatus("success");
+    setStatus("ready");
   };
 
   return (
@@ -98,12 +95,12 @@ export default function Contact() {
         <div className="container-x section-y grid min-w-0 gap-14 lg:grid-cols-12 lg:gap-16">
           {/* Form */}
           <div className="min-w-0 lg:col-span-7">
-            {status === "success" ? (
-              <SuccessPanel title="Your enquiry is ready to deliver.">
+            {status === "ready" ? (
+              <SuccessPanel title="Your enquiry is ready to send.">
                 <p className="max-w-prose">
-                  Click below to open your email client and deliver directly to{" "}
+                  Your details have been validated. Click below to open your email client
+                  with your message pre-formatted and addressed to{" "}
                   <span className="font-semibold text-forest-700">{primaryEmail}</span>.
-                  Your message and details are pre-formatted.
                 </p>
                 <div className="mt-5 flex flex-wrap gap-3">
                   <a href={mailtoHref} className="btn btn-primary btn-md">
@@ -118,7 +115,7 @@ export default function Contact() {
                       setValues({ name: "", email: "", phone: "", type: "", message: "" });
                     }}
                   >
-                    Send another enquiry
+                    Start over
                   </button>
                 </div>
               </SuccessPanel>
@@ -128,6 +125,7 @@ export default function Contact() {
                   <Field label="Full name" htmlFor="name" required error={errors.name}>
                     <TextInput
                       id="name"
+                      required
                       name="name"
                       autoComplete="name"
                       invalid={!!errors.name}
@@ -140,6 +138,7 @@ export default function Contact() {
                   <Field label="Email" htmlFor="email" required error={errors.email}>
                     <TextInput
                       id="email"
+                      required
                       name="email"
                       type="email"
                       autoComplete="email"
@@ -170,6 +169,7 @@ export default function Contact() {
                 <Field label="Enquiry type" htmlFor="enquiry-type" required error={errors.type}>
                   <SelectInput
                     id="enquiry-type"
+                    required
                     name="type"
                     invalid={!!errors.type}
                     aria-invalid={!!errors.type}
@@ -189,6 +189,7 @@ export default function Contact() {
                 <Field label="Your message" htmlFor="message" required error={errors.message}>
                   <TextArea
                     id="message"
+                    required
                     name="message"
                     invalid={!!errors.message}
                     aria-invalid={!!errors.message}
@@ -199,33 +200,12 @@ export default function Contact() {
                   />
                 </Field>
 
-                {status === "error" && (
-                  <ErrorState
-                    title="The form could not be prepared"
-                    body="An unexpected problem occurred while validating your enquiry. Please write directly to gibsilorin@gmail.com."
-                    onRetry={() => setStatus("idle")}
-                  />
-                )}
-
                 <button
                   type="submit"
-                  disabled={status === "submitting"}
                   className="btn btn-primary btn-lg w-full sm:w-auto"
                 >
-                  {status === "submitting" ? (
-                    <>
-                      <span
-                        className="h-4 w-4 animate-spin rounded-full border-2 border-ivory/40 border-t-ivory"
-                        aria-hidden="true"
-                      />
-                      Preparing enquiry…
-                    </>
-                  ) : (
-                    <>
-                      Submit Enquiry
-                      <ArrowUpRight className="h-4 w-4" />
-                    </>
-                  )}
+                  Prepare Enquiry
+                  <ArrowUpRight className="h-4 w-4" />
                 </button>
               </form>
             )}

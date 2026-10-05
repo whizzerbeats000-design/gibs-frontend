@@ -19,11 +19,72 @@ export type RouteState = {
   query: URLSearchParams;
 };
 
-function parseHash(): RouteState {
+/*
+ * ENTRY-PATH ADOPTION
+ * -------------------
+ * Vercel's catch-all rewrite serves index.html for clean paths as well as for
+ * "/", so https://host/programmes returns a fully working page. Previously an
+ * empty hash was forced to "#/", which meant a shared clean URL silently
+ * rendered the homepage with nothing to indicate that the route was lost.
+ *
+ * Now the served path is adopted as the route when there is no hash, and
+ * mirrored back into the fragment with replaceState. Two properties matter:
+ *
+ *   1. replaceState REPLACES the current history entry instead of pushing a
+ *      new one, so Back/Forward are unaffected by the adoption.
+ *   2. The hash remains the single source of truth. Every in-site link still
+ *      emits "#/…", so this is a one-time normalisation at entry, not a second
+ *      routing system.
+ *
+ * Because the adopted path is folded into the fragment and the pathname is
+ * reset to "/", every reachable URL has the same shape ("/#/route"), which is
+ * what the canonical/og:url strategy in index.html assumes.
+ *
+ * Known limitation, not fixable from the client: Vercel answers unknown clean
+ * paths with index.html and HTTP 200, so an unknown route renders our NotFound
+ * page as a "soft 404". Returning a real 404 status needs a server-side check,
+ * which is a deployment decision, not an app one.
+ */
+
+// Paths that are the served document itself rather than a route. A direct hit
+// on /index.html must not be mistaken for a route called "index.html".
+const DOCUMENT_PATHS = new Set(["/", "/index.html", "/index.htm", "/index.php"]);
+
+function normalizePath(raw: string): string {
+  if (DOCUMENT_PATHS.has(raw.toLowerCase())) return "/";
+  const trimmed = raw.replace(/\/+$/, "");
+  return trimmed || "/";
+}
+
+/**
+ * Can `window.location.pathname` be trusted as a route?
+ *
+ * Only over http(s). The single-file build is also meant to work when opened
+ * straight off disk, where the pathname is the full filesystem path to
+ * index.html ("/home/user/dist/index.html"). Adopting that would 404 a build
+ * that currently works, so file:// keeps the previous hash-only behaviour.
+ */
+function canAdoptPathname(): boolean {
+  return (
+    typeof window !== "undefined" &&
+    window.location.protocol !== "file:" &&
+    !DOCUMENT_PATHS.has(window.location.pathname.toLowerCase())
+  );
+}
+
+function readRoute(): RouteState {
   const raw = window.location.hash.replace(/^#/, "");
-  const [path, qs] = raw.split("?");
+
+  if (!raw && canAdoptPathname()) {
+    const [pathPart, qs] = `${window.location.pathname}${window.location.search}`.split("?");
+    const path = normalizePath(pathPart ?? "/");
+    window.history.replaceState(null, "", `/#${path}${qs ? `?${qs}` : ""}`);
+    return { path, query: new URLSearchParams(qs ?? "") };
+  }
+
+  const [pathPart, qs] = raw.split("?");
   return {
-    path: path && path !== "/" ? path.replace(/\/$/, "") || "/" : "/",
+    path: normalizePath(pathPart ?? "/"),
     query: new URLSearchParams(qs ?? ""),
   };
 }
@@ -32,13 +93,16 @@ const RouterContext = createContext<RouteState>({ path: "/", query: new URLSearc
 
 export function RouterProvider({ children }: { children: ReactNode }) {
   const [route, setRoute] = useState<RouteState>(() =>
-    typeof window === "undefined" ? { path: "/", query: new URLSearchParams() } : parseHash()
+    typeof window === "undefined" ? { path: "/", query: new URLSearchParams() } : readRoute()
   );
 
   useEffect(() => {
-    const onChange = () => setRoute(parseHash());
+    const onChange = () => setRoute(readRoute());
     window.addEventListener("hashchange", onChange);
-    if (!window.location.hash) window.location.hash = "#/";
+    // Adopt the served path on first paint for deep links that arrive without
+    // a fragment. readRoute() has already mirrored it into the hash by the
+    // time this effect runs, so there is nothing to rewrite here.
+    if (!window.location.hash) setRoute(readRoute());
     return () => window.removeEventListener("hashchange", onChange);
   }, []);
 
@@ -93,8 +157,18 @@ export function matchRoute(pattern: string, path: string): Record<string, string
   if (p.length !== a.length) return null;
   const params: Record<string, string> = {};
   for (let i = 0; i < p.length; i++) {
-    if (p[i].startsWith(":")) params[p[i].slice(1)] = decodeURIComponent(a[i]);
-    else if (p[i] !== a[i]) return null;
+    if (p[i].startsWith(":")) {
+      // The URL is user-controlled, so a malformed escape sequence such as
+      // "%E0%A4%A" must not throw a URIError out of route matching — that
+      // would surface the ErrorBoundary instead of the not-found page.
+      let decoded: string;
+      try {
+        decoded = decodeURIComponent(a[i]);
+      } catch {
+        return null;
+      }
+      params[p[i].slice(1)] = decoded;
+    } else if (p[i] !== a[i]) return null;
   }
   return params;
 }

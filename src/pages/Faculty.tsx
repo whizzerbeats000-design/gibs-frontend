@@ -18,7 +18,7 @@ export default function Faculty() {
         image={IMAGES.library}
         imageAlt="The GIBS academic and governance board"
         eyebrow="Governance & Faculty"
-        title="Who governs and teaches here"
+        title="Who governs and trains here"
         intro="The Governing Council, management advisors and academic coordinators responsible for manpower development in Nigeria and the overseas hubs."
         breadcrumbs={[{ label: "Faculty & Governance" }]}
       />

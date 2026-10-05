@@ -9,10 +9,29 @@
       content="Goshen International Business School (GIBS) — 2026 Executive Training Calendar featuring 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston."
     />
     <meta name="theme-color" content="#006B1B" />
+    <meta name="robots" content="index,follow" />
+
+    <!--
+      Canonical and og:url — deliberately a single root URL.
+
+      This is a hash-routed SPA: every route is served the same document and the
+      view is selected by the URL fragment. Search engines and social scrapers
+      neither send nor follow the fragment, so the only addressable
+      representation of any view is the site root. Declaring per-route canonicals
+      would point at URLs that resolve to this same document and would
+      misrepresent the site, so one root canonical is the accurate answer.
+
+      Route-specific <title> and meta description are still applied at runtime by
+      useSeo() in src/lib/router.tsx for in-page UX and browser history. That is
+      NOT server-rendered SEO: a client that does not execute JavaScript receives
+      only the static tags below.
+    -->
+    <link rel="canonical" href="https://www.gibs.com.ng/" />
 
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Goshen International Business School (GIBS)" />
+    <meta property="og:url" content="https://www.gibs.com.ng/" />
     <meta property="og:title" content="GIBS — 2026 Executive Training Calendar & International Programmes" />
     <meta
       property="og:description"
@@ -78,7 +97,7 @@
           {
             "@type": "ContactPoint",
             "telephone": "+234-816-001-0401",
-            "contactType": "Training Registry & Admissions",
+            "contactType": "Training Desk & Programme Subscriptions",
             "email": "gibsilorin@gmail.com"
           },
           {

@@ -52,7 +52,7 @@ export default function GlobalPerspective() {
             </Reveal>
             <Reveal delay={0.08} y={28}>
               <h2 className="type-h2 mt-2">
-                Where GIBS teaches
+                Where GIBS trains
               </h2>
             </Reveal>
             <Reveal delay={0.16}>

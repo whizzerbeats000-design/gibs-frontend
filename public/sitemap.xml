@@ -1,21 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  SITEMAP INACTIVE — DOMAIN REQUIRED
-  --------------------------------
-  This sitemap is deliberately deactivated. The site currently runs as a
-  hash-routed single-page app under no production domain; gibs.example is a
-  placeholder and must not be published. A sitemap that names an invented or
-  placeholder host is worse than no sitemap.
+  SITEMAP INACTIVE. Read before enabling.
 
-  Rebuild this file after launch when BOTH are true:
-    1. The official production domain is confirmed (replace <official-domain>).
-    2. The app is served with crawlable URLs — real paths (e.g.
-       https://<official-domain>/programmes) rather than #/ hash fragments,
-       which search engines treat as one URL.
+  Deliberately deactivated, for two independent reasons:
 
-  Programme slugs: mba, executive-mba, doctorate-business-administration,
-  executive-education, custom-programmes, undergraduate-business
-  Article slugs: quiet-authority-of-long-term-institutions,
-  growth-mapped-from-the-continent, changed-decisions
+    1. The site runs as a hash-routed single-page app. Every route is served the
+       same document (dist/index.html) and the view is selected by the URL
+       fragment. A fragment is never sent to the server, so there is exactly one
+       indexable URL, not one per page. A sitemap of per-route entries would be a
+       list of URLs that all resolve to the same page.
+
+    2. No production domain is confirmed. The official domain below is a
+       placeholder and must not be published. A sitemap naming an invented host
+       is worse than no sitemap at all.
+
+  The application now adopts a clean path into the fragment on entry, so
+  https://OFFICIAL_DOMAIN/programmes does render the catalogue. The response is
+  still this single document, so it remains one indexable URL. Publishing real
+  per-route entries therefore requires genuinely per-route documents, such as a
+  static export or server-side rendering. A routing change alone will not do it.
+
+  While this file is empty, index.html declares a single root canonical and a
+  root og:url for exactly the same reason. Do not add a "Sitemap:" line to
+  robots.txt until this file contains real entries.
+
+  NOTE ON A REMOVED LIST
+  An earlier version of this comment suggested slugs including "mba",
+  "doctorate-business-administration" and "undergraduate-business". Those were
+  aspirational placeholders that do not exist in the catalogue and that
+  misrepresent GIBS as a degree-awarding institution. GIBS publishes executive
+  training programmes only. It does not offer academic admissions and it does not
+  award degrees. They have been removed deliberately; do not reintroduce them.
+
+  XML NOTE
+  A run of two consecutive hyphens is not permitted anywhere inside an XML
+  comment, and including one makes the entire file malformed, which is why this
+  comment uses plain text separators instead of dashed rules. This was the cause
+  of a real defect: an earlier revision of this file was not well-formed XML.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+</urlset>

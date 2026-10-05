@@ -176,7 +176,7 @@ export function EditorialCard({
         <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
         <div className="film-grain" aria-hidden="true" />
       </div>
-      <div className="mt-5 flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.12em] sm:text-[12px]">
+      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium uppercase tracking-[0.12em] sm:text-[12px]">
         <span className="text-forest-600">{tag}</span>
         {meta && (
           <>

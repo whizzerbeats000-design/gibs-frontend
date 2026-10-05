@@ -3,32 +3,25 @@ import { Breadcrumbs } from "./ui";
 import { Reveal } from "./motion";
 import { imageSet } from "../lib/data";
 
-export function PageHero({
-  eyebrow,
-  title,
-  italic,
-  intro,
-  breadcrumbs,
-  image,
-  imageAlt,
-  meta,
-}: {
+type PageHeroProps = {
   eyebrow?: string;
   title: ReactNode;
   italic?: ReactNode;
   intro?: ReactNode;
   breadcrumbs?: { label: string; to?: string }[];
-  image?: string;
-  imageAlt?: string;
   meta?: ReactNode;
-}) {
-  if (image) {
+} & ({ image: string; imageAlt: string } | { image?: never; imageAlt?: never });
+
+export function PageHero(props: PageHeroProps) {
+  const { eyebrow, title, italic, intro, breadcrumbs, meta } = props;
+
+  if (props.image) {
     return (
       <section className="relative overflow-hidden bg-forest-950 text-ivory">
         <div className="absolute inset-0">
           <img
-            {...imageSet(image)}
-            alt={imageAlt ?? ""}
+            {...imageSet(props.image)}
+            alt={props.imageAlt}
             sizes="100vw"
             className="h-full w-full object-cover"
             decoding="async"

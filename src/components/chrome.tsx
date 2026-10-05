@@ -22,10 +22,11 @@ export function SkipLink() {
     <a
       href="#main"
       onClick={(e) => {
-        e.preventDefault();
         const main = document.getElementById("main");
-        main?.focus();
-        main?.scrollIntoView();
+        if (!main) return;
+        e.preventDefault();
+        main.focus({ preventScroll: true });
+        main.scrollIntoView();
       }}
       className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[var(--z-skip)] focus:rounded-panel focus:bg-forest-600 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-ivory"
     >
@@ -344,9 +345,20 @@ export function MobileNav({
   onOpenConcierge: () => void;
 }) {
   const [rendered, setRendered] = useState(open);
-  useBodyScrollLock(open);
+  // Scroll lock and focus trap follow `rendered`, not `open`, so they stay
+  // active for exactly as long as the aria-modal element is mounted. Binding
+  // them to `open` ran the trap's effect on the commit where `open` became true
+  // but `rendered` was still false, so `ref.current` was null, the effect
+  // early-returned, and because its dependency array is `[active]` it never ran
+  // again once the sheet mounted. The result was an `aria-modal="true"` dialog
+  // that never received focus and never trapped it: Tab walked straight out
+  // into #main, and closing it restored focus to nothing. This matches
+  // SearchModal and ConciergeDialog, which have always bound these to
+  // `rendered`. `useEscape` stays on `open` so Escape is inert during the exit
+  // animation.
+  useBodyScrollLock(rendered);
   useEscape(open, onClose);
-  const ref = useFocusTrap<HTMLDivElement>(open);
+  const ref = useFocusTrap<HTMLDivElement>(rendered);
   const { path: routePath } = useRoute();
 
   // Reopening the sheet always starts from the top of the list.
@@ -566,7 +578,7 @@ const FOOTER_COLUMNS = [
 
 function Newsletter() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [showInfo, setShowInfo] = useState(false);
   const [validationError, setValidationError] = useState("");
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -579,18 +591,16 @@ function Newsletter() {
       return;
     }
     setValidationError("");
-    setStatus("submitting");
-    window.setTimeout(() => {
-      setStatus("success");
-    }, 600);
+    setShowInfo(true);
   };
 
-  if (status === "success") {
+  if (showInfo) {
     return (
       <div className="mt-9 max-w-md border-l-2 border-gold-400 pl-4">
-        <p className="eyebrow-light">Thank you.</p>
+        <p className="eyebrow-light">How to join the mailing list</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
-          This site does not send the address you entered anywhere. To join the executive calendar mailing list, email the registry at{" "}
+          Online subscription is not yet available. To join the executive
+          calendar mailing list, email the registry at{" "}
           <a href="mailto:gibsilorin@gmail.com" className="text-gold-300 underline underline-offset-2">
             gibsilorin@gmail.com
           </a>{" "}
@@ -619,7 +629,6 @@ function Newsletter() {
           onChange={(e) => {
             setEmail(e.target.value);
             if (validationError) setValidationError("");
-            if (status === "error") setStatus("idle");
           }}
           placeholder="Your official email address"
           aria-invalid={validationError ? "true" : undefined}
@@ -628,28 +637,15 @@ function Newsletter() {
         />
         <button
           type="submit"
-          disabled={status === "submitting"}
-          aria-label="Subscribe"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-gold-300"
+          aria-label="Register interest"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 focus-visible:outline-gold-300"
         >
-          {status === "submitting" ? (
-            <span
-              className="h-4 w-4 animate-spin rounded-full border-2 border-forest-950/30 border-t-forest-950"
-              aria-hidden="true"
-            />
-          ) : (
-            <ArrowUpRight className="h-4 w-4" />
-          )}
+          <ArrowUpRight className="h-4 w-4" />
         </button>
       </div>
       {validationError && (
         <p id="footer-email-error" role="alert" className="mt-2 text-[12px] text-gold-300">
           {validationError}
-        </p>
-      )}
-      {status === "error" && (
-        <p role="alert" className="mt-2 text-[12px] text-gold-300">
-          Something went wrong. Please try again.
         </p>
       )}
     </form>

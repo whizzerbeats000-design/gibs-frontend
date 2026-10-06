@@ -84,7 +84,7 @@ const RULES: Rule[] = [
   {
     test: /\b(faculty|governance|board|council|advisor|director|who|accredit|cac|cmd|itf|nstif)\b/i,
     reply: {
-      text: `GIBS is governed by a Governing Council of 4 Directors under the Chairman of the Council, supported by a 20-member management and advisory board. Accredited by CAC (RC 1178333), CMD, ITF, and NSTIF.`,
+      text: `GIBS is governed by a Governing Council of 4 Directors under the Chairman of the Council, supported by a 20-member management and advisory board. It is registered with the Corporate Affairs Commission (CAC), RC 1178333. For current accreditation and certification details, please contact the registry.`,
       cards: [
         { kind: "link", label: "Governance & Accreditations", to: "/about" },
         { kind: "link", label: "Contact GIBS", to: "/contact" },

@@ -173,6 +173,24 @@ export default function ExecutiveEducation() {
         </div>
       </section>
 
+      {/* Training methodology */}
+      <section className="border-y border-line bg-white section-y">
+        <div className="container-x grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Reveal>
+              <h2 className="type-h2 text-ink">METHODOLOGY:</h2>
+            </Reveal>
+          </div>
+          <div className="lg:col-span-8">
+            <Reveal>
+              <p className="max-w-prose text-[15px] leading-relaxed text-ink/85">
+                &quot;Our scheme of training provides and involves high potential personnel with conceptual framework. Learning techniques such as discussion, syndicate session, lecture, audio-visual and training aids, case study, conference methods, simulation, and Role play are mostly employed in our training sessions. In these situations, the learning process is designed to directly address the title of the training within the context of professional areas of our participants. We have the critical capabilities to help you succeed in this ever changing global business environment with our world-class training facilities.&quot;
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* All 22 Foreign Programmes List */}
       <section className="bg-white section-y">
         <div className="container-x">

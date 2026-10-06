@@ -34,11 +34,11 @@ const INDEX: SearchItem[] = [
       blurb = "Ask about programmes, locations and how to enquire.";
     }
     return {
-      title: p.title,
+      title: p.to === "/admissions" ? "Programme Enquiries" : p.title,
       blurb,
       to: p.to,
       group: "Pages" as const,
-      keywords: `${p.title} ${blurb}`,
+      keywords: `${p.to === "/admissions" ? "Programme Enquiries" : p.title} ${blurb}`,
     };
   }),
 ];

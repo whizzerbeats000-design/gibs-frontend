@@ -87,11 +87,69 @@ export default function About() {
         </div>
       </section>
 
+      {/* Institutional capability statement */}
+      <section className="border-y border-line bg-white section-y">
+        <div className="container-x grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Reveal>
+              <h2 className="type-h2 text-ink">WHY CHOOSE US?</h2>
+            </Reveal>
+          </div>
+          <div className="lg:col-span-8">
+            <Reveal>
+              <p className="type-body text-muted">Because we have capacity to do the following:</p>
+              <ol className="mt-5 list-decimal space-y-4 pl-5 text-[15px] leading-relaxed text-ink/85">
+                <li>Developing effective corporate teamwork aiming for constructive changes in organizational performance and growth.</li>
+                <li>Structuring corporation, partnership and veracity.</li>
+                <li>Exposure to multifaceted organizational advancement elucidation.</li>
+                <li>Learning and applying corporate understanding for creating and implementing effective group planning.</li>
+                <li>Imbibing corporate planning principles.</li>
+                <li>Serving professional staff and other employees to attain excellence in their routine.</li>
+              </ol>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-line bg-paper section-y">
+        <div className="container-x grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Reveal>
+              <h2 className="type-h2 text-ink">PLEDGE:</h2>
+            </Reveal>
+          </div>
+          <div className="lg:col-span-8">
+            <Reveal>
+              <p className="display-serif text-2xl leading-snug text-forest-800 sm:text-3xl">
+                We pledge skilled practice, moral and ethical standard.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-line bg-white section-y">
+        <div className="container-x grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Reveal>
+              <h2 className="type-h2 text-ink">OUR FACULTY:</h2>
+            </Reveal>
+          </div>
+          <div className="lg:col-span-8">
+            <Reveal>
+              <p className="max-w-prose text-[15px] leading-relaxed text-ink/85">
+                &quot;Our Training Program aims at managing relationship between internal and external stakeholders, public and private sectors, including policy makers, Investors, Employees, Regulators, NGOs, and media. Also we have versatile experience in Leadership, Organisational Management, Emotional Intelligence and Knowledge Management. We are linked to Corporate and Social Responsibility (CSR) and community involvement initiatives. Our faculty is rich and experienced.&quot;
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* Accreditations & Technical Partner */}
       <section className="bg-forest-950 section-y text-ivory">
         <div className="container-x">
           <Reveal>
-            <p className="eyebrow-light">Official Accreditations &amp; Global Partnerships</p>
+            <p className="eyebrow-light">Institutional Registration &amp; Global Partnerships</p>
             <h2 className="type-h2 mt-4">
               Institutional standing and global reach
             </h2>
@@ -99,14 +157,20 @@ export default function About() {
 
           <div className="mt-12 grid gap-8 lg:grid-cols-12">
             <div className="border border-ivory/20 bg-forest-900/60 p-8 sm:p-10 lg:col-span-7">
-              <h3 className="display-serif text-2xl text-gold-300">National Accreditations</h3>
+              <h3 className="display-serif text-2xl text-gold-300">Company Registration</h3>
+              <p className="mt-4 max-w-prose text-[14.5px] leading-relaxed text-ivory/85">
+                Registered with the Corporate Affairs Commission (CAC), RC 1178333.
+              </p>
+              <h3 className="mt-8 display-serif text-2xl text-gold-300">Accreditations &amp; Certifications</h3>
               <ul className="mt-6 space-y-3.5">
-                {INSTITUTIONAL_DATA.accreditations.map((acc) => (
+                {INSTITUTIONAL_DATA.accreditations
+                  .filter((acc) => !acc.startsWith("Corporate Affairs Commission"))
+                  .map((acc) => (
                   <li key={acc} className="flex items-start gap-3 text-[14.5px] text-ivory/85 max-w-prose">
                     <CheckIcon className="mt-1 h-4 w-4 shrink-0 text-gold-300" />
                     {acc}
                   </li>
-                ))}
+                  ))}
               </ul>
             </div>
 

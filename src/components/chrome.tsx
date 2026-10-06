@@ -518,7 +518,7 @@ export function GlobalFooter() {
         <div className="mt-10 flex flex-col gap-4 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/60 sm:flex-row sm:items-center sm:justify-between sm:text-[12px]">
           <p>© {new Date().getFullYear()} Goshen International Business School Limited (RC 1178333)</p>
           <p className="text-ivory/60">
-            Accredited by: CAC · CMD · ITF · NSTIF
+            CAC registered · RC 1178333
           </p>
         </div>
         <div className="mt-6 flex flex-col gap-2 border-t rule-light pt-6 text-[11px] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">

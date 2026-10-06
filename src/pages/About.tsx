@@ -27,7 +27,7 @@ export default function About() {
       {/* Guiding Principles (4 Pillars) */}
       <section className="paper-grain bg-paper">
         <div className="container-x section-y grid lg:grid-cols-12">
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-12">
             <Reveal>
               <p className="eyebrow">4 Pillars</p>
               <h2 className="type-h2 mt-4 text-ink">
@@ -35,14 +35,14 @@ export default function About() {
               </h2>
             </Reveal>
           </div>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:col-span-7 lg:mt-0">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:col-span-12 lg:grid-cols-4">
             {INSTITUTIONAL_DATA.guidingPrinciples.map((pillar, i) => (
               <Reveal key={pillar} delay={i * 0.06}>
-                <div className="border border-line bg-white p-8 shadow-crisp max-w-card">
-                  <span className="text-[11px] font-bold tracking-[0.16em] text-forest-600">
+                <div className="rounded-panel border border-line bg-white px-4 py-4">
+                  <span className="text-[10px] font-semibold tracking-[0.12em] text-muted">
                     Pillar 0{i + 1}
                   </span>
-                  <h3 className="display-serif mt-4 text-2xl text-ink">{pillar}</h3>
+                  <h3 className="display-serif mt-2 text-xl text-ink sm:text-2xl">{pillar}</h3>
                 </div>
               </Reveal>
             ))}

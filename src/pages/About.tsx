@@ -15,7 +15,7 @@ export default function About() {
   return (
     <>
       <PageHero
-        image="/images/gibs-hq-architecture-edited-branded.jpg"
+        image="/images/gibs-hq-architecture-edited-branded.webp"
         imageAlt="GIBS headquarters building with signage and blue-framed windows"
         eyebrow="Institutional Profile"
         title="Goshen International"

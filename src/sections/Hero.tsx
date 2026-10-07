@@ -3,6 +3,17 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "../lib/router";
 import { ArrowUpRight } from "../components/icons";
 import { EASE_KINETIC } from "../components/motion";
+import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
+
+/* ── Green brand overlay opacity ramp (tweak here only) ───────────
+   Top half: subtle green tint that lets the building photo breathe.
+   Bottom third: ramps into a deep dark-green to anchor the text zone.
+   Colour always references the brand green CSS var
+   (--color-forest-600) so the palette never hardcodes a hex here. */
+const OVERLAY_OPACITY_TOP = 10; // % brand green at the top edge (subtle tint)
+const OVERLAY_OPACITY_MID = 20; // % brand green at mid-height (subtle tint)
+const OVERLAY_OPACITY_BOTTOM = 85; // % dark green at the bottom (text zone)
+const DARK_GREEN_BLEND = 35; // % brand green when mixed with black for the bottom stop
 
 const line = {
   hidden: { y: "112%" },
@@ -53,12 +64,13 @@ export default function Hero() {
             />
             <div className="kenburns absolute inset-0">
               <img
-                src="/images/gibs-hero-branded.jpg"
+                {...gibsResponsiveImage("/images/gibs-hero-branded.webp")}
                 alt="Goshen International Business School building in Ilorin, with blue-framed windows, palm trees, landscaped entrance and paved forecourt"
                 className="h-full w-full object-cover object-[28%_50%] sm:object-[42%_50%] lg:object-[50%_42%]"
-                width={1050}
-                height={750}
+                style={{ filter: "saturate(0.9)" }}
+                sizes="100vw"
                 fetchPriority="high"
+                loading="eager"
                 decoding="async"
               />
             </div>
@@ -86,6 +98,24 @@ export default function Hero() {
           style={{
             background:
               "linear-gradient(180deg, transparent 0%, rgba(0,15,7,0.08) 58%, rgba(0,15,7,0.32) 100%)",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Green brand overlay — deepens toward the text zone. Top half
+            stays a subtle green tint; bottom third ramps into a dark
+            green (brand green mixed with black) for text legibility.
+            Colour references the brand green CSS var (--color-forest-600);
+            opacity ramp is the constants block above. pointer-events:none
+            so clicks on the CTAs below are never intercepted. */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[2]"
+          style={{
+            background: `linear-gradient(180deg,
+              color-mix(in srgb, var(--color-forest-600) ${OVERLAY_OPACITY_TOP}%, transparent) 0%,
+              color-mix(in srgb, var(--color-forest-600) ${OVERLAY_OPACITY_MID}%, transparent) 50%,
+              color-mix(in srgb, color-mix(in srgb, var(--color-forest-600) ${DARK_GREEN_BLEND}%, black) ${OVERLAY_OPACITY_BOTTOM}%, transparent) 100%
+            )`,
           }}
           aria-hidden="true"
         />
@@ -148,7 +178,7 @@ export default function Hero() {
             >
               <Link
                 to="/programmes"
-                className="group inline-flex items-center gap-3 rounded-full bg-forest-600 pl-7 pr-5 py-3.5 text-[15px] font-semibold text-ivory shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_14px_rgba(0,20,5,0.35),0_12px_24px_-6px_rgba(0,32,9,0.4)] transition-[transform,background-color,box-shadow] duration-200 ease-out hover:bg-forest-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_6px_20px_rgba(0,20,5,0.4),0_16px_32px_-8px_rgba(0,32,9,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.985] focus-visible:outline-gold-300"
+                className="group inline-flex items-center gap-3 rounded-full bg-forest-600 pl-7 pr-5 py-3.5 text-[15px] font-semibold text-ivory border border-white/20 shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_4px_14px_rgba(0,20,5,0.35),0_12px_24px_-6px_rgba(0,32,9,0.4)] transition-[transform,background-color,box-shadow] duration-200 ease-out hover:bg-forest-700 hover:border-white/30 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_6px_20px_rgba(0,20,5,0.4),0_16px_32px_-8px_rgba(0,32,9,0.5)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.985] focus-visible:outline-gold-300"
               >
                 <span className="max-w-prose">Explore programmes</span>
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-white/25">

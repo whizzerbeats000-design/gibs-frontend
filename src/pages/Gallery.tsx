@@ -3,6 +3,7 @@ import { Breadcrumbs } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
+import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
 import { CloseIcon, ArrowLeft, ArrowRight } from "../components/icons";
 
 type GalleryItem = {
@@ -31,11 +32,12 @@ function GalleryFrame({
   return (
     <div className={frameClass}>
       <img
-        src={item.image}
+        {...gibsResponsiveImage(item.image)}
         alt={item.alt}
         loading={loading}
         decoding="async"
         sizes={sizes}
+        fetchPriority={loading === "eager" ? "high" : undefined}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
       />
       <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-forest-950/5" />
@@ -50,7 +52,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Architecture",
     title: "GIBS campus building",
     caption: "A view of the GIBS building and its landscaped entrance in Ilorin.",
-    image: "/images/gibs-hero-branded.jpg",
+    image: "/images/gibs-hero-branded.webp",
     alt: "Goshen International Business School building in Ilorin, with blue-framed windows and a landscaped entrance",
     aspect: "aspect-[16/9]",
   },
@@ -59,7 +61,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Architecture",
     title: "GIBS headquarters",
     caption: "The headquarters building and its front entrance.",
-    image: "/images/gibs-hq-architecture-edited-branded.jpg",
+    image: "/images/gibs-hq-architecture-edited-branded.webp",
     alt: "GIBS headquarters building with signage and blue-framed windows",
     aspect: "aspect-[4/3]",
   },
@@ -68,7 +70,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Architecture",
     title: "Ibafo training facility",
     caption: "Exterior view of the GIBS Ibafo facility.",
-    image: "/images/gibs-ibafo-architecture-branded.jpg",
+    image: "/images/gibs-ibafo-architecture-branded.webp",
     alt: "GIBS Ibafo facility exterior, with a glass-fronted upper level",
     aspect: "aspect-[4/3]",
   },
@@ -77,7 +79,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Architecture",
     title: "Ibafo front gate",
     caption: "The entrance to the GIBS Ibafo facility.",
-    image: "/images/gibs-ibafo-front-gate-branded.jpg",
+    image: "/images/gibs-ibafo-front-gate-branded.webp",
     alt: "GIBS Ibafo front gate with the Goshen International Business School sign",
     aspect: "aspect-[16/9]",
   },
@@ -86,7 +88,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Facilities",
     title: "Headquarters reception",
     caption: "Reception room at GIBS headquarters.",
-    image: "/images/gibs-hq-reception-room-branded.jpg",
+    image: "/images/gibs-hq-reception-room-branded.webp",
     alt: "GIBS headquarters reception room with lounge seating and an interior balcony",
     aspect: "aspect-[4/3]",
   },
@@ -95,7 +97,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Classrooms",
     title: "Case rooms",
     caption: "Case rooms built for discussion rather than lectures.",
-    image: "/images/gibs-hq-classroom-branded.jpg",
+    image: "/images/gibs-hq-classroom-branded.webp",
     alt: "GIBS headquarters classroom arranged around a central training table, with a projector and whiteboard",
     aspect: "aspect-[4/3]",
   },
@@ -104,7 +106,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Classrooms",
     title: "Learning studios",
     caption: "Case rooms, group work and practice spaces.",
-    image: "/images/gibs-hq-classroom-branded.jpg",
+    image: "/images/gibs-hq-classroom-branded.webp",
     alt: "GIBS headquarters classroom arranged around a central training table, with a projector and whiteboard",
     aspect: "aspect-[3/4]",
   },
@@ -113,7 +115,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Student Life",
     title: "Residences and common rooms",
     caption: "For residential fellows and executives.",
-    image: "/images/gibs-hq-guest-residence-branded.jpg",
+    image: "/images/gibs-hq-guest-residence-branded.webp",
     alt: "GIBS headquarters guest residence building",
     aspect: "aspect-[4/3]",
   },

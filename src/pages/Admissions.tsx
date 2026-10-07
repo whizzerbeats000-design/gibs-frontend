@@ -73,7 +73,7 @@ export default function Admissions() {
   return (
     <>
       <PageHero
-        image="/images/gibs-hero-branded.jpg"
+        image="/images/gibs-hero-branded.webp"
         imageAlt="Goshen International Business School building in Ilorin, with blue-framed windows and a landscaped entrance"
         eyebrow="Programme Enquiries"
         title="Enquire About a"

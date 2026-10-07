@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { Breadcrumbs } from "./ui";
 import { Reveal } from "./motion";
-import { imageSet } from "../lib/data";
+import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
 
 type PageHeroProps = {
   eyebrow?: string;
@@ -20,10 +20,11 @@ export function PageHero(props: PageHeroProps) {
       <section className="relative overflow-hidden bg-forest-950 text-ivory">
         <div className="absolute inset-0">
           <img
-            {...imageSet(props.image)}
+            {...gibsResponsiveImage(props.image)}
             alt={props.imageAlt}
             sizes="100vw"
             className="h-full w-full object-cover"
+            fetchPriority="high"
             decoding="async"
           />
           <div className="film-grain" aria-hidden="true" />

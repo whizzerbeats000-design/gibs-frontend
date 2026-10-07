@@ -2,7 +2,6 @@ import { useState, useCallback, useRef } from "react";
 import { Breadcrumbs } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { IMAGES, imageSet } from "../lib/data";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { CloseIcon, ArrowLeft, ArrowRight } from "../components/icons";
 
@@ -16,23 +15,79 @@ type GalleryItem = {
   aspect: string;
 };
 
+function GalleryFrame({
+  item,
+  className = "",
+  loading = "lazy",
+  sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
+}: {
+  item: GalleryItem;
+  className?: string;
+  loading?: "eager" | "lazy";
+  sizes?: string;
+}) {
+  const frameClass = `relative ${className || item.aspect} w-full overflow-hidden`;
+
+  return (
+    <div className={frameClass}>
+      <img
+        src={item.image}
+        alt={item.alt}
+        loading={loading}
+        decoding="async"
+        sizes={sizes}
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+      />
+      <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-forest-950/5" />
+      <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
+    </div>
+  );
+}
+
 const GALLERY_ITEMS: GalleryItem[] = [
   {
     id: "arch-1",
     category: "Architecture",
-    title: "Sandstone and forest steel",
-    caption: "Travertine, oak and brushed brass, chosen to age well in the heat.",
-    image: IMAGES.hero,
-    alt: "GIBS sandstone architecture at golden hour",
+    title: "GIBS campus building",
+    caption: "A view of the GIBS building and its landscaped entrance in Ilorin.",
+    image: "/images/gibs-hero-branded.jpg",
+    alt: "Goshen International Business School building in Ilorin, with blue-framed windows and a landscaped entrance",
     aspect: "aspect-[16/9]",
   },
   {
     id: "arch-2",
     category: "Architecture",
-    title: "Cloisters and quadrangles",
-    caption: "Pavilions arranged around gardens and reflecting water.",
-    image: IMAGES.colonnade,
-    alt: "Sunlight through the sandstone colonnade",
+    title: "GIBS headquarters",
+    caption: "The headquarters building and its front entrance.",
+    image: "/images/gibs-hq-architecture-edited-branded.jpg",
+    alt: "GIBS headquarters building with signage and blue-framed windows",
+    aspect: "aspect-[4/3]",
+  },
+  {
+    id: "arch-3",
+    category: "Architecture",
+    title: "Ibafo training facility",
+    caption: "Exterior view of the GIBS Ibafo facility.",
+    image: "/images/gibs-ibafo-architecture-branded.jpg",
+    alt: "GIBS Ibafo facility exterior, with a glass-fronted upper level",
+    aspect: "aspect-[4/3]",
+  },
+  {
+    id: "arch-4",
+    category: "Architecture",
+    title: "Ibafo front gate",
+    caption: "The entrance to the GIBS Ibafo facility.",
+    image: "/images/gibs-ibafo-front-gate-branded.jpg",
+    alt: "GIBS Ibafo front gate with the Goshen International Business School sign",
+    aspect: "aspect-[16/9]",
+  },
+  {
+    id: "fac-reception",
+    category: "Facilities",
+    title: "Headquarters reception",
+    caption: "Reception room at GIBS headquarters.",
+    image: "/images/gibs-hq-reception-room-branded.jpg",
+    alt: "GIBS headquarters reception room with lounge seating and an interior balcony",
     aspect: "aspect-[4/3]",
   },
   {
@@ -40,8 +95,8 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Classrooms",
     title: "Case rooms",
     caption: "Case rooms built for discussion rather than lectures.",
-    image: IMAGES.library,
-    alt: "GIBS library with oak shelving and brass lamps",
+    image: "/images/gibs-hq-classroom-branded.jpg",
+    alt: "GIBS headquarters classroom arranged around a central training table, with a projector and whiteboard",
     aspect: "aspect-[4/3]",
   },
   {
@@ -49,67 +104,22 @@ const GALLERY_ITEMS: GalleryItem[] = [
     category: "Classrooms",
     title: "Learning studios",
     caption: "Case rooms, group work and practice spaces.",
-    image: IMAGES.colonnade,
-    alt: "Colonnade walkway between case rooms",
+    image: "/images/gibs-hq-classroom-branded.jpg",
+    alt: "GIBS headquarters classroom arranged around a central training table, with a projector and whiteboard",
     aspect: "aspect-[3/4]",
-  },
-  {
-    id: "fac-1",
-    category: "Facilities",
-    title: "The Library",
-    caption: "Collections, reading rooms and research space.",
-    image: IMAGES.library,
-    alt: "Library interior with green leather chairs",
-    aspect: "aspect-[16/10]",
-  },
-  {
-    id: "fac-2",
-    category: "Facilities",
-    title: "Convening rooms",
-    caption: "Used for executive sessions, board meetings and public lectures.",
-    image: IMAGES.library,
-    alt: "GIBS interior convening space",
-    aspect: "aspect-[4/3]",
-  },
-  {
-    id: "life-1",
-    category: "Student Life",
-    title: "Quadrangles and gardens",
-    caption: "Open-air cloisters for conversation between sessions.",
-    image: IMAGES.colonnade,
-    alt: "Quadrangle garden with cloisters",
-    aspect: "aspect-[4/3]",
   },
   {
     id: "life-2",
     category: "Student Life",
     title: "Residences and common rooms",
     caption: "For residential fellows and executives.",
-    image: IMAGES.library,
-    alt: "Common room with warm lighting",
+    image: "/images/gibs-hq-guest-residence-branded.jpg",
+    alt: "GIBS headquarters guest residence building",
     aspect: "aspect-[4/3]",
-  },
-  {
-    id: "events-1",
-    category: "Events",
-    title: "The Forum",
-    caption: "Lectures and public dialogue in the convening hall.",
-    image: IMAGES.library,
-    alt: "GIBS interior for lectures and public dialogue",
-    aspect: "aspect-[16/9]",
-  },
-  {
-    id: "outdoor-1",
-    category: "Outdoor Spaces",
-    title: "Gardens and reflecting water",
-    caption: "The unhurried space between sessions.",
-    image: IMAGES.colonnade,
-    alt: "Reflecting pool and pavilions",
-    aspect: "aspect-[16/9]",
   },
 ];
 
-const CATEGORIES = ["All", "Architecture", "Classrooms", "Facilities", "Student Life", "Events", "Outdoor Spaces"] as const;
+const CATEGORIES = ["All", "Architecture", "Classrooms", "Facilities", "Student Life"] as const;
 
 function Lightbox({
   items,
@@ -183,7 +193,7 @@ function Lightbox({
           onTouchEnd={onTouchEnd}
         >
           <img
-            {...imageSet(item.image)}
+            src={item.image}
             alt={item.alt}
             sizes="100vw"
             className="max-h-[55vh] w-full object-contain"
@@ -224,7 +234,7 @@ function Lightbox({
 export default function Gallery() {
   useSeo({
     title: "Gallery — GIBS",
-    description: "A visual exploration of the GIBS campus: architecture, classrooms, facilities, student life, events and outdoor spaces.",
+    description: "Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.",
   });
 
   const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>("All");
@@ -258,7 +268,7 @@ export default function Gallery() {
             </Reveal>
             <Reveal delay={0.12} y={16}>
               <p className="mt-6 max-w-prose type-body">
-                Architecture, classrooms, facilities, events and outdoor spaces at Ilorin, Abuja and Ibafo.
+                Photographs of GIBS headquarters architecture, classroom, reception and guest residence, and the Ibafo facility.
               </p>
             </Reveal>
             <Reveal delay={0.18}>
@@ -299,18 +309,7 @@ export default function Gallery() {
                   aria-label={`View ${filtered[0].title} — opens in lightbox`}
                   className="group relative block w-full overflow-hidden text-left"
                 >
-                  <div className={`relative ${filtered[0].aspect} w-full overflow-hidden`}>
-                    <img
-                      {...imageSet(filtered[0].image)}
-                      alt={filtered[0].alt}
-                      loading="eager"
-                      decoding="async"
-                      sizes="(min-width: 1024px) 50vw, 100vw"
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]"
-                    />
-                    <div className="absolute inset-0 bg-forest-950/15 transition-colors group-hover:bg-forest-950/5" />
-                    <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-                  </div>
+                  <GalleryFrame item={filtered[0]} className={filtered[0].aspect} loading="eager" sizes="(min-width: 1024px) 50vw, 100vw" />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent p-6 sm:p-8">
                     <p className="eyebrow-light">{filtered[0].category}</p>
                     <h2 className="type-h3 mt-2 text-ivory">{filtered[0].title}</h2>
@@ -326,18 +325,7 @@ export default function Gallery() {
                 {filtered.slice(1, 3).map((item, i) => (
                   <Reveal key={item.id} delay={i * 0.06}>
                     <button type="button" onClick={() => openLightbox(1 + i)} aria-label={`View ${item.title} — opens in lightbox`} className="group block w-full text-left">
-                      <div className={`relative ${item.aspect} overflow-hidden`}>
-                        <img
-                          {...imageSet(item.image)}
-                          alt={item.alt}
-                          loading="lazy"
-                          decoding="async"
-                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                        />
-                        <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-forest-950/5" />
-                        <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-                      </div>
+                      <GalleryFrame item={item} />
                       <div className="mt-4">
                         <p className="eyebrow text-forest-600">{item.category}</p>
                         <h3 className="display-serif mt-1 text-lg text-ink">{item.title}</h3>
@@ -354,18 +342,7 @@ export default function Gallery() {
               <div className="grid gap-6 sm:gap-8 lg:grid-cols-12">
                 <Reveal className="lg:col-span-7">
                   <button type="button" onClick={() => openLightbox(3)} className="group block w-full text-left">
-                    <div className={`relative ${filtered[3].aspect} overflow-hidden lg:aspect-[4/3]`}>
-                      <img
-                        {...imageSet(filtered[3].image)}
-                        alt={filtered[3].alt}
-                        loading="lazy"
-                        decoding="async"
-                        sizes="(min-width: 1024px) 55vw, 100vw"
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                      />
-                      <div className="absolute inset-0 bg-forest-950/10 group-hover:bg-transparent" />
-                      <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-                    </div>
+                    <GalleryFrame item={filtered[3]} className={`${filtered[3].aspect} lg:aspect-[4/3]`} sizes="(min-width: 1024px) 55vw, 100vw" />
                     <div className="mt-4">
                       <p className="eyebrow text-forest-600">{filtered[3].category}</p>
                       <h3 className="display-serif mt-1 text-lg text-ink">{filtered[3].title}</h3>
@@ -377,18 +354,7 @@ export default function Gallery() {
                   {filtered.slice(4, 6).map((item, i) => (
                     <Reveal key={item.id} delay={i * 0.06}>
                       <button type="button" onClick={() => openLightbox(4 + i)} aria-label={`View ${item.title} — opens in lightbox`} className="group block w-full text-left">
-                        <div className={`relative ${item.aspect} overflow-hidden`}>
-                          <img
-                            {...imageSet(item.image)}
-                            alt={item.alt}
-                            loading="lazy"
-                            decoding="async"
-                            sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw"
-                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                          />
-                          <div className="absolute inset-0 bg-forest-950/10" />
-                          <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-                        </div>
+                        <GalleryFrame item={item} sizes="(min-width: 1024px) 40vw, (min-width: 640px) 50vw, 100vw" />
                         <div className="mt-3">
                           <p className="eyebrow text-forest-600">{item.category}</p>
                           <h3 className="display-serif mt-1 text-base text-ink">{item.title}</h3>
@@ -406,18 +372,7 @@ export default function Gallery() {
                 {filtered.slice(6).map((item, i) => (
                   <Reveal key={item.id} delay={i * 0.05}>
                     <button type="button" onClick={() => openLightbox(6 + i)} className="group block w-full text-left">
-                      <div className={`relative ${item.aspect} overflow-hidden`}>
-                        <img
-                          {...imageSet(item.image)}
-                          alt={item.alt}
-                          loading="lazy"
-                          decoding="async"
-                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-                        />
-                        <div className="absolute inset-0 bg-forest-950/10" />
-                        <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-                      </div>
+                      <GalleryFrame item={item} />
                       <div className="mt-4">
                         <p className="eyebrow text-forest-600">{item.category}</p>
                         <h3 className="display-serif mt-1 text-lg text-ink">{item.title}</h3>

@@ -4,7 +4,7 @@ import { FaqAccordion } from "../components/cards";
 import { ProgrammeNav, type ProgrammeSection } from "../components/ProgrammeNav";
 import { CheckIcon, ArrowUpRight, ArrowLeft, Diamond } from "../components/icons";
 import { Link } from "../lib/router";
-import { getProgramme, relatedProgrammes, IMAGES } from "../lib/data";
+import { getProgramme, relatedProgrammes } from "../lib/data";
 import { useSeo } from "../lib/router";
 import { Reveal } from "../components/motion";
 import NotFound from "./NotFound";
@@ -44,8 +44,6 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
   return (
     <>
       <PageHero
-        image={isForeign ? IMAGES.city : IMAGES.colonnade}
-        imageAlt={`GIBS Executive Training — ${programme.title}`}
         eyebrow={`${programme.category} · ${programme.code}`}
         title={programme.title}
         intro={programme.tagline ?? programme.summary}
@@ -63,7 +61,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
-            <BtnLink to="/concierge" variant="outline-light" size="md">
+            <BtnLink to="/concierge" variant="outline-ink" size="md">
               Ask GIBS AI
             </BtnLink>
           </div>

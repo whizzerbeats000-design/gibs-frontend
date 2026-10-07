@@ -34,30 +34,8 @@ export default function Hero() {
     >
       {/* 3D Perspective Stage */}
       <div className="perspective-hero relative h-full w-full">
-        {/*
-          Deep Background Plane (Z: -20px).
-          The Z offset lives on a plain wrapper — framer-motion writes
-          `style.transform` inline on the animated child, which would
-          override a `translateZ` set by class on the same element.
-
-          TEMPORARY IMAGE — PENDING GENUINE GIBS PHOTOGRAPHY.
-          The image below is NOT GIBS-owned photography. It is the legacy stock
-          campus shot that was removed from this hero in c80e759 after OCR
-          recovered signage reading "LAGOS BUS[INESS SCHOOL]" on the building
-          (a different Nigerian business school). That sign region is already
-          blurred in this file; re-verified 0 matches for lagos|business school
-          at psm 6/11/12. It is reinstated temporarily to stop the hero
-          rendering as flat green while official photography is sourced.
-
-          Known limit: 1376x768 is the largest version of this file in git
-          history, so the full-bleed hero is upscaled on large and hi-dpi
-          viewports. Acceptable for a placeholder; a replacement asset at
-          >=2400px wide is the real fix.
-
-          TO REPLACE: drop the new asset in public/images/ and point
-          src/srcSet at it. Nothing else needs to change — the crop classes and
-          the overlay stack below are asset-agnostic.
-        */}
+        {/* Deep background plane; the plain wrapper keeps the Z offset separate
+            from the transform written by Framer Motion. */}
         <div className="layer-z-deep absolute inset-0">
           <motion.div
             style={{ y: bgY, scale: bgScale }}
@@ -75,13 +53,11 @@ export default function Hero() {
             />
             <div className="kenburns absolute inset-0">
               <img
-                src="/images/hero-campus.webp"
-                srcSet="/images/hero-campus-640.webp 640w, /images/hero-campus.webp 1376w"
-                sizes="100vw"
-                alt="Sandstone campus pavilions and colonnade at golden hour, with the reflecting pool and grounds in the foreground"
-                className="h-full w-full object-cover object-[62%_58%] sm:object-[58%_55%] lg:object-center"
-                width={1376}
-                height={768}
+                src="/images/gibs-hero-branded.jpg"
+                alt="Goshen International Business School building in Ilorin, with blue-framed windows, palm trees, landscaped entrance and paved forecourt"
+                className="h-full w-full object-cover object-[28%_50%] sm:object-[42%_50%] lg:object-[50%_42%]"
+                width={1050}
+                height={750}
                 fetchPriority="high"
                 decoding="async"
               />
@@ -101,7 +77,7 @@ export default function Hero() {
           className="pointer-events-none absolute inset-0 z-[1]"
           style={{
             background:
-              "linear-gradient(95deg, rgba(0,20,9,0.88) 0%, rgba(0,26,11,0.72) 28%, rgba(0,26,11,0.30) 52%, transparent 68%)",
+              "linear-gradient(95deg, rgba(0,20,9,0.72) 0%, rgba(0,26,11,0.52) 28%, rgba(0,26,11,0.18) 52%, transparent 70%)",
           }}
           aria-hidden="true"
         />
@@ -109,32 +85,7 @@ export default function Hero() {
           className="pointer-events-none absolute inset-0 z-[1]"
           style={{
             background:
-              "linear-gradient(180deg, rgba(0,40,16,0.05) 0%, rgba(0,40,16,0.16) 45%, rgba(0,48,18,0.30) 100%)",
-            mixBlendMode: "multiply",
-          }}
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute inset-0 z-[1]"
-          style={{
-            background: "rgba(0, 64, 26, 0.20)",
-            mixBlendMode: "soft-light",
-          }}
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute inset-0 z-[1]"
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 26%), linear-gradient(0deg, rgba(0,15,7,0.60) 0%, rgba(0,15,7,0.18) 22%, transparent 42%)",
-          }}
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute inset-0 z-[1]"
-          style={{
-            background:
-              "radial-gradient(760px 430px at 14% 64%, rgba(0, 70, 26, 0.32), transparent 70%)",
+              "linear-gradient(180deg, transparent 0%, rgba(0,15,7,0.08) 58%, rgba(0,15,7,0.32) 100%)",
           }}
           aria-hidden="true"
         />

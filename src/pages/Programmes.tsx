@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { ProgrammeCard, colsFor, DIRECTORY_GRID } from "../components/cards";
+import { ProgrammeCard } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
 import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
@@ -26,15 +26,6 @@ const listStagger: Variants = {
     },
   }),
 };
-
-/* Below this many results the catalogue renders as a colsFor(n)-balanced card
-   grid (a handful of hits deserve card substance); at/above it, as the compact
-   3-column directory strips. */
-const DIRECTORY_MIN = 9;
-
-/* Static class map so Tailwind sees the full literals (no runtime-constructed
-   class names). */
-const GRID_COLS = { 1: "lg:grid-cols-1", 2: "lg:grid-cols-2", 3: "lg:grid-cols-3" } as const;
 
 export default function ProgrammesPage() {
   const reduceMotion = useReducedMotion();
@@ -284,53 +275,33 @@ export default function ProgrammesPage() {
             )}
           </div>
 
-          {/* Programme list — two registers:
-              < 9 results: a colsFor(n)-balanced card grid (a handful of cards
-                deserve card substance, and colsFor stops the last row ending
-                in a lone orphan)
-              ≥ 9 results: the compact two-column directory (DIRECTORY_GRID) —
-                each strip is Identity on top with schedule + fee in a bottom
-                bar, so the 135-row catalogue scans by field down each column
-                and stands at roughly half its one-up height.
-              Below lg the full ProgramRow card owns every row (single column
-              on phones, two-up on tablet); the strip only exists at lg+. */}
+          {/* Programme register */}
           {(() => {
-            const asDirectory = filtered.length >= DIRECTORY_MIN;
             const item = (p: (typeof PROGRAMMES)[number]) => (
-              <div key={p.id}>
-                <ProgrammeCard programme={p} />
-              </div>
+              <li key={p.id} className="border-b border-line">
+                <ProgrammeCard programme={p} presentation="register" />
+              </li>
             );
             return filtered.length > 0 ? (
               reduceMotion ? (
-                <div
-                  className={
-                    asDirectory
-                      ? DIRECTORY_GRID
-                      : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
-                  }
-                >
+                <ul className="border-t border-line">
                   {filtered.map((p) => item(p))}
-                </div>
+                </ul>
               ) : (
-                <motion.div
+                <motion.ul
                   key={`${category}-${destination}-${query}`}
                   custom={filtered.length}
                   variants={listStagger}
                   initial="hidden"
                   animate="visible"
-                  className={
-                    asDirectory
-                      ? DIRECTORY_GRID
-                      : `grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 ${GRID_COLS[colsFor(filtered.length)]}`
-                  }
+                  className="border-t border-line"
                 >
                   {filtered.map((p) => (
-                    <motion.div key={p.id} variants={staggerItem}>
-                      <ProgrammeCard programme={p} />
-                    </motion.div>
+                    <motion.li key={p.id} variants={staggerItem} className="border-b border-line">
+                      <ProgrammeCard programme={p} presentation="register" />
+                    </motion.li>
                   ))}
-                </motion.div>
+                </motion.ul>
               )
             ) : (
               <EmptyState

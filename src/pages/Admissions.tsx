@@ -10,7 +10,6 @@ import {
   SUBSCRIPTION_STEPS,
   SUBSCRIPTION_FAQS,
   REQUIREMENTS_ACCORDION,
-  IMAGES,
 } from "../lib/data";
 
 type CycleStatus = "Concluded" | "Active Intake" | "Open for Enrolment";
@@ -74,8 +73,8 @@ export default function Admissions() {
   return (
     <>
       <PageHero
-        image={IMAGES.colonnade}
-        imageAlt="The GIBS training facility"
+        image="/images/gibs-hero-branded.jpg"
+        imageAlt="Goshen International Business School building in Ilorin, with blue-framed windows and a landscaped entrance"
         eyebrow="Programme Enquiries"
         title="Enquire About a"
         italic="programme."

@@ -139,7 +139,10 @@ export function Header({
             type="button"
             onClick={onOpenConcierge}
             aria-label="Open GIBS AI"
-            className="hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 xl:inline-flex"
+            className={cn(
+              "hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50",
+              path === "/programmes" ? "lg:inline-flex" : "xl:inline-flex"
+            )}
           >
             <span className="relative flex h-2 w-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-500" />
@@ -403,7 +406,10 @@ function Newsletter() {
         <p className="eyebrow-light">How to join the mailing list</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
           To join the GIBS Executive Bulletin, email the registry at{" "}
-          <a href="mailto:gibsilorin@gmail.com" className="text-gold-300 underline underline-offset-2">
+          <a
+            href={`mailto:gibsilorin@gmail.com?subject=${encodeURIComponent("GIBS Executive Bulletin")}&body=${encodeURIComponent(`Please add ${email.trim()} to the GIBS Executive Bulletin mailing list.`)}`}
+            className="text-gold-300 underline underline-offset-2"
+          >
             gibsilorin@gmail.com
           </a>{" "}
           and ask to be added.

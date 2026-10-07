@@ -17,29 +17,79 @@ export function colsFor(n: number): 1 | 2 | 3 {
   return n % 3 === 1 ? 2 : 3;
 }
 
-/** Grid used for the full-catalogue directory register (≥ 9 results). Below lg
-    ProgramRow cards run single-column on phones, two-up on tablet; at lg three-up
-    and at xl four-up so scanning stays aligned and the page stays roughly
-    one third to one quarter of its one-up height. Single definition shared by
-    /programmes and /executive-education — keep it in sync here. */
+/** Responsive grid used by the foreign programme directory on /executive-education. */
 export const DIRECTORY_GRID =
   "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-3 xl:grid-cols-4 lg:gap-x-4 lg:gap-y-3";
 
 /**
- * Unified ProgrammeCard component.
- * Replaces the legacy ProgramRow and ProgrammeDirectoryStrip.
- * Maintains premium chrome (bg-white, border, shadow) across all viewports.
+ * Unified ProgrammeCard renderer.
+ * The default presentation retains the established card; the register option
+ * presents /programmes results as a continuous editorial list.
  */
 export function ProgrammeCard({
   programme,
   action = "quiet",
+  presentation = "card",
   className,
 }: {
   programme: Programme;
   action?: "solid" | "ghost" | "quiet";
+  presentation?: "card" | "register";
   className?: string;
 }) {
   const isForeign = programme.destination !== "Local";
+
+  if (presentation === "register") {
+    return (
+      <Link
+        to={`/programmes/${programme.slug}`}
+        data-programme-card
+        className={cn("group block py-4 sm:py-5", className)}
+      >
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="card-eyebrow">{programme.category}</span>
+          {isForeign && (
+            <>
+              <span className="meta text-muted/70" aria-hidden="true">·</span>
+              <span className="meta text-forest-700">{programme.destination} Hub</span>
+            </>
+          )}
+        </div>
+
+        <div className="mt-1.5 flex min-w-0 flex-col gap-x-4 gap-y-1 sm:flex-row sm:items-baseline sm:justify-between">
+          <h3 className="card-title min-w-0 text-[17px] sm:text-[19px]">{programme.title}</h3>
+          <p className="shrink-0 font-serif text-[11px] tracking-[0.04em] text-muted">{programme.code}</p>
+        </div>
+
+        <dl className="mt-3 grid min-w-0 gap-x-8 gap-y-2 sm:grid-cols-2">
+          <div className="min-w-0">
+            <dt className="card-field-label">Target Cohort</dt>
+            <dd className="mt-0.5 break-words text-[13px] leading-snug text-ink/85">{programme.targetAudience}</dd>
+          </div>
+          <div className="min-w-0">
+            <dt className="card-field-label">Schedule &amp; Duration</dt>
+            <dd className="mt-0.5 break-words text-[13px] leading-snug text-ink/85">
+              {programme.schedule}
+              {programme.duration ? <span className="text-muted"> · {programme.duration}</span> : null}
+            </dd>
+          </div>
+        </dl>
+
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <span className="card-field-label">Standard Tuition</span>
+            <span className="mt-0.5 block font-serif text-[16px] font-normal tabular-nums tracking-tight text-ink sm:text-[17px]">
+              {programme.fees}
+            </span>
+          </div>
+          <span className="inline-flex min-h-11 items-center gap-1.5 text-[12px] font-semibold text-forest-700 transition-colors group-hover:text-forest-900">
+            View details
+            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </span>
+        </div>
+      </Link>
+    );
+  }
 
   return (
     <Link

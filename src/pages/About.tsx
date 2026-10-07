@@ -2,7 +2,7 @@ import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingQuiet } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { INSTITUTIONAL_DATA, GOVERNANCE_INFO, FACULTY_ADVISORS, CAMPUS_LOCATIONS, IMAGES } from "../lib/data";
+import { INSTITUTIONAL_DATA, GOVERNANCE_INFO, FACULTY_ADVISORS, CAMPUS_LOCATIONS } from "../lib/data";
 import { Diamond, CheckIcon, MapPinIcon } from "../components/icons";
 
 export default function About() {
@@ -15,8 +15,8 @@ export default function About() {
   return (
     <>
       <PageHero
-        image={IMAGES.hero}
-        imageAlt="The GIBS campus — dedicated to manpower development and capacity building"
+        image="/images/gibs-hq-architecture-edited-branded.jpg"
+        imageAlt="GIBS headquarters building with signage and blue-framed windows"
         eyebrow="Institutional Profile"
         title="Goshen International"
         italic="Business School."

@@ -2,7 +2,6 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "../components/motion";
 import { ArrowTextLink } from "../components/ui";
-import { IMAGES } from "../lib/data";
 
 const PERSPECTIVES = [
   {
@@ -34,8 +33,8 @@ export default function GlobalPerspective() {
         <div className="relative min-h-[300px] overflow-hidden lg:col-span-6 lg:min-h-[640px]">
           <motion.img
             style={{ y: imgY }}
-            src={IMAGES.city}
-            alt="The GIBS campus, open sky and sandstone architecture"
+            src="/images/gibs-hq-architecture-edited-branded.jpg"
+            alt="GIBS headquarters building with signage and blue-framed windows"
             loading="lazy"
             decoding="async"
             className="absolute inset-0 h-[110%] w-full object-cover"

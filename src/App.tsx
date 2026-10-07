@@ -55,7 +55,9 @@ function RouteView({ path }: { path: string }) {
 function Chrome() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const { path } = useRoute();
   const { setOpen: setConciergeOpen } = useConcierge();
+  const isProgrammeCatalogue = path === "/programmes";
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const openConcierge = useCallback(() => setConciergeOpen(true), [setConciergeOpen]);
@@ -89,7 +91,7 @@ function Chrome() {
         onOpenConcierge={openConcierge}
       />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <ConciergeLauncher suppressed={searchOpen || menuOpen} />
+      {!isProgrammeCatalogue && <ConciergeLauncher suppressed={searchOpen || menuOpen} />}
       <ConciergeDialog />
     </>
   );

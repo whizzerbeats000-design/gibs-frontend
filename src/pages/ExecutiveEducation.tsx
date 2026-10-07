@@ -1,11 +1,11 @@
 import { PageHero } from "../components/PageHero";
-import { BtnLink, ClosingImmersive } from "../components/ui";
+import { BtnLink, ClosingQuiet } from "../components/ui";
 import { ProgrammeCard, DIRECTORY_GRID } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { useSeo } from "../lib/router";
-import { PROGRAMMES, IMAGES } from "../lib/data";
+import { PROGRAMMES } from "../lib/data";
 
 const FOREIGN_HUBS = [
   {
@@ -50,8 +50,6 @@ export default function ExecutiveEducation() {
   return (
     <>
       <PageHero
-        image={IMAGES.boardroom}
-        imageAlt="GIBS Foreign Executive Training Hubs"
         eyebrow="International & Customized Training"
         title="Training abroad and in-plant"
         intro="22 foreign executive programmes run in Kigali, Dubai, London and Houston, alongside in-plant workshops built around your organisation's own systems."
@@ -68,7 +66,7 @@ export default function ExecutiveEducation() {
             </BtnLink>
             <BtnLink
               to="/contact?type=Customized+In-Plant+Workshop+Request"
-              variant="outline-light"
+              variant="outline-ink"
               size="md"
             >
               Request In-Plant Workshop
@@ -214,9 +212,7 @@ export default function ExecutiveEducation() {
         </div>
       </section>
 
-      <ClosingImmersive
-        image={IMAGES.city}
-        alt="International Executive Training"
+      <ClosingQuiet
         eyebrow="Overseas Training"
         title="Training outside Nigeria"
         body="Our international desk can issue visa support letters, confirm itineraries, and process enrolments for the Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, Netherlands and Ghana hubs."
@@ -229,7 +225,7 @@ export default function ExecutiveEducation() {
             >
               Make an Enquiry
             </BtnLink>
-            <BtnLink to="/concierge" variant="outline-light" size="lg">
+            <BtnLink to="/concierge" variant="outline-ink" size="lg">
               Ask GIBS AI
             </BtnLink>
           </>

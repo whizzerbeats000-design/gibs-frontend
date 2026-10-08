@@ -8,7 +8,7 @@
   ],
   "headers": [
     {
-      "source": "/fonts/*",
+      "source": "/fonts/(.*)",
       "headers": [
         {
           "key": "X-Content-Type-Options",
@@ -37,7 +37,7 @@
       ]
     },
     {
-      "source": "/images/*",
+      "source": "/images/(.*)",
       "headers": [
         {
           "key": "X-Content-Type-Options",

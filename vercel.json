@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "routes": [
     {
-      "src": "/(.*).(woff2|webp|jpg|jpeg|png|svg|ico|css|js)$",
+      "src": "/(.*).(woff2|webp|jpg|jpeg|png|svg|ico|css|js|txt|xml)$",
       "headers": {
         "X-Content-Type-Options": "nosniff",
         "X-Frame-Options": "DENY",

@@ -8,8 +8,14 @@ after-*.png
 programmes-catalogue-*.png
 comparison-*.png
 
-# build output — Vercel builds from source
+# Build output — Vercel builds from source
 dist
 
 # local browser-audit scripts
 scripts
+
+# Original unprocessed source PNGs (2.2-3.1 MB each, ~21 MB total) —
+# NOT referenced by any code. The approved .webp variants in the same
+# directory are the ones actually used. Excluding these keeps the
+# Vercel deployment lean and prevents them from consuming edge cache slots.
+*.png

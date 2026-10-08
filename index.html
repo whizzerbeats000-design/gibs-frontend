@@ -49,19 +49,41 @@
     <link rel="icon" type="image/webp" href="/images/gibs-logo.webp" />
 
     <!-- Fonts are self-hosted (see the @font-face block at the top of src/index.css).
-         These two faces are the ones that paint the first screen — Instrument Serif
-         for the display headings, Space Grotesk for UI and body copy — so they are
-         preloaded to start downloading with the HTML instead of waiting for the
-         stylesheet to be parsed. crossorigin is required on a font preload even for
-         same-origin files, because the fetch is made in CORS mode.
+         All five homepage faces are preloaded: Instrument Serif (normal + italic) for
+         display headings, Fraunces (normal + italic) for card titles and footers, and
+         Space Grotesk for UI and body copy. Preloading moves the font fetch off the
+         critical path's tail — without these tags the browser only discovers the
+         @font-face declarations during CSS parsing (~2.4s in), starts downloading at
+         ~3.5s, and occupies the main thread until ~5.4s, which delays FCP by ~1.4s.
+         crossorigin is required on a font preload even for same-origin files, because
+         the fetch is made in CORS mode.
 
-         Fraunces and Libre Baskerville are deliberately NOT preloaded: Fraunces is
-         used by card titles and the footer motto (below the first screen) and
-         Libre Baskerville only by the mobile-nav sheet. Letting them load on first
-         use keeps them off the critical path. -->
+         Libre Baskerville is deliberately NOT preloaded: it is only used by the
+         mobile-nav sheet, which is not rendered on the initial page paint. -->
     <link
       rel="preload"
       href="/fonts/instrument-serif-400-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/instrument-serif-italic-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/fraunces-var-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/fraunces-italic-var-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin

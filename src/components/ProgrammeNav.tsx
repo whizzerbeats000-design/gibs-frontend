@@ -50,10 +50,9 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
     // land in the right place after using the select control.
     // tabIndex={-1} makes non-focusable elements programmably focusable
     // without inserting them into the natural tab order.
-    const focusTarget = el.querySelector<HTMLElement>("h2, h3, [tabindex]") ?? el;
     if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
     window.setTimeout(() => {
-      focusTarget.focus({ preventScroll: true });
+      el.focus({ preventScroll: true });
     }, 350); // wait for smooth scroll to settle
   };
 

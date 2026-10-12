@@ -195,7 +195,7 @@ function Lightbox({
           onTouchEnd={onTouchEnd}
         >
           <img
-            src={item.image}
+            {...gibsResponsiveImage(item.image)}
             alt={item.alt}
             sizes="100vw"
             className="max-h-[55vh] w-full object-contain"
@@ -241,11 +241,24 @@ export default function Gallery() {
 
   const [activeCategory, setActiveCategory] = useState<(typeof CATEGORIES)[number]>("All");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const lightboxTriggerRef = useRef<HTMLElement | null>(null);
 
   const filtered = activeCategory === "All" ? GALLERY_ITEMS : GALLERY_ITEMS.filter((i) => i.category === activeCategory);
 
-  const openLightbox = useCallback((idx: number) => setLightboxIndex(idx), []);
-  const closeLightbox = useCallback(() => setLightboxIndex(null), []);
+  const openLightbox = useCallback((idx: number) => {
+    lightboxTriggerRef.current = document.activeElement as HTMLElement | null;
+    setLightboxIndex(idx);
+  }, []);
+  const closeLightbox = useCallback(() => {
+    setLightboxIndex(null);
+    // Restore focus to the element that opened the lightbox. The Lightbox
+    // unmounts asynchronously (React commit), so defer until after teardown
+    // completes to run ahead of any competing focus management.
+    const trigger = lightboxTriggerRef.current;
+    if (trigger && typeof trigger.focus === "function") {
+      window.setTimeout(() => trigger.focus({ preventScroll: true }), 0);
+    }
+  }, []);
   const prev = useCallback(() => {
     if (lightboxIndex !== null) setLightboxIndex((lightboxIndex - 1 + filtered.length) % filtered.length);
   }, [lightboxIndex, filtered.length]);

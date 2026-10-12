@@ -56,23 +56,26 @@ function Chrome() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const { path } = useRoute();
-  const { setOpen: setConciergeOpen } = useConcierge();
+  const { open: conciergeOpen, setOpen: setConciergeOpen } = useConcierge();
   const isProgrammeCatalogue = path === "/programmes";
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const openConcierge = useCallback(() => setConciergeOpen(true), [setConciergeOpen]);
 
-  // Global keyboard shortcut: Cmd/Ctrl + K opens search
+  // Global keyboard shortcut: Cmd/Ctrl + K opens search.
+  // Guard against opening search while another overlay is active to
+  // prevent stacked modals (search underneath concierge/mobile drawer).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        if (conciergeOpen || menuOpen || searchOpen) return;
         setSearchOpen(true);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [conciergeOpen, menuOpen, searchOpen]);
 
   return (
     <>

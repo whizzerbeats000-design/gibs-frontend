@@ -148,7 +148,7 @@ async function run() {
     }
 
     // 4. Sitemap
-    const sitemapEntries = routes.map(r => `  <url>\n    <loc>${CANONICAL_DOMAIN}${r.path}</loc>\n  </url>`).join('\n');
+    const sitemapEntries = routes.map(r => `  <url>\n    <loc>${escapeHtml(CANONICAL_DOMAIN + r.path)}</loc>\n  </url>`).join('\n');
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${CANONICAL_DOMAIN}/</loc>\n  </url>\n${sitemapEntries}\n</urlset>`;
     fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemapXml);
 

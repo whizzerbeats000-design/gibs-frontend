@@ -27,15 +27,24 @@ const listStagger: Variants = {
   }),
 };
 
-export default function ProgrammesPage() {
+export default function ProgrammesPage({
+  initialCategory = "All",
+}: {
+  initialCategory?: (typeof PROGRAM_CATEGORIES)[number];
+} = {}) {
   const reduceMotion = useReducedMotion();
+  const isCategoryFilter = initialCategory !== "All";
+
   useSeo({
-    title: "2026 Training Calendar (135 Programmes) — GIBS",
-    description:
-      "Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.",
+    title: isCategoryFilter
+      ? `${initialCategory} Training Programmes | GIBS`
+      : "2026 Training Calendar (135 Programmes) — GIBS",
+    description: isCategoryFilter
+      ? `Explore our executive training programmes in ${initialCategory} at GIBS.`
+      : "Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.",
   });
 
-  const [category, setCategory] = useState<(typeof PROGRAM_CATEGORIES)[number]>("All");
+  const [category, setCategory] = useState<(typeof PROGRAM_CATEGORIES)[number]>(initialCategory);
   const [destination, setDestination] = useState<DestinationFilter>("All");
   const [query, setQuery] = useState("");
 
@@ -78,13 +87,27 @@ export default function ProgrammesPage() {
       {/* Header section */}
       <section className="bg-paper">
         <div className="container-x pb-10 pt-[var(--pt-page)] sm:pb-14 sm:pt-[var(--pt-page-sm)] lg:pb-16 lg:pt-[var(--pt-page-lg)]">
-          <Breadcrumbs items={[{ label: "2026 Training Calendar" }]} />
+          <Breadcrumbs
+            items={
+              isCategoryFilter
+                ? [{ label: "2026 Training Calendar", to: "/programmes" }, { label: initialCategory }]
+                : [{ label: "2026 Training Calendar" }]
+            }
+          />
           <Reveal>
             <p className="eyebrow mt-4">2026 Executive Training Calendar</p>
           </Reveal>
           <Reveal delay={0.06} y={20}>
             <h1 className="type-h1 mt-3 max-w-4xl text-ink">
-              135 Capacity-Building <em className="italic text-forest-700">Programmes.</em>
+              {isCategoryFilter ? (
+                <>
+                  {initialCategory} <em className="italic text-forest-700">Programmes.</em>
+                </>
+              ) : (
+                <>
+                  135 Capacity-Building <em className="italic text-forest-700">Programmes.</em>
+                </>
+              )}
             </h1>
           </Reveal>
         </div>

@@ -15,6 +15,7 @@ import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import ConciergePage from "./pages/ConciergePage";
 import NotFound from "./pages/NotFound";
+import { slugToCategory } from "./lib/categoryUtils.ts";
 
 /**
  * Resolves a path to a page.
@@ -27,6 +28,15 @@ import NotFound from "./pages/NotFound";
  * bail out of the untouched exiting subtree instead.
  */
 function RouteView({ path }: { path: string }) {
+  const category = matchRoute("/programmes/category/:slug", path);
+  if (category?.slug) {
+    const categoryName = slugToCategory(category.slug);
+    if (categoryName) {
+      return <Programmes initialCategory={categoryName} />;
+    }
+    return <NotFound />;
+  }
+
   const programme = matchRoute("/programmes/:slug", path);
   if (programme?.slug) return <ProgrammeDetail slug={programme.slug} />;
 
@@ -57,7 +67,7 @@ function Chrome() {
   const [searchOpen, setSearchOpen] = useState(false);
   const { path } = useRoute();
   const { open: conciergeOpen, setOpen: setConciergeOpen } = useConcierge();
-  const isProgrammeCatalogue = path === "/programmes";
+  const isProgrammeCatalogue = path === "/programmes" || path.startsWith("/programmes/category/");
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const openConcierge = useCallback(() => setConciergeOpen(true), [setConciergeOpen]);

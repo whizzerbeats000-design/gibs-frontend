@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { categoryToSlug } from '../src/lib/categoryUtils.ts';
 
 const CANONICAL_DOMAIN = 'https://gibs.com.ng';
 const MASTER_SHELL_PATH = 'dist/index.html';
@@ -96,8 +97,23 @@ function generateShell(masterHtml, route, meta) {
   } else {
     html = replaceMetaContent(html, 'og:description', meta.description);
   }
+  if (html.includes('property="og:url"')) {
+    html = replaceMetaContent(html, 'og:url', `${CANONICAL_DOMAIN}${route}`);
+  }
   html = replaceMetaContent(html, 'og:image', `${CANONICAL_DOMAIN}/images/gibs-hero-branded.webp`);
   return html;
+}
+
+function writeShell(route, shellHtml) {
+  const dir = path.join(DIST_DIR, route);
+  fs.mkdirSync(dir, { recursive: true });
+  fs.writeFileSync(path.join(dir, 'index.html'), shellHtml);
+
+  // Also write clean-url HTML file (e.g. dist/about.html) alongside dist/about/index.html
+  // to guarantee direct static resolution across all server / routing configurations
+  const cleanPath = `${path.join(DIST_DIR, route)}.html`;
+  fs.mkdirSync(path.dirname(cleanPath), { recursive: true });
+  fs.writeFileSync(cleanPath, shellHtml);
 }
 
 async function run() {
@@ -115,36 +131,39 @@ async function run() {
       const route = `/programmes/${p.slug}`;
       routes.push({ path: route, meta: { title: `${p.title} | GIBS`, description: p.summary.substring(0, 155) }});
       const shellHtml = generateShell(masterHtml, route, { title: `${p.title} | GIBS`, description: p.summary.substring(0, 155) });
-      const dir = path.join(DIST_DIR, route);
-      fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(path.join(dir, 'index.html'), shellHtml);
+      writeShell(route, shellHtml);
     }
 
     // 2. Institutional
     const instRoutes = [
+      { path: '/programmes', title: '2026 Training Calendar (135 Programmes) | GIBS', desc: 'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.' },
       { path: '/about', title: 'About GIBS | Goshen International Business School', desc: 'Learn about our mission, vision and guiding principles.' },
       { path: '/contact', title: 'Contact GIBS | Training Desk & Enquiries', desc: 'Get in touch with GIBS for programme registration and campus visits.' },
+      { path: '/admissions', title: 'Admissions & Enrolment | GIBS', desc: 'Admission procedures, executive nomination and registration details for GIBS programmes.' },
       { path: '/executive-education', title: 'Foreign Executive Training | GIBS', desc: 'Global training hubs in Kigali, Dubai, London and Houston.' },
+      { path: '/gallery', title: 'Campus & Training Gallery | GIBS', desc: 'Visual archive of GIBS executive training sessions, campus facilities and global cohorts.' },
       { path: '/concierge', title: 'GIBS AI | Institutional Guide', desc: 'Ask our AI about programmes, locations and enrolment.' },
     ];
     for (const r of instRoutes) {
       routes.push({ path: r.path, meta: { title: r.title, description: r.desc }});
       const shellHtml = generateShell(masterHtml, r.path, { title: r.title, description: r.desc });
-      const dir = path.join(DIST_DIR, r.path);
-      fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(path.join(dir, 'index.html'), shellHtml);
+      writeShell(r.path, shellHtml);
     }
 
     // 3. Categories
     const categories = [...new Set(programmes.map(p => p.category))];
+    const seenCategorySlugs = new Set();
     for (const cat of categories) {
-      const slug = cat.toLowerCase().replace(/\s+/g, '-');
+      const slug = categoryToSlug(cat);
+      if (seenCategorySlugs.has(slug)) {
+        throw new Error(`Category slug collision detected for "${cat}": "${slug}" is already used.`);
+      }
+      seenCategorySlugs.add(slug);
+
       const route = `/programmes/category/${slug}`;
       routes.push({ path: route, meta: { title: `${cat} Training Programmes | GIBS`, description: `Explore our executive training programmes in ${cat} at GIBS.` }});
       const shellHtml = generateShell(masterHtml, route, { title: `${cat} Training Programmes | GIBS`, description: `Explore our executive training programmes in ${cat} at GIBS.` });
-      const dir = path.join(DIST_DIR, route);
-      fs.mkdirSync(dir, { recursive: true });
-      fs.writeFileSync(path.join(dir, 'index.html'), shellHtml);
+      writeShell(route, shellHtml);
     }
 
     // 4. Sitemap

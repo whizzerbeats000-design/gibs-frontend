@@ -53,6 +53,7 @@ const ROUTES = [
   "/contact",
   "/concierge",
   "/programmes/course-1-public-sector-accounting-procedure-and-standards",
+  "/programmes/category/accounting-and-financial-management",
   "/definitely-not-a-real-page",
 ];
 

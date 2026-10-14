@@ -4,4 +4,4 @@ Allow: /
 # Hash-routed SPA. The root URL is the single canonical indexable address
 # (see index.html). Per-route HTML is not yet available, so the sitemap
 # lists the root only.
-Sitemap: https://www.gibs.com.ng/sitemap.xml
+Sitemap: https://gibs.com.ng/sitemap.xml

@@ -12,19 +12,17 @@
     <meta name="robots" content="index,follow" />
 
     <!--
-      Canonical and og:url — deliberately a single root URL.
+      This is the master SEO shell. scripts/seo-gen.mjs reads this file during
+      `npm run build` and generates a per-route HTML shell for every route in
+      src/lib/data.ts (135 programmes, 15 category pages, 7 institutional routes).
+      Each shell gets route-specific title, meta description, canonical link,
+      and og:url. The root canonical and og:url below are correct for the
+      homepage shell itself; route shells overwrite them with the per-route URL
+      (e.g. https://gibs.com.ng/about).
 
-      This is a hash-routed SPA: every route is served the same document and the
-      view is selected by the URL fragment. Search engines and social scrapers
-      neither send nor follow the fragment, so the only addressable
-      representation of any view is the site root. Declaring per-route canonicals
-      would point at URLs that resolve to this same document and would
-      misrepresent the site, so one root canonical is the accurate answer.
-
-      Route-specific <title> and meta description are still applied at runtime by
-      useSeo() in src/lib/router.tsx for in-page UX and browser history. That is
-      NOT server-rendered SEO: a client that does not execute JavaScript receives
-      only the static tags below.
+      Body content is rendered client-side by React (see src/main.tsx).
+      useSeo() in src/lib/router.tsx still updates title and meta description
+      at runtime for in-page navigation without a full reload.
     -->
     <link rel="canonical" href="https://gibs.com.ng/" />
 
@@ -122,6 +120,22 @@
             "telephone": "+234-816-001-0401",
             "contactType": "Training Desk & Programme Enquiries",
             "email": "gibsilorin@gmail.com"
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+234-818-646-4474",
+            "contactType": "Programme Enquiries",
+            "email": "goshenibs22@gmail.com"
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+234-803-229-6041",
+            "contactType": "Programme Enquiries"
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+234-708-579-2767",
+            "contactType": "Programme Enquiries"
           },
           {
             "@type": "ContactPoint",

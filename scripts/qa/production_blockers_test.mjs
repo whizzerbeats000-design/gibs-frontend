@@ -3,6 +3,7 @@ import path from "node:path";
 import http from "node:http";
 import { chromium } from "playwright-core";
 import { VALID_CATEGORIES, categoryToSlug } from "../../src/lib/categoryUtils.ts";
+import { PROGRAMMES } from "../../src/lib/data.ts";
 
 const ROOT = path.join(process.cwd(), "dist");
 
@@ -194,6 +195,20 @@ try {
     assert(`Category shell exists on disk: ${slug}`, fs.existsSync(shellFile) && fs.existsSync(cleanFile));
     assert(`Sitemap includes category URL: ${slug}`, sitemapXml.includes(`https://gibs.com.ng/programmes/category/${slug}`));
   }
+
+  console.log("\\n5. Programme shell inventory and metadata");
+  const programmeShells = PROGRAMMES.map((programme) => {
+    const shellFile = path.join(ROOT, "programmes", programme.slug, "index.html");
+    const cleanFile = path.join(ROOT, "programmes", `${programme.slug}.html`);
+    const expectedCanonical = `https://gibs.com.ng/programmes/${programme.slug}`;
+    const html = fs.existsSync(shellFile) ? fs.readFileSync(shellFile, "utf8") : "";
+    assert(`Programme shell exists: ${programme.slug}`, fs.existsSync(shellFile) && fs.existsSync(cleanFile));
+    assert(`Programme metadata is route-specific: ${programme.slug}`, html.includes(`<title>${programme.title} | GIBS</title>`) && html.includes(`href="${expectedCanonical}"`));
+    assert(`Sitemap includes programme URL: ${programme.slug}`, sitemapXml.includes(`<loc>${expectedCanonical}</loc>`));
+  });
+  const sitemapLocs = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
+  assert("Sitemap URLs are unique", new Set(sitemapLocs).size === sitemapLocs.length);
+  assert("Sitemap inventory matches generated routes", sitemapLocs.length === PROGRAMMES.length + VALID_CATEGORIES.length + 7 + 1);
 } finally {
   await browser.close();
   server.close();

@@ -6,6 +6,9 @@ const APPROVED_GIBS_IMAGES: Record<string, { width: number; height: number }> = 
   "/images/gibs-hq-reception-room-branded.webp": { width: 1485, height: 1059 },
   "/images/gibs-ibafo-architecture-branded.webp": { width: 1485, height: 1059 },
   "/images/gibs-ibafo-front-gate-branded.webp": { width: 1672, height: 941 },
+  "/images/gibs-abuja-architecture-branded.webp": { width: 1448, height: 1086 },
+  "/images/gibs-abuja-school-exterior-branded.webp": { width: 1448, height: 1086 },
+  "/images/gibs-abuja-office-branded.webp": { width: 1448, height: 1086 },
 };
 
 export function gibsResponsiveImage(src: string) {

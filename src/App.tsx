@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
+import { Analytics } from "@vercel/analytics/react";
 import { RouterProvider, ScrollManager, matchRoute, useRoute } from "./lib/router";
 import { ConciergeProvider, ConciergeLauncher, ConciergeDialog, useConcierge } from "./components/Concierge";
 import { Header, MobileNav, GlobalFooter, SkipLink, ErrorBoundary } from "./components/chrome";
@@ -124,6 +125,7 @@ export default function App() {
           </ConciergeProvider>
         </RouterProvider>
       </MotionConfig>
+      <Analytics />
     </ErrorBoundary>
   );
 }

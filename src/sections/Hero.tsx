@@ -66,8 +66,8 @@ export default function Hero() {
               <img
                 {...gibsResponsiveImage("/images/gibs-hero-branded.webp")}
                 alt="Goshen International Business School building in Ilorin, with blue-framed windows, palm trees, landscaped entrance and paved forecourt"
-                className="h-full w-full object-cover object-[28%_50%] sm:object-[42%_50%] lg:object-[50%_42%]"
-                style={{ filter: "saturate(0.9)" }}
+                className="absolute inset-0 h-full w-full object-cover object-[28%_50%] sm:object-[42%_50%] lg:object-[50%_42%]"
+                style={{ filter: "saturate(0.9)", aspectRatio: "16/9" }}
                 sizes="100vw"
                 fetchPriority="high"
                 loading="eager"

@@ -36,7 +36,7 @@ await page.route("**/*", async (route) => {
   // Slow down font and CSS requests to simulate slow loading
   const type = route.request().resourceType();
   if (type === "font" || type === "stylesheet" || type === "script" || type === "image") {
-    await route.continue({ latency: 500 });
+    await new Promise((r) => setTimeout(r, 500)); await route.continue();
   } else {
     await route.continue();
   }

@@ -1,5 +1,5 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve, sep } from "node:path";
 import { createServer } from "node:http";
 import { homedir } from "node:os";
 import { chromium } from "playwright-core";
@@ -28,7 +28,8 @@ function findChromium() {
 const server = createServer((req, res) => {
   let p = decodeURIComponent((req.url || "/").split("?")[0]);
   if (p === "/" || !EXTENSIONS.some((e) => p.endsWith(e))) p = "/index.html";
-  const fp = join(ROOT, p.replace(/^(\.\.[^/\\])+/, ""));
+  const fp = resolve(ROOT, p);
+  if (!fp.startsWith(resolve(ROOT, sep))) { res.writeHead(403); res.end(); return; }
   if (!existsSync(fp)) { res.writeHead(404); res.end(); return; }
   const ext = EXTENSIONS.find((e) => p.endsWith(e)) || ".html";
   res.writeHead(200, { "content-type": EXT[ext] });
@@ -193,7 +194,7 @@ const fontStatus = await page.evaluate(() => {
   }
   return statuses;
 });
-console.log("\nFont loading status:", JSON.stringify(fontStatuses || "N/A"));
+console.log("\nFont loading status:", JSON.stringify(fontStatus || "N/A"));
 
 // Check the Hero's scroll-linked animation
 console.log("\n=== Hero scroll-linked animation check ===\n");

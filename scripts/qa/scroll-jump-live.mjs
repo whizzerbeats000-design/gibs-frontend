@@ -183,8 +183,15 @@ await mobilePage.addInitScript(() => {
   po.observe({ entryTypes: ["layout-shift"] });
 });
 
-await mobilePage.goto("https://gibs.com.ng", { waitUntil: "networkidle", timeout: 30000 });
-await mobilePage.waitForTimeout(3000);
+try {
+  await mobilePage.goto("https://gibs.com.ng", { waitUntil: "networkidle", timeout: 30000 });
+  await mobilePage.waitForTimeout(3000);
+} catch (e) {
+  console.error("Mobile navigation failed:", e.message);
+  await context.close();
+  await browser.close();
+  process.exit(1);
+}
 
 const mobileScrollPoints = [0, 100, 200, 400, 600, 800, 1000, 1200];
 const mobilePositions = [];

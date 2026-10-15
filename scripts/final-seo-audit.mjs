@@ -108,6 +108,60 @@ async function validate() {
     }
   }
 
+  // Verify font URLs and font assets across all shells
+  console.log('Verifying root-relative font URL resolution in all shells...');
+  for (const shellPath of shells) {
+    const html = fs.readFileSync(shellPath, 'utf8');
+    if (html.includes('url(./fonts/') || html.includes('href="./fonts/')) {
+      console.error(`CRITICAL: Shell contains relative font path (breaks deep routes): ${shellPath}`);
+      failures++;
+    }
+    if (!html.includes('href="/fonts/instrument-serif-400-latin.woff2"') || !html.includes('url(/fonts/instrument-serif-400-latin.woff2)')) {
+      console.error(`CRITICAL: Shell missing expected root-relative font path: ${shellPath}`);
+      failures++;
+    }
+  }
+
+  // Verify all 7 font files exist in dist/fonts/
+  const expectedFonts = [
+    'instrument-serif-400-latin.woff2',
+    'instrument-serif-italic-latin.woff2',
+    'space-grotesk-var-latin.woff2',
+    'fraunces-var-latin.woff2',
+    'fraunces-italic-var-latin.woff2',
+    'libre-baskerville-var-latin.woff2',
+    'libre-baskerville-italic-latin.woff2',
+  ];
+  for (const font of expectedFonts) {
+    const fontPath = path.join(DIST_DIR, 'fonts', font);
+    if (!fs.existsSync(fontPath)) {
+      console.error(`CRITICAL: Expected font file missing from ${DIST_DIR}/fonts/: ${font}`);
+      failures++;
+    }
+  }
+
+  // Verify homepage hero image preload in master shell and ensure no leakage to subroutes
+  const masterContent = fs.readFileSync(path.join(DIST_DIR, 'index.html'), 'utf8');
+  if (!masterContent.includes('rel="preload" as="image" href="/images/gibs-hero-branded.webp"')) {
+    console.error('CRITICAL: Master shell (homepage) missing responsive hero image preload.');
+    failures++;
+  }
+  for (const shellPath of shells) {
+    if (shellPath.endsWith('/index.html') && shellPath !== path.join(DIST_DIR, 'index.html')) {
+      const subHtml = fs.readFileSync(shellPath, 'utf8');
+      if (subHtml.includes('rel="preload" as="image" href="/images/gibs-hero-branded.webp"')) {
+        console.error(`CRITICAL: Subroute shell incorrectly contains homepage hero preload: ${shellPath}`);
+        failures++;
+      }
+    }
+  }
+  const hero640 = path.join(DIST_DIR, 'images', 'gibs-hero-branded-640.webp');
+  const hero1050 = path.join(DIST_DIR, 'images', 'gibs-hero-branded.webp');
+  if (!fs.existsSync(hero640) || !fs.existsSync(hero1050)) {
+    console.error('CRITICAL: Hero image assets missing from dist/images/');
+    failures++;
+  }
+
   console.log(`Total Shells Verified: ${shells.length - 1}`);
   console.log(`Metadata Failures: ${failures}`);
   if (results.length > 0) {

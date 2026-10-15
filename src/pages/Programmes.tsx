@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useDeferredValue } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { ProgrammeCard } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
@@ -47,9 +47,10 @@ export default function ProgrammesPage({
   const [category, setCategory] = useState<(typeof PROGRAM_CATEGORIES)[number]>(initialCategory);
   const [destination, setDestination] = useState<DestinationFilter>("All");
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = deferredQuery.trim().toLowerCase();
     return PROGRAMMES.filter((p) => {
       const categoryMatch = category === "All" || p.category === category;
       const destinationMatch =
@@ -71,7 +72,7 @@ export default function ProgrammesPage({
 
       return categoryMatch && destinationMatch && queryMatch;
     });
-  }, [category, destination, query]);
+  }, [category, destination, deferredQuery]);
 
   const destinationCounts = useMemo(
     () =>
@@ -317,7 +318,6 @@ export default function ProgrammesPage({
                 </ul>
               ) : (
                 <motion.ul
-                  key={`${category}-${destination}-${query}`}
                   custom={filtered.length}
                   variants={listStagger}
                   initial="hidden"

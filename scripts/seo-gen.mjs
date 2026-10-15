@@ -52,11 +52,17 @@ function extractProgrammes() {
 
     return {
       slug: slugMatch[1],
-      title: titleMatch[1],
-      summary: summaryMatch ? summaryMatch[1] : 'Executive training programme at GIBS.',
-      category: categoryMatch ? categoryMatch[1] : 'General',
+      title: decodeJsonString(titleMatch[1]),
+      summary: summaryMatch ? decodeJsonString(summaryMatch[1]) : 'Executive training programme at GIBS.',
+      category: categoryMatch ? decodeJsonString(categoryMatch[1]) : 'General',
     };
   });
+}
+
+// Resolve JSON string escape sequences (\uXXXX, \', etc.) that the regex
+// extraction captures as literal characters rather than decoded Unicode values.
+function decodeJsonString(raw) {
+  return raw.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
 }
 
 function escapeHtml(text) {
@@ -104,6 +110,20 @@ function generateShell(masterHtml, route, meta) {
   return html;
 }
 
+function normalizeAssetUrls(html) {
+  // vite-plugin-singlefile sets config.base = "./" for file:// compatibility,
+  // rewriting root-relative assets to relative paths (e.g. ./fonts/..., ./favicon.ico).
+  // For deep route shells (e.g. /programmes/category/:slug and /programmes/:slug),
+  // relative asset paths cause the browser to resolve assets against the nested path,
+  // resulting in 404s. We restore root-relative paths for fonts, favicon, and icon images.
+  return html
+    .replaceAll('href="./fonts/', 'href="/fonts/')
+    .replaceAll('url(./fonts/', 'url(/fonts/')
+    .replaceAll('href="./favicon.ico"', 'href="/favicon.ico"')
+    .replaceAll('href="./images/', 'href="/images/')
+    .replaceAll('src="./images/', 'src="/images/');
+}
+
 function writeShell(route, shellHtml) {
   const dir = path.join(DIST_DIR, route);
   fs.mkdirSync(dir, { recursive: true });
@@ -120,7 +140,24 @@ async function run() {
   try {
     console.log('Starting SEO Shell Generation...');
     if (!fs.existsSync(MASTER_SHELL_PATH)) throw new Error('Master shell not found. Run npm run build first.');
-    const masterHtml = fs.readFileSync(MASTER_SHELL_PATH, 'utf8');
+    let masterHtml = fs.readFileSync(MASTER_SHELL_PATH, 'utf8');
+    masterHtml = normalizeAssetUrls(masterHtml);
+    fs.writeFileSync(MASTER_SHELL_PATH, masterHtml);
+
+    // Validate that all referenced fonts exist on disk
+    const fontMatches = masterHtml.matchAll(/(?:href|url)\(["']?\/fonts\/([^"')\s]+)["']?\)/g);
+    const checkedFonts = new Set();
+    for (const m of fontMatches) {
+      const fontFile = m[1];
+      if (checkedFonts.has(fontFile)) continue;
+      checkedFonts.add(fontFile);
+      const fontDiskPath = path.join(DIST_DIR, 'fonts', fontFile);
+      if (!fs.existsSync(fontDiskPath)) {
+        throw new Error(`Referenced font file does not exist on disk: ${fontDiskPath}`);
+      }
+    }
+    console.log(`Validated ${checkedFonts.size} font assets exist on disk in ${DIST_DIR}/fonts/.`);
+
     const programmes = extractProgrammes();
     console.log(`Extracted ${programmes.length} programmes.`);
 
@@ -170,6 +207,20 @@ async function run() {
     const sitemapEntries = routes.map(r => `  <url>\n    <loc>${escapeHtml(CANONICAL_DOMAIN + r.path)}</loc>\n  </url>`).join('\n');
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${CANONICAL_DOMAIN}/</loc>\n  </url>\n${sitemapEntries}\n</urlset>`;
     fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemapXml);
+
+    // 5. Inject homepage-specific hero image preload into master shell (dist/index.html)
+    // Preloads the exact responsive image selected by src/sections/Hero.tsx without leaking to other routes.
+    const hero640Path = path.join(DIST_DIR, 'images', 'gibs-hero-branded-640.webp');
+    const hero1050Path = path.join(DIST_DIR, 'images', 'gibs-hero-branded.webp');
+    if (!fs.existsSync(hero640Path) || !fs.existsSync(hero1050Path)) {
+      throw new Error('Referenced hero image files do not exist in dist/images/');
+    }
+    const heroPreloadTag = '<link rel="preload" as="image" href="/images/gibs-hero-branded.webp" imagesrcset="/images/gibs-hero-branded-640.webp 640w, /images/gibs-hero-branded.webp 1050w" imagesizes="100vw" fetchpriority="high" />';
+    if (!masterHtml.includes('href="/images/gibs-hero-branded.webp"')) {
+      const homepageHtml = masterHtml.replace('</head>', `  ${heroPreloadTag}\n  </head>`);
+      fs.writeFileSync(MASTER_SHELL_PATH, homepageHtml);
+      console.log('Injected homepage-specific hero image preload into dist/index.html');
+    }
 
     console.log(`SUCCESS: Generated ${routes.length} shells and sitemap.xml`);
   } catch (err) {

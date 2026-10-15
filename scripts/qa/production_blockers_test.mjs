@@ -203,12 +203,72 @@ try {
     const expectedCanonical = `https://gibs.com.ng/programmes/${programme.slug}`;
     const html = fs.existsSync(shellFile) ? fs.readFileSync(shellFile, "utf8") : "";
     assert(`Programme shell exists: ${programme.slug}`, fs.existsSync(shellFile) && fs.existsSync(cleanFile));
-    assert(`Programme metadata is route-specific: ${programme.slug}`, html.includes(`<title>${programme.title} | GIBS</title>`) && html.includes(`href="${expectedCanonical}"`));
+    const htmlTitle = programme.title.replace(/&/g, "&amp;").replace(/'/g, "&#039;").replace(/"/g, "&quot;");
+    assert(`Programme metadata is route-specific: ${programme.slug}`, html.includes(`<title>${htmlTitle} | GIBS</title>`) && html.includes(`href="${expectedCanonical}"`));
     assert(`Sitemap includes programme URL: ${programme.slug}`, sitemapXml.includes(`<loc>${expectedCanonical}</loc>`));
   });
   const sitemapLocs = [...sitemapXml.matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1]);
   assert("Sitemap URLs are unique", new Set(sitemapLocs).size === sitemapLocs.length);
   assert("Sitemap inventory matches generated routes", sitemapLocs.length === PROGRAMMES.length + VALID_CATEGORIES.length + 7 + 1);
+
+  // 6. Verifying Deep-Route Font Resolution & Asset Availability
+  console.log("\n6. Verifying Deep-Route Font Resolution & Asset Availability");
+  const masterContent = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  assert("Master shell has no ./fonts/ references", !masterContent.includes("url(./fonts/") && !masterContent.includes('href="./fonts/'));
+  assert("Master shell has root /fonts/ references", masterContent.includes("url(/fonts/") && masterContent.includes('href="/fonts/'));
+
+  // Test browser font loading on deep category route
+  {
+    const page = await browser.newPage();
+    const fontResponses = [];
+    page.on("response", (resp) => {
+      if (resp.url().includes(".woff2")) {
+        fontResponses.push({ url: resp.url(), status: resp.status() });
+      }
+    });
+    await page.goto(`${BASE}/programmes/category/accounting-and-financial-management`, { waitUntil: "networkidle" });
+    const failedFonts = fontResponses.filter((f) => f.status !== 200 || !f.url.includes("/fonts/"));
+    assert("Category route loads all fonts with status 200", failedFonts.length === 0, `failed fonts: ${JSON.stringify(failedFonts)}`);
+    assert("Category route requested at least 4 web fonts", fontResponses.length >= 4, `requested: ${fontResponses.length}`);
+    await page.close();
+  }
+
+  // Test browser font loading on deep programme detail route
+  {
+    const page = await browser.newPage();
+    const fontResponses = [];
+    page.on("response", (resp) => {
+      if (resp.url().includes(".woff2")) {
+        fontResponses.push({ url: resp.url(), status: resp.status() });
+      }
+    });
+    await page.goto(`${BASE}/programmes/course-1-public-sector-accounting-procedure-and-standards`, { waitUntil: "networkidle" });
+    const failedFonts = fontResponses.filter((f) => f.status !== 200 || !f.url.includes("/fonts/"));
+    assert("Detail route loads all fonts with status 200", failedFonts.length === 0, `failed fonts: ${JSON.stringify(failedFonts)}`);
+    assert("Detail route requested at least 4 web fonts", fontResponses.length >= 4, `requested: ${fontResponses.length}`);
+    await page.close();
+  }
+
+  // 7. Verifying Homepage Hero Image Preload & Route Isolation
+  console.log("\n7. Verifying Homepage Hero Image Preload & Route Isolation");
+  assert("Master shell has responsive hero preload", masterContent.includes('rel="preload" as="image" href="/images/gibs-hero-branded.webp"'));
+  const aboutContent = fs.readFileSync(path.join(ROOT, "about", "index.html"), "utf8");
+  assert("About shell does not leak homepage hero preload", !aboutContent.includes('rel="preload" as="image" href="/images/gibs-hero-branded.webp"'));
+
+  // Test browser loading of homepage hero image
+  {
+    const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+    const imageResponses = [];
+    page.on("response", (resp) => {
+      if (resp.url().includes("gibs-hero-branded")) {
+        imageResponses.push({ url: resp.url(), status: resp.status() });
+      }
+    });
+    await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+    assert("Homepage loads hero image with status 200", imageResponses.length > 0 && imageResponses[0].status === 200);
+    assert("Homepage requested expected branded hero webp", imageResponses[0].url.includes("gibs-hero-branded"));
+    await page.close();
+  }
 } finally {
   await browser.close();
   server.close();

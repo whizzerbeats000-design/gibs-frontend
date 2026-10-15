@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+/* Hide static SEO body content when JS is available — React mounts and replaces
+   it. When JS is disabled, <html> retains the no-js class and this rule does not
+   apply, so crawlers see the static content unchanged. The :not(#main) guard
+   ensures React's own <main id="main"> is never hidden. */
+.js #root > main:not(#main) {
+  display: none;
+}
+
 /* ============================================================
    GIBS DESIGN SYSTEM — single source of truth
    Modern Classicism

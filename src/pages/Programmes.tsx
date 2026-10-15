@@ -247,10 +247,15 @@ export default function ProgrammesPage({
               </div>
 
               {/* Sector / Category Filter Chips */}
+              <div className="flex items-center justify-between gap-3 pb-1">
+                <span className="meta shrink-0">Sector / category</span>
+                <span id="programme-filter-hint" className="meta text-right">Scroll for more</span>
+              </div>
               <div
                 role="group"
                 aria-label="Filter programmes by sector"
-                className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none"
+                aria-describedby="programme-filter-hint"
+                className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none focus-within:outline-none"
               >
                 {PROGRAM_CATEGORIES.map((cat) => (
                   <button

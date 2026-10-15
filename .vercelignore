@@ -8,8 +8,7 @@ after-*.png
 programmes-catalogue-*.png
 comparison-*.png
 
-# Build output — Vercel builds from source
-dist
+# Build output is the deployment artifact produced by the explicit Vercel build.
 
 # local browser-audit scripts
 

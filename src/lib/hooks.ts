@@ -35,13 +35,19 @@ export function useBodyScrollLock(locked: boolean) {
   }, [locked]);
 }
 
-/** Call onClose on Escape while active. */
+/** Call onClose on Escape while active.
+ * Listeners are registered in the capture phase on `window` so every active
+ * overlay receives Escape. We intentionally do NOT call `stopPropagation`:
+ * when multiple overlays are open (defended against by guards in callers, but
+ * not assumed here) a single Escape should dismiss all of them rather than
+ * requiring one keypress per layer — which previously left a hidden modal
+ * revealed when its sibling was closed. Each hook's `active` flag gates its
+ * own listener, so single-overlay dismissal is unaffected. */
 export function useEscape(active: boolean, onClose: () => void) {
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        e.stopPropagation();
         onClose();
       }
     };

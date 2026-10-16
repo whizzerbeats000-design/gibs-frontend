@@ -1,9 +1,49 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "routes": [
     {
-      "source": "/((?!images/|favicon).*)",
-      "destination": "/index.html"
+      "src": "/(?<path>.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.gibs.com.ng"
+        }
+      ],
+      "status": 301,
+      "headers": {
+        "Location": "https://gibs.com.ng/$path"
+      }
+    },
+    {
+      "src": "/.*",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(.*).(woff2|webp|jpg|jpeg|png|svg|ico|css|js|txt|xml)$",
+      "headers": {
+        "Cache-Control": "public, max-age=31536000, immutable"
+      },
+      "continue": true
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/((?!assets/|images/|favicon).*)",
+      "dest": "/index.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
     }
   ]
 }

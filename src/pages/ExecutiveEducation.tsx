@@ -1,11 +1,11 @@
 import { PageHero } from "../components/PageHero";
-import { BtnLink, ClosingImmersive } from "../components/ui";
-import { ProgramRow } from "../components/cards";
+import { BtnLink, ClosingQuiet } from "../components/ui";
+import { ProgrammeCard, DIRECTORY_GRID } from "../components/cards";
 import { Reveal } from "../components/motion";
 import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { useSeo } from "../lib/router";
-import { PROGRAMMES, IMAGES } from "../lib/data";
+import { PROGRAMMES } from "../lib/data";
 
 const FOREIGN_HUBS = [
   {
@@ -50,11 +50,9 @@ export default function ExecutiveEducation() {
   return (
     <>
       <PageHero
-        image={IMAGES.boardroom}
-        imageAlt="GIBS Foreign Executive Training Hubs"
         eyebrow="International & Customized Training"
         title="Training abroad and in-plant"
-        intro="Twenty-two foreign executive programmes run in Kigali, Dubai, London and Houston, alongside in-plant workshops built around your organisation's own systems."
+        intro="22 foreign executive programmes run in Kigali, Dubai, London and Houston, alongside in-plant workshops built around your organisation's own systems."
         breadcrumbs={[{ label: "Foreign & Executive Training" }]}
         meta={
           <div className="flex flex-wrap gap-3">
@@ -63,12 +61,12 @@ export default function ExecutiveEducation() {
               variant="gold"
               size="md"
             >
-              Subscribe for Foreign Hubs
+              Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
             <BtnLink
               to="/contact?type=Customized+In-Plant+Workshop+Request"
-              variant="outline-light"
+              variant="outline-ink"
               size="md"
             >
               Request In-Plant Workshop
@@ -78,19 +76,21 @@ export default function ExecutiveEducation() {
       />
 
       {/* 4 International Hubs Grid */}
-      <section className="bg-white py-20 sm:py-24">
-        <div className="container-x">
-          <Reveal>
-            <p className="eyebrow">4 International Destinations</p>
-            <h2 className="type-h2 mt-4 text-ink">
-              Foreign Executive Training <em className="italic text-forest-700">Hubs.</em>
-            </h2>
-            <p className="mt-3 max-w-2xl type-body">
-              In technical partnership with the Pacific Institute of Technology, Georgia, USA.
-            </p>
-          </Reveal>
+      <section className="bg-white section-y">
+        <div className="container-x grid lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <p className="eyebrow">4 International Destinations</p>
+              <h2 className="type-h2 mt-4 text-ink">
+                Foreign Executive Training <em className="italic text-forest-700">Hubs.</em>
+              </h2>
+              <p className="mt-3 max-w-prose type-body">
+                In technical partnership with the Pacific Institute of Technology, Georgia, USA.
+              </p>
+            </Reveal>
+          </div>
 
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:col-span-7 lg:mt-0">
             {FOREIGN_HUBS.map((hub) => (
               <div key={hub.city} className="flex flex-col border border-line bg-paper p-7 shadow-crisp">
                 <span className="pill pill-forest self-start">
@@ -99,11 +99,11 @@ export default function ExecutiveEducation() {
                 <h3 className="display-serif mt-4 text-2xl text-ink">{hub.city}</h3>
                 <p className="mt-1 text-[13px] font-bold text-forest-700">Fee: {hub.fee}</p>
                 <p className="text-[12px] font-medium text-muted">Schedule: {hub.dates}</p>
-                <p className="mt-4 flex-1 text-[13.5px] leading-relaxed text-ink/80">{hub.summary}</p>
+                <p className="mt-4 flex-1 text-[13.5px] leading-relaxed text-ink/80 max-w-prose">{hub.summary}</p>
                 <div className="mt-6 border-t rule pt-4">
                   <Link
                     to="/programmes"
-                    className="inline-flex items-center gap-1 text-[13px] font-bold text-forest-700 hover:text-forest-900"
+                    className="inline-flex min-h-[24px] items-center gap-1 text-[13px] font-bold text-forest-700 hover:text-forest-900"
                   >
                     View courses
                     <ArrowUpRight className="h-3.5 w-3.5" />
@@ -116,65 +116,81 @@ export default function ExecutiveEducation() {
       </section>
 
       {/* In-Plant Customized Workshops */}
-      <section className="border-y border-line bg-forest-900 py-20 text-ivory">
-        <div className="container-x">
-          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
-            <div className="lg:col-span-7">
-              <Reveal>
-                <p className="eyebrow-light">Customized In-Plant Delivery</p>
-                <h2 className="type-h2 mt-4">
-                  Bring GIBS faculty and curriculum directly to your organization
-                </h2>
-                <p className="mt-6 text-[15.5px] leading-relaxed text-ivory/85">
-                  GIBS designs and delivers customized in-plant workshops for government ministries,
-                  departments, agencies, and private corporate bodies. Courses can be tailored to
-                  address your specific operating challenges, scheduled at your preferred venue and dates.
-                </p>
-                <div className="mt-8 flex flex-wrap gap-4">
-                  <BtnLink
-                    to="/contact?type=Customized+In-Plant+Workshop+Request"
-                    variant="gold"
-                    size="lg"
-                  >
-                    Request In-Plant Proposal
-                    <ArrowUpRight className="h-4 w-4" />
-                  </BtnLink>
-                  <BtnLink to="/contact" variant="outline-light" size="lg">
-                    Speak with Registry
-                  </BtnLink>
-                </div>
-              </Reveal>
-            </div>
-
-            <div className="lg:col-span-5">
-              <div className="border border-ivory/20 bg-forest-950/70 p-8 shadow-lift">
-                <p className="eyebrow-light text-gold-300">In-Plant Advantages</p>
-                <ul className="mt-5 space-y-4 text-[14px] text-ivory/85">
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
-                    <span>Cost-effective team training at your institutional facility</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
-                    <span>Curriculum customized to internal SOPs, systems, and challenges</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
-                    <span>Flexible scheduling aligned with organizational calendars</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
-                    <span>Full GIBS &amp; CMD accredited certification for all participants</span>
-                  </li>
-                </ul>
+      <section className="border-y border-line bg-forest-900 section-y text-ivory">
+        <div className="container-x grid lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <Reveal>
+              <p className="eyebrow-light">Customized In-Plant Delivery</p>
+              <h2 className="type-h2 mt-4">
+                Bring GIBS training and curriculum directly to your organisation
+              </h2>
+              <p className="mt-6 text-[15.5px] leading-relaxed text-ivory/85 max-w-prose">
+                GIBS designs and delivers customized in-plant workshops for government ministries,
+                departments, agencies, and private corporate bodies. Courses can be tailored to
+                address your specific operating challenges, scheduled at your preferred venue and dates.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <BtnLink
+                  to="/contact?type=Customized+In-Plant+Workshop+Request"
+                  variant="gold"
+                  size="lg"
+                >
+                  Request In-Plant Proposal
+                  <ArrowUpRight className="h-4 w-4" />
+                </BtnLink>
+                <BtnLink to="/contact" variant="outline-light" size="lg">
+                  Speak with Registry
+                </BtnLink>
               </div>
+            </Reveal>
+          </div>
+
+          <div className="lg:col-span-5">
+            <div className="border border-ivory/20 bg-forest-950/70 p-7 shadow-lift max-w-editorial">
+              <p className="eyebrow-light text-gold-300">In-Plant Advantages</p>
+              <ul className="mt-5 space-y-4 text-[14px] text-ivory/85">
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span>Cost-effective team training at your institutional facility</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span>Curriculum customized to internal SOPs, systems, and challenges</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span>Flexible scheduling aligned with organizational calendars</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span>Full GIBS &amp; CMD accredited certification for all participants</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
       </section>
 
+      {/* Training methodology */}
+      <section className="border-y border-line bg-white section-y">
+        <div className="container-x grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <Reveal>
+              <h2 className="type-h2 text-ink">METHODOLOGY:</h2>
+            </Reveal>
+          </div>
+          <div className="lg:col-span-8">
+            <Reveal>
+              <p className="max-w-prose text-[15px] leading-relaxed text-ink/85">
+                &quot;Our scheme of training provides and involves high potential personnel with conceptual framework. Learning techniques such as discussion, syndicate session, lecture, audio-visual and training aids, case study, conference methods, simulation, and Role play are mostly employed in our training sessions. In these situations, the learning process is designed to directly address the title of the training within the context of professional areas of our participants. We have the critical capabilities to help you succeed in this ever changing global business environment with our world-class training facilities.&quot;
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       {/* All 22 Foreign Programmes List */}
-      <section className="bg-white py-20 sm:py-24">
+      <section className="bg-white section-y">
         <div className="container-x">
           <div className="flex flex-wrap items-end justify-between gap-4 border-b rule pb-6">
             <div>
@@ -186,20 +202,20 @@ export default function ExecutiveEducation() {
             <p className="meta">{foreignProgrammes.length} International Courses</p>
           </div>
 
-          <div className="mt-6 border-t rule">
-            {foreignProgrammes.map((p, idx) => (
-              <ProgramRow key={p.id} programme={p} index={idx} />
+          <div className={"mt-6 border-t rule pt-6 " + DIRECTORY_GRID}>
+            {foreignProgrammes.map((p) => (
+              <div key={p.id}>
+                <ProgrammeCard programme={p} />
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <ClosingImmersive
-        image={IMAGES.city}
-        alt="International Executive Training"
-        eyebrow="Overseas Subscription"
+      <ClosingQuiet
+        eyebrow="Overseas Training"
         title="Training outside Nigeria"
-        body="Our international desk can issue visa support letters, confirm itineraries and process nominations for the Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, Netherlands and Ghana hubs."
+        body="Our international desk can issue visa support letters, confirm itineraries, and process enrolments for the Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, Netherlands and Ghana hubs."
         actions={
           <>
             <BtnLink
@@ -207,9 +223,9 @@ export default function ExecutiveEducation() {
               variant="gold"
               size="lg"
             >
-              Subscribe for Foreign Hub
+              Make an Enquiry
             </BtnLink>
-            <BtnLink to="/concierge" variant="outline-light" size="lg">
+            <BtnLink to="/concierge" variant="outline-ink" size="lg">
               Ask GIBS AI
             </BtnLink>
           </>

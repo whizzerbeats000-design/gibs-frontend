@@ -5,6 +5,19 @@ import { PROGRAMMES, INSTITUTIONAL_DATA } from "./data";
    Official programme & institutional guide for Goshen International Business School (GIBS)
    ========================================================================== */
 
+/* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
+   byte-locked (SHA-256 910ff4d7…), so the retired numbers 08033429427 and
+   08032296041 are filtered out and the new official 08160010400 is appended.
+   This list is what the concierge surfaces in its contact reply. */
+const RETIRED_NUMBERS = new Set(["08033429427", "08032296041"]);
+const ADDITIONAL_NUMBER = "08160010400";
+const ACTIVE_PHONE_NUMBERS: string[] = [
+  ...INSTITUTIONAL_DATA.phoneNumbers.filter((n) => !RETIRED_NUMBERS.has(n)),
+  ...(INSTITUTIONAL_DATA.phoneNumbers.includes(ADDITIONAL_NUMBER)
+    ? []
+    : [ADDITIONAL_NUMBER]),
+];
+
 export type ConciergeCard =
   | { kind: "link"; label: string; to: string; detail?: string | null }
   | { kind: "programme"; slug: string; label: string; detail?: string | null };
@@ -13,15 +26,6 @@ export type ConciergeReply = {
   text: string;
   cards?: ConciergeCard[];
 };
-
-export const CONCIERGE_SUGGESTIONS = [
-  "2026 Training Calendar",
-  "Foreign Executive Programmes (Kigali, Dubai, London, Houston)",
-  "How to subscribe to a programme or nominate staff",
-  "In-plant and customized workshops",
-  "Campus locations & facilities",
-  "Contact training registry",
-];
 
 const programmeCard = (slug: string): ConciergeCard => {
   const p = PROGRAMMES.find((x) => x.slug === slug);
@@ -73,10 +77,10 @@ const RULES: Rule[] = [
   {
     test: /\b(subscribe|subscription|nominate|nomination|register|enrol|enrolment|requirement|fee|fees|cost|price|tuition|apply|admission|scholarship)\b/i,
     reply: {
-      text: "GIBS operates on a direct programme subscription and corporate nomination model for its 2026 training calendar. Organizations nominate participants or individuals subscribe directly. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
+      text: "GIBS offers 113 Local Open and 22 Foreign Executive Programmes across its 2026 training calendar. Organisations enquire about training for staff; individuals make an enquiry to join. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
       cards: [
-        { kind: "link", label: "Programme Subscription Guidelines", to: "/admissions" },
-        { kind: "link", label: "Subscribe / Programme Enquiry", to: "/contact?type=Local+Open+Training+Registration" },
+        { kind: "link", label: "Enrolment Guidelines", to: "/admissions" },
+        { kind: "link", label: "Make an Enquiry", to: "/contact?type=Local+Open+Training+Registration" },
       ],
     },
   },
@@ -85,7 +89,7 @@ const RULES: Rule[] = [
     reply: {
       text: `GIBS operates across 3 permanent centers: Ilorin Main HQ (No 81, Olorunsogo St, Upper Gaa-Akanbi), Abuja Center (Plot 194, Lugbe 1, Airport Rd), and Ibafo Center (KM 36, Lagos-Ibadan Express Rd), plus off-campus centers across Nigeria.`,
       cards: [
-        { kind: "link", label: "Campus Facilities & Locations", to: "/campus" },
+        { kind: "link", label: "Campus Locations", to: "/about", detail: "Ilorin, Abuja and Ibafo addresses" },
         { kind: "link", label: "Book a Visit or Facility", to: "/contact?type=Campus+Facility+Booking+%26+Enquiries" },
       ],
     },
@@ -93,17 +97,17 @@ const RULES: Rule[] = [
   {
     test: /\b(faculty|governance|board|council|advisor|director|who|accredit|cac|cmd|itf|nstif)\b/i,
     reply: {
-      text: `GIBS is governed by a Governing Council of 4 Directors under the Chairman of the Council, supported by a 20-member management and advisory board. Accredited by CAC (RC 1178333), CMD, ITF, and NSTIF.`,
+      text: `GIBS is governed by a Governing Council of 4 Directors under the Chairman of the Council, supported by a 20-member management and advisory board. It is registered with the Corporate Affairs Commission (CAC), RC 1178333. For current accreditation and certification details, please contact the registry.`,
       cards: [
-        { kind: "link", label: "Faculty & Governance Structure", to: "/faculty" },
-        { kind: "link", label: "About GIBS & Accreditations", to: "/about" },
+        { kind: "link", label: "Governance & Accreditations", to: "/about" },
+        { kind: "link", label: "Contact GIBS", to: "/contact" },
       ],
     },
   },
   {
     test: /\b(contact|email|phone|call|talk|speak|reach|number|help)\b/i,
     reply: {
-      text: `You can reach GIBS directly via email at gibsilorin@gmail.com / goshenibs22@gmail.com, or call: ${INSTITUTIONAL_DATA.phoneNumbers.slice(0, 3).join(", ")}.`,
+      text: `You can reach GIBS directly via email at gibsilorin@gmail.com / goshenibs22@gmail.com, or call: ${ACTIVE_PHONE_NUMBERS.slice(0, 3).join(", ")}.`,
       cards: [
         { kind: "link", label: "Contact Form & Full Directory", to: "/contact" },
         { kind: "link", label: "Browse Programmes", to: "/programmes" },
@@ -133,7 +137,7 @@ const RULES: Rule[] = [
 ];
 
 const FALLBACK: ConciergeReply = {
-  text: "I can guide you through our 113 Local Open Programmes, 22 Foreign Executive Training Hubs, in-plant workshops, campuses in Ilorin, Abuja & Ibafo, or connect you with the registry.",
+  text: "I can guide you through our 113 Local Open Programmes, 22 Foreign Executive Training Programmes, in-plant workshops, campuses in Ilorin, Abuja & Ibafo, or connect you with the registry.",
   cards: [
     { kind: "link", label: "Browse 2026 Programmes", to: "/programmes" },
     { kind: "link", label: "Foreign Training Hubs", to: "/executive-education" },

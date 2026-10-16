@@ -1,13 +1,13 @@
 import type {
-  ButtonHTMLAttributes,
   InputHTMLAttributes,
   ReactNode,
   SelectHTMLAttributes,
   TextareaHTMLAttributes,
 } from "react";
+import { cloneElement, isValidElement } from "react";
 import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
-import { ChevronRight, ArrowUpRight } from "./icons";
+import { ChevronRight, ChevronDown, ArrowUpRight } from "./icons";
 import { Reveal } from "./motion";
 
 /* ---------- Buttons ---------- */
@@ -28,15 +28,6 @@ const sizes: Record<BtnSize, string> = {
   md: "btn-md",
   lg: "btn-lg",
 };
-
-type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: BtnVariant;
-  size?: BtnSize;
-};
-
-export function Btn({ variant = "primary", size = "lg", className, ...props }: BtnProps) {
-  return <button className={cn("btn", variants[variant], sizes[size], className)} {...props} />;
-}
 
 type BtnLinkProps = {
   to: string;
@@ -74,9 +65,12 @@ export function Eyebrow({ children, light = false }: { children: ReactNode; ligh
 export function Breadcrumbs({ items }: { items: { label: string; to?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[11px] font-medium uppercase tracking-[0.12em] text-muted sm:text-[12px]">
+      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px] font-medium uppercase tracking-[0.12em] text-muted">
         <li>
-          <Link to="/" className="text-muted transition-colors hover:text-forest-700">
+          <Link
+            to="/"
+            className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700"
+          >
             Home
           </Link>
         </li>
@@ -84,7 +78,10 @@ export function Breadcrumbs({ items }: { items: { label: string; to?: string }[]
           <li key={item.label} className="flex items-center gap-1.5">
             <ChevronRight className="h-3 w-3 text-muted/60" />
             {item.to ? (
-              <Link to={item.to} className="text-muted transition-colors hover:text-forest-700">
+              <Link
+                to={item.to}
+                className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700"
+              >
                 {item.label}
               </Link>
             ) : (
@@ -150,28 +147,6 @@ export function EmptyState({
   );
 }
 
-export function ErrorState({
-  title = "Something went wrong",
-  body = "An unexpected problem occurred. Please try again, and if it persists, contact GIBS directly.",
-  onRetry,
-}: {
-  title?: string;
-  body?: string;
-  onRetry?: () => void;
-}) {
-  return (
-    <div role="alert" className="border border-red-800/25 bg-red-50 px-6 py-10 text-center">
-      <h3 className="type-h3 text-ink">{title}</h3>
-      <p className="mx-auto mt-3 max-w-md type-body text-muted">{body}</p>
-      {onRetry && (
-        <Btn variant="outline-ink" size="md" className="mt-6" onClick={onRetry}>
-          Try again
-        </Btn>
-      )}
-    </div>
-  );
-}
-
 export function SuccessPanel({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div
@@ -201,19 +176,30 @@ export function Field({
   hint?: string;
   children: ReactNode;
 }) {
+  const describedBy = error
+    ? `${htmlFor}-error`
+    : hint
+      ? `${htmlFor}-hint`
+      : undefined;
+  const control =
+    isValidElement<{ "aria-describedby"?: string }>(children) && describedBy
+      ? cloneElement(children, {
+          "aria-describedby": children.props["aria-describedby"] ?? describedBy,
+        })
+      : children;
   return (
     <div>
       <label htmlFor={htmlFor} className="field-label">
         {label} {required && <span className="text-gold-600" aria-hidden="true">*</span>}
       </label>
-      {children}
+      {control}
       {hint && !error && (
         <p id={`${htmlFor}-hint`} className="mt-1.5 text-[13px] text-muted">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${htmlFor}-error`} role="alert" className="mt-1.5 text-[13px] font-medium text-red-800">
+        <p id={`${htmlFor}-error`} role="alert" className="mt-1.5 text-[13px] font-medium text-error">
           {error}
         </p>
       )}
@@ -229,9 +215,17 @@ export function TextInput({ invalid, className, ...props }: InputProps) {
 type SelectProps = SelectHTMLAttributes<HTMLSelectElement> & { invalid?: boolean };
 export function SelectInput({ invalid, className, children, ...props }: SelectProps) {
   return (
-    <select className={cn("field-input appearance-none", invalid && "field-input-error", className)} {...props}>
-      {children}
-    </select>
+    <div className="relative">
+      <select
+        className={cn("field-input appearance-none pr-10", invalid && "field-input-error", className)}
+        {...props}
+      >
+        {children}
+      </select>
+      <span aria-hidden="true" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-muted">
+        <ChevronDown className="h-4 w-4" />
+      </span>
+    </div>
   );
 }
 
@@ -289,8 +283,8 @@ export function ClosingQuiet({
 }) {
   return (
     <section className={surface === "white" ? "bg-white" : "paper-grain bg-paper"}>
-      <div className="container-x py-20 sm:py-24">
-        <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+      <div className="container-x section-y">
+        <div className="grid gap-10 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">
             <Reveal>
               <Eyebrow>{eyebrowText}</Eyebrow>
@@ -313,97 +307,6 @@ export function ClosingQuiet({
               </div>
             </Reveal>
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Immersive full-bleed image close — a spatial, cinematic end. */
-export function ClosingImmersive({
-  image,
-  alt,
-  eyebrow: eyebrowText,
-  title,
-  italic,
-  body,
-  actions,
-}: {
-  image: string;
-  alt: string;
-  eyebrow: string;
-  title: ReactNode;
-  italic?: ReactNode;
-  body?: ReactNode;
-  actions: ReactNode;
-}) {
-  return (
-    <section className="relative isolate overflow-hidden bg-forest-950">
-      <img
-        src={image}
-        alt={alt}
-        loading="lazy"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="film-grain" aria-hidden="true" />
-      <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(0,32,9,0.92)_0%,rgba(0,38,12,0.72)_45%,rgba(0,32,9,0.45)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,32,9,0.7),transparent_55%)]" />
-      <div className="container-x relative py-28 sm:py-36">
-        <div className="max-w-2xl text-ivory">
-          <Reveal>
-            <Eyebrow light>{eyebrowText}</Eyebrow>
-          </Reveal>
-          <Reveal delay={0.08} y={28}>
-            <h2 className="type-h1 mt-6">
-              {title} {italic && <em className="italic text-gold-300">{italic}</em>}
-            </h2>
-          </Reveal>
-          {body && (
-            <Reveal delay={0.16}>
-              <p className="mt-5 max-w-lg type-body text-ivory/85">
-                {body}
-              </p>
-            </Reveal>
-          )}
-          <Reveal delay={0.22}>
-            <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">{actions}</div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Dark journal close — two-column editorial panel for research/news pages. */
-export function ClosingJournal({
-  eyebrow: eyebrowText,
-  quote,
-  body,
-  actions,
-}: {
-  eyebrow: string;
-  quote: ReactNode;
-  body?: ReactNode;
-  actions: ReactNode;
-}) {
-  return (
-    <section className="relative overflow-hidden bg-forest-900 text-ivory">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_120%_at_12%_-20%,rgba(235,211,117,0.12),transparent_55%)]" />
-      <div className="container-x relative grid items-center gap-10 py-20 sm:py-24 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <Reveal>
-            <Eyebrow light>{eyebrowText}</Eyebrow>
-            <h2 className="type-h2 mt-6">
-              {quote}
-            </h2>
-          </Reveal>
-        </div>
-        <div className="lg:col-span-5 lg:pl-8">
-          <Reveal delay={0.12}>
-            {body && <p className="type-body text-ivory/85">{body}</p>}
-            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">{actions}</div>
-          </Reveal>
         </div>
       </div>
     </section>

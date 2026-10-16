@@ -1,5 +1,4 @@
 import type {
-  ButtonHTMLAttributes,
   InputHTMLAttributes,
   ReactNode,
   SelectHTMLAttributes,
@@ -10,7 +9,6 @@ import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
 import { ChevronRight, ChevronDown, ArrowUpRight } from "./icons";
 import { Reveal } from "./motion";
-import { imageSet } from "../lib/data";
 
 /* ---------- Buttons ---------- */
 
@@ -30,15 +28,6 @@ const sizes: Record<BtnSize, string> = {
   md: "btn-md",
   lg: "btn-lg",
 };
-
-type BtnProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: BtnVariant;
-  size?: BtnSize;
-};
-
-export function Btn({ variant = "primary", size = "lg", className, ...props }: BtnProps) {
-  return <button className={cn("btn", variants[variant], sizes[size], className)} {...props} />;
-}
 
 type BtnLinkProps = {
   to: string;
@@ -154,28 +143,6 @@ export function EmptyState({
       <Heading className="type-h3 text-ink">{title}</Heading>
       <p className="mt-3 max-w-md type-body text-muted">{body}</p>
       {action && <div className="mt-7">{action}</div>}
-    </div>
-  );
-}
-
-export function ErrorState({
-  title = "Something went wrong",
-  body = "An unexpected problem occurred. Please try again, and if it persists, contact GIBS directly.",
-  onRetry,
-}: {
-  title?: string;
-  body?: string;
-  onRetry?: () => void;
-}) {
-  return (
-    <div role="alert" className="border border-error/25 bg-error-bg px-6 py-10 text-center">
-      <h3 className="type-h3 text-ink">{title}</h3>
-      <p className="mx-auto mt-3 max-w-md type-body text-muted">{body}</p>
-      {onRetry && (
-        <Btn variant="outline-ink" size="md" className="mt-6" onClick={onRetry}>
-          Try again
-        </Btn>
-      )}
     </div>
   );
 }
@@ -340,98 +307,6 @@ export function ClosingQuiet({
               </div>
             </Reveal>
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Immersive full-bleed image close — a spatial, cinematic end. */
-export function ClosingImmersive({
-  image,
-  alt,
-  eyebrow: eyebrowText,
-  title,
-  italic,
-  body,
-  actions,
-}: {
-  image: string;
-  alt: string;
-  eyebrow: string;
-  title: ReactNode;
-  italic?: ReactNode;
-  body?: ReactNode;
-  actions: ReactNode;
-}) {
-  return (
-    <section className="relative isolate overflow-hidden bg-forest-950">
-      <img
-        {...imageSet(image)}
-        alt={alt}
-        loading="lazy"
-        decoding="async"
-        sizes="100vw"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="film-grain" aria-hidden="true" />
-      <div className="absolute inset-0 bg-[linear-gradient(92deg,rgba(0,32,9,0.92)_0%,rgba(0,38,12,0.72)_45%,rgba(0,32,9,0.45)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(0,32,9,0.7),transparent_55%)]" />
-      <div className="container-x section-y-major relative">
-        <div className="max-w-2xl text-ivory">
-          <Reveal>
-            <Eyebrow light>{eyebrowText}</Eyebrow>
-          </Reveal>
-          <Reveal delay={0.08} y={28}>
-            <h2 className="type-h1 mt-6">
-              {title} {italic && <em className="italic text-gold-300">{italic}</em>}
-            </h2>
-          </Reveal>
-          {body && (
-            <Reveal delay={0.16}>
-              <p className="mt-5 max-w-lg type-body text-ivory/85">
-                {body}
-              </p>
-            </Reveal>
-          )}
-          <Reveal delay={0.22}>
-            <div className="mt-9 flex flex-wrap items-center gap-x-8 gap-y-4">{actions}</div>
-          </Reveal>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/** Dark journal close — two-column editorial panel for research/news pages. */
-export function ClosingJournal({
-  eyebrow: eyebrowText,
-  quote,
-  body,
-  actions,
-}: {
-  eyebrow: string;
-  quote: ReactNode;
-  body?: ReactNode;
-  actions: ReactNode;
-}) {
-  return (
-    <section className="relative overflow-hidden bg-forest-900 text-ivory">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_120%_at_12%_-20%,rgba(235,211,117,0.12),transparent_55%)]" />
-      <div className="container-x section-y-major relative grid items-center gap-10 lg:grid-cols-12">
-        <div className="lg:col-span-7">
-          <Reveal>
-            <Eyebrow light>{eyebrowText}</Eyebrow>
-            <h2 className="type-h2 mt-6">
-              {quote}
-            </h2>
-          </Reveal>
-        </div>
-        <div className="lg:col-span-5 lg:pl-8">
-          <Reveal delay={0.12}>
-            {body && <p className="type-body text-ivory/85">{body}</p>}
-            <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">{actions}</div>
-          </Reveal>
         </div>
       </div>
     </section>

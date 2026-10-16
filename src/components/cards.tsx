@@ -2,20 +2,9 @@ import type { ReactNode } from "react";
 import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
 import { ArrowUpRight, PlusIcon, CalendarIcon, UsersIcon } from "./icons";
-import { useCardDepth } from "./depth";
-import { type Programme, imageSet } from "../lib/data";
+import { type Programme } from "../lib/data";
 
 /* ---------- Programme card (index pages / programmes catalog) ---------- */
-
-/** Rebalance a small catalogue so the last row never ends in a lone orphan:
-    1 → full width, 2–4 → two-up, and the 3-column directory only when its
-    remainder is 0 or 2 (three-up otherwise leaves a single cell stranded at
-    the end of the last row). */
-export function colsFor(n: number): 1 | 2 | 3 {
-  if (n === 1) return 1;
-  if (n <= 4) return 2;
-  return n % 3 === 1 ? 2 : 3;
-}
 
 /** Responsive grid used by the foreign programme directory on /executive-education. */
 export const DIRECTORY_GRID =
@@ -179,83 +168,6 @@ export function ProgrammeCard({
         </span>
       </div>
     </Link>
-  );
-}
-
-/* ---------- Editorial image card (research / insights) ---------- */
-
-export function EditorialCard({
-  to,
-  image,
-  alt,
-  tag,
-  meta,
-  title,
-  excerpt,
-  cta = "Read",
-}: {
-  to: string;
-  image: string;
-  alt: string;
-  tag: string;
-  meta?: string;
-  title: string;
-  excerpt: string;
-  cta?: string;
-}) {
-  const depthRef = useCardDepth<HTMLAnchorElement>(2.25);
-  return (
-    <Link
-      ref={depthRef}
-      to={to}
-      className="group block card-depth card-spot rounded-panel bg-white p-4 shadow-card transition-all duration-300 hover:shadow-card-strong max-w-card mx-auto lg:mx-0"
-    >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xs shadow-crisp">
-        <img
-          {...imageSet(image)}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
-        />
-        <div className="absolute inset-0 bg-forest-900/20 transition-colors duration-300 group-hover:bg-forest-900/10" />
-        <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-        <div className="film-grain" aria-hidden="true" />
-      </div>
-      <div className="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-medium uppercase tracking-[0.12em] sm:text-[12px]">
-        <span className="text-forest-600">{tag}</span>
-        {meta && (
-          <>
-            <span className="h-px w-4 bg-gold-500" />
-            <span className="text-muted">{meta}</span>
-          </>
-        )}
-      </div>
-      <h3 className="type-h3 mt-3 text-ink transition-colors duration-200 group-hover:text-forest-700">{title}</h3>
-      <p className="mt-3 type-body text-muted line-clamp-3 max-w-prose">{excerpt}</p>
-      <span className="card-action card-action-quiet mt-4">
-        {cta}
-        <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      </span>
-    </Link>
-  );
-}
-
-/* ---------- Theme card (typographic, no image) ---------- */
-
-export function ThemeCard({
-  title,
-  blurb,
-}: {
-  title: string;
-  blurb: string;
-}) {
-  return (
-    <div className="flex h-full flex-col border-t rule pt-6">
-      <h3 className="display-serif text-xl leading-snug text-ink">{title}</h3>
-      <p className="mt-3 type-body text-muted">{blurb}</p>
-    </div>
   );
 }
 

@@ -123,15 +123,6 @@ export function MapPinIcon({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
-export function ClockIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" {...base}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3.5 2" />
-    </svg>
-  );
-}
-
 export function Diamond({ className = "h-1.5 w-1.5" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 8 8" fill="currentColor" aria-hidden="true">

@@ -218,7 +218,17 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
   if (route === '/contact') {
     const address = escapeHtml(inst.postalAddress || '');
     const website = escapeHtml(inst.website || '');
-    const phones = inst.phoneNumbers
+    /* The contact page in data.ts is the source of phoneNumbers, but data.ts
+       is byte-locked. Retired numbers are filtered out and the new official
+       number is appended, mirroring the render-layer transform in
+       src/pages/Contact.tsx. */
+    const RETIRED = new Set(["08033429427", "08032296041"]);
+    const NEW_NUMBER = "08160010400";
+    const activePhones = [
+      ...inst.phoneNumbers.filter((n) => !RETIRED.has(n)),
+      ...(inst.phoneNumbers.includes(NEW_NUMBER) ? [] : [NEW_NUMBER]),
+    ];
+    const phones = activePhones
       .map((n) => `<li><strong>Phone:</strong> ${escapeHtml(n)}</li>`)
       .join('');
     const emails = inst.emails

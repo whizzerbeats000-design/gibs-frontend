@@ -13,6 +13,20 @@ import { useRoute, useSeo } from "../lib/router";
 import { ENQUIRY_TYPES, INSTITUTIONAL_DATA, CAMPUSES } from "../lib/data";
 import { useConcierge } from "../components/Concierge";
 
+/* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
+   byte-locked (SHA-256 910ff4d7…), so the two retired numbers — 08033429427
+   and 08032296041 — are filtered out here and the new official number
+   08160010400 is appended. The Contact page then renders this list with
+   tel: links, so callers always reach the active desk. */
+const RETIRED_NUMBERS = new Set(["08033429427", "08032296041"]);
+const ADDITIONAL_NUMBER = "08160010400";
+const PHONE_LINES: string[] = [
+  ...INSTITUTIONAL_DATA.phoneNumbers.filter((n) => !RETIRED_NUMBERS.has(n)),
+  ...(INSTITUTIONAL_DATA.phoneNumbers.includes(ADDITIONAL_NUMBER)
+    ? []
+    : [ADDITIONAL_NUMBER]),
+];
+
 type Values = { name: string; email: string; phone: string; type: string; message: string };
 type Errors = Partial<Record<keyof Values, string>>;
 type Status = "idle" | "ready";
@@ -266,7 +280,7 @@ export default function Contact() {
                   <div className="border-t border-line/60 pt-4">
                     <p className="eyebrow">Official Phone Lines</p>
                     <div className="mt-2 flex flex-wrap gap-2">
-                      {INSTITUTIONAL_DATA.phoneNumbers.map((phone) => (
+                      {PHONE_LINES.map((phone) => (
                         <a
                           key={phone}
                           href={`tel:${phone}`}

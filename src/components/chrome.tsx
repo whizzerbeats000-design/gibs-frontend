@@ -484,7 +484,7 @@ export function GlobalFooter() {
               <p className="font-semibold text-ivory">Headquarters (Ilorin):</p>
               <p>No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi, Ilorin, Kwara State</p>
               <p className="pt-1"><span className="text-gold-300">Emails:</span> gibsilorin@gmail.com · goshenibs22@gmail.com</p>
-              <p><span className="text-gold-300">Phones:</span> 08160010401 · 08033429427 · 08186464474</p>
+              <p><span className="text-gold-300">Phones:</span> 08160010401 · 08160010400 · 08186464474</p>
               <p><span className="text-gold-300">Postal:</span> P.O. Box 63, Ilorin General Post Office, Kwara State</p>
               <p><span className="text-gold-300">Web:</span> www.gibs.com.ng</p>
             </div>

@@ -5,6 +5,19 @@ import { PROGRAMMES, INSTITUTIONAL_DATA } from "./data";
    Official programme & institutional guide for Goshen International Business School (GIBS)
    ========================================================================== */
 
+/* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
+   byte-locked (SHA-256 910ff4d7…), so the retired numbers 08033429427 and
+   08032296041 are filtered out and the new official 08160010400 is appended.
+   This list is what the concierge surfaces in its contact reply. */
+const RETIRED_NUMBERS = new Set(["08033429427", "08032296041"]);
+const ADDITIONAL_NUMBER = "08160010400";
+const ACTIVE_PHONE_NUMBERS: string[] = [
+  ...INSTITUTIONAL_DATA.phoneNumbers.filter((n) => !RETIRED_NUMBERS.has(n)),
+  ...(INSTITUTIONAL_DATA.phoneNumbers.includes(ADDITIONAL_NUMBER)
+    ? []
+    : [ADDITIONAL_NUMBER]),
+];
+
 export type ConciergeCard =
   | { kind: "link"; label: string; to: string; detail?: string | null }
   | { kind: "programme"; slug: string; label: string; detail?: string | null };
@@ -94,7 +107,7 @@ const RULES: Rule[] = [
   {
     test: /\b(contact|email|phone|call|talk|speak|reach|number|help)\b/i,
     reply: {
-      text: `You can reach GIBS directly via email at gibsilorin@gmail.com / goshenibs22@gmail.com, or call: ${INSTITUTIONAL_DATA.phoneNumbers.slice(0, 3).join(", ")}.`,
+      text: `You can reach GIBS directly via email at gibsilorin@gmail.com / goshenibs22@gmail.com, or call: ${ACTIVE_PHONE_NUMBERS.slice(0, 3).join(", ")}.`,
       cards: [
         { kind: "link", label: "Contact Form & Full Directory", to: "/contact" },
         { kind: "link", label: "Browse Programmes", to: "/programmes" },

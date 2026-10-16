@@ -43,7 +43,7 @@ const SUBSCRIPTION_STEPS_RENDER = SUBSCRIPTION_STEPS.map((step) =>
 
 const SUBSCRIPTION_FAQS_RENDER = SUBSCRIPTION_FAQS.map((faq) => {
   if (faq.q === "How do MDAs and corporate organizations nominate staff to subscribe?")
-    return { q: "How do MDAs and corporate organisations enquire about staff training?", a: "Organisations can email gibsilorin@gmail.com / goshenibs22@gmail.com, or contact the training desk via 08160010401 or 08033429427 to request a programme enquiry." };
+    return { q: "How do MDAs and corporate organisations enquire about staff training?", a: "Organisations can email gibsilorin@gmail.com / goshenibs22@gmail.com, or contact the training desk via 08160010401 or 08160010400 to request a programme enquiry." };
   if (faq.q === "Are concessions available for group subscriptions and nominations?")
     return { q: "Are concessions available for group enrolments?", a: faq.a };
   return faq;

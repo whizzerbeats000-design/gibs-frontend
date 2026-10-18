@@ -38,7 +38,6 @@ jobs:
 
       - name: Run E2E Browser Tests
         run: |
-          npm run build
           npm run preview &
           sleep 5
           npm run test:e2e

@@ -16,7 +16,7 @@ this document only covers headers.
 | `Referrer-Policy` | `strict-origin-when-cross-origin` | Sends the full URL same-origin and origin-only cross-origin. Note: the Fetch spec always strips the fragment from a referrer, so hash-routed paths (`/#/programmes/...`) are not leaked even same-origin. |
 | `Permissions-Policy` | see below | Disables powerful device APIs the site never uses. `payment=()` is deliberate: GIBS does not handle payments. |
 | `Content-Security-Policy` | see below | **Enforced.** Promotion from report-only was evidence-gated — see "Promotion to enforcement" below. |
-| `Cache-Control` | `public, max-age=0, must-revalidate` | Explicitly pins revalidation. See "Caching" below for why this is deliberately conservative. |
+| `Cache-Control` | Stable files: `public, max-age=0, must-revalidate`; content-hashed files under `/assets/`: `public, max-age=31536000, immutable` | Stable URLs can receive updated bytes without a year-long client cache; only URL-versioned assets are immutable. See "Caching" below. |
 
 ### HSTS — not declared here, and why that is a known unknown
 
@@ -43,22 +43,19 @@ follow an explicit decision.
 
 ### Caching
 
-`Cache-Control: public, max-age=0, must-revalidate` is set on every response.
+Stable public files (`/images/*`, `/fonts/*`, `/favicon.ico`, `/robots.txt`,
+and `/sitemap.xml`) receive `Cache-Control: public, max-age=0, must-revalidate`.
+This includes the current stable image and font filenames and the generated SEO
+files, which can all change at the same URL on a later deploy.
 
-This is intentionally conservative. `vite-plugin-singlefile` emits stable,
-**non-content-hashed** asset names — `/images/gibs-logo.webp`,
-`fonts/fraunces-var-latin.woff2`, and so on. A deploy can replace the bytes
-behind an unchanged filename, so any long-lived or `immutable` cache would
-serve stale assets after release. `max-age=0, must-revalidate` costs a
-conditional request per asset and buys correctness.
+The only long-lived rule is scoped to `/assets/<name>-<hash>.<ext>` paths and
+sets `Cache-Control: public, max-age=31536000, immutable`. The filename must
+carry an 8-or-more-character version token. Vite's `vite-plugin-singlefile`
+currently inlines the application JS and CSS, and public images/fonts keep stable
+names, so today's build does not rely on that immutable rule for those files.
 
-Raising this to `max-age=31536000, immutable` requires content-hashed filenames
-first. That means dropping `viteSingleFile()` in favour of emitted external
-assets, which changes the deployment assumptions the build is built around. Until
-someone makes that decision, do not set a long cache.
-
-The HTML entry point must never be cached for long regardless: it is the whole
-application, and it changes on every deploy.
+Generated HTML shells and fallback HTML use `public, max-age=0, must-revalidate`.
+This avoids retaining an old application shell or metadata after a deploy.
 
 ### Permissions-Policy
 

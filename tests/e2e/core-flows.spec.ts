@@ -21,6 +21,14 @@ test.describe('Core User Journeys', () => {
     await expect(page.locator('h1')).toContainText('Programmes');
   });
 
+  test('Valid clean programme route and unknown hash route', async ({ page }) => {
+    await page.goto('/programmes/course-1-public-sector-accounting-procedure-and-standards');
+    await expect(page.locator('h1')).toContainText('Public Sector Accounting');
+
+    await page.goto('/#/not-a-real-route');
+    await expect(page.locator('h1')).toHaveText('Page not found');
+  });
+
   test('Gallery lightbox flow', async ({ page }) => {
     await page.goto('/gallery');
 
@@ -56,4 +64,43 @@ test.describe('Core User Journeys', () => {
 
     expect(scrollWidth).toBeLessThanOrEqual(clientWidth);
   });
+
+  test('Concierge history expires when older than 24 hours', async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem('gibs-concierge-v2', JSON.stringify({
+        savedAt: Date.now() - 25 * 60 * 60 * 1000,
+        messages: [{ id: 1, role: 'user', text: 'expired conversation marker' }],
+      }));
+    });
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Open GIBS AI' }).first().click();
+
+    const dialog = page.getByRole('dialog', { name: 'GIBS AI' });
+    await expect(dialog.getByText('expired conversation marker')).toHaveCount(0);
+    await expect(dialog.getByText(/stored locally in this browser/i)).toBeVisible();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem('gibs-concierge-v2'))).toBeNull();
+  });
+
+  for (const viewport of [
+    { name: 'desktop', width: 1440, height: 900, route: '/programmes' },
+    { name: 'mobile', width: 390, height: 844, route: '/' },
+  ]) {
+    test(`Concierge history can be cleared on ${viewport.name}`, async ({ page }) => {
+      await page.setViewportSize({ width: viewport.width, height: viewport.height });
+      await page.goto(viewport.route);
+      await page.getByRole('button', { name: 'Open GIBS AI' }).first().click();
+
+      const dialog = page.getByRole('dialog', { name: 'GIBS AI' });
+      await dialog.getByLabel('Ask GIBS AI').fill('message for reset verification');
+      await dialog.getByRole('button', { name: 'Send message' }).click();
+      await expect(dialog.getByText('message for reset verification')).toBeVisible();
+      await expect.poll(() => page.evaluate(() => localStorage.getItem('gibs-concierge-v2'))).not.toBeNull();
+
+      await dialog.getByRole('button', { name: 'Clear history' }).click();
+      await expect(dialog.getByText(/Welcome to GIBS AI/)).toBeVisible();
+      await expect(dialog.getByText('message for reset verification')).toHaveCount(0);
+      await page.waitForTimeout(750);
+      await expect.poll(() => page.evaluate(() => localStorage.getItem('gibs-concierge-v2'))).toBeNull();
+    });
+  }
 });

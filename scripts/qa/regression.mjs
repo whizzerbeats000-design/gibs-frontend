@@ -1,28 +1,19 @@
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
-import { homedir } from "node:os";
 import { createServer } from "node:http";
 import { chromium } from "playwright-core";
 
 const ROOT = process.env.DIST_DIR || join(process.cwd(), "dist");
+if (!existsSync(join(ROOT, "index.html"))) {
+  console.error(`No production build found at ${ROOT}/index.html. Run npm run build first.`);
+  process.exit(1);
+}
+
 const MIME = {
   ".html": "text/html", ".js": "text/javascript", ".css": "text/css",
   ".webp": "image/webp", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml",
   ".woff2": "font/woff2", ".json": "application/json",
 };
-
-function findChromium() {
-  if (process.env.CHROMIUM_PATH && existsSync(process.env.CHROMIUM_PATH)) return process.env.CHROMIUM_PATH;
-  const cacheRoots = [process.env.PLAYWRIGHT_BROWSERS_PATH, join(homedir(), ".cache", "ms-playwright")]
-    .filter(Boolean);
-  for (const root of cacheRoots) {
-    for (const base of existsSync(root) ? readdirSync(root) : []) {
-      const exe = join(root, base, "chrome-linux", "chrome");
-      if (base.startsWith("chromium") && existsSync(exe)) return exe;
-    }
-  }
-  return undefined;
-}
 
 const server = createServer((req, res) => {
   let p = decodeURIComponent((req.url || "/").split("?")[0]);
@@ -61,9 +52,12 @@ const AXE = existsSync(join(process.cwd(), "node_modules/axe-core/axe.min.js"))
   ? readFileSync(join(process.cwd(), "node_modules/axe-core/axe.min.js"), "utf8")
   : null;
 
-const executablePath = findChromium();
-if (!executablePath) {
-  console.error("No Chromium found. Set CHROMIUM_PATH or run `npx playwright-core install chromium`.");
+const configuredPath = process.env.CHROMIUM_PATH;
+const executablePath = configuredPath && existsSync(configuredPath)
+  ? configuredPath
+  : chromium.executablePath();
+if (!existsSync(executablePath)) {
+  console.error(`No Chromium found at ${executablePath}. Set CHROMIUM_PATH or run \`npx playwright-core install chromium\`.`);
   process.exit(2);
 }
 const browser = await chromium.launch({

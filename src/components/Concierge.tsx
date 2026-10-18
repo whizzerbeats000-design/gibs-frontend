@@ -55,20 +55,51 @@ const WELCOME: Message = {
 };
 
 const STORAGE_KEY = "gibs-concierge-v2";
+const HISTORY_TTL_MS = 24 * 60 * 60 * 1000;
 
-function loadHistory(): Message[] {
+function clearStoredHistory() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+function loadHistory(): { messages: Message[]; savedAt: number | null } {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [WELCOME];
-    const parsed = JSON.parse(raw) as Message[];
-    if (!Array.isArray(parsed) || parsed.length === 0) return [WELCOME];
-    return parsed
+    if (!raw) return { messages: [WELCOME], savedAt: null };
+
+    const stored = JSON.parse(raw) as { savedAt?: number; messages?: Message[] };
+    const now = Date.now();
+    if (
+      !stored ||
+      !Array.isArray(stored.messages) ||
+      !Number.isFinite(stored.savedAt) ||
+      stored.savedAt! > now ||
+      now - stored.savedAt! >= HISTORY_TTL_MS
+    ) {
+      clearStoredHistory();
+      return { messages: [WELCOME], savedAt: null };
+    }
+
+    const messages = stored.messages
       .filter(
-        (m) => m && Number.isInteger(m.id) && typeof m.role === "string" && typeof m.text === "string"
+        (m) =>
+          m &&
+          Number.isInteger(m.id) &&
+          (m.role === "user" || m.role === "concierge") &&
+          typeof m.text === "string"
       )
       .slice(-30);
+    if (messages.length === 0) {
+      clearStoredHistory();
+      return { messages: [WELCOME], savedAt: null };
+    }
+    return { messages, savedAt: stored.savedAt! };
   } catch {
-    return [WELCOME];
+    clearStoredHistory();
+    return { messages: [WELCOME], savedAt: null };
   }
 }
 
@@ -103,6 +134,7 @@ export function ConciergeConversation({
 }) {
   const hintId = useId();
   const idRef = useRef(1);
+  const savedAtRef = useRef<number | null>(null);
   /*
    * Message ids must stay unique across fresh sessions, remounts, navigation
    * and localStorage restore. The initial history is loaded once and the id
@@ -111,24 +143,33 @@ export function ConciergeConversation({
    */
   const [messages, setMessages] = useState<Message[]>(() => {
     const history = loadHistory();
-    idRef.current = history.reduce((max, m) => Math.max(max, m.id), 0) + 1;
-    return history;
+    savedAtRef.current = history.savedAt;
+    idRef.current = history.messages.reduce((max, m) => Math.max(max, m.id), 0) + 1;
+    return history.messages;
   });
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
+  const pendingReplyRef = useRef<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { setOpen } = useConcierge();
 
   const reset = () => {
+    if (pendingReplyRef.current !== null) {
+      window.clearTimeout(pendingReplyRef.current);
+      pendingReplyRef.current = null;
+    }
+    savedAtRef.current = null;
     setMessages([WELCOME]);
     setInput("");
     setTyping(false);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      /* storage unavailable */
-    }
+    clearStoredHistory();
   };
+
+  useEffect(() => {
+    return () => {
+      if (pendingReplyRef.current !== null) window.clearTimeout(pendingReplyRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const onReset = () => reset();
@@ -137,8 +178,15 @@ export function ConciergeConversation({
   }, []);
 
   useEffect(() => {
+    if (messages.length <= 1) {
+      clearStoredHistory();
+      return;
+    }
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-30)));
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ savedAt: savedAtRef.current ?? Date.now(), messages: messages.slice(-30) })
+      );
     } catch {
       /* storage unavailable — conversation continues in memory */
     }
@@ -164,12 +212,14 @@ export function ConciergeConversation({
       const text = raw.trim();
       if (!text || typing) return;
       const userMsg: Message = { id: idRef.current++, role: "user", text };
+      savedAtRef.current = Date.now();
       setMessages((m) => [...m, userMsg]);
       setInput("");
       setTyping(true);
       // Simulated turn latency of the deterministic frontend engine.
       // Replace with a provider request in getConciergeReply when integrating.
-      window.setTimeout(() => {
+      pendingReplyRef.current = window.setTimeout(() => {
+        pendingReplyRef.current = null;
         const reply = getConciergeReply(text);
         setMessages((m) => [
           ...m,
@@ -192,7 +242,7 @@ export function ConciergeConversation({
         role="region"
         aria-label={label}
         aria-describedby={hintId}
-        className="flex-1 space-y-5 overflow-y-auto px-5 py-6 sm:px-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-forest-600/30 focus-visible:ring-inset"
+        className="flex-1 space-y-5 overflow-y-auto px-5 py-6 sm:px-6"
         aria-live="polite"
       >
         <span id={hintId} className="sr-only">
@@ -262,9 +312,18 @@ export function ConciergeConversation({
           <SendIcon className="h-4.5 w-4.5" />
         </button>
       </form>
-      <p className="px-5 pb-3 text-[11px] leading-snug text-muted">
-        Answers come from the GIBS programme records. For official enquiries, GIBS AI directs you to the registry.
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-2 px-5 pb-3">
+        <p className="min-w-0 flex-1 text-[11px] leading-snug text-muted">
+          Answers come from GIBS programme records. Chat history is stored locally in this browser for up to 24 hours and may remain after you close this page.
+        </p>
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent("gibs:concierge-reset"))}
+          className="min-h-11 shrink-0 rounded-pill border border-forest-700/25 px-3 text-[11px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50"
+        >
+          Clear history
+        </button>
+      </div>
     </div>
   );
 }
@@ -363,20 +422,6 @@ export function ConciergeDialog() {
             <p className="mt-0.5 text-[11px] text-ivory/75">Programme and enquiry guide</p>
           </div>
           <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => {
-                try {
-                  localStorage.removeItem(STORAGE_KEY);
-                } catch {
-                  /* storage unavailable */
-                }
-                window.dispatchEvent(new CustomEvent("gibs:concierge-reset"));
-              }}
-              className="mr-1 min-h-[40px] hidden items-center rounded-pill px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory sm:inline-flex"
-            >
-              Reset
-            </button>
             <button
               type="button"
               onClick={() => setOpen(false)}

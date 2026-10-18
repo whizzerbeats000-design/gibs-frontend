@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/seo-gen.mjs",
-    "qa": "python3 scripts/qa/parity_check.py && python3 scripts/qa/generator_drift_check.py && python3 scripts/import/export_snapshot.py --check",
-    "qa:browser": "node scripts/qa/regression.mjs",
+    "qa": "node --test scripts/qa/chromium-path.test.mjs && node scripts/qa/cache_policy_check.mjs && python3 scripts/qa/parity_check.py && python3 scripts/qa/generator_drift_check.py && python3 scripts/import/export_snapshot.py --check",
+    "qa:browser": "npm run build && node scripts/qa/regression.mjs",
     "check:all": "npx tsc --noEmit && node scripts/qa/catalogue_integrity.cjs && npm run qa && npm run build",
     "test:e2e": "playwright test",
     "preview": "vite preview"

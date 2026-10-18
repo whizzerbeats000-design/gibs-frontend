@@ -22,8 +22,8 @@ export type RouteState = {
 /*
  * ENTRY-PATH ADOPTION
  * -------------------
- * Vercel's catch-all rewrite serves index.html for clean paths as well as for
- * "/", so https://host/programmes returns a fully working page. Previously an
+ * Vercel serves generated HTML shells for valid clean paths as well as "/",
+ * so https://host/programmes returns a fully working page. Previously an
  * empty hash was forced to "#/", which meant a shared clean URL silently
  * rendered the homepage with nothing to indicate that the route was lost.
  *
@@ -40,10 +40,11 @@ export type RouteState = {
  * reset to "/", every reachable URL has the same shape ("/#/route"), which is
  * what the canonical/og:url strategy in index.html assumes.
  *
- * Known limitation, not fixable from the client: Vercel answers unknown clean
- * paths with index.html and HTTP 200, so an unknown route renders our NotFound
- * page as a "soft 404". Returning a real 404 status needs a server-side check,
- * which is a deployment decision, not an app one.
+ * Unknown-route behavior differs by URL form. An unknown hash route (for
+ * example, /#/not-a-page) reaches the client router and renders NotFound. An
+ * unknown clean path currently receives Vercel's platform-level HTTP 404 before
+ * this app runs, so the client router cannot replace that response. Preserve
+ * this observed distinction; do not assume unknown clean paths reach the SPA.
  */
 
 // Paths that are the served document itself rather than a route. A direct hit

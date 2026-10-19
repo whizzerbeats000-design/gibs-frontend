@@ -5,10 +5,15 @@ export default defineConfig({
   fullyParallel: true,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:4173', // Vite preview port
-    // Use a more flexible approach for the port if it changes
+    baseURL: 'http://127.0.0.1:4173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+  },
+  webServer: {
+    command: 'npm run preview -- --host 127.0.0.1 --strictPort',
+    url: 'http://127.0.0.1:4173',
+    reuseExistingServer: !process.env.CI,
+    timeout: 30_000,
   },
   projects: [
     {

@@ -28,11 +28,13 @@ const server = createServer((req, res) => {
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const BASE = `http://127.0.0.1:${server.address().port}`;
 
-const VIEWPORTS = [
-  [320, 720], [360, 800], [375, 812], [390, 844], [412, 915], [430, 932],
-  [600, 960], [640, 960], [768, 1024], [834, 1112], [1024, 768],
-  [1280, 800], [1440, 900], [1920, 1080],
-];
+const VIEWPORTS = process.env.CI
+  ? [[320, 720], [390, 844], [768, 1024], [1440, 900]]
+  : [
+      [320, 720], [360, 800], [375, 812], [390, 844], [412, 915], [430, 932],
+      [600, 960], [640, 960], [768, 1024], [834, 1112], [1024, 768],
+      [1280, 800], [1440, 900], [1920, 1080],
+    ];
 
 const ROUTES = [
   "/",
@@ -51,6 +53,10 @@ const ROUTES = [
 const AXE = existsSync(join(process.cwd(), "node_modules/axe-core/axe.min.js"))
   ? readFileSync(join(process.cwd(), "node_modules/axe-core/axe.min.js"), "utf8")
   : null;
+if (!AXE && process.env.CI) {
+  console.error("axe-core is required for the CI browser accessibility sweep but is not installed.");
+  process.exit(1);
+}
 
 const configuredPath = process.env.CHROMIUM_PATH;
 const executablePath = configuredPath && existsSync(configuredPath)

@@ -35,9 +35,9 @@ function quarterStatus(start: string, end: string): CycleStatus {
    arrays override specific items before they reach the user. */
 const SUBSCRIPTION_STEPS_RENDER = SUBSCRIPTION_STEPS.map((step) =>
   step.n === "02"
-    ? { ...step, title: "Enrolment & Confirmation", body: "Organisations submit participant details; individual candidates make an enquiry. GIBS confirms your place and issues a formal confirmation letter." }
+    ? { ...step, title: "Enquiry & Guidance", body: "Organisations submit participant details; individual candidates make an enquiry. GIBS processes enquiries and provides guidance on programme availability." }
     : step.n === "03"
-    ? { ...step, body: "GIBS issues official programme confirmation letters, course schedule details, and invoice." }
+    ? { ...step, body: "GIBS provides programme details, schedule information, and fee structure upon enquiry." }
     : step
 );
 
@@ -45,7 +45,7 @@ const SUBSCRIPTION_FAQS_RENDER = SUBSCRIPTION_FAQS.map((faq) => {
   if (faq.q === "How do MDAs and corporate organizations nominate staff to subscribe?")
     return { q: "How do MDAs and corporate organisations enquire about staff training?", a: "Organisations can email gibsilorin@gmail.com / goshenibs22@gmail.com, or contact the training desk via 08160010401 or 08160010400 to request a programme enquiry." };
   if (faq.q === "Are concessions available for group subscriptions and nominations?")
-    return { q: "Are concessions available for group enrolments?", a: faq.a };
+    return { q: "Are concessions available for group enquiries?", a: faq.a };
   return faq;
 });
 
@@ -249,7 +249,7 @@ export default function Admissions() {
             <div>
               <h2 className="type-h2 text-ink">Need guidance on programme selection?</h2>
               <p className="mt-2 max-w-lg type-body">
-                GIBS AI answers instantly and can recommend programmes based on sector, cadre, department, and calendar quarter.
+                GIBS AI searches published programme titles, categories, stated audiences, and listed locations or schedule months. Quarter matches use the months shown in programme records; sector, cadre, and department are matched only when a record names them.
               </p>
             </div>
           </div>

@@ -423,7 +423,7 @@ function Newsletter() {
       className="mt-9 max-w-md"
       onSubmit={handleSubmit}
       noValidate
-      aria-label="Register interest in GIBS Executive Calendar Updates"
+      aria-label="Sign up for GIBS Executive Calendar Updates"
     >
       <label htmlFor="footer-email" className="eyebrow-light">
         GIBS Executive Bulletin & Calendar Updates
@@ -445,7 +445,7 @@ function Newsletter() {
         />
         <button
           type="submit"
-          aria-label="Register interest"
+          aria-label="Sign up for updates"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 focus-visible:outline-gold-300"
         >
           <ArrowUpRight className="h-4 w-4" />

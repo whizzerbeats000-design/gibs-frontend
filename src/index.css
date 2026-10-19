@@ -910,6 +910,10 @@ body {
     opacity: 1;
     transform: translateY(0);
   }
+  [data-reveal="hidden"]:focus-within {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
   /* ---------------- Dimensional cards ----------------
      CARD DEPTH (L3): a physical, sub-3° tilt that trails the pointer; driven

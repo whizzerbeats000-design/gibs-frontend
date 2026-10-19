@@ -38,6 +38,131 @@ const programmeCard = (slug: string): ConciergeCard => {
 };
 
 type Rule = { test: RegExp; reply: ConciergeReply };
+type RankedProgramme = { slug: string; label: string; num: number; score: number; topicMatch: boolean };
+
+const SEARCH_STOP_WORDS = new Set([
+  "a", "about", "an", "and", "any", "at", "available", "best", "by", "can", "could", "department",
+  "dept", "for", "from", "find", "get", "help", "i", "in", "is", "list", "looking", "me", "my", "near", "need", "of", "on",
+  "or", "please", "programme", "programmes", "program", "programs", "recommend",
+  "recommendation", "recommendations", "suitable", "the", "to", "training", "workshop",
+  "workshops", "course", "courses", "class", "classes", "sector", "cadre", "staff", "team",
+  "quarter", "month", "during", "which", "what", "with", "you", "your", "search", "show", "suggest", "suggestion", "suggestions", "want",
+]);
+
+const MONTHS = [
+  { name: "january", aliases: ["jan", "january"], quarter: 1 },
+  { name: "february", aliases: ["feb", "february"], quarter: 1 },
+  { name: "march", aliases: ["mar", "march"], quarter: 1 },
+  { name: "april", aliases: ["apr", "april"], quarter: 2 },
+  { name: "may", aliases: ["may"], quarter: 2 },
+  { name: "june", aliases: ["jun", "june"], quarter: 2 },
+  { name: "july", aliases: ["jul", "july"], quarter: 3 },
+  { name: "august", aliases: ["aug", "august"], quarter: 3 },
+  { name: "september", aliases: ["sep", "sept", "september"], quarter: 3 },
+  { name: "october", aliases: ["oct", "october"], quarter: 4 },
+  { name: "november", aliases: ["nov", "november"], quarter: 4 },
+  { name: "december", aliases: ["dec", "december"], quarter: 4 },
+];
+
+const ORDINAL_QUARTERS = ["first", "second", "third", "fourth"];
+
+function normalizeSearchText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function quarterFromText(value: string) {
+  const text = normalizeSearchText(value);
+  for (let quarter = 1; quarter <= 4; quarter++) {
+    const pattern = new RegExp(`\\bq\\s*${quarter}\\b|\\bquarter\\s+${quarter}\\b|\\b${ORDINAL_QUARTERS[quarter - 1]}\\s+quarter\\b`);
+    if (pattern.test(text)) return quarter;
+  }
+  return null;
+}
+
+function searchTerms(value: string) {
+  const text = normalizeSearchText(value);
+  const tokens = new Set(text.split(/\s+/).filter(Boolean).map((token) => {
+    const month = MONTHS.find((entry) => entry.aliases.includes(token));
+    return month ? month.name : token;
+  }));
+  const quarter = quarterFromText(text);
+  if (quarter) {
+    tokens.delete(`q${quarter}`);
+    tokens.delete(String(quarter));
+    tokens.delete("quarter");
+    tokens.delete(ORDINAL_QUARTERS[quarter - 1]);
+    tokens.add(`quarter-${quarter}`);
+  }
+  for (const month of MONTHS) {
+    if (tokens.has(month.name)) tokens.add(`quarter-${month.quarter}`);
+  }
+  return [...tokens].filter((token) => !SEARCH_STOP_WORDS.has(token));
+}
+
+function rankProgrammes(query: string): RankedProgramme[] {
+  const terms = searchTerms(query);
+  if (terms.length === 0) return [];
+
+  return PROGRAMMES.flatMap((programme) => {
+    const fields = [
+      { value: programme.title, weight: 6, topic: true },
+      { value: programme.category, weight: 5, topic: true },
+      { value: programme.targetAudience, weight: 4, topic: true },
+      { value: programme.destination, weight: 3, topic: false },
+      { value: programme.schedule, weight: 2, topic: false },
+      { value: programme.startDate ?? "", weight: 2, topic: false },
+    ].map((field) => ({ ...field, tokens: new Set(searchTerms(field.value)) }));
+
+    if (!terms.every((term) => fields.some((field) => field.tokens.has(term)))) return [];
+
+    const score = terms.reduce((total, term) => {
+      const bestField = fields.reduce(
+        (best, field) => field.tokens.has(term) ? Math.max(best, field.weight) : best,
+        0
+      );
+      return total + bestField;
+    }, 0);
+    const topicMatch = terms.some((term) => fields.some((field) => field.topic && field.tokens.has(term)));
+
+    return [{ slug: programme.slug, label: programme.title, num: programme.num, score, topicMatch }];
+  }).sort((a, b) => b.score - a.score || a.num - b.num);
+}
+
+function programmeReply(matches: RankedProgramme[]): ConciergeReply {
+  return {
+    text: "These are the closest matches from programme titles, categories, stated audiences, and published schedules. Sector, cadre, and department are not separate catalogue filters; I can match those terms only where the programme record explicitly names them.",
+    cards: [
+      { kind: "link", label: "Browse all programmes", to: "/programmes" },
+      ...matches.slice(0, 3).map((programme) => programmeCard(programme.slug)),
+    ],
+  };
+}
+
+function noProgrammeMatch(): ConciergeReply {
+  return {
+    text: "I couldn't find a programme that explicitly matches those terms. Sector, cadre, and department are not separate catalogue filters. Try a programme topic, category, stated audience, listed city, month, or quarter, or contact the training desk for help.",
+    cards: [
+      { kind: "link", label: "Browse all programmes", to: "/programmes" },
+      { kind: "link", label: "Contact the training desk", to: "/contact" },
+    ],
+  };
+}
+
+function clarifyProgrammeQuery(): ConciergeReply {
+  return {
+    text: "What programme topic or published category should I search? You can also name a stated audience, listed city, month, or quarter. Sector, cadre, and department are not separate catalogue filters.",
+    cards: [{ kind: "link", label: "Browse all programmes", to: "/programmes" }],
+  };
+}
+
+function hasProgrammeIntent(query: string) {
+  return /\b(programmes?|courses?|training|workshops?|recommend(?:ation)?s?|suggest(?:ion)?s?|suitable|sector|cadre|department|quarter|months?|q[1-4])\b/i.test(query);
+}
 
 const RULES: Rule[] = [
   {
@@ -77,9 +202,9 @@ const RULES: Rule[] = [
   {
     test: /\b(subscribe|subscription|nominate|nomination|register|enrol|enrolment|requirement|fee|fees|cost|price|tuition|apply|admission|scholarship)\b/i,
     reply: {
-      text: "GIBS offers 113 Local Open and 22 Foreign Executive Programmes across its 2026 training calendar. Organisations enquire about training for staff; individuals make an enquiry to join. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
+      text: "GIBS offers 113 Local Open and 22 Foreign Executive Programmes across its 2026 training calendar. Organisations and individuals enquire by email, phone, or in person; GIBS processes enquiries and provides programme guidance. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
       cards: [
-        { kind: "link", label: "Enrolment Guidelines", to: "/admissions" },
+        { kind: "link", label: "Programme Enquiry Guidelines", to: "/admissions" },
         { kind: "link", label: "Make an Enquiry", to: "/contact?type=Local+Open+Training+Registration" },
       ],
     },
@@ -121,19 +246,6 @@ const RULES: Rule[] = [
       cards: [{ kind: "link", label: "About GIBS", to: "/about" }],
     },
   },
-  {
-    test: /\b(program|programme|calendar|course|training|open|workshop|seminar|finance|accounting|admin|telecom|pension|legal|oil|gas|maritime)\b/i,
-    reply: {
-      text: "The 2026 GIBS Training Calendar includes 113 Local Open Programmes across 14 categories (Accounting, Administration, Telecom, Consumer Protection, Environmental, Oil & Gas, IT, Legal, Power, Maritime, Pension, and Special Training).",
-      cards: [
-        { kind: "link", label: "View Complete 2026 Calendar", to: "/programmes", detail: "Filter by category or search" },
-        programmeCard(PROGRAMMES[0].slug),
-        programmeCard(PROGRAMMES[6].slug),
-        programmeCard(PROGRAMMES[32].slug),
-        programmeCard(PROGRAMMES[64].slug),
-      ],
-    },
-  },
 ];
 
 const FALLBACK: ConciergeReply = {
@@ -152,8 +264,21 @@ export function getConciergeReply(input: string): ConciergeReply {
       text: "Tell me what training or institutional information you are looking for, and I will guide you.",
     };
   }
+
+  const matches = rankProgrammes(q);
+  const programmeIntent = hasProgrammeIntent(q);
+  const searchWords = searchTerms(q);
+  const destinationOnly = searchWords.length === 1 && /^(foreign|overseas|international|kigali|dubai|london|houston|rwanda|uae|uk|usa|texas)$/i.test(searchWords[0]);
+  const hubOverview = /\bhubs?\b/i.test(q) && !/\b(programme|program|course|kigali|dubai|london|houston)\b/i.test(q);
+
+  if (matches.length && !destinationOnly && !hubOverview && (programmeIntent || matches.some((match) => match.topicMatch))) {
+    return programmeReply(matches);
+  }
+  if (programmeIntent) return searchWords.length ? noProgrammeMatch() : clarifyProgrammeQuery();
+
   for (const rule of RULES) {
     if (rule.test.test(q)) return rule.reply;
   }
+  if (matches.length) return programmeReply(matches);
   return FALLBACK;
 }

@@ -21,6 +21,39 @@ test.describe('Core User Journeys', () => {
     await expect(page.locator('h1')).toContainText('Programmes');
   });
 
+  test('SPA navigation keeps canonical and social metadata in sync', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Explore programmes' }).first().click();
+    await expect(page.locator('h1')).toContainText('Programmes');
+
+    await expect(page).toHaveTitle('2026 Training Calendar (135 Programmes) — GIBS');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://gibs.com.ng/programmes');
+    await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://gibs.com.ng/programmes');
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', '2026 Training Calendar (135 Programmes) — GIBS');
+    await expect(page.locator('meta[name="twitter:title"]')).toHaveAttribute('content', '2026 Training Calendar (135 Programmes) — GIBS');
+    await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', 'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.');
+  });
+
+  test('keyboard focus reveals interactive content inside a pending scroll reveal', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/contact');
+
+    const reveal = page.locator('[data-reveal="hidden"]').filter({
+      has: page.locator('a[href^="mailto:"]'),
+    }).first();
+    await expect(reveal).toHaveCount(1);
+    const state = await reveal.evaluate((element) => {
+      const link = element.querySelector('a[href^="mailto:"]');
+      link?.focus();
+      return {
+        revealState: element.getAttribute('data-reveal'),
+        opacity: getComputedStyle(element).opacity,
+      };
+    });
+    expect(state.revealState).toBe('hidden');
+    expect(state.opacity).toBe('1');
+  });
+
   test('Valid clean programme route and unknown hash route', async ({ page }) => {
     await page.goto('/programmes/course-1-public-sector-accounting-procedure-and-standards');
     await expect(page.locator('h1')).toContainText('Public Sector Accounting');

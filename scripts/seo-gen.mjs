@@ -262,6 +262,27 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
     </main>`;
   }
 
+  if (route === '/admissions') {
+    return `<main>
+      <h1>${escapeHtml('Enquire About a programme.')}</h1>
+      <p>${escapeHtml('Discover a programme, make an enquiry, and GIBS handles the rest. Whether you are an individual professional or an organisation enquiring about staff training, our team guides you through the process.')}</p>
+    </main>`;
+  }
+
+  if (route === '/gallery') {
+    return `<main>
+      <h1>${escapeHtml('The GIBS campus')}</h1>
+      <p>${escapeHtml('Photographs of GIBS headquarters architecture, classroom, reception and guest residence, and the Ibafo facility.')}</p>
+    </main>`;
+  }
+
+  if (route === '/concierge') {
+    return `<main>
+      <h1>${escapeHtml('Find the right programme')}</h1>
+      <p>${escapeHtml('Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire.')}</p>
+    </main>`;
+  }
+
   if (route === '/programmes') {
     const desc = escapeHtml(
       'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Training Programmes in Kigali, Dubai, London, and Houston.',
@@ -364,6 +385,8 @@ function generateShell(masterHtml, route, meta, staticBody) {
   html = html.replace(/<link rel="canonical" href=".*?"\s*\/?>/,
     `<link rel="canonical" href="${CANONICAL_DOMAIN}${route}" />`);
   html = replaceMetaContent(html, 'og:title', meta.title);
+  html = replaceMetaContent(html, 'twitter:title', meta.title);
+  html = replaceMetaContent(html, 'twitter:description', meta.description);
   if (!html.includes('property="og:description"')) {
     html = html.replace(/(<meta property="og:title".*?\/>)/,
       `$1\n    <meta property="og:description" content="${escapeHtml(meta.description)}" />`);
@@ -449,10 +472,10 @@ async function run() {
       { path: '/programmes', title: '2026 Training Calendar (135 Programmes) | GIBS', desc: 'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.' },
       { path: '/about', title: 'About GIBS | Goshen International Business School', desc: 'Learn about our mission, vision and guiding principles.' },
       { path: '/contact', title: 'Contact GIBS | Training Desk & Enquiries', desc: 'Get in touch with GIBS for programme registration and campus visits.' },
-      { path: '/admissions', title: 'Admissions & Enrolment | GIBS', desc: 'Admission procedures, executive nomination and registration details for GIBS programmes.' },
+      { path: '/admissions', title: 'Programme Enquiries — Goshen International Business School', desc: 'The GIBS programme enquiry process: browse the 2026 calendar, make an enquiry, and GIBS handles the rest.' },
       { path: '/executive-education', title: 'Foreign Executive Training | GIBS', desc: 'Global training hubs in Kigali, Dubai, London and Houston.' },
-      { path: '/gallery', title: 'Campus & Training Gallery | GIBS', desc: 'Visual archive of GIBS executive training sessions, campus facilities and global cohorts.' },
-      { path: '/concierge', title: 'GIBS AI | Institutional Guide', desc: 'Ask our AI about programmes, locations and enrolment.' },
+      { path: '/gallery', title: 'Gallery — GIBS', desc: 'Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.' },
+      { path: '/concierge', title: 'GIBS AI — Ask about programmes and locations', desc: 'GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.' },
     ];
     for (const r of instRoutes) {
       routes.push({ path: r.path, meta: { title: r.title, description: r.desc }});

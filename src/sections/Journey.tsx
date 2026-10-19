@@ -6,7 +6,7 @@ import { ADMISSIONS_STEPS } from "../lib/data";
 /* Step 2 title in data.ts reads "Nomination & Subscription" — override at
    the render layer. data.ts is byte-locked. */
 const STEPS_RENDER = ADMISSIONS_STEPS.map((step) =>
-  step.n === "02" ? { ...step, title: "Enrolment & Confirmation" } : step
+  step.n === "02" ? { ...step, title: "Enquiry & Guidance" } : step
 );
 
 export default function AdmissionsTeaser() {
@@ -25,9 +25,9 @@ export default function AdmissionsTeaser() {
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
-              <p className="mt-7 max-w-lg type-body text-ivory/85">
+                              <p className="mt-7 max-w-lg type-body text-ivory/85">
                 Organisations enquire by email or phone. Individual professionals can make an
-                enquiry to register. Either way, six steps get you onto a programme in the 2026 calendar.
+                enquiry directly. Either way, six steps connect you to the right GIBS training and guide your enquiry through to programme details.
               </p>
             </Reveal>
             <Reveal delay={0.24}>

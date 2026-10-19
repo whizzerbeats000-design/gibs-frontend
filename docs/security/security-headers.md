@@ -50,7 +50,7 @@ files, which can all change at the same URL on a later deploy.
 
 The only long-lived rule is scoped to `/assets/<name>-<hash>.<ext>` paths and
 sets `Cache-Control: public, max-age=31536000, immutable`. The filename must
-carry an 8-or-more-character version token. Vite's `vite-plugin-singlefile`
+carry an 8-or-more-character version token. Vite's `vite-plugin-singlefile` (2.3.4)
 currently inlines the application JS and CSS, and public images/fonts keep stable
 names, so today's build does not rely on that immutable rule for those files.
 

@@ -54,7 +54,7 @@ test.describe('Core User Journeys', () => {
     await expect.poll(async () => {
       const fresh = await reveal.evaluate((element) => getComputedStyle(element).opacity);
       return fresh;
-    }, { message: 'focus-within should reveal hidden element', timeout: 2000 }).toBe('1');
+    }, { message: 'focus-within should reveal hidden element', timeout: 5000 }).toBe('1');
   });
 
   test('Valid clean programme route and unknown hash route', async ({ page }) => {

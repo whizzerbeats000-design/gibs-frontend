@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const root = process.cwd();
@@ -139,4 +140,131 @@ checkStaticShell("concierge", {
   intro: "Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire.",
 });
 
-console.log("PASS static Admissions, Gallery, and Concierge shell content and metadata; homepage, contact, category, programme, sitemap, and structured metadata");
+// --- Crawlability & Static Navigation Checks ---
+const dataTsContent = readFileSync(join(root, "src", "lib", "data.ts"), "utf8");
+const catalogueSha = createHash("sha256").update(dataTsContent).digest("hex");
+assert.equal(
+  catalogueSha,
+  "910ff4d75ad3110aa3062e0fbc3e6ea73074d0004a53780c35a961cef64dbde7",
+  "src/lib/data.ts must maintain protected SHA-256 checksum"
+);
+
+const homeMain = home.match(/<div id="root">[\s\S]*?<main\b[^>]*>([\s\S]*?)<\/main>[\s\S]*?<\/div>/i);
+assert.ok(homeMain, "homepage static main must exist inside React root");
+
+// 1. Check semantic navigation containers on homepage
+assert.match(homeMain[1], /<nav\s+aria-label="Institutional Navigation">/i, "homepage must have Institutional Navigation");
+assert.match(homeMain[1], /<nav\s+aria-label="Programme Categories">/i, "homepage must have Programme Categories navigation");
+
+// 2. Extract all anchor links from homepage static body
+const homeLinks = [...homeMain[1].matchAll(/<a\s+[^>]*href=["']([^"']+)["'][^>]*>(.*?)<\/a>/gi)].map((m) => ({
+  href: m[1],
+  text: decodeEntities(m[2].trim()),
+}));
+
+assert.ok(homeLinks.length >= 22, `homepage must have at least 22 static internal links (got ${homeLinks.length})`);
+
+// 3. Verify all 7 primary institutional routes are present
+const expectedInstitutional = [
+  "/programmes",
+  "/about",
+  "/contact",
+  "/admissions",
+  "/executive-education",
+  "/gallery",
+  "/concierge",
+];
+for (const route of expectedInstitutional) {
+  assert.ok(
+    homeLinks.some((l) => l.href === route),
+    `homepage must contain link to primary route: ${route}`
+  );
+}
+
+// 4. Verify all 15 category hubs are present on homepage
+const expectedCategories = [
+  "accounting-and-financial-management",
+  "general-administration-and-management",
+  "telecom-and-utilities-regulation",
+  "consumer-protection-and-utilities",
+  "environmental-sustainability-and-management",
+  "oil-and-gas-sector",
+  "secretarial-administration-and-management",
+  "capital-market-and-securities-management",
+  "information-technology-workshops",
+  "legal-and-legislative-studies",
+  "power-and-energy-sector",
+  "maritime-and-transportation",
+  "pension-management",
+  "special-executive-training",
+  "foreign-executive-training",
+];
+for (const slug of expectedCategories) {
+  const catPath = `/programmes/category/${slug}`;
+  assert.ok(
+    homeLinks.some((l) => l.href === catPath),
+    `homepage must contain link to category hub: ${catPath}`
+  );
+}
+
+// 5. Verify every generated internal link on homepage points to a valid generated route file on disk
+for (const link of homeLinks) {
+  assert.ok(link.href.startsWith("/"), `internal link must be root-relative: ${link.href}`);
+  const htmlPath = join(root, "dist", `${link.href}.html`);
+  const indexPath = join(root, "dist", link.href, "index.html");
+  assert.ok(
+    existsSync(htmlPath) || existsSync(indexPath),
+    `internal link target must exist in dist: ${link.href}`
+  );
+}
+
+// 6. Verify /programmes shell contains all 15 category links
+const programmesShell = readShell("programmes");
+assert.match(programmesShell, /<nav\s+aria-label="Programme Categories">/i);
+for (const slug of expectedCategories) {
+  assert.match(
+    programmesShell,
+    new RegExp(`href="/programmes/category/${slug}"`),
+    `programmes shell must link to category: ${slug}`
+  );
+}
+
+// 7. Verify category shell has breadcrumb and programme links
+assert.match(category, /<nav\s+aria-label="Breadcrumb">/i);
+assert.match(category, /href="\/programmes\/course-1-public-sector-accounting-procedure-and-standards"/);
+
+// 8. Verify programme shell has breadcrumb
+assert.match(programme, /<nav\s+aria-label="Breadcrumb">/i);
+assert.match(programme, /href="\/programmes\/category\/accounting-and-financial-management"/);
+
+// --- External Asset Delivery & Shell Payload Size Checks ---
+const homeBytes = readFileSync(join(root, "dist", "index.html")).length;
+const categoryBytes = readFileSync(join(root, "dist", "programmes", "category", "accounting-and-financial-management", "index.html")).length;
+const programmeBytes = readFileSync(join(root, "dist", "programmes", "course-1-public-sector-accounting-procedure-and-standards", "index.html")).length;
+
+assert.ok(homeBytes < 50_000, `Homepage shell payload must be < 50 KB (got ${(homeBytes / 1024).toFixed(1)} KB)`);
+assert.ok(categoryBytes < 50_000, `Category shell payload must be < 50 KB (got ${(categoryBytes / 1024).toFixed(1)} KB)`);
+assert.ok(programmeBytes < 50_000, `Programme shell payload must be < 50 KB (got ${(programmeBytes / 1024).toFixed(1)} KB)`);
+
+// Verify external assets exist in dist/assets
+const assetsDir = join(root, "dist", "assets");
+assert.ok(existsSync(assetsDir), "dist/assets directory must exist");
+const jsAssets = readdirSync(assetsDir).filter((f) => f.endsWith(".js"));
+const cssAssets = readdirSync(assetsDir).filter((f) => f.endsWith(".css"));
+assert.ok(jsAssets.length >= 1, "At least one JavaScript asset bundle must exist in dist/assets");
+assert.ok(cssAssets.length >= 1, "At least one CSS asset bundle must exist in dist/assets");
+
+// Verify shells reference external assets with root-relative paths
+assert.match(home, /<script\s+type="module"\s+crossorigin\s+src="\/assets\/[^"]+\.js"><\/script>/i);
+assert.match(home, /<link\s+rel="stylesheet"\s+crossorigin\s+href="\/assets\/[^"]+\.css">/i);
+assert.match(category, /<script\s+type="module"\s+crossorigin\s+src="\/assets\/[^"]+\.js"><\/script>/i);
+assert.match(category, /<link\s+rel="stylesheet"\s+crossorigin\s+href="\/assets\/[^"]+\.css">/i);
+assert.match(programme, /<script\s+type="module"\s+crossorigin\s+src="\/assets\/[^"]+\.js"><\/script>/i);
+assert.match(programme, /<link\s+rel="stylesheet"\s+crossorigin\s+href="\/assets\/[^"]+\.css">/i);
+
+// Ensure no relative ./assets/, ./fonts/, or ./images/ paths remain
+assert.doesNotMatch(home, /href="\.\/(assets|fonts|images)\//);
+assert.doesNotMatch(category, /href="\.\/(assets|fonts|images)\//);
+assert.doesNotMatch(programme, /href="\.\/(assets|fonts|images)\//);
+
+console.log("PASS static Admissions, Gallery, and Concierge shell content and metadata; homepage, contact, category, programme, sitemap, structured metadata, crawlable navigation, and external asset bundle delivery (<50KB shells)");

@@ -171,6 +171,41 @@ function extractInstitutionalData() {
 
 // ----- Static Body Content Generation -----
 
+const PRIMARY_INSTITUTIONAL_ROUTES = [
+  { path: '/programmes', label: '2026 Training Calendar (135 Programmes)' },
+  { path: '/about', label: 'About GIBS — Mission, Vision & Accreditations' },
+  { path: '/contact', label: 'Contact & Training Registry' },
+  { path: '/admissions', label: 'Programme Enquiries & Registration' },
+  { path: '/executive-education', label: 'Foreign Executive Training (Kigali, Dubai, London, Houston)' },
+  { path: '/gallery', label: 'Campus & Facility Gallery' },
+  { path: '/concierge', label: 'GIBS AI Programme Assistant' },
+];
+
+function generateInstitutionalNav() {
+  const items = PRIMARY_INSTITUTIONAL_ROUTES
+    .map((r) => `<li><a href="${r.path}">${escapeHtml(r.label)}</a></li>`)
+    .join('');
+  return `<nav aria-label="Institutional Navigation">
+        <h2>Institutional Overview</h2>
+        <ul>${items}</ul>
+      </nav>`;
+}
+
+function generateCategoryNav(allProgrammes) {
+  const categories = [...new Set((allProgrammes || []).map((p) => p.category))];
+  const items = categories
+    .map((cat) => {
+      const slug = categoryToSlug(cat);
+      const label = cat.endsWith('Training') ? `${cat} Programmes` : `${cat} Training Programmes`;
+      return `<li><a href="/programmes/category/${slug}">${escapeHtml(label)}</a></li>`;
+    })
+    .join('');
+  return `<nav aria-label="Programme Categories">
+        <h2>Training Sectors & Categories</h2>
+        <ul>${items}</ul>
+      </nav>`;
+}
+
 function generateStaticBody(route, programme, inst, allProgrammes) {
   const catMatch = route.match(/^\/programmes\/category\/(.+)$/);
   const progMatch = route.match(/^\/programmes\/(.+)$/);
@@ -179,11 +214,15 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
     const positioning = escapeHtml(inst.positioningStatement || '');
     const mission = escapeHtml(inst.mission || '');
     const vision = escapeHtml(inst.vision || '');
+    const instNav = generateInstitutionalNav();
+    const catNav = generateCategoryNav(allProgrammes);
     return `<main>
       <h1>Goshen International Business School (GIBS)</h1>
       <p>${positioning}</p>
       <p><strong>Mission:</strong> ${mission}</p>
       <p><strong>Vision:</strong> ${vision}</p>
+      ${instNav}
+      ${catNav}
     </main>`;
   }
 
@@ -287,9 +326,17 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
     const desc = escapeHtml(
       'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Training Programmes in Kigali, Dubai, London, and Houston.',
     );
+    const catNav = generateCategoryNav(allProgrammes);
     return `<main>
       <h1>2026 Training Calendar (135 Programmes) | GIBS</h1>
       <p>${desc}</p>
+      <nav aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><span>2026 Training Calendar</span></li>
+        </ol>
+      </nav>
+      ${catNav}
     </main>`;
   }
 
@@ -300,15 +347,21 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
     );
     const catName = catProgrammes[0]?.category || 'Training Programmes';
     const links = catProgrammes
-      .slice(0, 15)
       .map(
         (p) =>
-          `<li><a href="${CANONICAL_DOMAIN}/programmes/${p.slug}">${escapeHtml(p.code)} — ${escapeHtml(p.title)}</a></li>`,
+          `<li><a href="/programmes/${p.slug}">${escapeHtml(p.code)} — ${escapeHtml(p.title)}</a></li>`,
       )
       .join('');
     return `<main>
       <h1>${escapeHtml(catName)} Training Programmes | GIBS</h1>
       <p>Explore our executive training programmes in ${escapeHtml(catName)} at GIBS.</p>
+      <nav aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href="/programmes">All Programmes</a></li>
+          <li><span>${escapeHtml(catName)}</span></li>
+        </ol>
+      </nav>
       <h2>Programmes in this category</h2>
       <ol>${links}</ol>
     </main>`;
@@ -318,6 +371,7 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
     const code = escapeHtml(programme.code || '');
     const title = escapeHtml(programme.title || '');
     const category = escapeHtml(programme.category || '');
+    const catSlug = categoryToSlug(programme.category || '');
     const destination = escapeHtml(programme.destination || 'Local');
     const schedule = escapeHtml(programme.schedule || '');
     const fees = escapeHtml(programme.fees || '');
@@ -345,6 +399,14 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
       : '';
     return `<main>
       <h1>${title}</h1>
+      <nav aria-label="Breadcrumb">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href="/programmes">All Programmes</a></li>
+          <li><a href="/programmes/category/${catSlug}">${category}</a></li>
+          <li><span>${title}</span></li>
+        </ol>
+      </nav>
       <p><strong>Code:</strong> ${code}</p>
       <p><strong>Category:</strong> ${category}</p>
       <p><strong>Location:</strong> ${destination} Training</p>
@@ -404,17 +466,17 @@ function generateShell(masterHtml, route, meta, staticBody) {
 }
 
 function normalizeAssetUrls(html) {
-  // vite-plugin-singlefile sets config.base = "./" for file:// compatibility,
-  // rewriting root-relative assets to relative paths (e.g. ./fonts/..., ./favicon.ico).
+  // Restore root-relative paths for fonts, favicon, icon images, and assets.
   // For deep route shells (e.g. /programmes/category/:slug and /programmes/:slug),
-  // relative asset paths cause the browser to resolve assets against the nested path,
-  // resulting in 404s. We restore root-relative paths for fonts, favicon, and icon images.
+  // root-relative paths ensure assets resolve correctly from any nesting level.
   return html
     .replaceAll('href="./fonts/', 'href="/fonts/')
     .replaceAll('url(./fonts/', 'url(/fonts/')
     .replaceAll('href="./favicon.ico"', 'href="/favicon.ico"')
     .replaceAll('href="./images/', 'href="/images/')
-    .replaceAll('src="./images/', 'src="/images/');
+    .replaceAll('src="./images/', 'src="/images/')
+    .replaceAll('href="./assets/', 'href="/assets/')
+    .replaceAll('src="./assets/', 'src="/assets/');
 }
 
 function writeShell(route, shellHtml) {
@@ -438,7 +500,16 @@ async function run() {
     fs.writeFileSync(MASTER_SHELL_PATH, masterHtml);
 
     // Validate that all referenced fonts exist on disk
-    const fontMatches = masterHtml.matchAll(/(?:href|url)\(["']?\/fonts\/([^"')\s]+)["']?\)/g);
+    let cssContent = '';
+    const assetsDir = path.join(DIST_DIR, 'assets');
+    if (fs.existsSync(assetsDir)) {
+      for (const file of fs.readdirSync(assetsDir)) {
+        if (file.endsWith('.css')) {
+          cssContent += fs.readFileSync(path.join(assetsDir, file), 'utf8');
+        }
+      }
+    }
+    const fontMatches = (masterHtml + cssContent).matchAll(/(?:href|url)\(["']?\/fonts\/([^"')\s]+)["']?\)/g);
     const checkedFonts = new Set();
     for (const m of fontMatches) {
       const fontFile = m[1];

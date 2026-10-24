@@ -1,12 +1,15 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 const root = process.cwd();
+const distDir = process.env.GIBS_DIST_DIR
+  ? resolve(root, process.env.GIBS_DIST_DIR)
+  : join(root, "dist");
 
 function readShell(route) {
-  return readFileSync(join(root, "dist", route, "index.html"), "utf8");
+  return readFileSync(join(distDir, route, "index.html"), "utf8");
 }
 
 function decodeEntities(value) {
@@ -139,6 +142,27 @@ checkStaticShell("concierge", {
   h1: "Find the right programme",
   intro: "Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire.",
 });
+
+// Every generated static shell is user-visible to non-JavaScript clients and
+// search crawlers. Keep retired source phone numbers out of that output even
+// when a future programme FAQ contains one.
+function htmlShells(directory) {
+  return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) return htmlShells(path);
+    return entry.isFile() && entry.name.endsWith(".html") ? [path] : [];
+  });
+}
+
+const retiredPhoneNumbers = ["08033429427", "08032296041"];
+for (const shellPath of htmlShells(distDir)) {
+  const html = readFileSync(shellPath, "utf8");
+  for (const number of retiredPhoneNumbers) {
+    assert.ok(!html.includes(number), `${shellPath}: must not publish retired phone number ${number}`);
+  }
+}
+assert.ok(contact.includes("08160010401"), "contact shell must retain the approved existing number");
+assert.ok(contact.includes("08160010400"), "contact shell must publish the current training-desk number");
 
 // --- Crawlability & Static Navigation Checks ---
 const dataTsContent = readFileSync(join(root, "src", "lib", "data.ts"), "utf8");

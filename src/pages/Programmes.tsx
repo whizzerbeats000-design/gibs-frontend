@@ -131,6 +131,7 @@ export default function ProgrammesPage({
                   setDestination("All");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "All" && category === "All"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "All"
@@ -146,6 +147,7 @@ export default function ProgrammesPage({
                   setDestination("Local");
                   if (category === "Foreign Executive Training") setCategory("All");
                 }}
+                aria-pressed={destination === "Local"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Local"
@@ -161,6 +163,7 @@ export default function ProgrammesPage({
                   setDestination("Kigali");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "Kigali"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Kigali"
@@ -176,6 +179,7 @@ export default function ProgrammesPage({
                   setDestination("Dubai");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "Dubai"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Dubai"
@@ -191,6 +195,7 @@ export default function ProgrammesPage({
                   setDestination("London");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "London"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "London"
@@ -206,6 +211,7 @@ export default function ProgrammesPage({
                   setDestination("Houston");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "Houston"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Houston"

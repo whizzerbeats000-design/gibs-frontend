@@ -10,7 +10,13 @@ import {
   SUBSCRIPTION_STEPS,
   SUBSCRIPTION_FAQS,
   REQUIREMENTS_ACCORDION,
+  INSTITUTIONAL_DATA,
 } from "../lib/data";
+import {
+  activePhoneNumbers,
+  scrubRetiredNumbersInProse,
+  CURRENT_TRAINING_DESK_NUMBER,
+} from "../lib/phones";
 
 type CycleStatus = "Concluded" | "Active Intake" | "Open for Enrolment";
 
@@ -41,12 +47,19 @@ const SUBSCRIPTION_STEPS_RENDER = SUBSCRIPTION_STEPS.map((step) =>
     : step
 );
 
+/* The FAQ answers come from data.ts, which is byte-locked and still contains a
+   retired desk number inside one of them. The shared policy in
+   src/lib/phones.ts scrubs retired numbers out of the answer text, and the
+   current training-desk number is put back, so the correction is driven by
+   the number policy rather than by matching a particular question string. */
+const PUBLISHED_PHONES = activePhoneNumbers(INSTITUTIONAL_DATA.phoneNumbers);
+
 const SUBSCRIPTION_FAQS_RENDER = SUBSCRIPTION_FAQS.map((faq) => {
   if (faq.q === "How do MDAs and corporate organizations nominate staff to subscribe?")
-    return { q: "How do MDAs and corporate organisations enquire about staff training?", a: "Organisations can email gibsilorin@gmail.com / goshenibs22@gmail.com, or contact the training desk via 08160010401 or 08160010400 to request a programme enquiry." };
+    return { q: "How do MDAs and corporate organisations enquire about staff training?", a: `Organisations can email gibsilorin@gmail.com / goshenibs22@gmail.com, or contact the training desk via ${PUBLISHED_PHONES[0]} or ${CURRENT_TRAINING_DESK_NUMBER} to request a programme enquiry.` };
   if (faq.q === "Are concessions available for group subscriptions and nominations?")
     return { q: "Are concessions available for group enquiries?", a: faq.a };
-  return faq;
+  return { ...faq, a: scrubRetiredNumbersInProse(faq.a) };
 });
 
 const REQUIREMENTS_ACCORDION_RENDER = REQUIREMENTS_ACCORDION.map((faq) => {

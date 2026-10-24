@@ -5,6 +5,7 @@ import { ProgrammeNav, type ProgrammeSection } from "../components/ProgrammeNav"
 import { CheckIcon, ArrowUpRight, ArrowLeft, Diamond } from "../components/icons";
 import { Link } from "../lib/router";
 import { getProgramme, relatedProgrammes } from "../lib/data";
+import { scrubRetiredNumbersInProse } from "../lib/phones";
 import { useSeo } from "../lib/router";
 import { Reveal } from "../components/motion";
 import NotFound from "./NotFound";
@@ -34,6 +35,11 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
   useSeo({
     title: programme ? `${programme.code} · ${programme.title} — GIBS` : "Programme not found — GIBS",
     description: programme?.summary ?? "",
+    /* A programme is reachable by slug, by id, by code and by slug suffix.
+       Point the canonical address at the one URL the sitemap lists, so the
+       alternative addresses do not each publish the same content as their
+       own canonical page. */
+    canonicalPath: programme ? `/programmes/${programme.slug}` : undefined,
   });
 
   if (!programme) return <NotFound />;
@@ -263,7 +269,12 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </p>
           </div>
           <div className="lg:col-span-8">
-            <FaqAccordion items={programme.faqs ?? []} />
+            <FaqAccordion
+              items={(programme.faqs ?? []).map((faq) => ({
+                ...faq,
+                a: scrubRetiredNumbersInProse(faq.a),
+              }))}
+            />
           </div>
         </div>
       </section>

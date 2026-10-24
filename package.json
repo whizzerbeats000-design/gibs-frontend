@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build && node scripts/seo-gen.mjs && node scripts/qa/seo_shell_metadata_check.mjs",
-    "qa": "node --test scripts/qa/chromium-path.test.mjs scripts/qa/concierge.test.mjs scripts/qa/seo_metadata.test.mjs scripts/qa/terminology.test.mjs && node scripts/qa/cache_policy_check.mjs && python3 scripts/qa/parity_check.py && python3 scripts/qa/generator_drift_check.py && python3 scripts/import/export_snapshot.py --check",
+    "qa": "node --test scripts/qa/chromium-path.test.mjs scripts/qa/concierge.test.mjs scripts/qa/seo_metadata.test.mjs scripts/qa/terminology.test.mjs scripts/qa/phones.test.mjs && node scripts/qa/cache_policy_check.mjs && python3 scripts/qa/parity_check.py && python3 scripts/qa/generator_drift_check.py && python3 scripts/import/export_snapshot.py --check",
     "qa:browser": "npm run build && node scripts/qa/regression.mjs",
     "qa:browser:dist": "node scripts/qa/regression.mjs",
     "check:all": "npx tsc --noEmit && node scripts/qa/catalogue_integrity.cjs && npm run qa && npm run build",
@@ -31,8 +31,7 @@
     "playwright-core": "^1.63.0",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3",
-    "vite": "^7.3.7",
-    "vite-plugin-singlefile": "2.3.4"
+    "vite": "^7.3.7"
   },
   "overrides": {
     "esbuild": "0.28.2",

@@ -11,8 +11,8 @@ import {
 
 /*
  * Minimal dependency-free hash router.
- * Hash routing is used deliberately so the single-file production build
- * works when opened directly or hosted without server rewrites.
+ * Hash routing keeps in-app navigation independent of server rewrites;
+ * clean entry paths are adopted from the generated SEO shells on load.
  */
 
 export type RouteState = {
@@ -61,10 +61,10 @@ function normalizePath(raw: string): string {
 /**
  * Can `window.location.pathname` be trusted as a route?
  *
- * Only over http(s). The single-file build is also meant to work when opened
- * straight off disk, where the pathname is the full filesystem path to
- * index.html ("/home/user/dist/index.html"). Adopting that would 404 a build
- * that currently works, so file:// keeps the previous hash-only behaviour.
+ * Only over http(s). Vite emits separate root-relative assets, so opening the
+ * production artifact under file:// is not a supported deployment mode. This
+ * guard also prevents a local filesystem path from being mistaken for a
+ * client route.
  */
 function canAdoptPathname(): boolean {
   return (
@@ -183,10 +183,30 @@ export function ScrollManager() {
   return null;
 }
 
-/** Keep the static shell's route metadata in sync during client-side navigation. */
-export function useSeo(meta: { title: string; description?: string }) {
+/**
+ * Keep the static shell's route metadata in sync during client-side navigation.
+ *
+ * `canonicalPath` overrides the path used for the canonical and og:url tags.
+ * It exists for routes that can be reached through more than one URL: a
+ * programme resolves by slug, by id, by code and by slug suffix, so
+ * `/programmes/<id>` and `/programmes/<code>` render the same page as the
+ * canonical slug. Without the override each of those URLs would declare
+ * itself canonical and the same content would be published at several
+ * addresses. The override is the resolved programme's own slug, so the
+ * canonical address always names the one URL that the sitemap lists.
+ */
+export function useSeo(meta: {
+  title: string;
+  description?: string;
+  canonicalPath?: string;
+}) {
   const { path } = useRoute();
   useEffect(() => {
-    syncRouteMetadata(document, path, meta.title, meta.description);
-  }, [path, meta.title, meta.description]);
+    syncRouteMetadata(
+      document,
+      meta.canonicalPath ?? path,
+      meta.title,
+      meta.description
+    );
+  }, [path, meta.canonicalPath, meta.title, meta.description]);
 }

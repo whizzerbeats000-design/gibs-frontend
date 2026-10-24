@@ -18,12 +18,22 @@ const MIME = {
 const server = createServer((req, res) => {
   let p = decodeURIComponent((req.url || "/").split("?")[0]);
   if (p === "/" || !extname(p)) p = "/index.html";
+  const file = join(ROOT, normalize(p).replace(/^(\.\.[/\\])+/, ""));
+  /* Read the file before any header is sent. If the read fails, the 404 is
+     then the only response that goes out. Sending a 200 header first and
+     only then discovering that the file is missing threw
+     ERR_HTTP_HEADERS_SENT, which is an uncaught exception in the server
+     handler: it took the whole sweep down instead of reporting one missing
+     asset. */
+  let body;
   try {
-    res.writeHead(200, { "content-type": MIME[extname(p)] || "application/octet-stream" });
-    res.end(readFileSync(join(ROOT, normalize(p).replace(/^(\.\.[/\\])+/, ""))));
+    body = readFileSync(file);
   } catch {
     res.writeHead(404); res.end();
+    return;
   }
+  res.writeHead(200, { "content-type": MIME[extname(p)] || "application/octet-stream" });
+  res.end(body);
 });
 await new Promise((r) => server.listen(0, "127.0.0.1", r));
 const BASE = `http://127.0.0.1:${server.address().port}`;

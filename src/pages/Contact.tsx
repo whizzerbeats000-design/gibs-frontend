@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { PageHero } from "../components/PageHero";
 import {
   Field,
@@ -11,21 +11,16 @@ import { Reveal } from "../components/motion";
 import { ArrowUpRight, ChatIcon, MapPinIcon, PhoneIcon, MailIcon } from "../components/icons";
 import { useRoute, useSeo } from "../lib/router";
 import { ENQUIRY_TYPES, INSTITUTIONAL_DATA, CAMPUSES } from "../lib/data";
+import { activePhoneNumbers } from "../lib/phones";
 import { useConcierge } from "../components/Concierge";
 
 /* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
-   byte-locked (SHA-256 910ff4d7…), so the two retired numbers — 08033429427
-   and 08032296041 — are filtered out here and the new official number
-   08160010400 is appended. The Contact page then renders this list with
+   byte-locked (SHA-256 910ff4d7…), so the retired numbers it still lists are
+   filtered out and the current official number is appended. The policy lives
+   in src/lib/phones.ts so the Contact page, the concierge and the SEO shell
+   generator cannot drift apart. The Contact page then renders this list with
    tel: links, so callers always reach the active desk. */
-const RETIRED_NUMBERS = new Set(["08033429427", "08032296041"]);
-const ADDITIONAL_NUMBER = "08160010400";
-const PHONE_LINES: string[] = [
-  ...INSTITUTIONAL_DATA.phoneNumbers.filter((n) => !RETIRED_NUMBERS.has(n)),
-  ...(INSTITUTIONAL_DATA.phoneNumbers.includes(ADDITIONAL_NUMBER)
-    ? []
-    : [ADDITIONAL_NUMBER]),
-];
+const PHONE_LINES: string[] = activePhoneNumbers(INSTITUTIONAL_DATA.phoneNumbers);
 
 type Values = { name: string; email: string; phone: string; type: string; message: string };
 type Errors = Partial<Record<keyof Values, string>>;
@@ -65,6 +60,23 @@ export default function Contact() {
   });
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>("idle");
+  const currentTypeRef = useRef(values.type);
+  currentTypeRef.current = values.type;
+
+  /* The enquiry type is pre-selected from the ?type= query parameter, which
+     the concierge replies and the programme/admissions CTAs link to. The
+     useState initialiser above only runs on the first mount, so a link that
+     arrives while the contact page is already open used to be dropped: the
+     form would keep an empty enquiry type even though the URL asked for one.
+     Re-applying the parameter whenever it changes closes that gap. A link
+     that arrives with no (or an unknown) type leaves whatever the visitor
+     has chosen in the form alone. */
+  useEffect(() => {
+    if (!ENQUIRY_TYPES.includes(preselect as never)) return;
+    const typeChanged = currentTypeRef.current !== preselect;
+    setValues((v) => (v.type === preselect ? v : { ...v, type: preselect }));
+    if (typeChanged) setStatus("idle");
+  }, [preselect]);
 
   const primaryEmail = INSTITUTIONAL_DATA.emails?.[0] ?? "gibsilorin@gmail.com";
 
@@ -176,7 +188,7 @@ export default function Contact() {
                     aria-describedby={errors.phone ? "phone-error" : undefined}
                     value={values.phone}
                     onChange={set("phone")}
-                    placeholder="08160010401 or +234 …"
+                    placeholder={`${PHONE_LINES[0]} or +234 …`}
                   />
                 </Field>
 

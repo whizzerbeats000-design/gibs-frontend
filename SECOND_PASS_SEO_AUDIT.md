@@ -6,6 +6,26 @@
 **Production URL:** `https://gibs-frontend-eight.vercel.app`  
 **Canonical domain:** `https://www.gibs.com.ng/` (DNS: **NXDOMAIN — does not resolve**)  
 
+> **Superseded in part — read with the note below (2026-10-22).**
+> This file is a point-in-time audit record from 2026-10-08 and is kept as
+> evidence; its body is not rewritten. Three statements in it no longer hold:
+>
+> 1. **`vite-plugin-singlefile` is no longer used.** Commit `5a3b363` replaced
+>    the inlined single-file build with hashed external assets
+>    (`dist/assets/index-<hash>.js` and `.css`), and the dependency was
+>    removed from `package.json`. The CSP `script-src 'unsafe-inline'` that
+>    this audit calls unavoidable is now required only by the one-line
+>    `no-js` → `js` class swap in `index.html`; see
+>    `docs/security/security-headers.md`, limitation 1.
+> 2. **The production URL is `https://gibs.com.ng`**, and `www.gibs.com.ng`
+>    now resolves and 301-redirects to it (`vercel.json`, first route). The
+>    NXDOMAIN finding above is historic.
+> 3. **`gibs-frontend-eight.vercel.app`** is the deployment that was audited
+>    then, not the current production host.
+>
+> For the current architecture, routes, build and bundle measurements, see
+> `docs/responsive/00-project-map.md`.
+
 ---
 
 ## 0. Project Context

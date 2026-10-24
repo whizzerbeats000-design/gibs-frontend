@@ -1,4 +1,5 @@
 import { PROGRAMMES, INSTITUTIONAL_DATA } from "./data";
+import { activePhoneNumbers, scrubRetiredNumbersInProse } from "./phones";
 
 /* ==========================================================================
    GIBS AI — frontend conversational intelligence engine.
@@ -6,17 +7,12 @@ import { PROGRAMMES, INSTITUTIONAL_DATA } from "./data";
    ========================================================================== */
 
 /* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
-   byte-locked (SHA-256 910ff4d7…), so the retired numbers 08033429427 and
-   08032296041 are filtered out and the new official 08160010400 is appended.
-   This list is what the concierge surfaces in its contact reply. */
-const RETIRED_NUMBERS = new Set(["08033429427", "08032296041"]);
-const ADDITIONAL_NUMBER = "08160010400";
-const ACTIVE_PHONE_NUMBERS: string[] = [
-  ...INSTITUTIONAL_DATA.phoneNumbers.filter((n) => !RETIRED_NUMBERS.has(n)),
-  ...(INSTITUTIONAL_DATA.phoneNumbers.includes(ADDITIONAL_NUMBER)
-    ? []
-    : [ADDITIONAL_NUMBER]),
-];
+   byte-locked (SHA-256 910ff4d7…), so the retired numbers it still lists are
+   filtered out and the current official number is appended. The policy lives
+   in src/lib/phones.ts and is shared with the Contact page and the SEO shell
+   generator, so the three cannot drift apart. This list is what the
+   concierge surfaces in its contact reply. */
+const ACTIVE_PHONE_NUMBERS: string[] = activePhoneNumbers(INSTITUTIONAL_DATA.phoneNumbers);
 
 export type ConciergeCard =
   | { kind: "link"; label: string; to: string; detail?: string | null }
@@ -37,7 +33,7 @@ const programmeCard = (slug: string): ConciergeCard => {
   };
 };
 
-type Rule = { test: RegExp; reply: ConciergeReply };
+type Rule = { test: RegExp; reply: ConciergeReply; id?: string };
 type RankedProgramme = { slug: string; label: string; num: number; score: number; topicMatch: boolean };
 
 const SEARCH_STOP_WORDS = new Set([
@@ -177,6 +173,7 @@ const RULES: Rule[] = [
     },
   },
   {
+    id: "foreign-hubs",
     test: /\b(foreign|overseas|international|kigali|dubai|london|houston|rwanda|uae|uk|usa|texas)\b/i,
     reply: {
       text: "GIBS conducts 22 Foreign Executive Training Programmes across 4 international hubs: Kigali (8 courses, $4,800 USD), Dubai (5 courses, $4,800 USD), London (4 courses, £4,800 GBP), and Houston, Texas (5 courses, $5,000–$9,500 USD).",
@@ -200,6 +197,7 @@ const RULES: Rule[] = [
     },
   },
   {
+    id: "enrolment",
     test: /\b(subscribe|subscription|nominate|nomination|register|enrol|enrolment|requirement|fee|fees|cost|price|tuition|apply|admission|scholarship)\b/i,
     reply: {
       text: "GIBS offers 113 Local Open and 22 Foreign Executive Programmes across its 2026 training calendar. Organisations and individuals enquire by email, phone, or in person; GIBS processes enquiries and provides programme guidance. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP.",
@@ -210,6 +208,7 @@ const RULES: Rule[] = [
     },
   },
   {
+    id: "campus-locations",
     test: /\b(campus|visit|location|address|ilorin|abuja|ibafo|facilities|accommodation|lodge|hall)\b/i,
     reply: {
       text: `GIBS operates across 3 permanent centers: Ilorin Main HQ (No 81, Olorunsogo St, Upper Gaa-Akanbi), Abuja Center (Plot 194, Lugbe 1, Airport Rd), and Ibafo Center (KM 36, Lagos-Ibadan Express Rd), plus off-campus centers across Nigeria.`,
@@ -257,6 +256,18 @@ const FALLBACK: ConciergeReply = {
   ],
 };
 
+/**
+ * Defence in depth: every reply that leaves the concierge passes through the
+ * shared retired-number policy, so a rule that quotes data.ts prose can never
+ * publish a retired number even if the rule is written later.
+ */
+function publishable(reply: ConciergeReply): ConciergeReply {
+  return {
+    ...reply,
+    text: scrubRetiredNumbersInProse(reply.text),
+  };
+}
+
 export function getConciergeReply(input: string): ConciergeReply {
   const q = input.trim();
   if (!q) {
@@ -269,16 +280,40 @@ export function getConciergeReply(input: string): ConciergeReply {
   const programmeIntent = hasProgrammeIntent(q);
   const searchWords = searchTerms(q);
   const destinationOnly = searchWords.length === 1 && /^(foreign|overseas|international|kigali|dubai|london|houston|rwanda|uae|uk|usa|texas)$/i.test(searchWords[0]);
-  const hubOverview = /\bhubs?\b/i.test(q) && !/\b(programme|program|course|kigali|dubai|london|houston)\b/i.test(q);
+  const hasHubOverview = /\bhubs?\b/i.test(q) && !/\b(programme|program|course)\b/i.test(q);
+  const localHubIntent = /\b(local|nigeria|nigerian|ilorin|abuja|ibafo)\b/i.test(q) && /\bhubs?\b/i.test(q);
 
-  if (matches.length && !destinationOnly && !hubOverview && (programmeIntent || matches.some((match) => match.topicMatch))) {
-    return programmeReply(matches);
+  if (localHubIntent) {
+    const localHubRule = RULES.find((rule) => rule.id === "campus-locations");
+    if (localHubRule) return publishable(localHubRule.reply);
   }
-  if (programmeIntent) return searchWords.length ? noProgrammeMatch() : clarifyProgrammeQuery();
+  if (hasHubOverview) {
+    const foreignHubRule = RULES.find((rule) => rule.id === "foreign-hubs");
+    if (foreignHubRule) return publishable(foreignHubRule.reply);
+  }
+
+  if (matches.length && !destinationOnly && !hasHubOverview && (programmeIntent || matches.some((match) => match.topicMatch))) {
+    return publishable(programmeReply(matches));
+  }
+  if (programmeIntent && !destinationOnly && !hasHubOverview) {
+    /* A fee, enrolment or requirement question that also mentions a programme
+       must still reach the enrolment rule. The extra word ("fee", "cost")
+       prevents a programme match, so the branch above would answer "I
+       couldn't find a programme that explicitly matches those terms" — with
+       no fee information at all — to a question such as "How much does a
+       programme cost?" or "What is the fee of the Public Sector Accounting
+       programme?". The rule is only consulted when no programme matched, so
+       a query that does identify a programme still gets the programme. */
+    const enrolmentRule = RULES.find((rule) => rule.id === "enrolment");
+    if (enrolmentRule && enrolmentRule.test.test(q) && matches.length === 0) {
+      return publishable(enrolmentRule.reply);
+    }
+    return publishable(searchWords.length ? noProgrammeMatch() : clarifyProgrammeQuery());
+  }
 
   for (const rule of RULES) {
-    if (rule.test.test(q)) return rule.reply;
+    if (rule.test.test(q)) return publishable(rule.reply);
   }
-  if (matches.length) return programmeReply(matches);
-  return FALLBACK;
+  if (matches.length) return publishable(programmeReply(matches));
+  return publishable(FALLBACK);
 }

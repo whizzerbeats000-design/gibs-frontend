@@ -115,7 +115,7 @@ If server-side management of the catalogue is required in future, introduce only
 ## Deployment
 
 - Vercel configuration (`vercel.json`): SPA rewrite for non-API paths
-- Build: `vite` + `vite-plugin-singlefile` produces `dist/index.html`
+- Build: `vite` produces hashed assets in `dist/assets/`; `scripts/seo-gen.mjs` then writes 157 static SEO shells and `dist/sitemap.xml` into `dist/`
 - No backend deployment required until DB needed
 - No production changes made; no deployment executed
 

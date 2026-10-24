@@ -1,6 +1,6 @@
 import { PageHero } from "../components/PageHero";
 import { BtnLink } from "../components/ui";
-import { ConciergeConversation, useConcierge } from "../components/Concierge";
+import { ConciergeConversation, useConcierge, PAGE_STORAGE_KEY } from "../components/Concierge";
 import { Reveal } from "../components/motion";
 import { ChatIcon } from "../components/icons";
 import { useSeo } from "../lib/router";
@@ -85,7 +85,10 @@ export default function ConciergePage() {
                   </div>
                 </div>
                 <div className="min-h-0 flex-1">
-                  <ConciergeConversation label="GIBS AI conversation on this page" />
+                  <ConciergeConversation
+                    label="GIBS AI conversation on this page"
+                    storageKey={PAGE_STORAGE_KEY}
+                  />
                 </div>
               </div>
             </Reveal>

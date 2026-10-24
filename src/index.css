@@ -1,4 +1,16 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+
+/* Scope Tailwind's source detection to the application's own files.
+   `source(none)` disables automatic project-wide scanning; the explicit
+   sources below ensure generated artifacts, including Playwright reports,
+   cannot contribute classes to the production stylesheet.
+
+   `src` covers every .ts/.tsx file that defines the component classes.
+   `index.html` is included because the document element carries the
+   `no-js` class that the FOUC rules key off. Nothing outside these two
+   locations contributes utilities to the shipped app. */
+@source "../src";
+@source "../index.html";
 
 /* Hide static SEO body content when JS is available — React mounts and replaces
    it. When JS is disabled, <html> retains the no-js class and this rule does not

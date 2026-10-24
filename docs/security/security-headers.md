@@ -50,9 +50,11 @@ files, which can all change at the same URL on a later deploy.
 
 The only long-lived rule is scoped to `/assets/<name>-<hash>.<ext>` paths and
 sets `Cache-Control: public, max-age=31536000, immutable`. The filename must
-carry an 8-or-more-character version token. Vite's `vite-plugin-singlefile` (2.3.4)
-currently inlines the application JS and CSS, and public images/fonts keep stable
-names, so today's build does not rely on that immutable rule for those files.
+carry an 8-or-more-character version token. Since commit `5a3b363` the build
+emits the application bundle and the stylesheet as **hashed external assets**
+under `/assets/`, so the application JS and CSS now do rely on this rule. The
+public images and fonts keep stable names and are served under
+`must-revalidate` instead.
 
 Generated HTML shells and fallback HTML use `public, max-age=0, must-revalidate`.
 This avoids retaining an old application shell or metadata after a deploy.
@@ -74,8 +76,8 @@ Directives were chosen from the **actual build**, not from a generic template.
 | Directive | Value | Why this value |
 | --- | --- | --- |
 | `default-src` | `'self'` | Baseline. Nothing is loaded from a third party. |
-| `script-src` | `'self' 'unsafe-inline'` | `'unsafe-inline'` is **currently unavoidable**. `vite.config.ts` uses `viteSingleFile()`, so the production build emits the module as an *inline* `<script type="module">` in `dist/index.html`. Verified. |
-| `style-src` | `'self' 'unsafe-inline'` | Also unavoidable today: the same plugin inlines CSS into a `<style>` tag, and `framer-motion` writes inline `style` attributes at runtime. |
+| `script-src` | `'self' 'unsafe-inline'` | The build no longer inlines the application bundle: `dist/index.html` loads `<script type="module" src="/assets/index-<hash>.js">`. The only inline script is the one-line `no-js` → `js` class swap in `index.html`, which still needs `'unsafe-inline'`. See limitation 1 — this directive can be tightened to `'self'`. |
+| `style-src` | `'self' 'unsafe-inline'` | The Tailwind output is an external stylesheet (`/assets/index-<hash>.css`), not an inlined `<style>` tag. `'unsafe-inline'` is still required for the 46-character no-js guard in `index.html` and because `framer-motion` writes inline `style` attributes at runtime. |
 | `font-src` | `'self'` | All seven faces are self-hosted `woff2` under `/fonts/`. The `fonts.googleapis.com` reference at `src/index.css:15` is **inside a comment** recording why Google Fonts was removed — it is not a live request. Verified. |
 | `img-src` | `'self' data:` | Images are local `/images/*.webp`. `data:` is required by the two inline `data:image/svg+xml` noise textures at `src/index.css:959` and `:994`. |
 | `connect-src` | `'self'` | The app makes **zero** network requests today (no `fetch`, `XHR`, analytics, or beacons). **When a backend is added, its origin must be added here**, or XHR/fetch to it will be reported and later blocked. |
@@ -91,11 +93,21 @@ manifest and no workers; verified 0 `blob:` and 0 `Worker` references).
 
 ## Known limitations — read before changing the policy
 
-1. **`'unsafe-inline'` is the price of the single-file build.** It meaningfully
-   weakens `script-src`: an injected inline script would execute. Removing it
-   requires either dropping `viteSingleFile()` in favour of hashed external assets
-   (which changes deployment assumptions) or a per-build nonce, which
-   `vite-plugin-singlefile` does not emit. **Do not remove it casually.**
+1. **`'unsafe-inline'` in `script-src` is now a one-line liability, not a
+   structural necessity.** It meaningfully weakens `script-src`: an injected
+   inline script would execute. The application bundle is an external hashed
+   asset, so the only thing that still requires `'unsafe-inline'` is the
+   one-line `document.documentElement.classList.replace('no-js','js')` script
+   in `index.html` (with the matching 46-character `<style>` guard in the same
+   file). Moving that swap into an external script, authorizing its exact inline
+   source with a CSP hash, or dropping it would let `script-src` become `'self'`.
+   A nonce is appropriate only when the server generates a unique value for each
+   response and sets the matching policy; a per-build nonce is unsuitable for
+   this static deployment. This changes `index.html` and the `vercel.json`
+   CSP, and deployment configuration was not in scope for this pass, so it has
+   **not** been changed. **Do not remove `'unsafe-inline'` from `vercel.json`
+   without also removing the inline swap in `index.html`** — the class swap is
+   what prevents the no-JS fallback from flashing.
 2. **No violation reports leave the browser.** There is no `report-uri` /
    `report-to`, so violations surface in the DevTools console only. That is
    acceptable for a manual verification pass and useless for ongoing monitoring.

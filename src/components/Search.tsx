@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "../lib/router";
 import { PROGRAMMES, STATIC_PAGES } from "../lib/data";
+import { scrubRetiredNumbersInProse } from "../lib/phones";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { EASE } from "./motion";
 import { SearchIcon, CloseIcon, ArrowUpRight } from "./icons";
@@ -17,7 +18,7 @@ type SearchItem = {
 const INDEX: SearchItem[] = [
   ...PROGRAMMES.map((p) => ({
     title: `${p.code} · ${p.title}`,
-    blurb: `${p.fees} · ${p.schedule}`,
+    blurb: scrubRetiredNumbersInProse(`${p.fees} · ${p.schedule}`),
     to: `/programmes/${p.slug}`,
     group: "Programmes" as const,
     keywords: `${p.code} ${p.title} ${p.category} ${p.destination} ${p.targetAudience} ${p.schedule} ${p.fees} ${p.summary} ${p.duration}`,

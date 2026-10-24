@@ -8,10 +8,20 @@ import {
 import { motion } from "framer-motion";
 import { Link, navigate, useRoute } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
+import { INSTITUTIONAL_DATA } from "../lib/data";
+import { activePhoneNumbers } from "../lib/phones";
 import { HexMark } from "./Logo";
 import { MenuIcon, CloseIcon, SearchIcon, ChatIcon, ArrowUpRight } from "./icons";
 import { EASE } from "./motion";
 import { cn } from "../utils/cn";
+
+/* The footer publishes the same phone list as the Contact page, derived
+   through the shared policy in src/lib/phones.ts. It used to be a
+   hand-typed literal, which is exactly the kind of duplicate list that
+   drifts out of step with the rest of the site. */
+const FOOTER_PHONE_LINES: string[] = activePhoneNumbers(
+  INSTITUTIONAL_DATA.phoneNumbers
+);
 
 /* ---------------- Navigation simplification ----------------
  * The site architecture has been simplified to four primary
@@ -484,7 +494,7 @@ export function GlobalFooter() {
               <p className="font-semibold text-ivory">Headquarters (Ilorin):</p>
               <p>No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi, Ilorin, Kwara State</p>
               <p className="pt-1"><span className="text-gold-300">Emails:</span> gibsilorin@gmail.com · goshenibs22@gmail.com</p>
-              <p><span className="text-gold-300">Phones:</span> 08160010401 · 08160010400 · 08186464474</p>
+              <p><span className="text-gold-300">Phones:</span> {FOOTER_PHONE_LINES.join(" · ")}</p>
               <p><span className="text-gold-300">Postal:</span> P.O. Box 63, Ilorin General Post Office, Kwara State</p>
               <p><span className="text-gold-300">Web:</span> www.gibs.com.ng</p>
             </div>

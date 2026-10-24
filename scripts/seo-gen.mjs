@@ -1,10 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { categoryToSlug } from '../src/lib/categoryUtils.ts';
+import { activePhoneNumbers, scrubRetiredNumbersInProse } from '../src/lib/phones.ts';
 
 const CANONICAL_DOMAIN = 'https://gibs.com.ng';
-const MASTER_SHELL_PATH = 'dist/index.html';
-const DIST_DIR = 'dist';
+const DIST_DIR = path.resolve(process.env.GIBS_DIST_DIR || 'dist');
+const MASTER_SHELL_PATH = path.join(DIST_DIR, 'index.html');
 
 function extractProgrammes() {
   const content = fs.readFileSync('src/lib/data.ts', 'utf8');
@@ -258,15 +259,11 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
     const address = escapeHtml(inst.postalAddress || '');
     const website = escapeHtml(inst.website || '');
     /* The contact page in data.ts is the source of phoneNumbers, but data.ts
-       is byte-locked. Retired numbers are filtered out and the new official
-       number is appended, mirroring the render-layer transform in
-       src/pages/Contact.tsx. */
-    const RETIRED = new Set(["08033429427", "08032296041"]);
-    const NEW_NUMBER = "08160010400";
-    const activePhones = [
-      ...inst.phoneNumbers.filter((n) => !RETIRED.has(n)),
-      ...(inst.phoneNumbers.includes(NEW_NUMBER) ? [] : [NEW_NUMBER]),
-    ];
+       is byte-locked. Retired numbers are filtered out and the current
+       official number is appended, using the same shared policy the Contact
+       page and the concierge use (src/lib/phones.ts), so the three cannot
+       drift apart. */
+    const activePhones = activePhoneNumbers(inst.phoneNumbers);
     const phones = activePhones
       .map((n) => `<li><strong>Phone:</strong> ${escapeHtml(n)}</li>`)
       .join('');
@@ -393,7 +390,7 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
         programme.faqs
           .map(
             (f) =>
-              `<div><strong>${escapeHtml(f.q)}</strong><p>${escapeHtml(f.a)}</p></div>`,
+              `<div><strong>${escapeHtml(f.q)}</strong><p>${escapeHtml(scrubRetiredNumbersInProse(f.a))}</p></div>`,
           )
           .join('')
       : '';

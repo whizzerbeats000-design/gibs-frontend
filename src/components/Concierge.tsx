@@ -55,19 +55,26 @@ const WELCOME: Message = {
 };
 
 const STORAGE_KEY = "gibs-concierge-v2";
+/* The /concierge page mounts its own conversation panel while the floating
+   dialog is also on the page, so the two instances are alive at the same
+   time. They must not share one storage key: each save would overwrite the
+   other's history and the visitor would lose messages. The page panel
+   therefore keeps its own history under its own key. */
+const PAGE_STORAGE_KEY = "gibs-concierge-page-v2";
+export { PAGE_STORAGE_KEY };
 const HISTORY_TTL_MS = 24 * 60 * 60 * 1000;
 
-function clearStoredHistory() {
+function clearStoredHistory(key: string = STORAGE_KEY) {
   try {
-    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(key);
   } catch {
     /* storage unavailable */
   }
 }
 
-function loadHistory(): { messages: Message[]; savedAt: number | null } {
+function loadHistory(key: string = STORAGE_KEY): { messages: Message[]; savedAt: number | null } {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) return { messages: [WELCOME], savedAt: null };
 
     const stored = JSON.parse(raw) as { savedAt?: number; messages?: Message[] };
@@ -79,7 +86,7 @@ function loadHistory(): { messages: Message[]; savedAt: number | null } {
       stored.savedAt! > now ||
       now - stored.savedAt! >= HISTORY_TTL_MS
     ) {
-      clearStoredHistory();
+      clearStoredHistory(key);
       return { messages: [WELCOME], savedAt: null };
     }
 
@@ -93,12 +100,12 @@ function loadHistory(): { messages: Message[]; savedAt: number | null } {
       )
       .slice(-30);
     if (messages.length === 0) {
-      clearStoredHistory();
+      clearStoredHistory(key);
       return { messages: [WELCOME], savedAt: null };
     }
     return { messages, savedAt: stored.savedAt! };
   } catch {
-    clearStoredHistory();
+    clearStoredHistory(key);
     return { messages: [WELCOME], savedAt: null };
   }
 }
@@ -123,6 +130,7 @@ function CardView({ card, onNavigate }: { card: ConciergeCard; onNavigate?: () =
 export function ConciergeConversation({
   compact = false,
   label = "GIBS AI conversation",
+  storageKey = STORAGE_KEY,
 }: {
   compact?: boolean;
   /**
@@ -131,6 +139,12 @@ export function ConciergeConversation({
    * distinct label to keep the landmarks unique.
    */
   label?: string;
+  /**
+   * Where this conversation is persisted. Two instances can be mounted at the
+   * same time, so they must not write to the same key — the last writer would
+   * otherwise discard the other instance's history.
+   */
+  storageKey?: string;
 }) {
   const hintId = useId();
   const idRef = useRef(1);
@@ -142,7 +156,7 @@ export function ConciergeConversation({
    * after a reload never collides with a restored message key.
    */
   const [messages, setMessages] = useState<Message[]>(() => {
-    const history = loadHistory();
+    const history = loadHistory(storageKey);
     savedAtRef.current = history.savedAt;
     idRef.current = history.messages.reduce((max, m) => Math.max(max, m.id), 0) + 1;
     return history.messages;
@@ -162,7 +176,7 @@ export function ConciergeConversation({
     setMessages([WELCOME]);
     setInput("");
     setTyping(false);
-    clearStoredHistory();
+    clearStoredHistory(storageKey);
   };
 
   useEffect(() => {
@@ -172,19 +186,22 @@ export function ConciergeConversation({
   }, []);
 
   useEffect(() => {
-    const onReset = () => reset();
+    const onReset = (event: Event) => {
+      const requestedKey = (event as CustomEvent<{ storageKey?: string }>).detail?.storageKey;
+      if (requestedKey === undefined || requestedKey === storageKey) reset();
+    };
     window.addEventListener("gibs:concierge-reset", onReset);
     return () => window.removeEventListener("gibs:concierge-reset", onReset);
   }, []);
 
   useEffect(() => {
     if (messages.length <= 1) {
-      clearStoredHistory();
+      clearStoredHistory(storageKey);
       return;
     }
     try {
       localStorage.setItem(
-        STORAGE_KEY,
+        storageKey,
         JSON.stringify({ savedAt: savedAtRef.current ?? Date.now(), messages: messages.slice(-30) })
       );
     } catch {
@@ -244,6 +261,11 @@ export function ConciergeConversation({
         aria-describedby={hintId}
         className="flex-1 space-y-5 overflow-y-auto px-5 py-6 sm:px-6"
         aria-live="polite"
+        /* Without this, every new message makes the live region announce its
+           whole contents, so the visitor hears the entire conversation read
+           out again on every reply. "additions" limits the announcement to
+           the message that was just added. */
+        aria-relevant="additions"
       >
         <span id={hintId} className="sr-only">
           Scrollable conversation transcript. Use arrow keys to scroll.
@@ -318,7 +340,11 @@ export function ConciergeConversation({
         </p>
         <button
           type="button"
-          onClick={() => window.dispatchEvent(new CustomEvent("gibs:concierge-reset"))}
+          onClick={() =>
+            window.dispatchEvent(
+              new CustomEvent("gibs:concierge-reset", { detail: { storageKey } })
+            )
+          }
           className="min-h-11 shrink-0 rounded-pill border border-forest-700/25 px-3 text-[11px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50"
         >
           Clear history

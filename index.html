@@ -1,6 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="no-js">
   <head>
+    <script>document.documentElement.classList.replace('no-js','js')</script>
+    <style>.js #root > main:not(#main) { display: none; }</style>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>GIBS — Goshen International Business School</title>
@@ -9,30 +11,90 @@
       content="Goshen International Business School (GIBS) — 2026 Executive Training Calendar featuring 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston."
     />
     <meta name="theme-color" content="#006B1B" />
+    <meta name="robots" content="index,follow" />
+
+    <!--
+      This is the master SEO shell. scripts/seo-gen.mjs reads this file during
+      `npm run build` and generates a per-route HTML shell for every route in
+      src/lib/data.ts (135 programmes, 15 category pages, 8 institutional routes).
+      Each shell gets route-specific title, meta description, canonical link,
+      and og:url. The root canonical and og:url below are correct for the
+      homepage shell itself; route shells overwrite them with the per-route URL
+      (e.g. https://gibs.com.ng/about).
+
+      Body content is rendered client-side by React (see src/main.tsx).
+      useSeo() in src/lib/router.tsx still updates title and meta description
+      at runtime for in-page navigation without a full reload.
+    -->
+    <link rel="canonical" href="https://gibs.com.ng/" />
 
     <!-- Open Graph / Social Sharing -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Goshen International Business School (GIBS)" />
+    <meta property="og:url" content="https://gibs.com.ng/" />
     <meta property="og:title" content="GIBS — 2026 Executive Training Calendar & International Programmes" />
     <meta
       property="og:description"
-      content="113 Local Open Programmes and 22 Foreign Executive Training Hubs across Kigali, Dubai, London, and Houston. Accredited by CAC, CMD, and ITF."
+      content="113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333."
     />
-    <meta property="og:image" content="https://www.gibs.com.ng/images/hero-campus.webp" />
+    <meta property="og:image" content="https://gibs.com.ng/images/gibs-hero-branded.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="GIBS — 2026 Executive Training Calendar & International Programmes" />
     <meta
       name="twitter:description"
-      content="113 Local Open Programmes and 22 Foreign Executive Training Hubs across Kigali, Dubai, London, and Houston."
+      content="113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston."
     />
-    <meta name="twitter:image" content="https://www.gibs.com.ng/images/hero-campus.webp" />
+    <meta name="twitter:image" content="https://gibs.com.ng/images/gibs-hero-branded.webp" />
 
     <link rel="icon" type="image/webp" href="/images/gibs-logo.webp" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Fonts are self-hosted (see the @font-face block at the top of src/index.css).
+         All five homepage faces are preloaded: Instrument Serif (normal + italic) for
+         display headings, Fraunces (normal + italic) for card titles and footers, and
+         Space Grotesk for UI and body copy. Preloading moves the font fetch off the
+         critical path's tail — without these tags the browser only discovers the
+         @font-face declarations during CSS parsing (~2.4s in), starts downloading at
+         ~3.5s, and occupies the main thread until ~5.4s, which delays FCP by ~1.4s.
+         crossorigin is required on a font preload even for same-origin files, because
+         the fetch is made in CORS mode.
+
+         Libre Baskerville is deliberately NOT preloaded: it is only used by the
+         mobile-nav sheet, which is not rendered on the initial page paint. -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Space+Grotesk:wght@300..700&family=Instrument+Serif:ital@0;1&display=swap"
-      rel="stylesheet"
+      rel="preload"
+      href="/fonts/instrument-serif-400-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/instrument-serif-italic-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/fraunces-var-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/fraunces-italic-var-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/space-grotesk-var-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
     />
 
     <script type="application/ld+json">
@@ -43,9 +105,9 @@
         "alternateName": "GIBS",
         "identifier": "RC 1178333",
         "slogan": "Take advantage of us, so that no one takes advantage of you",
-        "description": "An outfit committed to manpower development and capacity-building. Dedicated to empowering the future generation through management and business knowledge.",
-        "url": "https://www.gibs.com.ng",
-        "logo": "https://www.gibs.com.ng/images/gibs-logo.webp",
+        "description": "Goshen International Business School offers executive training programmes across Nigeria and four overseas hubs.",
+        "url": "https://gibs.com.ng",
+        "logo": "https://gibs.com.ng/images/gibs-logo.webp",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi",
@@ -58,12 +120,23 @@
           {
             "@type": "ContactPoint",
             "telephone": "+234-816-001-0401",
-            "contactType": "Training Registry & Admissions",
+            "contactType": "Training Desk & Programme Enquiries",
             "email": "gibsilorin@gmail.com"
           },
           {
             "@type": "ContactPoint",
-            "telephone": "+234-803-342-9427",
+            "telephone": "+234-818-646-4474",
+            "contactType": "Programme Enquiries",
+            "email": "goshenibs22@gmail.com"
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+234-708-579-2767",
+            "contactType": "Programme Enquiries"
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+234-816-001-0400",
             "contactType": "Programme Enquiries"
           }
         ],

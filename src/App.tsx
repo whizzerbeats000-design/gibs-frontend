@@ -11,16 +11,12 @@ import ProgrammeDetail from "./pages/ProgrammeDetail";
 import ExecutiveEducation from "./pages/ExecutiveEducation";
 import Admissions from "./pages/Admissions";
 import About from "./pages/About";
-import Faculty from "./pages/Faculty";
-import ResearchInsights from "./pages/ResearchInsights";
-import ArticleDetail from "./pages/ArticleDetail";
-import CampusPage from "./pages/Campus";
 import Gallery from "./pages/Gallery";
-import Events from "./pages/Events";
-import EventDetail from "./pages/EventDetail";
 import Contact from "./pages/Contact";
 import ConciergePage from "./pages/ConciergePage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
+import { slugToCategory } from "./lib/categoryUtils.ts";
 
 /**
  * Resolves a path to a page.
@@ -33,14 +29,17 @@ import NotFound from "./pages/NotFound";
  * bail out of the untouched exiting subtree instead.
  */
 function RouteView({ path }: { path: string }) {
+  const category = matchRoute("/programmes/category/:slug", path);
+  if (category?.slug) {
+    const categoryName = slugToCategory(category.slug);
+    if (categoryName) {
+      return <Programmes initialCategory={categoryName} />;
+    }
+    return <NotFound />;
+  }
+
   const programme = matchRoute("/programmes/:slug", path);
   if (programme?.slug) return <ProgrammeDetail slug={programme.slug} />;
-
-  const article = matchRoute("/research-insights/:slug", path);
-  if (article?.slug) return <ArticleDetail slug={article.slug} />;
-
-  const event = matchRoute("/events/:slug", path);
-  if (event?.slug) return <EventDetail slug={event.slug} />;
 
   switch (path) {
     case "/":
@@ -53,20 +52,14 @@ function RouteView({ path }: { path: string }) {
       return <Admissions />;
     case "/about":
       return <About />;
-    case "/faculty":
-      return <Faculty />;
-    case "/research-insights":
-      return <ResearchInsights />;
-    case "/campus":
-      return <CampusPage />;
     case "/gallery":
       return <Gallery />;
-    case "/events":
-      return <Events />;
     case "/contact":
       return <Contact />;
     case "/concierge":
       return <ConciergePage />;
+    case "/privacy-policy":
+      return <PrivacyPolicy />;
     default:
       return <NotFound />;
   }
@@ -75,22 +68,27 @@ function RouteView({ path }: { path: string }) {
 function Chrome() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { setOpen: setConciergeOpen } = useConcierge();
+  const { path } = useRoute();
+  const { open: conciergeOpen, setOpen: setConciergeOpen } = useConcierge();
+  const isProgrammeCatalogue = path === "/programmes" || path.startsWith("/programmes/category/");
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const openConcierge = useCallback(() => setConciergeOpen(true), [setConciergeOpen]);
 
-  // Global keyboard shortcut: Cmd/Ctrl + K opens search
+  // Global keyboard shortcut: Cmd/Ctrl + K opens search.
+  // Guard against opening search while another overlay is active to
+  // prevent stacked modals (search underneath concierge/mobile drawer).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        if (conciergeOpen || menuOpen || searchOpen) return;
         setSearchOpen(true);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [conciergeOpen, menuOpen, searchOpen]);
 
   return (
     <>
@@ -109,7 +107,7 @@ function Chrome() {
         onOpenConcierge={openConcierge}
       />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <ConciergeLauncher suppressed={searchOpen || menuOpen} />
+      {!isProgrammeCatalogue && <ConciergeLauncher suppressed={searchOpen || menuOpen} />}
       <ConciergeDialog />
     </>
   );

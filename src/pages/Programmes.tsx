@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useDeferredValue } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
-import { ProgramRow } from "../components/cards";
+import { ProgrammeCard } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
 import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
@@ -27,20 +27,30 @@ const listStagger: Variants = {
   }),
 };
 
-export default function ProgrammesPage() {
+export default function ProgrammesPage({
+  initialCategory = "All",
+}: {
+  initialCategory?: (typeof PROGRAM_CATEGORIES)[number];
+} = {}) {
   const reduceMotion = useReducedMotion();
+  const isCategoryFilter = initialCategory !== "All";
+
   useSeo({
-    title: "2026 Training Calendar (135 Programmes) — GIBS",
-    description:
-      "Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.",
+    title: isCategoryFilter
+      ? `${initialCategory} Training Programmes | GIBS`
+      : "2026 Training Calendar (135 Programmes) — GIBS",
+    description: isCategoryFilter
+      ? `Explore our executive training programmes in ${initialCategory} at GIBS.`
+      : "Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.",
   });
 
-  const [category, setCategory] = useState<(typeof PROGRAM_CATEGORIES)[number]>("All");
+  const [category, setCategory] = useState<(typeof PROGRAM_CATEGORIES)[number]>(initialCategory);
   const [destination, setDestination] = useState<DestinationFilter>("All");
   const [query, setQuery] = useState("");
+  const deferredQuery = useDeferredValue(query);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = deferredQuery.trim().toLowerCase();
     return PROGRAMMES.filter((p) => {
       const categoryMatch = category === "All" || p.category === category;
       const destinationMatch =
@@ -62,36 +72,53 @@ export default function ProgrammesPage() {
 
       return categoryMatch && destinationMatch && queryMatch;
     });
-  }, [category, destination, query]);
+  }, [category, destination, deferredQuery]);
 
-  const localCount = useMemo(() => PROGRAMMES.filter((p) => p.destination === "Local").length, []);
+  const destinationCounts = useMemo(
+    () =>
+      PROGRAMMES.reduce<Record<string, number>>((acc, p) => {
+        acc[p.destination] = (acc[p.destination] ?? 0) + 1;
+        return acc;
+      }, {}),
+    []
+  );
 
   return (
     <>
       {/* Header section */}
       <section className="bg-paper">
-        <div className="container-x pb-10 pt-[112px] sm:pb-14 sm:pt-[132px] lg:pb-16 lg:pt-[148px]">
-          <Breadcrumbs items={[{ label: "2026 Training Calendar" }]} />
+        <div className="container-x pb-10 pt-[var(--pt-page)] sm:pb-14 sm:pt-[var(--pt-page-sm)] lg:pb-16 lg:pt-[var(--pt-page-lg)]">
+          <Breadcrumbs
+            items={
+              isCategoryFilter
+                ? [{ label: "2026 Training Calendar", to: "/programmes" }, { label: initialCategory }]
+                : [{ label: "2026 Training Calendar" }]
+            }
+          />
           <Reveal>
             <p className="eyebrow mt-4">2026 Executive Training Calendar</p>
           </Reveal>
           <Reveal delay={0.06} y={20}>
             <h1 className="type-h1 mt-3 max-w-4xl text-ink">
-              135 Capacity-Building <em className="italic text-forest-700">Programmes.</em>
+              {isCategoryFilter ? (
+                <>
+                  {initialCategory} <em className="italic text-forest-700">Programmes.</em>
+                </>
+              ) : (
+                <>
+                  135 Capacity-Building <em className="italic text-forest-700">Programmes.</em>
+                </>
+              )}
             </h1>
-          </Reveal>
-          <Reveal delay={0.12} y={16}>
-            <p className="mt-5 max-w-3xl type-body text-ink/80">
-              113 Local Open Training Programmes delivered across our Ilorin Headquarters, Abuja,
-              and Ibafo Centers, plus 22 Foreign Executive Training Programmes across Kigali,
-              Dubai, London, and Houston.
-            </p>
           </Reveal>
         </div>
       </section>
 
-      <section className="bg-paper border-t border-line">
-        <div className="container-x pb-24 pt-6 sm:pb-32 sm:pt-8">
+      <section className="bg-paper border-t border-line" aria-labelledby="programme-results-heading">
+        <div className="container-x pb-20 pt-6 sm:pb-24 sm:pt-8">
+          <h2 id="programme-results-heading" className="sr-only">
+            Programme catalogue
+          </h2>
           {/* Scope / Destination Tabs */}
           <div className="border-b border-line pb-4">
             <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
@@ -104,6 +131,7 @@ export default function ProgrammesPage() {
                   setDestination("All");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "All" && category === "All"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "All"
@@ -111,7 +139,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                All Programmes (135)
+                All Programmes ({PROGRAMMES.length})
               </button>
               <button
                 type="button"
@@ -119,6 +147,7 @@ export default function ProgrammesPage() {
                   setDestination("Local");
                   if (category === "Foreign Executive Training") setCategory("All");
                 }}
+                aria-pressed={destination === "Local"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Local"
@@ -126,7 +155,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Local / Open ({localCount})
+                Local / Open ({destinationCounts.Local ?? 0})
               </button>
               <button
                 type="button"
@@ -134,6 +163,7 @@ export default function ProgrammesPage() {
                   setDestination("Kigali");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "Kigali"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Kigali"
@@ -141,7 +171,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Kigali Hub (8)
+                Kigali Hub ({destinationCounts.Kigali ?? 0})
               </button>
               <button
                 type="button"
@@ -149,6 +179,7 @@ export default function ProgrammesPage() {
                   setDestination("Dubai");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "Dubai"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Dubai"
@@ -156,7 +187,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Dubai Hub (5)
+                Dubai Hub ({destinationCounts.Dubai ?? 0})
               </button>
               <button
                 type="button"
@@ -164,6 +195,7 @@ export default function ProgrammesPage() {
                   setDestination("London");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "London"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "London"
@@ -171,7 +203,7 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                London Hub (4)
+                London Hub ({destinationCounts.London ?? 0})
               </button>
               <button
                 type="button"
@@ -179,6 +211,7 @@ export default function ProgrammesPage() {
                   setDestination("Houston");
                   setCategory("All");
                 }}
+                aria-pressed={destination === "Houston"}
                 className={cn(
                   "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
                   destination === "Houston"
@@ -186,13 +219,13 @@ export default function ProgrammesPage() {
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
                 )}
               >
-                Houston Hub (5)
+                Houston Hub ({destinationCounts.Houston ?? 0})
               </button>
             </div>
           </div>
 
           {/* Sticky filter & search container (Matching Admissions card elevation) */}
-          <div className="sticky top-[var(--sticky-top)] z-20 -mx-5 mb-6 border-b border-line bg-paper/95 px-5 py-3.5 backdrop-blur-md sm:mx-0 sm:my-6 sm:rounded-none sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
+          <div className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] -mx-5 mb-6 border-b border-line bg-paper/95 px-5 py-3.5 backdrop-blur-md sm:mx-0 sm:my-6 sm:rounded-none sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
             <div className="flex flex-col gap-3">
               {/* Search bar with warm editorial border & subtle inset highlight */}
               <div className="relative w-full">
@@ -221,10 +254,15 @@ export default function ProgrammesPage() {
               </div>
 
               {/* Sector / Category Filter Chips */}
+              <div className="flex items-center justify-between gap-3 pb-1">
+                <span className="meta shrink-0">Sector / category</span>
+                <span id="programme-filter-hint" className="meta text-right">Scroll for more</span>
+              </div>
               <div
                 role="group"
                 aria-label="Filter programmes by sector"
-                className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none"
+                aria-describedby="programme-filter-hint"
+                className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none focus-within:outline-none"
               >
                 {PROGRAM_CATEGORIES.map((cat) => (
                   <button
@@ -248,9 +286,13 @@ export default function ProgrammesPage() {
 
           {/* Results summary bar */}
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-sm">
-            <p className="text-[12.5px] text-muted" aria-live="polite">
+            <p className="text-[13px] text-muted" aria-live="polite">
               Showing <span className="font-bold text-ink">{filtered.length}</span> of {PROGRAMMES.length} programmes
-              {destination !== "All" ? ` · ${destination} Hub` : ""}
+              {destination === "Local"
+                ? " · Local / Open"
+                : destination !== "All"
+                ? ` · ${destination} Hub`
+                : ""}
               {category !== "All" ? ` · ${category}` : ""}
             </p>
             {(category !== "All" || destination !== "All" || query) && (
@@ -268,55 +310,54 @@ export default function ProgrammesPage() {
             )}
           </div>
 
-          {/* Programme list with explicit card spacing */}
-          {filtered.length > 0 ? (
-            reduceMotion ? (
-              /* Reduced motion: render the settled list directly. The stagger
-                 below is a nicety; it must never be load-bearing for
-                 legibility. */
-              <div className="grid grid-cols-1 gap-4 sm:gap-4.5">
-                {filtered.map((p, i) => (
-                  <div key={p.id}>
-                    <ProgramRow programme={p} index={i} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-            <motion.div
-              key={`${category}-${destination}-${query}`}
-              custom={filtered.length}
-              variants={listStagger}
-              initial="hidden"
-              animate="visible"
-              className="grid grid-cols-1 gap-4 sm:gap-4.5"
-            >
-              {filtered.map((p, i) => (
-                <motion.div key={p.id} variants={staggerItem}>
-                  <ProgramRow programme={p} index={i} />
-                </motion.div>
-              ))}
-            </motion.div>
-            )
-          ) : (
-            <EmptyState
-              title="No programmes match your filter"
-              body="No programme matches that specific filter combination. Try clearing your search or switching destination to browse the full 2026 calendar."
-              action={
-                <BtnLink
-                  to="/programmes"
-                  variant="outline-ink"
-                  size="md"
-                  onClick={() => {
-                    setCategory("All");
-                    setDestination("All");
-                    setQuery("");
-                  }}
+          {/* Programme register */}
+          {(() => {
+            const item = (p: (typeof PROGRAMMES)[number]) => (
+              <li key={p.id} className="border-b border-line">
+                <ProgrammeCard programme={p} presentation="register" />
+              </li>
+            );
+            return filtered.length > 0 ? (
+              reduceMotion ? (
+                <ul className="border-t border-line">
+                  {filtered.map((p) => item(p))}
+                </ul>
+              ) : (
+                <motion.ul
+                  custom={filtered.length}
+                  variants={listStagger}
+                  initial="hidden"
+                  animate="visible"
+                  className="border-t border-line"
                 >
-                  View All 135 Programmes
-                </BtnLink>
-              }
-            />
-          )}
+                  {filtered.map((p) => (
+                    <motion.li key={p.id} variants={staggerItem} className="border-b border-line">
+                      <ProgrammeCard programme={p} presentation="register" />
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              )
+            ) : (
+              <EmptyState
+                title="No programmes match your filter"
+                body="No programme matches that specific filter combination. Try clearing your search or switching destination to browse the full 2026 calendar."
+                action={
+                  <BtnLink
+                    to="/programmes"
+                    variant="outline-ink"
+                    size="md"
+                    onClick={() => {
+                      setCategory("All");
+                      setDestination("All");
+                      setQuery("");
+                    }}
+                  >
+                    View All 135 Programmes
+                  </BtnLink>
+                }
+              />
+            );
+          })()}
 
           <div className="mt-14 flex flex-wrap items-center justify-between gap-6 border-t rule pt-10">
             <div>
@@ -330,7 +371,7 @@ export default function ProgrammesPage() {
                 Request In-Plant Workshop
               </BtnLink>
               <BtnLink to="/contact" variant="outline-ink" size="md">
-                Nominate Candidates
+                Make an Enquiry
               </BtnLink>
             </div>
           </div>

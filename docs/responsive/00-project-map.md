@@ -29,12 +29,12 @@ Ground truth for the responsive audit and refinement brief. All file references 
    - `public/` is copied verbatim to `dist/` (`images/`, `fonts/`, `favicon.ico`, `robots.txt`).
    The `<hash>` is Vite's content hash. `vercel.json` serves `/assets/<name>-<8+ char token>.<ext>` with `Cache-Control: public, max-age=31536000, immutable`, and everything else with `must-revalidate`.
 
-2. **`node scripts/seo-gen.mjs`** — generates the static SEO shells. It reads the programme catalogue out of `src/lib/data.ts`, then emits **157 HTML shells**:
+2. **`node scripts/seo-gen.mjs`** — generates the static SEO shells. It reads the programme catalogue out of `src/lib/data.ts`, then emits **158 HTML shells**:
    - 135 programme shells (`/programmes/<slug>`)
    - 15 category shells (`/programmes/category/<slug>`)
-   - 7 institutional shells (`/programmes`, `/about`, `/contact`, `/admissions`, `/executive-education`, `/gallery`, `/concierge`)
+   - 8 institutional shells (`/programmes`, `/about`, `/contact`, `/admissions`, `/executive-education`, `/gallery`, `/concierge`, `/privacy-policy`)
 
-   Each shell is written **twice** — as `<route>.html` and as `<route>/index.html` — so that both extension-ful links and clean paths resolve without a rewrite. That is why `dist/` holds 315 `.html` files for 157 logical routes. The same script writes `dist/sitemap.xml`, which lists 158 URLs (the 157 routes plus the homepage).
+   Each shell is written **twice** — as `<route>.html` and as `<route>/index.html` — so that both extension-ful links and clean paths resolve without a rewrite. That is why `dist/` holds 317 `.html` files for 158 logical routes. The same script writes `dist/sitemap.xml`, which lists 159 URLs (the 158 routes plus the homepage).
 
 3. **`node scripts/qa/seo_shell_metadata_check.mjs`** — validates the generated shells (title/description/canonical/OG metadata, crawlable navigation, shell size) and fails the build if a shell is malformed. It is part of `npm run build`, so a broken shell fails the build rather than shipping.
 
@@ -56,6 +56,7 @@ Resolved in `src/App.tsx` (`RouteView`) against the hash router.
 | `/gallery` | `src/pages/Gallery.tsx` | Filterable grid + lightbox |
 | `/contact` | `src/pages/Contact.tsx` | Contact details + form with validation |
 | `/concierge` | `src/pages/ConciergePage.tsx` | GIBS AI landing |
+| `/privacy-policy` | `src/pages/PrivacyPolicy.tsx` | Website privacy and data-protection notice |
 | *unmatched* | `src/pages/NotFound.tsx` | Renders for any unmatched hash route |
 
 There are **no** `/faculty`, `/research-insights`, `/research-insights/:slug`, `/campus`, `/events` or `/events/:slug` routes, and no `Loader` component. The previous revision of this file listed all of them.

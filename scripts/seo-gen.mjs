@@ -134,6 +134,17 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+function programmeMetaDescription(summary) {
+  const maxLength = 155;
+  if (summary.length <= maxLength) return summary;
+
+  const excerpt = summary.slice(0, maxLength - 1);
+  const boundary = excerpt.search(/\s+\S*$/u);
+  if (boundary <= 0) throw new Error('Programme summary has no safe metadata word boundary.');
+
+  return `${excerpt.slice(0, boundary).replace(/[\s,;:—–-]+$/u, '')}…`;
+}
+
 // ----- Institutional Data Extraction -----
 
 function extractInstitutionalData() {
@@ -180,6 +191,7 @@ const PRIMARY_INSTITUTIONAL_ROUTES = [
   { path: '/executive-education', label: 'Foreign Executive Training (Kigali, Dubai, London, Houston)' },
   { path: '/gallery', label: 'Campus & Facility Gallery' },
   { path: '/concierge', label: 'GIBS AI Programme Assistant' },
+  { path: '/privacy-policy', label: 'Privacy Policy' },
 ];
 
 function generateInstitutionalNav() {
@@ -316,6 +328,13 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
     return `<main>
       <h1>${escapeHtml('Find the right programme')}</h1>
       <p>${escapeHtml('Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire.')}</p>
+    </main>`;
+  }
+
+  if (route === '/privacy-policy') {
+    return `<main>
+      <h1>Privacy Policy</h1>
+      <p>Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.</p>
     </main>`;
   }
 
@@ -530,8 +549,9 @@ async function run() {
     // 1. Programmes
     for (const p of programmes) {
       const route = `/programmes/${p.slug}`;
-      routes.push({ path: route, meta: { title: `${p.title} | GIBS`, description: p.summary.substring(0, 155) }});
-      const shellHtml = generateShell(masterHtml, route, { title: `${p.title} | GIBS`, description: p.summary.substring(0, 155) }, generateStaticBody(route, p, inst, programmes));
+      const description = programmeMetaDescription(p.summary);
+      routes.push({ path: route, meta: { title: `${p.title} | GIBS`, description }});
+      const shellHtml = generateShell(masterHtml, route, { title: `${p.title} | GIBS`, description }, generateStaticBody(route, p, inst, programmes));
       writeShell(route, shellHtml);
     }
 
@@ -544,6 +564,7 @@ async function run() {
       { path: '/executive-education', title: 'Foreign Executive Training | GIBS', desc: 'Global training hubs in Kigali, Dubai, London and Houston.' },
       { path: '/gallery', title: 'Gallery — GIBS', desc: 'Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.' },
       { path: '/concierge', title: 'GIBS AI — Ask about programmes and locations', desc: 'GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.' },
+      { path: '/privacy-policy', title: 'Privacy Policy | Goshen International Business School', desc: 'Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.' },
     ];
     for (const r of instRoutes) {
       routes.push({ path: r.path, meta: { title: r.title, description: r.desc }});

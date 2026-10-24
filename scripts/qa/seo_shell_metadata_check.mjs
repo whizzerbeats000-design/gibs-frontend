@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { PROGRAMMES } from "../../src/lib/data.ts";
 
 const root = process.cwd();
 const distDir = process.env.GIBS_DIST_DIR
@@ -117,9 +118,41 @@ assert.equal(metaValue(programme, "twitter:description"), metaValue(programme, "
 assert.equal(canonicalValue(programme), "https://gibs.com.ng/programmes/course-1-public-sector-accounting-procedure-and-standards");
 assert.equal(metaValue(programme, "og:url", "property"), canonicalValue(programme));
 assert.match(programme, /"@type":\s*"EducationalOrganization"/);
-assert.match(readFileSync(join(root, "dist", "sitemap.xml"), "utf8"), /<loc>https:\/\/gibs\.com\.ng\/programmes\/course-1-public-sector-accounting-procedure-and-standards<\/loc>/);
-assert.equal((readFileSync(join(root, "dist", "sitemap.xml"), "utf8").match(/<url>/g) ?? []).length, 158);
-assert.match(readFileSync(join(root, "dist", "robots.txt"), "utf8"), /Sitemap:\s*https:\/\/gibs\.com\.ng\/sitemap\.xml/);
+assert.match(readFileSync(join(distDir, "sitemap.xml"), "utf8"), /<loc>https:\/\/gibs\.com\.ng\/programmes\/course-1-public-sector-accounting-procedure-and-standards<\/loc>/);
+
+const sampledProgrammeSlugs = [
+  "course-54-local-content-development-strategies-in-the-oil-and-gas-indu",
+  "course-1-public-sector-accounting-procedure-and-standards",
+  "foreign-kigali-1-managing-service-quality-and-customer-satisfaction-in-the-pu",
+  "foreign-london-1-building-capacity-for-executives-and-top-management-utility",
+];
+for (const slug of sampledProgrammeSlugs) {
+  const source = PROGRAMMES.find((item) => item.slug === slug);
+  assert.ok(source, `source catalogue must contain programme ${slug}`);
+  const html = readShell(`programmes/${slug}`);
+  const description = metaValue(html, "description");
+  assert.equal(metaValue(html, "og:description", "property"), description, `${slug}: Open Graph description`);
+  assert.equal(metaValue(html, "twitter:description"), description, `${slug}: Twitter description`);
+  assert.ok(description.length <= 155, `${slug}: metadata must remain within the existing 155-character ceiling`);
+  assert.ok(description.endsWith("…"), `${slug}: truncated metadata must end with an ellipsis`);
+  const excerpt = description.slice(0, -1);
+  assert.ok(source.summary.startsWith(excerpt), `${slug}: metadata must preserve the source summary prefix`);
+  assert.match(excerpt, /[\p{L}\p{N}]$/u, `${slug}: metadata must end at a word boundary`);
+  const nextSourceCharacter = source.summary[excerpt.length];
+  assert.ok(
+    nextSourceCharacter === undefined || !/[\p{L}\p{N}]/u.test(nextSourceCharacter),
+    `${slug}: metadata must not split a word from the source summary`
+  );
+}
+
+assert.equal((readFileSync(join(distDir, "sitemap.xml"), "utf8").match(/<url>/g) ?? []).length, 159);
+const sitemap = readFileSync(join(distDir, "sitemap.xml"), "utf8");
+assert.equal(
+  (sitemap.match(/<loc>https:\/\/gibs\.com\.ng\/privacy-policy<\/loc>/g) ?? []).length,
+  1,
+  "sitemap must include the canonical Privacy Policy URL exactly once"
+);
+assert.match(readFileSync(join(distDir, "robots.txt"), "utf8"), /Sitemap:\s*https:\/\/gibs\.com\.ng\/sitemap\.xml/);
 
 checkStaticShell("admissions", {
   title: "Programme Enquiries — Goshen International Business School",
@@ -141,6 +174,14 @@ checkStaticShell("concierge", {
   canonical: "https://gibs.com.ng/concierge",
   h1: "Find the right programme",
   intro: "Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire.",
+});
+
+checkStaticShell("privacy-policy", {
+  title: "Privacy Policy | Goshen International Business School",
+  description: "Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.",
+  canonical: "https://gibs.com.ng/privacy-policy",
+  h1: "Privacy Policy",
+  intro: "Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.",
 });
 
 // Every generated static shell is user-visible to non-JavaScript clients and
@@ -188,7 +229,7 @@ const homeLinks = [...homeMain[1].matchAll(/<a\s+[^>]*href=["']([^"']+)["'][^>]*
 
 assert.ok(homeLinks.length >= 22, `homepage must have at least 22 static internal links (got ${homeLinks.length})`);
 
-// 3. Verify all 7 primary institutional routes are present
+// 3. Verify all 8 primary institutional routes are present
 const expectedInstitutional = [
   "/programmes",
   "/about",
@@ -197,6 +238,7 @@ const expectedInstitutional = [
   "/executive-education",
   "/gallery",
   "/concierge",
+  "/privacy-policy",
 ];
 for (const route of expectedInstitutional) {
   assert.ok(
@@ -234,8 +276,8 @@ for (const slug of expectedCategories) {
 // 5. Verify every generated internal link on homepage points to a valid generated route file on disk
 for (const link of homeLinks) {
   assert.ok(link.href.startsWith("/"), `internal link must be root-relative: ${link.href}`);
-  const htmlPath = join(root, "dist", `${link.href}.html`);
-  const indexPath = join(root, "dist", link.href, "index.html");
+  const htmlPath = join(distDir, `${link.href}.html`);
+  const indexPath = join(distDir, link.href, "index.html");
   assert.ok(
     existsSync(htmlPath) || existsSync(indexPath),
     `internal link target must exist in dist: ${link.href}`
@@ -262,16 +304,16 @@ assert.match(programme, /<nav\s+aria-label="Breadcrumb">/i);
 assert.match(programme, /href="\/programmes\/category\/accounting-and-financial-management"/);
 
 // --- External Asset Delivery & Shell Payload Size Checks ---
-const homeBytes = readFileSync(join(root, "dist", "index.html")).length;
-const categoryBytes = readFileSync(join(root, "dist", "programmes", "category", "accounting-and-financial-management", "index.html")).length;
-const programmeBytes = readFileSync(join(root, "dist", "programmes", "course-1-public-sector-accounting-procedure-and-standards", "index.html")).length;
+const homeBytes = readFileSync(join(distDir, "index.html")).length;
+const categoryBytes = readFileSync(join(distDir, "programmes", "category", "accounting-and-financial-management", "index.html")).length;
+const programmeBytes = readFileSync(join(distDir, "programmes", "course-1-public-sector-accounting-procedure-and-standards", "index.html")).length;
 
 assert.ok(homeBytes < 50_000, `Homepage shell payload must be < 50 KB (got ${(homeBytes / 1024).toFixed(1)} KB)`);
 assert.ok(categoryBytes < 50_000, `Category shell payload must be < 50 KB (got ${(categoryBytes / 1024).toFixed(1)} KB)`);
 assert.ok(programmeBytes < 50_000, `Programme shell payload must be < 50 KB (got ${(programmeBytes / 1024).toFixed(1)} KB)`);
 
 // Verify external assets exist in dist/assets
-const assetsDir = join(root, "dist", "assets");
+const assetsDir = join(distDir, "assets");
 assert.ok(existsSync(assetsDir), "dist/assets directory must exist");
 const jsAssets = readdirSync(assetsDir).filter((f) => f.endsWith(".js"));
 const cssAssets = readdirSync(assetsDir).filter((f) => f.endsWith(".css"));
@@ -291,4 +333,4 @@ assert.doesNotMatch(home, /href="\.\/(assets|fonts|images)\//);
 assert.doesNotMatch(category, /href="\.\/(assets|fonts|images)\//);
 assert.doesNotMatch(programme, /href="\.\/(assets|fonts|images)\//);
 
-console.log("PASS static Admissions, Gallery, and Concierge shell content and metadata; homepage, contact, category, programme, sitemap, structured metadata, crawlable navigation, and external asset bundle delivery (<50KB shells)");
+console.log("PASS static Admissions, Gallery, Concierge, and Privacy Policy shell content and metadata; homepage, contact, category, programme, sitemap, structured metadata, crawlable navigation, and external asset bundle delivery (<50KB shells)");

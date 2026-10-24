@@ -31,6 +31,29 @@ test.describe('Core User Journeys', () => {
     await expect(page.locator('h1')).toContainText('Programmes');
   });
 
+  test('Privacy Policy is directly reachable and keyboard-accessible from the footer', async ({ page }) => {
+    await page.goto('/');
+    const policyLink = page.getByRole('link', { name: 'Privacy Policy' });
+    await policyLink.focus();
+    await expect(policyLink).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(page.getByRole('heading', { level: 1, name: 'Privacy Policy' })).toBeVisible();
+    await expect(page).toHaveTitle('Privacy Policy | Goshen International Business School');
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      'https://gibs.com.ng/privacy-policy'
+    );
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/privacy-policy');
+    await expect(page.getByRole('heading', { level: 1, name: 'Privacy Policy' })).toBeVisible();
+    const dimensions = await page.evaluate(() => ({
+      viewport: document.documentElement.clientWidth,
+      content: document.documentElement.scrollWidth,
+    }));
+    expect(dimensions.content).toBeLessThanOrEqual(dimensions.viewport);
+  });
+
   test('SPA navigation keeps canonical and social metadata in sync', async ({ page }) => {
     await page.goto('/');
     await page.getByRole('link', { name: 'Explore programmes' }).first().click();

@@ -14,6 +14,7 @@ import About from "./pages/About";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import ConciergePage from "./pages/ConciergePage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import { slugToCategory } from "./lib/categoryUtils.ts";
 
@@ -57,6 +58,8 @@ function RouteView({ path }: { path: string }) {
       return <Contact />;
     case "/concierge":
       return <ConciergePage />;
+    case "/privacy-policy":
+      return <PrivacyPolicy />;
     default:
       return <NotFound />;
   }

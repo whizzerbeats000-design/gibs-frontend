@@ -388,6 +388,7 @@ const FOOTER_COLUMNS = [
     links: [
       { label: "Contact Registry", to: "/contact" },
       { label: "GIBS AI", to: "/concierge" },
+      { label: "Privacy Policy", to: "/privacy-policy" },
     ],
   },
 ];

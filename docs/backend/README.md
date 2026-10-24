@@ -114,8 +114,8 @@ If server-side management of the catalogue is required in future, introduce only
 
 ## Deployment
 
-- Vercel configuration (`vercel.json`): SPA rewrite for non-API paths
-- Build: `vite` produces hashed assets in `dist/assets/`; `scripts/seo-gen.mjs` then writes 157 static SEO shells and `dist/sitemap.xml` into `dist/`
+- Vercel configuration (`vercel.json`): serves generated route shells and static assets through filesystem handling; unmatched clean paths return Vercel's 404, while unknown hash routes render the client not-found page
+- Build: `vite` produces hashed assets in `dist/assets/`; `scripts/seo-gen.mjs` then writes 158 static SEO shells (135 programme, 8 institutional and 15 category routes) and a sitemap with 159 URLs including the homepage
 - No backend deployment required until DB needed
 - No production changes made; no deployment executed
 

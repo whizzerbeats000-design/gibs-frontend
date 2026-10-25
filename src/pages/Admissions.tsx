@@ -21,10 +21,10 @@ import {
 type CycleStatus = "Concluded" | "Active Intake" | "Open for Enrolment";
 
 const QUARTER_CYCLES = [
-  { k: "Quarter 1 Cohorts", v: "January — March 2026", start: "2026-01-01", end: "2026-03-31" },
-  { k: "Quarter 2 Cohorts", v: "April — June 2026", start: "2026-04-01", end: "2026-06-30" },
-  { k: "Quarter 3 Cohorts", v: "July — September 2026", start: "2026-07-01", end: "2026-09-30" },
-  { k: "Quarter 4 Cohorts", v: "October — December 2026", start: "2026-10-01", end: "2026-12-31" },
+  { k: "Quarter 1 Cohorts", v: "January – March 2026", start: "2026-01-01", end: "2026-03-31" },
+  { k: "Quarter 2 Cohorts", v: "April – June 2026", start: "2026-04-01", end: "2026-06-30" },
+  { k: "Quarter 3 Cohorts", v: "July – September 2026", start: "2026-07-01", end: "2026-09-30" },
+  { k: "Quarter 4 Cohorts", v: "October – December 2026", start: "2026-10-01", end: "2026-12-31" },
 ];
 
 /* Status follows the clock, not the copy — quarters before today are
@@ -187,7 +187,7 @@ export default function Admissions() {
                 </dl>
                 <div className="mt-7 flex flex-wrap gap-4">
                   <Link to="/programmes" className="group link-underline text-sm font-semibold text-forest-700">
-                    Explore all 135 programmes
+                    View all 135 programmes
                   </Link>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default function Admissions() {
                 <span className="eyebrow-light">
                   Domestic / Open Programmes (113)
                 </span>
-                <p className="mt-2 text-2xl font-bold text-white">₦300,000 — ₦800,000</p>
+                <p className="mt-2 text-2xl font-bold text-white">₦300,000 to ₦800,000</p>
                 <p className="mt-2 text-[13px] text-ivory/70 max-w-prose">
                   Delivered at Ilorin HQ, Abuja, Ibafo (Ogun State), or off-campus locations (Lagos, Port Harcourt, Kaduna, etc.).
                 </p>

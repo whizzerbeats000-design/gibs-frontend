@@ -32,7 +32,7 @@ export default function Perspective() {
             London, Dubai, Cape Town, Durban, Kigali, the Netherlands and Ghana.
           </motion.p>
           <motion.div variants={staggerItem} className="mt-8">
-            <ArrowTextLink to="/about">Read the institution's story</ArrowTextLink>
+            <ArrowTextLink to="/about">Institutional profile & governance</ArrowTextLink>
           </motion.div>
         </StaggerSlow>
 

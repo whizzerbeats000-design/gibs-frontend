@@ -79,7 +79,7 @@ export default function GlobalPerspective() {
             <Reveal delay={0.1}>
               <div className="mt-10">
                 <ArrowTextLink to="/about" light>
-                  How GIBS sees the world
+                  Institutional profile & leadership
                 </ArrowTextLink>
               </div>
             </Reveal>

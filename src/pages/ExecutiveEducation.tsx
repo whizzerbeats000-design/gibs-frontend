@@ -42,7 +42,7 @@ export default function ExecutiveEducation() {
   useSeo({
     title: "Foreign Executive Training & In-Plant Workshops — GIBS",
     description:
-      "Explore 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston, plus customized in-plant workshops for organizations.",
+      "Browse 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston, plus customized in-plant workshops for organizations.",
   });
 
   const foreignProgrammes = PROGRAMMES.filter((p) => p.destination !== "Local");

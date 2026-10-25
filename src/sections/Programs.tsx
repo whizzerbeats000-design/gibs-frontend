@@ -29,14 +29,14 @@ const PROGRAMME_GROUPS = [
   {
     title: "Local Programmes",
     body: `${LOCAL_PROGRAMMES.length} programmes across Nigeria, with training locations including Ilorin, Abuja and Ibafo.`,
-    cta: "Explore Local Programmes",
+    cta: "View Local Programmes",
     to: "/programmes",
     selected: SELECTED_PROGRAMMES.filter((p) => p.destination === "Local"),
   },
   {
     title: "Foreign Executive Programmes",
     body: `${FOREIGN_PROGRAMMES.length} international executive programmes across Kigali, Dubai, London and Houston.`,
-    cta: "Explore Foreign Executive Programmes",
+    cta: "View Foreign Executive Programmes",
     to: "/executive-education",
     selected: SELECTED_PROGRAMMES.filter((p) => p.destination !== "Local"),
   },
@@ -85,7 +85,7 @@ export default function ProgrammeDiscovery() {
             </Reveal>
             <Reveal delay={0.08} y={28}>
               <h2 className="type-h2 mt-5 text-ink">
-                Explore our programmes
+                2026 Programme Catalogue
               </h2>
             </Reveal>
           </div>

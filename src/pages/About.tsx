@@ -3,7 +3,7 @@ import { BtnLink, ClosingQuiet } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
 import { INSTITUTIONAL_DATA, GOVERNANCE_INFO, FACULTY_ADVISORS, CAMPUS_LOCATIONS } from "../lib/data";
-import { Diamond, CheckIcon, MapPinIcon } from "../components/icons";
+import { CheckIcon, MapPinIcon } from "../components/icons";
 
 export default function About() {
   useSeo({
@@ -61,7 +61,7 @@ export default function About() {
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {INSTITUTIONAL_DATA.coreValues.map((val) => (
                   <div key={val} className="flex items-center gap-3 border border-line bg-paper px-4 py-3.5 max-w-card">
-                    <Diamond className="h-2 w-2 shrink-0 text-gold-600" />
+                    <span className="h-1.5 w-1.5 shrink-0 rounded-xs bg-forest-600" aria-hidden="true" />
                     <span className="text-[14px] font-bold text-ink">{val}</span>
                   </div>
                 ))}
@@ -92,7 +92,7 @@ export default function About() {
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Reveal>
-              <h2 className="type-h2 text-ink">WHY CHOOSE US?</h2>
+              <h2 className="type-h2 text-ink">Why choose GIBS</h2>
             </Reveal>
           </div>
           <div className="lg:col-span-8">
@@ -115,7 +115,7 @@ export default function About() {
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Reveal>
-              <h2 className="type-h2 text-ink">PLEDGE:</h2>
+              <h2 className="type-h2 text-ink">Institutional pledge</h2>
             </Reveal>
           </div>
           <div className="lg:col-span-8">
@@ -132,7 +132,7 @@ export default function About() {
         <div className="container-x grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <Reveal>
-              <h2 className="type-h2 text-ink">OUR FACULTY:</h2>
+              <h2 className="type-h2 text-ink">Our faculty & resource persons</h2>
             </Reveal>
           </div>
           <div className="lg:col-span-8">

@@ -220,6 +220,19 @@ test.describe('Core User Journeys', () => {
     await expect(phoneLinks.first()).toBeVisible();
   });
 
+  test('Mobile contact form keeps the floating concierge launcher clear of its fields', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/contact');
+
+    await expect(page.locator('#phone')).toBeVisible();
+    await expect(page.locator('button.fixed[aria-label="Open GIBS AI"]')).toHaveCount(0);
+
+    const contactConcierge = page.getByRole('button', { name: 'Open GIBS AI', exact: true });
+    await expect(contactConcierge).toBeVisible();
+    await contactConcierge.click();
+    await expect(page.getByRole('dialog', { name: 'GIBS AI' })).toBeVisible();
+  });
+
   test('retired phone numbers never reach the rendered page', async ({ page }) => {
     /* The two retired desk numbers are still present in the byte-locked data
        file, so the render layer has to filter them out. This asserts on what

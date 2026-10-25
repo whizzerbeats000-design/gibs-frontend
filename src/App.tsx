@@ -71,6 +71,9 @@ function Chrome() {
   const { path } = useRoute();
   const { open: conciergeOpen, setOpen: setConciergeOpen } = useConcierge();
   const isProgrammeCatalogue = path === "/programmes" || path.startsWith("/programmes/category/");
+  // The Contact page has an inline concierge action beside its form. Hiding
+  // the fixed launcher there keeps it from covering the lower form controls.
+  const showFloatingConcierge = !isProgrammeCatalogue && path !== "/contact";
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const openConcierge = useCallback(() => setConciergeOpen(true), [setConciergeOpen]);
@@ -107,7 +110,7 @@ function Chrome() {
         onOpenConcierge={openConcierge}
       />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-      {!isProgrammeCatalogue && <ConciergeLauncher suppressed={searchOpen || menuOpen} />}
+      {showFloatingConcierge && <ConciergeLauncher suppressed={searchOpen || menuOpen} />}
       <ConciergeDialog />
     </>
   );

@@ -69,7 +69,7 @@ export function Breadcrumbs({ items }: { items: { label: string; to?: string }[]
         <li>
           <Link
             to="/"
-            className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700"
+            className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2 rounded-xs"
           >
             Home
           </Link>
@@ -80,7 +80,7 @@ export function Breadcrumbs({ items }: { items: { label: string; to?: string }[]
             {item.to ? (
               <Link
                 to={item.to}
-                className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700"
+                className="inline-block py-1.5 -my-1.5 text-muted transition-colors hover:text-forest-700 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2 rounded-xs"
               >
                 {item.label}
               </Link>

@@ -141,7 +141,7 @@ export function Header({
             type="button"
             onClick={onOpenSearch}
             aria-label="Search GIBS"
-            className="flex h-11 w-11 items-center justify-center rounded-pill text-forest-800 transition-colors hover:bg-forest-50"
+            className="flex h-11 w-11 items-center justify-center rounded-pill text-forest-800 transition-colors hover:bg-forest-50 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2"
           >
             <SearchIcon className="h-5 w-5" />
           </button>
@@ -150,7 +150,7 @@ export function Header({
             onClick={onOpenConcierge}
             aria-label="Open GIBS AI"
             className={cn(
-              "hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50",
+              "hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
               path === "/programmes" ? "lg:inline-flex" : "xl:inline-flex"
             )}
           >
@@ -171,7 +171,7 @@ export function Header({
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
-            className="flex h-11 w-11 items-center justify-center rounded-pill border border-forest-700/25 text-forest-800 transition-colors hover:border-forest-600 hover:bg-forest-600 hover:text-ivory lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-pill border border-forest-700/25 text-forest-800 transition-colors hover:border-forest-600 hover:bg-forest-600 hover:text-ivory focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2 lg:hidden"
           >
             <MenuIcon className="h-5 w-5" />
           </button>
@@ -513,7 +513,7 @@ export function GlobalFooter() {
                     <li key={l.label}>
                       <Link
                         to={l.to}
-                        className="group inline-flex min-h-[44px] items-center gap-1.5 py-2.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory"
+                        className="group inline-flex min-h-[44px] items-center gap-1.5 py-2.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory focus-visible:outline-2 focus-visible:outline-gold-300 focus-visible:outline-offset-2 rounded-xs"
                       >
                         <span className="h-px w-0 bg-gold-300 transition-all duration-300 group-hover:w-4" />
                         {l.label}

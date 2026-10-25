@@ -76,7 +76,7 @@ function ProgrammeListItem({ programme }: { programme: Programme }) {
 
 export default function ProgrammeDiscovery() {
   return (
-    <section id="programmes" className="cv-auto relative bg-white px-6 md:px-12 lg:px-16">
+    <section id="programmes" className="cv-auto relative bg-white">
       <div className="container-x mx-auto section-y text-left">
         <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">

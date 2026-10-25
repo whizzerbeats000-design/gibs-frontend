@@ -34,7 +34,7 @@ export default function ConciergePage() {
           {/* LEFT — identity and topics */}
           <div className="order-2 lg:order-1 lg:col-span-5">
             <Reveal>
-              <div className="border-t-2 border-forest-600 bg-paper p-8 sm:p-10 max-w-editorial">
+              <div className="rounded-panel border border-line border-t-2 border-t-forest-600 bg-paper p-8 shadow-crisp sm:p-10 max-w-editorial">
                 <span className="flex h-12 w-12 items-center justify-center rounded-pill bg-forest-700 text-gold-300">
                   <ChatIcon className="h-5 w-5" />
                 </span>
@@ -70,7 +70,7 @@ export default function ConciergePage() {
           {/* RIGHT — conversation */}
           <div className="order-1 lg:order-2 lg:col-span-7">
             <Reveal y={28}>
-              <div className="flex h-[640px] max-h-[85dvh] flex-col overflow-hidden border border-line shadow-crisp sm:h-[700px] sm:max-h-[85dvh]">
+              <div className="flex h-[640px] max-h-[85dvh] flex-col overflow-hidden rounded-panel border border-line shadow-card sm:h-[700px] sm:max-h-[85dvh]">
                 <div className="flex items-center justify-between gap-3 bg-forest-800 px-6 py-4 text-ivory">
                   <div>
                     <p className="flex items-center gap-2.5 font-serif text-[15px] font-semibold">

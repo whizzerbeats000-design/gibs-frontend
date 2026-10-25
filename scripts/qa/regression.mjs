@@ -55,6 +55,7 @@ const ROUTES = [
   "/gallery",
   "/contact",
   "/concierge",
+  "/privacy-policy",
   "/programmes/course-1-public-sector-accounting-procedure-and-standards",
   "/programmes/category/accounting-and-financial-management",
   "/definitely-not-a-real-page",
@@ -187,7 +188,7 @@ for (const route of ROUTES) {
 console.log("4. Geometry visual QA (320/390/768/920/1440/1920)");
 let hiddenTotal = 0;
 const gqaRoutes = ["/", "/programmes", "/about", "/admissions", "/contact",
-  "/executive-education", "/gallery", "/concierge",
+  "/executive-education", "/gallery", "/concierge", "/privacy-policy",
   "/programmes/course-1-public-sector-accounting-procedure-and-standards"];
 for (const w of [320, 390, 768, 920, 1440, 1920]) {
   for (const route of gqaRoutes) {

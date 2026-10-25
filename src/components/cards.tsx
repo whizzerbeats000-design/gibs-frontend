@@ -33,7 +33,10 @@ export function ProgrammeCard({
       <Link
         to={`/programmes/${programme.slug}`}
         data-programme-card
-        className={cn("group block py-4 sm:py-5", className)}
+        className={cn(
+          "group block py-4 sm:py-5 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-4 rounded-panel",
+          className
+        )}
       >
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <span className="card-eyebrow">{programme.category}</span>

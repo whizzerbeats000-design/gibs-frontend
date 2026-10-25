@@ -170,7 +170,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
             type="button"
             onClick={onClose}
             aria-label="Close search"
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink/60 transition-colors hover:bg-stone hover:text-ink"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink/60 transition-colors hover:bg-stone hover:text-ink focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2"
           >
             <CloseIcon className="h-4.5 w-4.5" />
           </button>
@@ -208,7 +208,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
                     key={s}
                     type="button"
                     onClick={() => setQuery(s)}
-                    className="min-h-[44px] rounded-pill border border-ink/20 px-4 py-2 text-[13px] font-semibold text-ink/75 transition-colors hover:border-forest-600 hover:text-forest-700"
+                    className="min-h-[44px] rounded-pill border border-ink/20 px-4 py-2 text-[13px] font-semibold text-ink/75 transition-colors hover:border-forest-600 hover:text-forest-700 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2"
                   >
                     {s}
                   </button>

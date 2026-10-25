@@ -241,7 +241,7 @@ export default function Contact() {
           <div className="min-w-0 lg:col-span-5">
             <Reveal y={32}>
               <div className="space-y-6">
-                <div className="border border-line bg-paper p-7 max-w-card">
+                <div className="rounded-panel border border-line border-t-2 border-t-forest-600 bg-paper p-7 shadow-crisp max-w-card">
                   <p className="eyebrow">GIBS AI</p>
                   <p className="mt-3 type-body max-w-prose">
                     GIBS AI is available to help guide you through programme selection, overseas hub schedules, and fee breakdowns.
@@ -256,7 +256,7 @@ export default function Contact() {
                   </button>
                 </div>
 
-                <div className="border border-line bg-paper p-7 space-y-5 max-w-card">
+                <div className="rounded-panel border border-line bg-paper p-7 shadow-crisp space-y-5 max-w-card">
                   <div>
                     <p className="eyebrow">Headquarters (Ilorin)</p>
                     <p className="mt-2 flex items-start gap-2.5 text-[14px] text-ink max-w-prose">

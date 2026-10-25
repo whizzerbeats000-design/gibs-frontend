@@ -806,7 +806,7 @@ body {
      the two card families can never drift apart again — this is what let the
      programme card fall behind the homepage editorial card in the first place. */
   .card-title {
-    @apply font-serif text-[16px] font-normal leading-[1.25] tracking-[-0.01em] text-ink transition-colors duration-150 group-hover:text-forest-700 sm:text-[17px];
+    @apply font-serif text-[16px] font-normal leading-[1.25] tracking-[-0.01em] text-ink transition-colors duration-150 group-hover:text-forest-700 group-focus-visible:text-forest-700 sm:text-[17px];
   }
   /* Editorial card label — the single definition behind the homepage featured
      card's category line. The programme catalogue pulls this same class so the

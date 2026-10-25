@@ -133,7 +133,7 @@ export default function ProgrammesPage({
                 }}
                 aria-pressed={destination === "All" && category === "All"}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
                   destination === "All"
                     ? "bg-forest-900 text-ivory border border-forest-950 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -149,7 +149,7 @@ export default function ProgrammesPage({
                 }}
                 aria-pressed={destination === "Local"}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
                   destination === "Local"
                     ? "bg-forest-600 text-ivory border border-forest-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -165,7 +165,7 @@ export default function ProgrammesPage({
                 }}
                 aria-pressed={destination === "Kigali"}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
                   destination === "Kigali"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -181,7 +181,7 @@ export default function ProgrammesPage({
                 }}
                 aria-pressed={destination === "Dubai"}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
                   destination === "Dubai"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -197,7 +197,7 @@ export default function ProgrammesPage({
                 }}
                 aria-pressed={destination === "London"}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
                   destination === "London"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -213,7 +213,7 @@ export default function ProgrammesPage({
                 }}
                 aria-pressed={destination === "Houston"}
                 className={cn(
-                  "min-h-[40px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
                   destination === "Houston"
                     ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
                     : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
@@ -271,7 +271,7 @@ export default function ProgrammesPage({
                     aria-pressed={category === cat}
                     onClick={() => setCategory(cat)}
                     className={cn(
-                      "shrink-0 rounded-none px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap min-h-[40px] transition-[transform,box-shadow,background-color] duration-150 ease-out",
+                      "shrink-0 rounded-none px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap min-h-[44px] transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
                       category === cat
                         ? "bg-forest-600 text-ivory border border-forest-700 shadow-card"
                         : "bg-white text-muted hover:text-ink hover:bg-stone/60 border border-line shadow-crisp"

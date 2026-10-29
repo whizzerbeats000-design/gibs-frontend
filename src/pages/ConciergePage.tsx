@@ -73,13 +73,13 @@ export default function ConciergePage() {
               <div className="flex h-[640px] max-h-[85dvh] flex-col overflow-hidden rounded-panel border border-line shadow-card sm:h-[700px] sm:max-h-[85dvh]">
                 <div className="flex items-center justify-between gap-3 bg-forest-800 px-6 py-4 text-ivory">
                   <div>
-                    <p className="flex items-center gap-2.5 font-serif text-[15px] font-semibold">
+                    <p className="flex items-center gap-2.5 font-serif text-sm font-semibold">
                       <span className="relative flex h-2 w-2">
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
                       </span>
                       GIBS AI
                     </p>
-                    <p className="mt-0.5 text-[11px] text-ivory/75">
+                    <p className="mt-0.5 text-xs text-ivory/75">
                       Programme guide
                     </p>
                   </div>

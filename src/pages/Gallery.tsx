@@ -250,7 +250,7 @@ function Lightbox({
 
         {/* Caption */}
         <div className="shrink-0 border-t border-line bg-white px-4 py-3 sm:px-5 sm:py-4">
-          <p className="text-[13px] leading-relaxed text-muted sm:text-[14px]">{item.caption}</p>
+          <p className="text-xs leading-relaxed text-muted sm:text-sm">{item.caption}</p>
           <p className="mt-1 meta">
             {index + 1} of {items.length} — {item.category}
           </p>
@@ -371,7 +371,7 @@ export default function Gallery() {
                       <div className="mt-4">
                         <p className="eyebrow text-forest-600">{item.category}</p>
                         <h3 className="display-serif mt-1 text-lg text-ink">{item.title}</h3>
-                        <p className="mt-1 text-[13px] text-muted">{item.caption}</p>
+                        <p className="mt-1 text-xs text-muted">{item.caption}</p>
                       </div>
                     </button>
                   </Reveal>
@@ -388,7 +388,7 @@ export default function Gallery() {
                     <div className="mt-4">
                       <p className="eyebrow text-forest-600">{filtered[3].category}</p>
                       <h3 className="display-serif mt-1 text-lg text-ink">{filtered[3].title}</h3>
-                      <p className="mt-1 text-[13px] text-muted">{filtered[3].caption}</p>
+                      <p className="mt-1 text-xs text-muted">{filtered[3].caption}</p>
                     </div>
                   </button>
                 </Reveal>
@@ -418,7 +418,7 @@ export default function Gallery() {
                       <div className="mt-4">
                         <p className="eyebrow text-forest-600">{item.category}</p>
                         <h3 className="display-serif mt-1 text-lg text-ink">{item.title}</h3>
-                        <p className="mt-1 text-[13px] text-muted">{item.caption}</p>
+                        <p className="mt-1 text-xs text-muted">{item.caption}</p>
                       </div>
                     </button>
                   </Reveal>

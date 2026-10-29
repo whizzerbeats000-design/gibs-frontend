@@ -24,7 +24,21 @@ function FactRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b rule py-3.5 last:border-b-0 sm:gap-6">
       <dt className="meta shrink-0 text-muted">{label}</dt>
-      <dd className="min-w-0 text-right text-[13.5px] font-semibold text-ink">{value}</dd>
+      <dd className="min-w-0 text-right text-sm font-semibold text-ink">{value}</dd>
+    </div>
+  );
+}
+
+/* Shared shell for the four "Delivery & Venues" fact surfaces (Format,
+   Duration, Schedule, Tuition Fee). The surface, eyebrow and display-serif
+   value styling are identical; only the value colour varies (the fee is
+   forest-900 to read as the emphasized datum). One shell, four call sites —
+   identical rendered output to the previous inline block. */
+function FactCard({ label, value, valueClass = "text-ink" }: { label: string; value?: string | null; valueClass?: string }) {
+  return (
+    <div className="border border-line bg-paper p-6">
+      <p className="eyebrow">{label}</p>
+      <h3 className={`display-serif mt-3 text-lg ${valueClass}`}>{value}</h3>
     </div>
   );
 }
@@ -89,27 +103,27 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   {programme.destination} Training
                 </span>
                 {programme.inPlantAvailable && (
-                  <span className="rounded-pill border border-forest-600/30 px-3 py-1 text-[11px] font-semibold text-forest-700">
+                  <span className="rounded-pill border border-forest-600/30 px-3 py-1 text-xs font-semibold text-forest-700">
                     In-Plant Option Available
                   </span>
                 )}
               </div>
-              <p className="prose-editorial mt-6 max-w-[62ch] text-[17px] leading-[1.8] text-ink">
+              <p className="prose-editorial mt-6 max-w-[62ch] type-body text-ink">
                 {programme.summary}
               </p>
             </Reveal>
 
             {/* Target Audience Highlight */}
-            <div className="mt-8 border-l-2 border-gold-500 bg-white p-6 shadow-crisp">
+            <div className="mt-8 border-l-2 border-gold-500 bg-white p-6">
               <p className="eyebrow text-gold-700">Target Audience</p>
-              <p className="mt-2 text-[15px] font-bold text-ink">{programme.targetAudience}</p>
+              <p className="mt-2 text-sm font-bold text-ink">{programme.targetAudience}</p>
             </div>
           </div>
 
           <div className="lg:col-span-5">
             <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + var(--subnav-height) + 16px)" }}>
               <Reveal y={32}>
-                <div className="border border-line bg-white p-7 shadow-card sm:p-8">
+                <div className="border border-line bg-white p-7 sm:p-8">
                   <p className="eyebrow">Programme Summary</p>
                   <dl className="mt-5">
                     <FactRow label="Course Code" value={programme.code} />
@@ -131,7 +145,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                     to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
                     variant="primary"
                     size="lg"
-                    className="mt-7 w-full whitespace-normal px-4 text-sm sm:px-7 sm:text-[15px]"
+                    className="mt-7 w-full whitespace-normal px-4 text-sm sm:px-7"
                   >
                     Make an Enquiry
                     <ArrowUpRight className="h-4 w-4" />
@@ -202,7 +216,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <ol className="border-t rule lg:col-span-7">
               {programme.indicativeStructure?.map((item, i) => (
                 <li key={i} className="grid grid-cols-[2.75rem_1fr] gap-4 border-b rule py-6">
-                  <span className="text-[12px] font-bold tracking-[0.16em] text-forest-600">
+                  <span className="text-xs font-bold tracking-[0.16em] text-forest-600">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p className="type-body font-medium text-ink/90">{item}</p>
@@ -211,9 +225,9 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </ol>
 
             <div className="lg:col-span-5">
-              <div className="border border-line bg-white p-7 shadow-card">
+              <div className="border border-line bg-white p-7">
                 <p className="eyebrow">Training Methodology</p>
-                <div className="mt-4 space-y-4 text-[14px] leading-relaxed text-muted">
+                <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted">
                   <p>
                     GIBS executive workshops employ participatory case studies, syndicate discussions,
                     expert lectures, and live institutional problem-solving.
@@ -238,22 +252,10 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           </Reveal>
 
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="border border-line bg-paper p-6">
-              <p className="eyebrow">Format</p>
-              <h3 className="display-serif mt-3 text-lg text-ink">{programme.format}</h3>
-            </div>
-            <div className="border border-line bg-paper p-6">
-              <p className="eyebrow">Duration</p>
-              <h3 className="display-serif mt-3 text-lg text-ink">{programme.duration ?? "5 Days"}</h3>
-            </div>
-            <div className="border border-line bg-paper p-6">
-              <p className="eyebrow">2026 Schedule</p>
-              <h3 className="display-serif mt-3 text-lg text-ink">{programme.schedule}</h3>
-            </div>
-            <div className="border border-line bg-paper p-6">
-              <p className="eyebrow">Tuition Fee</p>
-              <h3 className="display-serif mt-3 text-lg text-forest-900">{programme.fees}</h3>
-            </div>
+            <FactCard label="Format" value={programme.format} />
+            <FactCard label="Duration" value={programme.duration ?? "5 Days"} />
+            <FactCard label="2026 Schedule" value={programme.schedule} />
+            <FactCard label="Tuition Fee" value={programme.fees} valueClass="text-forest-900" />
           </div>
         </div>
       </section>
@@ -287,7 +289,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <h2 className="type-h2 mt-3">
               Enquire About {programme.code}.
             </h2>
-            <p className="mt-2 text-[14px] text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
+            <p className="mt-2 text-sm text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
           </div>
           <div className="flex w-full flex-wrap items-center gap-4 sm:w-auto">
             <BtnLink
@@ -328,11 +330,11 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               >
                 <div className="flex items-center justify-between">
                   <p className="meta text-gold-300">{p.code}</p>
-                  <span className="text-[12px] font-bold text-ivory/80">{p.fees}</span>
+                  <span className="text-xs font-bold text-ivory/80">{p.fees}</span>
                 </div>
                 <h3 className="type-h3 mt-3">{p.title}</h3>
-                <p className="mt-3 text-[13px] text-ivory/70 line-clamp-2">{p.schedule}</p>
-                <span className="mt-5 inline-flex items-center gap-2 text-[13px] font-bold text-gold-300">
+                <p className="mt-3 text-xs text-ivory/70 line-clamp-2">{p.schedule}</p>
+                <span className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-gold-300">
                   View details
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </span>

@@ -45,7 +45,7 @@ export default function ConciergeBand() {
               <blockquote className="display-serif mt-10 text-[1.55rem] leading-[1.4]">
                 “Welcome to GIBS AI. How can we help?”
               </blockquote>
-              <figcaption className="mt-6 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/70">
+              <figcaption className="mt-6 text-xs font-medium uppercase tracking-[0.12em] text-ivory/70">
                 Programme and enquiry guide
               </figcaption>
             </figure>

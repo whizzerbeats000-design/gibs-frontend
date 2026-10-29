@@ -49,18 +49,18 @@ export function ProgrammeCard({
         </div>
 
         <div className="mt-1.5 flex min-w-0 flex-col gap-x-4 gap-y-1 sm:flex-row sm:items-baseline sm:justify-between">
-          <h3 className="card-title min-w-0 text-[17px] sm:text-[19px]">{programme.title}</h3>
-          <p className="shrink-0 font-serif text-[11px] tracking-[0.04em] text-muted">{programme.code}</p>
+          <h3 className="card-title min-w-0 text-ink">{programme.title}</h3>
+          <p className="shrink-0 font-serif text-xs tracking-[0.04em] text-muted">{programme.code}</p>
         </div>
 
         <dl className="mt-3 grid min-w-0 gap-x-8 gap-y-2 sm:grid-cols-2">
           <div className="min-w-0">
             <dt className="card-field-label">Target Cohort</dt>
-            <dd className="mt-0.5 break-words text-[13px] leading-snug text-ink/85">{programme.targetAudience}</dd>
+            <dd className="mt-0.5 break-words text-sm leading-snug text-ink/85">{programme.targetAudience}</dd>
           </div>
           <div className="min-w-0">
             <dt className="card-field-label">Schedule &amp; Duration</dt>
-            <dd className="mt-0.5 break-words text-[13px] leading-snug text-ink/85">
+            <dd className="mt-0.5 break-words text-sm leading-snug text-ink/85">
               {programme.schedule}
               {programme.duration ? <span className="text-muted"> · {programme.duration}</span> : null}
             </dd>
@@ -70,11 +70,11 @@ export function ProgrammeCard({
         <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
           <div>
             <span className="card-field-label">Standard Tuition</span>
-            <span className="mt-0.5 block font-serif text-[16px] font-normal tabular-nums tracking-tight text-ink sm:text-[17px]">
+            <span className="mt-0.5 block font-serif text-base font-normal tabular-nums tracking-tight text-ink sm:text-lg">
               {programme.fees}
             </span>
           </div>
-          <span className="inline-flex min-h-11 items-center gap-1.5 text-[12px] font-semibold text-forest-700 transition-colors group-hover:text-forest-900">
+          <span className="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-forest-700 transition-colors group-hover:text-forest-900">
             View details
             <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </span>
@@ -108,7 +108,7 @@ export function ProgrammeCard({
       {/* Primary Identity */}
       <div className="mt-2.5">
         <h3 className="card-title">{programme.title}</h3>
-        <p className="mt-1 font-serif text-[12px] tracking-[0.04em] text-gold-700">
+        <p className="mt-1 font-serif text-xs tracking-[0.04em] text-gold-700">
           {programme.code}
         </p>
       </div>
@@ -118,8 +118,8 @@ export function ProgrammeCard({
         <div className="flex items-start gap-2.5">
           <UsersIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
-            <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink/90 line-clamp-2">
-              <span className="font-semibold text-muted text-[11px] uppercase tracking-wider block mb-0.5">Target Cohort</span>
+            <p className="text-sm leading-snug tracking-[-0.005em] text-ink/90 line-clamp-2">
+            <span className="font-semibold text-muted text-xs uppercase tracking-wider block mb-0.5">Target Cohort</span>
               {programme.targetAudience}
             </p>
           </div>
@@ -128,8 +128,8 @@ export function ProgrammeCard({
         <div className="flex items-start gap-2.5">
           <CalendarIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
-            <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink">
-              <span className="font-semibold text-muted text-[11px] uppercase tracking-wider block mb-0.5">Schedule &amp; Duration</span>
+            <p className="text-sm leading-snug tracking-[-0.005em] text-ink">
+              <span className="font-semibold text-muted text-xs uppercase tracking-wider block mb-0.5">Schedule &amp; Duration</span>
               {programme.schedule}
               {programme.duration ? (
                 <span className="text-muted"> · {programme.duration}</span>
@@ -141,7 +141,7 @@ export function ProgrammeCard({
 
       {/* Desktop-only simplified body (hidden on mobile/tablet) */}
       <div className="hidden lg:block mt-3.5">
-        <p className="text-[13px] leading-snug tracking-[-0.005em] text-ink">
+        <p className="text-sm leading-snug tracking-[-0.005em] text-ink">
           {programme.schedule}
           {programme.duration ? (
             <span className="text-muted"> · {programme.duration}</span>
@@ -153,7 +153,7 @@ export function ProgrammeCard({
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-line/70 pt-3 transition-colors duration-150 group-hover:border-forest-600/35">
         <div className="min-w-0 shrink">
           <span className="card-field-label">Standard Tuition</span>
-          <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink sm:text-[18px]">
+          <span className="mt-0.5 block font-serif text-lg font-normal tabular-nums tracking-tight text-ink sm:text-xl">
             {programme.fees}
           </span>
         </div>

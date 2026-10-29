@@ -237,7 +237,7 @@ export function ConciergeConversation({
       // Replace with a provider request in getConciergeReply when integrating.
       pendingReplyRef.current = window.setTimeout(() => {
         pendingReplyRef.current = null;
-        const reply = getConciergeReply(text);
+        const reply = getConciergeReply(text, messages);
         setMessages((m) => [
           ...m,
           { id: idRef.current++, role: "concierge", text: reply.text, cards: reply.cards },
@@ -245,7 +245,7 @@ export function ConciergeConversation({
         setTyping(false);
       }, 650);
     },
-    [typing]
+    [typing, messages]
   );
 
   const closePanels = () => setOpen(false);
@@ -445,7 +445,7 @@ export function ConciergeDialog() {
               </span>
               GIBS AI
             </p>
-            <p className="mt-0.5 text-[11px] text-ivory/75">Programme and enquiry guide</p>
+            <p className="mt-0.5 text-[11px] text-ivory/75">Your programme and enquiry guide</p>
           </div>
           <div className="flex items-center gap-1">
             <button

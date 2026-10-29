@@ -65,7 +65,7 @@ export function Eyebrow({ children, light = false }: { children: ReactNode; ligh
 export function Breadcrumbs({ items }: { items: { label: string; to?: string }[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-[12px] font-medium uppercase tracking-[0.12em] text-muted">
+      <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-muted">
         <li>
           <Link
             to="/"
@@ -194,12 +194,12 @@ export function Field({
       </label>
       {control}
       {hint && !error && (
-        <p id={`${htmlFor}-hint`} className="mt-1.5 text-[13px] text-muted">
+        <p id={`${htmlFor}-hint`} className="mt-1.5 text-sm text-muted">
           {hint}
         </p>
       )}
       {error && (
-        <p id={`${htmlFor}-error`} role="alert" className="mt-1.5 text-[13px] font-medium text-error">
+        <p id={`${htmlFor}-error`} role="alert" className="mt-1.5 text-sm font-medium text-error">
           {error}
         </p>
       )}

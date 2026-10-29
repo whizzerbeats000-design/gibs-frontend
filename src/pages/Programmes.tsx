@@ -27,6 +27,42 @@ const listStagger: Variants = {
   }),
 };
 
+/* One configuration row per scope tab. The shared shell is <ScopeToggle>; only
+   the active colour, label and value vary — previously each tab was a ~13-line
+   block of identical JSX differing solely in `aria-pressed`/`onClick`/colour.
+   Keeping a single render path preserves the 44px touch target, the focus
+   ring and the accessible-name contract the E2E suite pins. */
+const DESTINATION_TABS: { label: string; value: DestinationFilter; activeClass: string }[] = [
+  { label: "All Programmes", value: "All", activeClass: "bg-forest-900 text-ivory border border-forest-950 shadow-card" },
+  { label: "Local / Open", value: "Local", activeClass: "bg-forest-600 text-ivory border border-forest-700 shadow-card" },
+  { label: "Kigali Hub", value: "Kigali", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
+  { label: "Dubai Hub", value: "Dubai", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
+  { label: "London Hub", value: "London", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
+  { label: "Houston Hub", value: "Houston", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
+];
+
+function ScopeToggle({ pressed, activeClass, onClick, label, count }: {
+  pressed: boolean;
+  activeClass: string;
+  onClick: () => void;
+  label: string;
+  count: number;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={pressed}
+      className={cn(
+        "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
+        pressed ? activeClass : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
+      )}
+    >
+      {label} ({count})
+    </button>
+  );
+}
+
 export default function ProgrammesPage({
   initialCategory = "All",
 }: {
@@ -51,6 +87,19 @@ export default function ProgrammesPage({
 
   const filtered = useMemo(() => {
     const q = deferredQuery.trim().toLowerCase();
+    if (!q) {
+      return PROGRAMMES.filter((p) => {
+        const categoryMatch = category === "All" || p.category === category;
+        const destinationMatch =
+          destination === "All"
+            ? true
+            : destination === "Local"
+            ? p.destination === "Local"
+            : p.destination === destination;
+        return categoryMatch && destinationMatch;
+      });
+    }
+
     return PROGRAMMES.filter((p) => {
       const categoryMatch = category === "All" || p.category === category;
       const destinationMatch =
@@ -60,15 +109,16 @@ export default function ProgrammesPage({
           ? p.destination === "Local"
           : p.destination === destination;
 
-      const queryMatch =
-        !q ||
-        p.title.toLowerCase().includes(q) ||
-        p.code.toLowerCase().includes(q) ||
-        p.category.toLowerCase().includes(q) ||
-        p.destination.toLowerCase().includes(q) ||
-        p.schedule.toLowerCase().includes(q) ||
-        p.targetAudience.toLowerCase().includes(q) ||
-        p.summary.toLowerCase().includes(q);
+      const tokens = q.split(/\s+/);
+      const queryMatch = tokens.every((token) =>
+        p.title.toLowerCase().includes(token) ||
+        p.code.toLowerCase().includes(token) ||
+        p.category.toLowerCase().includes(token) ||
+        p.destination.toLowerCase().includes(token) ||
+        p.schedule.toLowerCase().includes(token) ||
+        p.targetAudience.toLowerCase().includes(token) ||
+        p.summary.toLowerCase().includes(token)
+      );
 
       return categoryMatch && destinationMatch && queryMatch;
     });
@@ -82,6 +132,15 @@ export default function ProgrammesPage({
       }, {}),
     []
   );
+
+  const handleScope = (value: DestinationFilter) => {
+    setDestination(value);
+    if (value === "Local") {
+      if (category === "Foreign Executive Training") setCategory("All");
+    } else {
+      setCategory("All");
+    }
+  };
 
   return (
     <>
@@ -125,102 +184,23 @@ export default function ProgrammesPage({
               <span className="shrink-0 mr-1 meta">
                 Scope:
               </span>
-              <button
-                type="button"
-                onClick={() => {
-                  setDestination("All");
-                  setCategory("All");
-                }}
-                aria-pressed={destination === "All" && category === "All"}
-                className={cn(
-                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
-                  destination === "All"
-                    ? "bg-forest-900 text-ivory border border-forest-950 shadow-card"
-                    : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
-                )}
-              >
-                All Programmes ({PROGRAMMES.length})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setDestination("Local");
-                  if (category === "Foreign Executive Training") setCategory("All");
-                }}
-                aria-pressed={destination === "Local"}
-                className={cn(
-                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
-                  destination === "Local"
-                    ? "bg-forest-600 text-ivory border border-forest-700 shadow-card"
-                    : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
-                )}
-              >
-                Local / Open ({destinationCounts.Local ?? 0})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setDestination("Kigali");
-                  setCategory("All");
-                }}
-                aria-pressed={destination === "Kigali"}
-                className={cn(
-                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
-                  destination === "Kigali"
-                    ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
-                    : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
-                )}
-              >
-                Kigali Hub ({destinationCounts.Kigali ?? 0})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setDestination("Dubai");
-                  setCategory("All");
-                }}
-                aria-pressed={destination === "Dubai"}
-                className={cn(
-                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
-                  destination === "Dubai"
-                    ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
-                    : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
-                )}
-              >
-                Dubai Hub ({destinationCounts.Dubai ?? 0})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setDestination("London");
-                  setCategory("All");
-                }}
-                aria-pressed={destination === "London"}
-                className={cn(
-                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
-                  destination === "London"
-                    ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
-                    : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
-                )}
-              >
-                London Hub ({destinationCounts.London ?? 0})
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setDestination("Houston");
-                  setCategory("All");
-                }}
-                aria-pressed={destination === "Houston"}
-                className={cn(
-                  "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
-                  destination === "Houston"
-                    ? "bg-gold-600 text-ivory border border-gold-700 shadow-card"
-                    : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
-                )}
-              >
-                Houston Hub ({destinationCounts.Houston ?? 0})
-              </button>
+              {DESTINATION_TABS.map((tab) => {
+                const pressed =
+                  tab.value === "All"
+                    ? destination === "All" && category === "All"
+                    : destination === tab.value;
+                const count = tab.value === "All" ? PROGRAMMES.length : destinationCounts[tab.value] ?? 0;
+                return (
+                  <ScopeToggle
+                    key={tab.value}
+                    pressed={pressed}
+                    activeClass={tab.activeClass}
+                    onClick={() => handleScope(tab.value)}
+                    label={tab.label}
+                    count={count}
+                  />
+                );
+              })}
             </div>
           </div>
 

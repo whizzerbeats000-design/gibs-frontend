@@ -72,9 +72,9 @@ if (!AXE && process.env.CI) {
 const configuredPath = process.env.CHROMIUM_PATH;
 const executablePath = configuredPath && existsSync(configuredPath)
   ? configuredPath
-  : chromium.executablePath();
-if (!existsSync(executablePath)) {
-  console.error(`No Chromium found at ${executablePath}. Set CHROMIUM_PATH or run \`npx playwright-core install chromium\`.`);
+  : (chromium.executablePath() || "");
+if (!executablePath || !existsSync(executablePath)) {
+  console.error(`No Chromium found at ${executablePath || "default path"}. Set CHROMIUM_PATH or run \`npx playwright-core install chromium\`.`);
   process.exit(2);
 }
 const browser = await chromium.launch({

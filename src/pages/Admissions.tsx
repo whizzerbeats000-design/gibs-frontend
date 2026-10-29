@@ -174,12 +174,12 @@ export default function Admissions() {
                       className="border-b rule py-4 last:border-b-0"
                     >
                       <dt className="flex items-center justify-between gap-3">
-                        <span className="eyebrow text-forest-800">{d.k}</span>
+                        <span className="label-base text-forest-800">{d.k}</span>
                         <span className="rounded-full bg-forest-100 px-2.5 py-0.5 text-[11px] font-semibold text-forest-800">
                           {d.status}
                         </span>
                       </dt>
-                      <dd className="mt-1 text-[13.5px] text-muted">
+                      <dd className="mt-1 text-sm text-muted">
                         {d.v}
                       </dd>
                     </div>

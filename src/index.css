@@ -219,22 +219,21 @@
      Hierarchy: L0 flat editorial → L1 tactile surface → L2 interactive cards → L3 floating/dialog.
      Layered tight+soft pairs read as physical depth; one huge blurred shadow reads as plastic. */
   --shadow-crisp: 0 1px 2px rgba(18, 18, 18, 0.05);
-  --shadow-lift: 0 24px 48px -20px rgba(0, 32, 9, 0.28), 0 8px 16px -6px rgba(18, 18, 18, 0.06);
-  /* L2 — cards: a near contact edge, a brief falloff, a long soft ambient pool. */
+  --shadow-lift: 0 12px 24px -12px rgba(0, 32, 9, 0.2), 0 4px 8px -4px rgba(18, 18, 18, 0.05);
+  /* L2 — cards: a near contact edge, a brief falloff, and a soft ambient pool.
+     Simplified to remove the 'plastic' look of too many layered shadows. */
   --shadow-card:
     0 1px 2px rgba(18, 18, 18, 0.05),
-    0 3px 8px rgba(18, 18, 18, 0.04),
-    0 18px 36px -22px rgba(0, 40, 16, 0.18);
-  /* L3 — interactive cards: raised + closer ambient pool. */
+    0 8px 16px -6px rgba(0, 40, 16, 0.12);
+  /* L3 — interactive cards: slightly more presence, but still grounded. */
   --shadow-card-strong:
     0 2px 4px rgba(18, 18, 18, 0.06),
-    0 8px 18px -8px rgba(18, 18, 18, 0.09),
-    0 28px 52px -24px rgba(0, 40, 16, 0.26);
+    0 16px 32px -12px rgba(0, 40, 16, 0.2);
   /* Spatial architectural shadow for elevated photo planes */
   --shadow-spatial:
     0 1px 2px rgba(0, 20, 5, 0.08),
-    0 6px 14px -4px rgba(0, 32, 9, 0.12),
-    0 24px 48px -12px rgba(0, 32, 9, 0.24);
+    0 12px 24px -8px rgba(0, 32, 9, 0.15),
+    0 32px 64px -16px rgba(0, 32, 9, 0.2);
 
   /* Layout. --gutter-x and --section-y/--band-y are consumed by .container-x
      and the section rhythm tokens (see the semantic aliases block); they live
@@ -400,13 +399,10 @@ body {
   font-family: var(--font-display);
   font-weight: 400;
   /* Page-title rung — mobile floor held at 36px so the longest real programme
-     titles (~184 chars) render sanely at 320px; desktop caps at 56px (was 80px)
-     so page titles read controlled and stop climbing past ~1500px. The home
-     hero borrows .type-hero (68px) so the front page stays the loudest moment
-     while every routed page title sits one rung quieter (doc 06, §4). */
-  font-size: clamp(2.25rem, 3.75vw, 3.5rem);
+     titles (~184 chars) render sanely at 320px; desktop caps at 64px. */
+  font-size: clamp(2.25rem, 5vw, 4rem);
   line-height: 1.02;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -415,12 +411,11 @@ body {
 @utility type-h2 {
   font-family: var(--font-display);
   font-weight: 400;
-  /* Desktop section headings stop at 40px (was 44px, then 54px) so sections
-     read exactly one quiet rung under the 56px page title. Floor held at
-     28px — mobile section headings stay focused, not shouting. */
-  font-size: clamp(1.75rem, 2.6vw, 2.5rem);
+  /* Section headings — one rung quieter than H1.
+     Mobile: 28px (1.75rem) -> Desktop: 48px (3rem). */
+  font-size: clamp(1.75rem, 3.5vw, 3rem);
   line-height: 1.1;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.02em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -429,9 +424,7 @@ body {
 @utility type-hero {
   font-family: var(--font-display);
   font-weight: 400;
-  /* The one loud rung — reserved for the full-bleed home hero. Caps at 68px
-     so even a 5rem cinematic headline equals the old H2 and the intellectual
-     serif stays premium, never poster-shout. Mobile floor held at 2.25rem. */
+  /* The one loud rung — reserved for the full-bleed home hero. */
   font-size: clamp(2.25rem, 5.5vw, 4.25rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
@@ -443,11 +436,10 @@ body {
 @utility type-h3 {
   font-family: var(--font-display);
   font-weight: 400;
-  /* Card/row titles: floor held at 24px (mobile unchanged), flat 1.8vw slope
-     holds ≈22–24px across common desktop widths and caps at 26px — compact,
-     editorial card scale instead of 33.6px inflation. */
-  font-size: clamp(1.5rem, 1.6vw, 1.625rem);
-  line-height: 1.2;
+  /* Sub-section headings — scaled below H2.
+     Mobile: 24px (1.5rem) -> Desktop: 32px (2rem). */
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.1;
   letter-spacing: -0.01em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
@@ -455,7 +447,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 @utility label-base {
-  @apply text-[11px] font-medium uppercase tracking-[0.12em] sm:text-[12px];
+  @apply text-[12px] font-bold uppercase tracking-[0.15em] sm:text-[13px];
 }
 
 @layer components {
@@ -540,8 +532,8 @@ body {
     text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
   }
   .type-body {
-    font-size: clamp(0.95rem, 1.2vw, 1.0625rem);
-    line-height: 1.55;
+    font-size: clamp(1rem, 1.3vw, 1.125rem);
+    line-height: 1.7;
     text-wrap: pretty;
     @apply text-muted;
   }
@@ -561,7 +553,7 @@ body {
     @apply label-base tracking-[0.1em] text-muted;
   }
   .prose-editorial {
-    @apply text-[16.5px] leading-[1.9] text-ink/85;
+    @apply text-[17px] leading-[2] text-ink/85;
   }
   .prose-editorial p + p {
     margin-top: 1.6em;
@@ -765,12 +757,6 @@ body {
   .pill-stone {
     @apply bg-stone text-forest-900;
   }
-  .pill-ivory {
-    @apply border border-ivory/25 text-ivory/90;
-  }
-  .pill-gold-outline {
-    @apply border border-gold-600/50 text-gold-700;
-  }
 
   /* ---------------- Programme Catalogue Card ----------------
      Elevation lives in tokens (--shadow-card / --shadow-card-strong) so the
@@ -780,12 +766,15 @@ body {
   /* NOTE: the former `.programme-card` block lived here and has been removed.
      No component ever applied the class — ProgrammeCard keys itself off the
      `data-programme-card` attribute (used by the QA harness) and styles itself
-     with Tailwind utilities plus `.card-depth` / `.card-spot`. The block was
+     with Tailwind utilities (`shadow-crisp` / `hover:shadow-card`) plus the
+     shared `.card-lift` shell (homepage featured card). The block was
      dead weight that also contradicted the card: it declared `border-radius: 0`
      and `--shadow-card` where the component ships `rounded-panel` and
      `shadow-crisp`, so adopting it would have changed the card. The elevation
      ladder those rules referenced (--shadow-card / --shadow-card-strong) is
-     still live via `.card-lift` and `.card-depth:hover` and stays in @theme. */
+     `.card-lift` (which reads `--shadow-card`). `--shadow-card-strong` was only
+     ever consumed by the now-removed `.card-depth:hover` and stays in @theme
+     as an unused token. */
 
   /* Interactive card lift — for cards where the WHOLE surface is the target
      (stretched link). Hover and focus-within share one state so a keyboard
@@ -806,7 +795,7 @@ body {
      the two card families can never drift apart again — this is what let the
      programme card fall behind the homepage editorial card in the first place. */
   .card-title {
-    @apply font-serif text-[16px] font-normal leading-[1.25] tracking-[-0.01em] text-ink transition-colors duration-150 group-hover:text-forest-700 group-focus-visible:text-forest-700 sm:text-[17px];
+    @apply font-serif text-[16px] font-normal leading-[1.2] tracking-[-0.01em] text-ink transition-colors duration-150 group-hover:text-forest-700 group-focus-visible:text-forest-700 sm:text-[18px];
   }
   /* Editorial card label — the single definition behind the homepage featured
      card's category line. The programme catalogue pulls this same class so the
@@ -837,31 +826,25 @@ body {
     @apply gap-2 rounded-none px-0 py-0 text-[13px] font-bold tracking-normal text-forest-700 group-hover:text-forest-800;
   }
 
-  /* ---------------- Spatial Depth System (Levels 0–3) ----------------
-     L0: Flat editorial canvas (bg-paper, bg-white)
-     L1: (reserved) tactile surface with 1px top highlight + contact edge
-     L2: Raised architectural cards with dual-layer shadow & 3D preserve (.surface-depth-2, .card-depth)
-     L3: Spatial stages with controlled perspective and Z-axis layers (.perspective-stage, .layer-z-*)
-  ---------------------------------------------------------------------- */
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-
-  /* Perspective Stages */
-  .perspective-stage {
-    perspective: 1200px;
-    transform-style: preserve-3d;
-  }
+  /* ---------------- Z-Axis Depth System ----------------
+     L0: Flat editorial canvas (bg-paper, bg-white).
+     L3 / stage: the Hero parallax stage is a single `.perspective-hero` parent
+     carrying `.layer-z-deep` (receding) + `.layer-z-fore` (headline, rising).
+     ProgrammeCatalogue cards deliberately do NOT adopt this 3D tilt/lighting
+     kit — they use Tailwind `shadow-crisp` + `hover:shadow-card` and the
+     `.card-lift` shell (used by the homepage featured card) — so the
+     `surface-depth-2` / `card-depth` / `card-spot` rules that previously
+     declared that kit are removed. `transform-origin` on the live layer
+     primitives is pinned to the anchored corner so a translateZ toward the
+     viewer scales the plane about its own centre rather than sliding
+     left-aligned editorial type out of the container gutter. */
+  /* Perspective stage for the Hero parallax stage. */
   .perspective-hero {
     perspective: 1400px;
     transform-style: preserve-3d;
   }
 
-  /* Z-Plane Layers for multi-plane architectural compositions.
-     transform-origin is pinned to the anchored corner: a translateZ toward the
-     viewer scales the plane about its centre by perspective/(perspective-z),
-     which would slide left-aligned editorial type out of the container gutter
-     and break alignment with the sections below. */
+  /* Z-Plane Layers for multi-plane architectural compositions. */
   .layer-z-deep {
     transform: translateZ(-20px) scale(1.02);
     transform-origin: center;
@@ -870,38 +853,10 @@ body {
     transform: translateZ(28px);
     transform-origin: left center;
   }
-  .layer-z-top {
-    transform: translateZ(44px);
-    transform-origin: left top;
-  }
 
-  /* Level 1: Tactile Surface (Clean structural framing) */
-
-  /* Level 2: Tactile Raised Architectural Card (Double-Bezel & Contact Drop) */
-  .surface-depth-2 {
-    background-color: #ffffff;
-    border: 1px solid rgba(18, 18, 18, 0.08);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 0 rgba(0, 32, 9, 0.03),
-      0 1px 3px rgba(18, 18, 18, 0.04),
-      0 8px 20px -6px rgba(0, 32, 9, 0.08),
-      0 20px 40px -16px rgba(0, 40, 16, 0.12);
-    transform-style: preserve-3d;
-    transition:
-      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.35s ease;
-  }
-  .surface-depth-2:hover {
-    transform: translateY(-3px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 1),
-      0 2px 5px rgba(18, 18, 18, 0.05),
-      0 12px 28px -6px rgba(0, 48, 16, 0.12),
-      0 28px 56px -14px rgba(0, 40, 16, 0.18);
-  }
-
-  /* Tactile Floating Institutional Badge */
+  /* ProgrammeCatalogue surfaces use `.panel` (`shadow-crisp`) plus the
+     `.card-lift` shell on the homepage featured card; the L1 tactile surface
+     and the L2 `surface-depth-2` dual-bezel card kit were never wired in. */
 
   /* ---------------- Scroll reveal ----------------
      Drives <Reveal> in src/components/motion.tsx. Kept as plain CSS so the
@@ -927,46 +882,10 @@ body {
     transform: translateY(0);
   }
 
-  /* ---------------- Dimensional cards ----------------
-     CARD DEPTH (L3): a physical, sub-3° tilt that trails the pointer; driven
-     entirely by CSS variables set from a passive pointermove handler (no
-     React re-renders, no layout reads). Disabled for coarse pointers and
-     prefers-reduced-motion. */
-  .card-depth {
-    transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transform-style: preserve-3d;
-    transition:
-      transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.4s ease;
-  }
-  .card-depth:hover {
-    box-shadow: var(--shadow-card-strong);
-  }
-
-  /* CARD LIGHTING: a restrained ivory highlight follows the pointer inside the
-     surface. Alpha 0.05 — light interacting with the material, not an RGB glow. */
-  .card-spot {
-    position: relative;
-  }
-  .card-spot::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      420px circle at var(--mx, 50%) var(--my, 50%),
-      rgba(255, 251, 235, 0.05),
-      transparent 45%
-    );
-    transition: opacity 0.45s ease;
-  }
-  .card-spot:hover::before,
-  .card-spot:focus-within::before {
-    opacity: 1;
-  }
+  /* The `.card-depth` pointer-tilt and `.card-spot` pointer-light kit were
+     prototyped for ProgrammeCatalogue cards but never adopted — those cards
+     ship `shadow-crisp` + `.card-lift` instead, so the rules are removed.
+     (The `--shadow-card` / `--shadow-card-strong` tokens remain in @theme.) */
 
   /* Film grain — 1.5% turbulence, static paint, composited once. Attach to
      important photography only (hero, full-bleed closes, framed features). */
@@ -1045,28 +964,22 @@ body {
   .typing-dot { animation: none; }
   .btn { transform: none !important; }
   .kenburns { animation: none !important; }
-  .card-depth { transform: none !important; }
   .card-lift,
   .card-lift:hover,
   .card-lift:focus-within { transform: none !important; transition: none !important; }
-  .perspective-stage, .perspective-hero { perspective: none !important; }
-  .layer-z-deep, .layer-z-fore, .layer-z-top { transform: none !important; }
-  /* Variant-level hover transforms must also sit — the bare `.btn` rule above
-     covers .btn-* (they all carry .btn), but these surface variants do not. */
-  .surface-depth-2:hover { transform: none !important; }
-  .card-spot::before { opacity: 0 !important; }
+  .perspective-hero { perspective: none !important; }
+  .layer-z-deep, .layer-z-fore { transform: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* Touch / coarse pointers never receive tilt or pointer-light; they scroll.
-   Elevation shadow may remain (harmless), transform is stripped entirely. */
-@media (pointer: coarse) {
-  .card-depth { transform: none !important; }
-  .card-spot::before { opacity: 0 !important; }
-}
+/* No coarse-pointer overrides remain: the only classes that lived here
+   (.card-depth / .card-spot) were never wired and are now removed, so touch
+   users retain the live hero/kenburns motion exactly as before. The universal
+   animation-duration reset in prefers-reduced-motion above is the sole motion
+   policy. */
 
 /* Mobile hero breathes slower and stays fractionally flatter — the scale
    delta and duration keep the effect subconscious on small viewports. */
@@ -1075,7 +988,7 @@ body {
     animation-duration: 60s;
     transform-origin: 50% 62%;
   }
-  .layer-z-deep, .layer-z-fore, .layer-z-top {
+  .layer-z-deep, .layer-z-fore {
     transform: none !important;
   }
 }

@@ -39,10 +39,10 @@ export default function About() {
             {INSTITUTIONAL_DATA.guidingPrinciples.map((pillar, i) => (
               <Reveal key={pillar} delay={i * 0.06}>
                 <div className="rounded-panel border border-line bg-white px-4 py-4">
-                  <span className="text-[10px] font-semibold tracking-[0.12em] text-muted">
+                  <span className="label-base text-muted">
                     Pillar 0{i + 1}
                   </span>
-                  <h3 className="display-serif mt-2 text-xl text-ink sm:text-2xl">{pillar}</h3>
+                  <h3 className="card-title mt-2 text-ink">{pillar}</h3>
                 </div>
               </Reveal>
             ))}
@@ -62,7 +62,7 @@ export default function About() {
                 {INSTITUTIONAL_DATA.coreValues.map((val) => (
                   <div key={val} className="flex items-center gap-3 border border-line bg-paper px-4 py-3.5 max-w-card">
                     <span className="h-1.5 w-1.5 shrink-0 rounded-xs bg-forest-600" aria-hidden="true" />
-                    <span className="text-[14px] font-bold text-ink">{val}</span>
+                    <span className="text-sm font-semibold text-ink">{val}</span>
                   </div>
                 ))}
               </div>
@@ -77,8 +77,8 @@ export default function About() {
               <ul className="mt-8 space-y-4">
                 {INSTITUTIONAL_DATA.strategicFocusAreas.map((area, i) => (
                   <li key={area} className="flex items-start gap-4 border-b rule pb-4">
-                    <span className="text-[11px] font-bold text-forest-700">0{i + 1}</span>
-                    <span className="text-[14.5px] font-medium leading-snug text-ink/85 max-w-prose">{area}</span>
+                    <span className="label-base text-forest-700">0{i + 1}</span>
+                    <span className="text-sm font-medium leading-snug text-ink/85 max-w-prose">{area}</span>
                   </li>
                 ))}
               </ul>

@@ -96,10 +96,10 @@ export default function ExecutiveEducation() {
                 <span className="pill pill-forest self-start">
                   {hub.coursesCount} Programmes
                 </span>
-                <h3 className="display-serif mt-4 text-2xl text-ink">{hub.city}</h3>
-                <p className="mt-1 text-[13px] font-bold text-forest-700">Fee: {hub.fee}</p>
-                <p className="text-[12px] font-medium text-muted">Schedule: {hub.dates}</p>
-                <p className="mt-4 flex-1 text-[13.5px] leading-relaxed text-ink/80 max-w-prose">{hub.summary}</p>
+                <h3 className="card-title mt-4 text-ink">{hub.city}</h3>
+                <p className="mt-1 text-sm font-bold text-forest-700">Fee: {hub.fee}</p>
+                <p className="text-xs font-medium text-muted">Schedule: {hub.dates}</p>
+                <p className="mt-4 flex-1 text-sm leading-relaxed text-ink/80 max-w-prose">{hub.summary}</p>
                 <div className="mt-6 border-t rule pt-4">
                   <Link
                     to="/programmes"
@@ -124,7 +124,7 @@ export default function ExecutiveEducation() {
               <h2 className="type-h2 mt-4">
                 Bring GIBS training and curriculum directly to your organisation
               </h2>
-              <p className="mt-6 text-[15.5px] leading-relaxed text-ivory/85 max-w-prose">
+              <p className="mt-6 text-sm leading-relaxed text-ivory/85 max-w-prose">
                 GIBS designs and delivers customized in-plant workshops for government ministries,
                 departments, agencies, and private corporate bodies. Courses can be tailored to
                 address your specific operating challenges, scheduled at your preferred venue and dates.
@@ -148,7 +148,7 @@ export default function ExecutiveEducation() {
           <div className="lg:col-span-5">
             <div className="border border-ivory/20 bg-forest-950/70 p-7 shadow-lift max-w-editorial">
               <p className="eyebrow-light text-gold-300">In-Plant Advantages</p>
-              <ul className="mt-5 space-y-4 text-[14px] text-ivory/85">
+                <ul className="mt-5 space-y-4 text-sm text-ivory/85">
                 <li className="flex items-start gap-3">
                   <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
                   <span>Cost-effective team training at your institutional facility</span>

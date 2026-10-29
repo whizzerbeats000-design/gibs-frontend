@@ -107,6 +107,21 @@ export default function Contact() {
     setStatus("ready");
   };
 
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      alert("Email address copied to clipboard!");
+    } catch (err) {
+      console.error("Clipboard copy failed:", err);
+      alert("Failed to copy email address.");
+    }
+  };
+
+  const handleEmailFallback = () => {
+    copyToClipboard(primaryEmail);
+  };
+
+
   return (
     <>
       <PageHero
@@ -133,6 +148,13 @@ export default function Contact() {
                     Open in email client
                     <ArrowUpRight className="h-4 w-4" />
                   </a>
+                  <button
+                    type="button"
+                    className="btn btn-outline-ink btn-md"
+                    onClick={handleEmailFallback}
+                  >
+                    Copy email address
+                  </button>
                   <button
                     type="button"
                     className="btn btn-outline-ink btn-md"
@@ -267,7 +289,7 @@ export default function Contact() {
 
                   <div className="border-t border-line/60 pt-4">
                     <p className="eyebrow">Postal Address</p>
-                    <p className="mt-1 text-[13.5px] text-muted max-w-prose">
+                    <p className="mt-1 text-sm text-muted max-w-prose">
                       {INSTITUTIONAL_DATA.postalAddress}
                     </p>
                   </div>
@@ -279,7 +301,7 @@ export default function Contact() {
                         <li key={em}>
                           <a
                             href={`mailto:${em}`}
-                            className="flex min-h-6 items-center gap-2 text-[13.5px] font-medium text-forest-700 hover:underline"
+                            className="flex min-h-6 items-center gap-2 text-sm font-medium text-forest-700 hover:underline"
                           >
                             <MailIcon className="h-3.5 w-3.5" />
                             {em}

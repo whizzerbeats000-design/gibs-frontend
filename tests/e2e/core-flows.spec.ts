@@ -340,6 +340,12 @@ test.describe('Core User Journeys', () => {
     await expect(enquiryType).toHaveValue('Campus Facility Booking & Enquiries');
     await expect(page.getByText('Your enquiry is ready to send.')).toHaveCount(0);
     await expect(page.getByRole('button', { name: 'Make an Enquiry' })).toBeVisible();
+
+    await page.evaluate(() => {
+      window.location.hash = '#/contact?type=Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)';
+    });
+
+    await expect(enquiryType).toHaveValue('Foreign Training Programmes (Kigali, Dubai, London, Houston)');
   });
 
   test('the programme scope filters expose their selected state', async ({ page }) => {

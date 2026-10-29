@@ -20,7 +20,7 @@ function PolicySection({
     <Reveal delay={delay}>
       <section className="border-b border-line py-8 first:pt-0 last:border-b-0">
         <h2 className="type-h3 text-ink">{title}</h2>
-        <div className="mt-4 max-w-prose space-y-4 text-[15px] leading-relaxed text-ink/85 sm:text-[15.5px]">
+        <div className="mt-4 max-w-prose space-y-4 type-body leading-relaxed text-ink/85">
           {children}
         </div>
       </section>
@@ -52,7 +52,7 @@ export default function PrivacyPolicy() {
                   <h2 className="display-serif mt-4 text-2xl text-ink">
                     Data Protection Summary
                   </h2>
-                  <div className="mt-5 space-y-3 border-t rule pt-4 text-[13px] text-ink/80">
+                  <div className="mt-5 space-y-3 border-t rule pt-4 text-xs text-ink/80">
                     <p>
                       <span className="font-semibold text-ink">Entity:</span> Goshen
                       International Business School Limited (RC 1178333)

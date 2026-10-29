@@ -416,7 +416,7 @@ function Newsletter() {
       <div className="mt-9 max-w-md border-l-2 border-gold-400 pl-4">
         <p className="eyebrow-light">How to join the mailing list</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
-          To join the GIBS Executive Bulletin, email the registry at{" "}
+          Our newsletter is currently managed manually via the registry. To join the GIBS Executive Bulletin, please email us at{" "}
           <a
             href={`mailto:gibsilorin@gmail.com?subject=${encodeURIComponent("GIBS Executive Bulletin")}&body=${encodeURIComponent(`Please add ${email.trim()} to the GIBS Executive Bulletin mailing list.`)}`}
             className="text-gold-300 underline underline-offset-2"

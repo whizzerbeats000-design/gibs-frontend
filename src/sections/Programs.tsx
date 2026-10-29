@@ -100,7 +100,7 @@ export default function ProgrammeDiscovery() {
         <div className="mt-14 space-y-12 sm:mt-16 sm:space-y-14">
           {PROGRAMME_GROUPS.map((group) => (
             <Reveal key={group.title} delay={0.08}>
-              <h3 className="type-h3 text-ink">{group.title}</h3>
+              <h3 className="type-h3 text-forest-600">{group.title}</h3>
               <p className="mt-3 max-w-prose type-body text-muted">{group.body}</p>
 
               <ul className="mt-8 grid gap-x-12 sm:grid-cols-2">
@@ -117,7 +117,7 @@ export default function ProgrammeDiscovery() {
                   to={group.to}
                   variant="primary"
                   size="lg"
-                  className="w-full justify-center whitespace-normal px-5 text-center text-sm sm:w-auto sm:whitespace-nowrap sm:px-7 sm:text-[15px]"
+                  className="w-full justify-center whitespace-normal px-5 text-center text-sm sm:w-auto sm:whitespace-nowrap sm:px-7"
                 >
                   {group.cta}
                   <ArrowUpRight className="h-4 w-4" />

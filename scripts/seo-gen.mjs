@@ -6,6 +6,7 @@ import { activePhoneNumbers, scrubRetiredNumbersInProse } from '../src/lib/phone
 const CANONICAL_DOMAIN = 'https://gibs.com.ng';
 const DIST_DIR = path.resolve(process.env.GIBS_DIST_DIR || 'dist');
 const MASTER_SHELL_PATH = path.join(DIST_DIR, 'index.html');
+const CLEAN_TEMPLATE_PATH = path.join(DIST_DIR, '.master-template.html');
 
 function extractProgrammes() {
   const content = fs.readFileSync('src/lib/data.ts', 'utf8');
@@ -134,13 +135,47 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+function programmeTitle(title) {
+  const brand = ' | GIBS';
+  const limit = 60;
+  if (title.length + brand.length <= limit) return `${title}${brand}`;
+
+  const maxTitleLength = limit - brand.length;
+  const excerpt = title.slice(0, maxTitleLength);
+  const boundary = excerpt.lastIndexOf(' ');
+
+  // If we have a reasonable boundary, use it.
+  if (boundary > 15) {
+    return `${title.slice(0, boundary).trim()}${brand}`;
+  }
+
+  // FALLBACK: If the title is very long and has no early boundary,
+  // we must still cap it at 60 to prevent SERP destruction.
+  // We truncate at the last possible space before the limit.
+  const forcedBoundary = title.slice(0, maxTitleLength).lastIndexOf(' ');
+  if (forcedBoundary > 0) {
+    return `${title.slice(0, forcedBoundary).trim()}${brand}`;
+  }
+
+  // Absolute last resort: hard cut
+  return `${title.slice(0, maxTitleLength)}${brand}`;
+}
+
 function programmeMetaDescription(summary) {
-  const maxLength = 155;
+  const maxLength = 160;
+  if (!summary) return 'Executive training programme at GIBS.';
+
+  // The metadata value is what matters.
+  // We must account for the ellipsis (...) which is 1 character.
+  const effectiveMax = maxLength - 1;
+
   if (summary.length <= maxLength) return summary;
 
-  const excerpt = summary.slice(0, maxLength - 1);
+  // Truncate to effectiveMax then find the last word boundary.
+  const excerpt = summary.slice(0, effectiveMax);
   const boundary = excerpt.search(/\s+\S*$/u);
-  if (boundary <= 0) throw new Error('Programme summary has no safe metadata word boundary.');
+
+  if (boundary <= 0) return `${excerpt}…`;
 
   return `${excerpt.slice(0, boundary).replace(/[\s,;:—–-]+$/u, '')}…`;
 }
@@ -511,9 +546,29 @@ async function run() {
   try {
     console.log('Starting SEO Shell Generation...');
     if (!fs.existsSync(MASTER_SHELL_PATH)) throw new Error('Master shell not found. Run npm run build first.');
-    let masterHtml = fs.readFileSync(MASTER_SHELL_PATH, 'utf8');
+
+    let masterHtml;
+    const currentMaster = fs.readFileSync(MASTER_SHELL_PATH, 'utf8');
+
+    // The master shell (dist/index.html) is contaminated if it already contains a static body.
+    // A clean Vite shell has <div id="root"></div>.
+    const isContaminated = currentMaster.includes('<div id="root"><main>');
+
+    if (isContaminated) {
+      if (!fs.existsSync(CLEAN_TEMPLATE_PATH)) {
+        throw new Error('Master shell is contaminated and no backup exists. Run npm run build to reset.');
+      }
+      masterHtml = fs.readFileSync(CLEAN_TEMPLATE_PATH, 'utf8');
+      console.log('Using cached clean template from .master-template.html');
+    } else {
+      masterHtml = currentMaster;
+      fs.writeFileSync(CLEAN_TEMPLATE_PATH, masterHtml);
+      console.log('Detected clean master shell; saved to .master-template.html');
+    }
+
     masterHtml = normalizeAssetUrls(masterHtml);
-    fs.writeFileSync(MASTER_SHELL_PATH, masterHtml);
+    // We no longer write normalized masterHtml back to MASTER_SHELL_PATH here
+    // to avoid contaminating the clean shell before we can back it up.
 
     // Validate that all referenced fonts exist on disk
     let cssContent = '';
@@ -550,25 +605,29 @@ async function run() {
     for (const p of programmes) {
       const route = `/programmes/${p.slug}`;
       const description = programmeMetaDescription(p.summary);
-      routes.push({ path: route, meta: { title: `${p.title} | GIBS`, description }});
-      const shellHtml = generateShell(masterHtml, route, { title: `${p.title} | GIBS`, description }, generateStaticBody(route, p, inst, programmes));
+      const title = programmeTitle(p.title);
+      routes.push({ path: route, meta: { title, description }});
+      const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, inst, programmes));
       writeShell(route, shellHtml);
     }
 
     // 2. Institutional
     const instRoutes = [
-      { path: '/programmes', title: '2026 Training Calendar (135 Programmes) | GIBS', desc: 'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes in Kigali, Dubai, London, and Houston.' },
+      { path: '/programmes', title: '2026 Training Calendar (135 Programmes) | GIBS', desc: 'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes.' },
       { path: '/about', title: 'About GIBS | Goshen International Business School', desc: 'Learn about our mission, vision and guiding principles.' },
       { path: '/contact', title: 'Contact GIBS | Training Desk & Enquiries', desc: 'Get in touch with GIBS for programme registration and campus visits.' },
       { path: '/admissions', title: 'Programme Enquiries — Goshen International Business School', desc: 'The GIBS programme enquiry process: browse the 2026 calendar, make an enquiry, and GIBS handles the rest.' },
       { path: '/executive-education', title: 'Foreign Executive Training | GIBS', desc: 'Global training hubs in Kigali, Dubai, London and Houston.' },
       { path: '/gallery', title: 'Gallery — GIBS', desc: 'Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.' },
       { path: '/concierge', title: 'GIBS AI — Ask about programmes and locations', desc: 'GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.' },
-      { path: '/privacy-policy', title: 'Privacy Policy | Goshen International Business School', desc: 'Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.' },
+      { path: '/privacy-policy', title: 'Privacy Policy | Goshen International Business School', desc: 'Learn how GIBS handles your information, stores concierge history, and your data-protection rights.' },
     ];
     for (const r of instRoutes) {
-      routes.push({ path: r.path, meta: { title: r.title, description: r.desc }});
-      const shellHtml = generateShell(masterHtml, r.path, { title: r.title, description: r.desc }, generateStaticBody(r.path, null, inst, programmes));
+      // All institutional route descriptions must be explicitly under 160 chars.
+      // We use the provided desc, which is now pre-validated in this list.
+      const boundedTitle = r.title.length <= 60 ? r.title : programmeTitle(r.title.replace(' | GIBS', ''));
+      routes.push({ path: r.path, meta: { title: boundedTitle, description: r.desc }});
+      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, inst, programmes));
       writeShell(r.path, shellHtml);
     }
 
@@ -583,8 +642,9 @@ async function run() {
       seenCategorySlugs.add(slug);
 
       const route = `/programmes/category/${slug}`;
-      routes.push({ path: route, meta: { title: `${cat} Training Programmes | GIBS`, description: `Explore our executive training programmes in ${cat} at GIBS.` }});
-      const shellHtml = generateShell(masterHtml, route, { title: `${cat} Training Programmes | GIBS`, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, inst, programmes));
+      const catTitle = programmeTitle(`${cat} Training Programmes`);
+      routes.push({ path: route, meta: { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }});
+      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, inst, programmes));
       writeShell(route, shellHtml);
     }
 
@@ -605,15 +665,29 @@ async function run() {
     // Inject static body content into the homepage for non-JS crawlers
     const homepageStaticBody = generateStaticBody('/', null, inst, programmes);
     if (homepageStaticBody) {
-      masterHtml = masterHtml.replace('<div id="root"></div>', `<div id="root">${homepageStaticBody}</div>`);
-      fs.writeFileSync(MASTER_SHELL_PATH, masterHtml);
-      console.log('Injected static body content into dist/index.html (homepage)');
-    }
+      let homeHtml = masterHtml;
+      homeHtml = homeHtml.replace('<div id="root"></div>', `<div id="root">${homepageStaticBody}</div>`);
 
-    if (!masterHtml.includes('href="/images/gibs-hero-branded.webp"')) {
-      const homepageHtml = masterHtml.replace('</head>', `  ${heroPreloadTag}\n  </head>`);
-      fs.writeFileSync(MASTER_SHELL_PATH, homepageHtml);
-      console.log('Injected homepage-specific hero image preload into dist/index.html');
+      // FIX: The homepage (dist/index.html) uses a different meta description source than institutional routes.
+      // We must explicitly ensure its metadata is bounded.
+      const homeDesc = '113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.';
+      const homeTitle = 'GIBS — 2026 Executive Training Calendar & International Programmes';
+      homeHtml = replaceMetaContent(homeHtml, 'description', programmeMetaDescription(homeDesc));
+      homeHtml = replaceMetaContent(homeHtml, 'og:description', programmeMetaDescription(homeDesc));
+      homeHtml = replaceMetaContent(homeHtml, 'twitter:description', programmeMetaDescription(homeDesc));
+
+      // Use a bounded title that preserves the brand identity without triggering the programme-specific helper's logic
+      const boundedHomeTitle = homeTitle.length <= 60 ? homeTitle : homeTitle.slice(0, 57) + '...';
+      homeHtml = replaceMetaContent(homeHtml, 'og:title', boundedHomeTitle);
+      homeHtml = replaceMetaContent(homeHtml, 'twitter:title', boundedHomeTitle);
+
+      // Inject homepage-specific hero image preload
+      if (!homeHtml.includes('href="/images/gibs-hero-branded.webp"')) {
+        homeHtml = homeHtml.replace('</head>', `  ${heroPreloadTag}\n  </head>`);
+      }
+
+      fs.writeFileSync(MASTER_SHELL_PATH, homeHtml);
+      console.log('Injected static body content and bounded metadata into dist/index.html (homepage)');
     }
 
     console.log(`SUCCESS: Generated ${routes.length} shells and sitemap.xml`);

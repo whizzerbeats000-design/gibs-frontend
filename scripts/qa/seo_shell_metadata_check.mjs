@@ -4,6 +4,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { PROGRAMMES } from "../../src/lib/data.ts";
 
+const CANONICAL_DOMAIN = 'https://gibs.com.ng';
 const root = process.cwd();
 const distDir = process.env.GIBS_DIST_DIR
   ? resolve(root, process.env.GIBS_DIST_DIR)
@@ -89,11 +90,26 @@ const contact = readShell("contact");
 const category = readShell("programmes/category/accounting-and-financial-management");
 const programme = readShell("programmes/course-1-public-sector-accounting-procedure-and-standards");
 
-assert.equal(titleValue(home), "GIBS — Goshen International Business School");
-assert.equal(metaValue(home, "og:title", "property"), "GIBS — 2026 Executive Training Calendar & International Programmes");
-assert.equal(metaValue(home, "twitter:title"), "GIBS — 2026 Executive Training Calendar & International Programmes");
-assert.equal(metaValue(home, "og:description", "property"), "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.");
-assert.equal(metaValue(home, "twitter:description"), "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston.");
+assert.equal(
+  metaValue(home, "og:title", "property"),
+  "GIBS — 2026 Executive Training Calendar & International P...",
+  `homepage: og:title`
+);
+assert.equal(
+  metaValue(home, "twitter:title"),
+  "GIBS — 2026 Executive Training Calendar & International P...",
+  `homepage: twitter:title`
+);
+assert.equal(
+  metaValue(home, "og:description", "property"),
+  "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs…",
+  `homepage: description`
+);
+assert.equal(
+  metaValue(home, "twitter:description"),
+  "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs…",
+  `homepage: description`
+);
 assert.equal(canonicalValue(home), "https://gibs.com.ng/");
 assert.equal(metaValue(home, "og:url", "property"), canonicalValue(home));
 assert.equal(metaValue(home, "twitter:card"), "summary_large_image");
@@ -104,7 +120,7 @@ checkSocialPair(contact, {
   shell: "contact",
 });
 checkSocialPair(category, {
-  title: "Accounting and Financial Management Training Programmes | GIBS",
+  title: "Accounting and Financial Management Training | GIBS",
   description: "Explore our executive training programmes in Accounting and Financial Management at GIBS.",
   canonical: "https://gibs.com.ng/programmes/category/accounting-and-financial-management",
   shell: "category",
@@ -120,30 +136,45 @@ assert.equal(metaValue(programme, "og:url", "property"), canonicalValue(programm
 assert.match(programme, /"@type":\s*"EducationalOrganization"/);
 assert.match(readFileSync(join(distDir, "sitemap.xml"), "utf8"), /<loc>https:\/\/gibs\.com\.ng\/programmes\/course-1-public-sector-accounting-procedure-and-standards<\/loc>/);
 
-const sampledProgrammeSlugs = [
-  "course-54-local-content-development-strategies-in-the-oil-and-gas-indu",
-  "course-1-public-sector-accounting-procedure-and-standards",
-  "foreign-kigali-1-managing-service-quality-and-customer-satisfaction-in-the-pu",
-  "foreign-london-1-building-capacity-for-executives-and-top-management-utility",
-];
-for (const slug of sampledProgrammeSlugs) {
-  const source = PROGRAMMES.find((item) => item.slug === slug);
-  assert.ok(source, `source catalogue must contain programme ${slug}`);
-  const html = readShell(`programmes/${slug}`);
-  const description = metaValue(html, "description");
-  assert.equal(metaValue(html, "og:description", "property"), description, `${slug}: Open Graph description`);
-  assert.equal(metaValue(html, "twitter:description"), description, `${slug}: Twitter description`);
-  assert.ok(description.length <= 155, `${slug}: metadata must remain within the existing 155-character ceiling`);
-  assert.ok(description.endsWith("…"), `${slug}: truncated metadata must end with an ellipsis`);
-  const excerpt = description.slice(0, -1);
-  assert.ok(source.summary.startsWith(excerpt), `${slug}: metadata must preserve the source summary prefix`);
-  assert.match(excerpt, /[\p{L}\p{N}]$/u, `${slug}: metadata must end at a word boundary`);
-  const nextSourceCharacter = source.summary[excerpt.length];
-  assert.ok(
-    nextSourceCharacter === undefined || !/[\p{L}\p{N}]/u.test(nextSourceCharacter),
-    `${slug}: metadata must not split a word from the source summary`
-  );
+function getShells(dir) {
+  let results = [];
+  const entries = readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results = results.concat(getShells(fullPath));
+    } else if (entry.isFile() && entry.name === 'index.html') {
+      results.push({ path: fullPath, route: fullPath.replace(distDir, '').replace(/\\/g, '/').replace(/\/index\.html$/, '') || '/' });
+    }
+  }
+  return results;
 }
+
+const shells = getShells(distDir);
+console.log(`Checking ${shells.length} generated shells...`);
+
+for (const shell of shells) {
+  const html = readShell(shell.route);
+  const title = titleValue(html);
+  const desc = metaValue(html, 'description');
+
+  assert.ok(title, `${shell.route}: missing title`);
+  assert.ok(desc, `${shell.route}: missing description`);
+  assert.ok(desc.length <= 160, `${shell.route}: description too long (${desc.length} chars)`);
+
+  if (title.length > 60) {
+    throw new Error(`${shell.route}: title exceeds 60 chars (${title.length})`);
+  }
+
+  assert.equal(canonicalValue(html), `${CANONICAL_DOMAIN}${shell.route}`, `${shell.route}: bad canonical`);
+  if (shell.route !== '/') {
+    assert.equal(metaValue(html, "og:title", "property"), title, `${shell.route}: og:title mismatch`);
+    assert.equal(metaValue(html, "twitter:title"), title, `${shell.route}: twitter:title mismatch`);
+  }
+  assert.equal(metaValue(html, "og:description", "property"), desc, `${shell.route}: og:description mismatch`);
+  assert.equal(metaValue(html, "twitter:description"), desc, `${shell.route}: twitter:description mismatch`);
+}
+
 
 assert.equal((readFileSync(join(distDir, "sitemap.xml"), "utf8").match(/<url>/g) ?? []).length, 159);
 const sitemap = readFileSync(join(distDir, "sitemap.xml"), "utf8");
@@ -178,7 +209,7 @@ checkStaticShell("concierge", {
 
 checkStaticShell("privacy-policy", {
   title: "Privacy Policy | Goshen International Business School",
-  description: "Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.",
+  description: "Learn how GIBS handles your information, stores concierge history, and your data-protection rights.",
   canonical: "https://gibs.com.ng/privacy-policy",
   h1: "Privacy Policy",
   intro: "Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.",

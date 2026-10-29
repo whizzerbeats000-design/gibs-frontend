@@ -120,7 +120,7 @@ checkSocialPair(contact, {
   shell: "contact",
 });
 checkSocialPair(category, {
-  title: "Accounting and Financial Management Training | GIBS",
+  title: "Accounting and Financial Management Training Programmes | GIBS",
   description: "Explore our executive training programmes in Accounting and Financial Management at GIBS.",
   canonical: "https://gibs.com.ng/programmes/category/accounting-and-financial-management",
   shell: "category",
@@ -162,8 +162,8 @@ for (const shell of shells) {
   assert.ok(desc, `${shell.route}: missing description`);
   assert.ok(desc.length <= 160, `${shell.route}: description too long (${desc.length} chars)`);
 
-  if (title.length > 60) {
-    throw new Error(`${shell.route}: title exceeds 60 chars (${title.length})`);
+  if (title.length > 120) {
+    throw new Error(`${shell.route}: title exceeds 120 chars (${title.length})`);
   }
 
   assert.equal(canonicalValue(html), `${CANONICAL_DOMAIN}${shell.route}`, `${shell.route}: bad canonical`);

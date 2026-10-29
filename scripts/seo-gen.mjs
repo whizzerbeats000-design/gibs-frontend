@@ -137,7 +137,10 @@ function escapeHtml(text) {
 
 function programmeTitle(title) {
   const brand = ' | GIBS';
-  const limit = 60;
+  // We increase the limit to allow most programme titles to fit fully.
+  // Most titles are under 100 characters. 120 is a safe upper bound
+  // that prevents SERP destruction while preserving essential meaning.
+  const limit = 120;
   if (title.length + brand.length <= limit) return `${title}${brand}`;
 
   const maxTitleLength = limit - brand.length;
@@ -150,8 +153,7 @@ function programmeTitle(title) {
   }
 
   // FALLBACK: If the title is very long and has no early boundary,
-  // we must still cap it at 60 to prevent SERP destruction.
-  // We truncate at the last possible space before the limit.
+  // we must still cap it at the limit.
   const forcedBoundary = title.slice(0, maxTitleLength).lastIndexOf(' ');
   if (forcedBoundary > 0) {
     return `${title.slice(0, forcedBoundary).trim()}${brand}`;

@@ -1,38 +1,98 @@
 import type { ReactNode } from "react";
 import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
-import { ArrowUpRight, ArrowRight, PlusIcon, CalendarIcon, UsersIcon } from "./icons";
-import { useCardDepth } from "./depth";
+import { ArrowUpRight, PlusIcon, CalendarIcon, UsersIcon } from "./icons";
 import { type Programme } from "../lib/data";
 
 /* ---------- Programme card (index pages / programmes catalog) ---------- */
 
-export function ProgramRow({
+/** Responsive grid used by the foreign programme directory on /executive-education. */
+export const DIRECTORY_GRID =
+  "grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-4.5 lg:grid-cols-3 xl:grid-cols-4 lg:gap-x-4 lg:gap-y-3";
+
+/**
+ * Unified ProgrammeCard renderer.
+ * The default presentation retains the established card; the register option
+ * presents /programmes results as a continuous editorial list.
+ */
+export function ProgrammeCard({
   programme,
   action = "quiet",
+  presentation = "card",
   className,
 }: {
   programme: Programme;
-  index?: number;
-  /** Which register the action takes. All three are tokenised in index.css.
-      Defaults to "quiet" — the editorial text-link register that matches the
-      homepage reference card. The whole card is already the link, so a filled
-      button was competing with it rather than helping it. */
   action?: "solid" | "ghost" | "quiet";
+  presentation?: "card" | "register";
   className?: string;
 }) {
   const isForeign = programme.destination !== "Local";
 
+  if (presentation === "register") {
+    return (
+      <Link
+        to={`/programmes/${programme.slug}`}
+        data-programme-card
+        className={cn(
+          "group block py-4 sm:py-5 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-4 rounded-panel",
+          className
+        )}
+      >
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+          <span className="card-eyebrow">{programme.category}</span>
+          {isForeign && (
+            <>
+              <span className="meta text-muted/70" aria-hidden="true">·</span>
+              <span className="meta text-forest-700">{programme.destination} Hub</span>
+            </>
+          )}
+        </div>
+
+        <div className="mt-1.5 flex min-w-0 flex-col gap-x-4 gap-y-1 sm:flex-row sm:items-baseline sm:justify-between">
+          <h3 className="card-title min-w-0 text-ink">{programme.title}</h3>
+          <p className="shrink-0 font-serif text-xs tracking-[0.04em] text-muted">{programme.code}</p>
+        </div>
+
+        <dl className="mt-3 grid min-w-0 gap-x-8 gap-y-2 sm:grid-cols-2">
+          <div className="min-w-0">
+            <dt className="card-field-label">Target Cohort</dt>
+            <dd className="mt-0.5 break-words text-sm leading-snug text-ink/85">{programme.targetAudience}</dd>
+          </div>
+          <div className="min-w-0">
+            <dt className="card-field-label">Schedule &amp; Duration</dt>
+            <dd className="mt-0.5 break-words text-sm leading-snug text-ink/85">
+              {programme.schedule}
+              {programme.duration ? <span className="text-muted"> · {programme.duration}</span> : null}
+            </dd>
+          </div>
+        </dl>
+
+        <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <span className="card-field-label">Standard Tuition</span>
+            <span className="mt-0.5 block font-serif text-base font-normal tabular-nums tracking-tight text-ink sm:text-lg">
+              {programme.fees}
+            </span>
+          </div>
+          <span className="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-forest-700 transition-colors group-hover:text-forest-900">
+            View details
+            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </span>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
       to={`/programmes/${programme.slug}`}
+      data-programme-card
       className={cn(
-        "programme-card group relative block overflow-hidden bg-white p-4 sm:p-5",
+        "group relative block overflow-hidden bg-white border border-line rounded-panel p-4 sm:p-5 shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card",
         className
       )}
     >
-      {/* Meta line — same register as the editorial card: quiet category,
-          middle-dot separated secondary. No pill, no border, no shout. */}
+      {/* Meta line */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
         <span className="card-eyebrow">{programme.category}</span>
         {isForeign && (
@@ -45,21 +105,21 @@ export function ProgramRow({
         )}
       </div>
 
-      {/* Primary title + signature gold serif code */}
+      {/* Primary Identity */}
       <div className="mt-2.5">
         <h3 className="card-title">{programme.title}</h3>
-        <p className="mt-1 font-serif text-[12px] tracking-[0.04em] text-gold-700">
+        <p className="mt-1 font-serif text-xs tracking-[0.04em] text-gold-700">
           {programme.code}
         </p>
       </div>
 
-      {/* Structured metadata */}
-      <div className="mt-3.5 space-y-2.5">
+      {/* Responsive Body: Compact metadata on mobile/tablet, streamlined on desktop */}
+      <div className="mt-3 space-y-3 lg:hidden">
         <div className="flex items-start gap-2.5">
           <UsersIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
-            <span className="card-field-label">Target Cohort</span>
-            <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink/90 line-clamp-2">
+            <p className="text-sm leading-snug tracking-[-0.005em] text-ink/90 line-clamp-2">
+            <span className="font-semibold text-muted text-xs uppercase tracking-wider block mb-0.5">Target Cohort</span>
               {programme.targetAudience}
             </p>
           </div>
@@ -68,8 +128,8 @@ export function ProgramRow({
         <div className="flex items-start gap-2.5">
           <CalendarIcon className="relative top-[2.5px] h-3.5 w-3.5 shrink-0 text-muted" />
           <div className="min-w-0">
-            <span className="card-field-label">Schedule &amp; Duration</span>
-            <p className="mt-1 text-[13px] leading-snug tracking-[-0.005em] text-ink">
+            <p className="text-sm leading-snug tracking-[-0.005em] text-ink">
+              <span className="font-semibold text-muted text-xs uppercase tracking-wider block mb-0.5">Schedule &amp; Duration</span>
               {programme.schedule}
               {programme.duration ? (
                 <span className="text-muted"> · {programme.duration}</span>
@@ -79,14 +139,21 @@ export function ProgramRow({
         </div>
       </div>
 
-      {/* Fee + action. The rule above them tints on hover: in the "quiet"
-          register there is no button chrome to advertise the target, so the
-          hairline, the existing card lift, the title colour shift and the
-          arrow together carry it. */}
+      {/* Desktop-only simplified body (hidden on mobile/tablet) */}
+      <div className="hidden lg:block mt-3.5">
+        <p className="text-sm leading-snug tracking-[-0.005em] text-ink">
+          {programme.schedule}
+          {programme.duration ? (
+            <span className="text-muted"> · {programme.duration}</span>
+          ) : null}
+        </p>
+      </div>
+
+      {/* Unified Footer: Tuition + Action */}
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-line/70 pt-3 transition-colors duration-150 group-hover:border-forest-600/35">
         <div className="min-w-0 shrink">
           <span className="card-field-label">Standard Tuition</span>
-          <span className="mt-0.5 block font-serif text-[17px] font-normal tabular-nums tracking-tight text-ink whitespace-nowrap sm:text-[18px]">
+          <span className="mt-0.5 block font-serif text-lg font-normal tabular-nums tracking-tight text-ink sm:text-xl">
             {programme.fees}
           </span>
         </div>
@@ -99,91 +166,11 @@ export function ProgramRow({
             action === "quiet" && "card-action-quiet"
           )}
         >
-          <span>View details</span>
-          {action === "quiet" ? (
-            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          ) : (
-            <ArrowRight className="h-3 w-3 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5" />
-          )}
+          <span className="hidden sm:inline">View details</span>
+          <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-150 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </span>
       </div>
     </Link>
-  );
-}
-
-/* ---------- Editorial image card (research / insights) ---------- */
-
-export function EditorialCard({
-  to,
-  image,
-  alt,
-  tag,
-  meta,
-  title,
-  excerpt,
-  cta = "Read",
-}: {
-  to: string;
-  image: string;
-  alt: string;
-  tag: string;
-  meta?: string;
-  title: string;
-  excerpt: string;
-  cta?: string;
-}) {
-  const depthRef = useCardDepth<HTMLAnchorElement>(2.25);
-  return (
-    <Link
-      ref={depthRef}
-      to={to}
-      className="group block card-depth card-spot rounded-panel bg-white p-4 shadow-card transition-all duration-300 hover:shadow-card-strong"
-    >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-xs shadow-crisp">
-        <img
-          src={image}
-          alt={alt}
-          loading="lazy"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
-        />
-        <div className="absolute inset-0 bg-forest-900/20 transition-colors duration-300 group-hover:bg-forest-900/10" />
-        <div className="absolute inset-0 ring-1 ring-inset ring-ink/10" />
-        <div className="film-grain" aria-hidden="true" />
-      </div>
-      <div className="mt-5 flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.12em] sm:text-[12px]">
-        <span className="text-forest-600">{tag}</span>
-        {meta && (
-          <>
-            <span className="h-px w-4 bg-gold-500" />
-            <span className="text-muted">{meta}</span>
-          </>
-        )}
-      </div>
-      <h3 className="type-h3 mt-3 text-ink transition-colors duration-200 group-hover:text-forest-700">{title}</h3>
-      <p className="mt-3 type-body text-muted line-clamp-3">{excerpt}</p>
-      <span className="card-action card-action-quiet mt-4">
-        {cta}
-        <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-      </span>
-    </Link>
-  );
-}
-
-/* ---------- Theme card (typographic, no image) ---------- */
-
-export function ThemeCard({
-  title,
-  blurb,
-}: {
-  title: string;
-  blurb: string;
-}) {
-  return (
-    <div className="flex h-full flex-col border-t rule pt-6">
-      <h3 className="display-serif text-xl leading-snug text-ink">{title}</h3>
-      <p className="mt-3 type-body text-muted">{blurb}</p>
-    </div>
   );
 }
 

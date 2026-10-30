@@ -44,6 +44,14 @@ export function ChevronRight({ className = "h-4 w-4" }: IconProps) {
   );
 }
 
+export function ChevronDown({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" {...base}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
 export function MenuIcon({ className = "h-5 w-5" }: IconProps) {
   return (
     <svg className={className} viewBox="0 0 24 24" {...base}>
@@ -111,15 +119,6 @@ export function MapPinIcon({ className = "h-4 w-4" }: IconProps) {
     <svg className={className} viewBox="0 0 24 24" {...base}>
       <path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11Z" />
       <circle cx="12" cy="10" r="2.5" />
-    </svg>
-  );
-}
-
-export function ClockIcon({ className = "h-4 w-4" }: IconProps) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" {...base}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7v5l3.5 2" />
     </svg>
   );
 }

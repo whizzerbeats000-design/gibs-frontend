@@ -10,12 +10,11 @@ export default function NotFound() {
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden bg-forest-900 text-ivory">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_85%_-10%,rgba(235,211,117,0.14),transparent_55%)]" />
-      <div className="container-x relative pb-20 pt-[140px]">
+      <div className="container-x relative pb-20 pt-[var(--pt-404)]">
         <p className="eyebrow-light">Error 404</p>
         <h1 className="type-h1 mt-6 max-w-3xl">Page not found</h1>
         <p className="mt-7 max-w-lg type-body text-ivory/85">
-          We could not find that page. The address may be mistyped, or the page
-          may have moved. Try the programme catalogue, or search from the home page.
+          We could not find that page. The address may be mistyped or moved.
         </p>
         <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
           <BtnLink to="/" variant="gold" size="lg">

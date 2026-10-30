@@ -16,6 +16,13 @@ export type ProgrammeSection = {
 export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
   const [active, setActive] = useState(sections[0]?.id ?? "");
 
+  const subnavOffset = () => {
+    const cs = getComputedStyle(document.documentElement);
+    const sticky = parseFloat(cs.getPropertyValue("--sticky-top")) || 72;
+    const subnav = parseFloat(cs.getPropertyValue("--subnav-height")) || 69;
+    return sticky + subnav + 8;
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -24,7 +31,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
         if (visible[0]) setActive(visible[0].target.id);
       },
-      { rootMargin: "-150px 0px -55% 0px", threshold: 0 }
+      { rootMargin: `-${subnavOffset()}px 0px -55% 0px`, threshold: 0 }
     );
     sections.forEach((s) => {
       const el = document.getElementById(s.id);
@@ -36,28 +43,22 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
   const go = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    const sticky = parseInt(
-      getComputedStyle(document.documentElement).getPropertyValue("--sticky-top") || "72",
-      10
-    );
-    const offset = (Number.isNaN(sticky) ? 72 : sticky) + 64;
-    const top = el.getBoundingClientRect().top + window.scrollY - offset;
+    const top = el.getBoundingClientRect().top + window.scrollY - subnavOffset();
     window.scrollTo({ top, behavior: "smooth" });
     setActive(id);
     // Move focus to the target section so keyboard/screen-reader users
     // land in the right place after using the select control.
     // tabIndex={-1} makes non-focusable elements programmably focusable
     // without inserting them into the natural tab order.
-    const focusTarget = el.querySelector<HTMLElement>("h2, h3, [tabindex]") ?? el;
     if (!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "-1");
     window.setTimeout(() => {
-      focusTarget.focus({ preventScroll: true });
+      el.focus({ preventScroll: true });
     }, 350); // wait for smooth scroll to settle
   };
 
   return (
-    <div className="sticky z-30 border-b border-line bg-paper/92 backdrop-blur-md" style={{ top: "var(--sticky-top, 72px)" }}>
-      <div className="container-x flex items-center gap-4 py-3 xl:pt-3">
+    <div className="sticky z-[var(--z-subnav)] border-b border-line bg-paper/95 backdrop-blur-md" style={{ top: "var(--sticky-top, 72px)" }}>
+      <div className="container-x flex min-h-0 items-center gap-4 py-3 lg:h-[calc(var(--subnav-height)-1px)]">
         {/* Mobile / tablet compact selector */}
         <div className="flex w-full items-center gap-3 lg:hidden">
           <label htmlFor="programme-section-select" className="sr-only">
@@ -76,7 +77,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
             ))}
           </select>
           <Link to="/admissions" className="btn btn-primary btn-md shrink-0">
-            Subscribe
+            Make an Enquiry
           </Link>
         </div>
 
@@ -88,7 +89,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
                 <button
                   type="button"
                   onClick={() => go(s.id)}
-                  aria-current={active === s.id ? "true" : undefined}
+                  aria-current={active === s.id ? "location" : undefined}
                   className={cn(
                     "relative whitespace-nowrap px-3.5 py-2 text-[12.5px] font-bold uppercase tracking-[0.12em] transition-colors duration-200",
                     active === s.id ? "text-forest-700" : "text-muted hover:text-ink"
@@ -110,7 +111,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
               Ask GIBS AI
             </Link>
             <Link to="/admissions" className="btn btn-primary btn-md">
-              Subscribe Now
+              Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
           </div>

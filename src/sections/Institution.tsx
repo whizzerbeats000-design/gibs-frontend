@@ -2,12 +2,12 @@ import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Reveal } from "../components/motion";
 import { ArrowTextLink } from "../components/ui";
-import { IMAGES } from "../lib/data";
+import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
 
 const PERSPECTIVES = [
   {
     k: "Nigeria",
-    v: "Taught in Ilorin since 2014, with centres in Abuja and Ibafo, for the public and private sectors of the country.",
+    v: "Trained in Ilorin since 2014, with centres in Abuja and Ibafo, for the public and private sectors of the country.",
   },
   {
     k: "Abroad",
@@ -34,10 +34,11 @@ export default function GlobalPerspective() {
         <div className="relative min-h-[300px] overflow-hidden lg:col-span-6 lg:min-h-[640px]">
           <motion.img
             style={{ y: imgY }}
-            src={IMAGES.city}
-            alt="The GIBS campus, open sky and sandstone architecture"
+            {...gibsResponsiveImage("/images/gibs-hq-architecture-edited-branded.webp")}
+            alt="GIBS headquarters building with signage and blue-framed windows"
             loading="lazy"
             decoding="async"
+            sizes="(min-width: 1024px) 50vw, 100vw"
             className="absolute inset-0 h-[110%] w-full object-cover"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,32,9,0.35),rgba(0,32,9,0.15))] lg:bg-[linear-gradient(90deg,rgba(0,32,9,0.05),rgba(0,32,9,0.55))]" />
@@ -52,11 +53,11 @@ export default function GlobalPerspective() {
             </Reveal>
             <Reveal delay={0.08} y={28}>
               <h2 className="type-h2 mt-2">
-                Where GIBS teaches
+                Where GIBS trains
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
-              <p className="mt-5 max-w-lg type-body text-ivory/85">
+              <p className="mt-5 max-w-prose type-body text-ivory/85">
                 GIBS trains executives for the organisations they work in, at home
                 in Nigeria and in nine countries overseas.
               </p>
@@ -78,7 +79,7 @@ export default function GlobalPerspective() {
             <Reveal delay={0.1}>
               <div className="mt-10">
                 <ArrowTextLink to="/about" light>
-                  How GIBS sees the world
+                  Institutional profile & leadership
                 </ArrowTextLink>
               </div>
             </Reveal>

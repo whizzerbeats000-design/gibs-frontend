@@ -182,7 +182,58 @@ function programmeMetaDescription(summary) {
   return `${excerpt.slice(0, boundary).replace(/[\s,;:—–-]+$/u, '')}…`;
 }
 
-// ----- Institutional Data Extraction -----
+function getOrgSchema(inst) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "name": inst.legalName,
+    "alternateName": "GIBS",
+    "url": CANONICAL_DOMAIN,
+    "logo": `${CANONICAL_DOMAIN}/images/gibs-logo.webp`,
+    "description": inst.positioningStatement,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": inst.postalAddress,
+      "addressLocality": "Ilorin",
+      "addressRegion": "Kwara State",
+      "addressCountry": "NG"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": inst.phoneNumbers[0] || '',
+      "contactType": "enquiry"
+    }
+  });
+}
+
+function getCourseSchema(p) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": p.title,
+    "description": p.summary,
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Goshen International Business School",
+      "sameAs": CANONICAL_DOMAIN
+    },
+    "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`
+  });
+}
+
+function getBreadcrumbSchema(items) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": items.map((item, idx) => ({
+      "@type": "ListItem",
+      "position": idx + 1,
+      "name": item.name,
+      "item": item.url
+    }))
+  });
+}
+
 
 function extractInstitutionalData() {
   const content = fs.readFileSync('src/lib/data.ts', 'utf8');
@@ -493,7 +544,7 @@ function replaceMetaContent(html, name, newValue) {
   return html.replace(tag, updatedTag);
 }
 
-function generateShell(masterHtml, route, meta, staticBody) {
+function generateShell(masterHtml, route, meta, staticBody, jsonLd = '') {
   let html = masterHtml;
   html = html.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(meta.title)}</title>`);
   html = replaceMetaContent(html, 'description', meta.description);
@@ -512,6 +563,17 @@ function generateShell(masterHtml, route, meta, staticBody) {
     html = replaceMetaContent(html, 'og:url', `${CANONICAL_DOMAIN}${route}`);
   }
   html = replaceMetaContent(html, 'og:image', `${CANONICAL_DOMAIN}/images/gibs-hero-branded.webp`);
+  if (jsonLd) {
+    // Replace existing empty JSON-LD tags or inject a new one if missing
+    if (html.includes('<script type="application/ld+json"></script>')) {
+      html = html.replace('<script type="application/ld+json"></script>', `<script type="application/ld+json">${jsonLd}</script>`);
+    } else if (html.includes('<script type="application/ld+json">')) {
+       // Handle partially closed tags
+       html = html.replace(/<script type="application\/ld\+json">.*?<\/script>/is, `<script type="application/ld+json">${jsonLd}</script>`);
+    } else {
+      html = html.replace('</head>', `  <script type="application/ld+json">${jsonLd}</script>\n  </head>`);
+    }
+  }
   if (staticBody) {
     html = html.replace('<div id="root"></div>', `<div id="root">${staticBody}</div>`);
   }
@@ -609,9 +671,20 @@ async function run() {
       const description = programmeMetaDescription(p.summary);
       const title = programmeTitle(p.title);
       routes.push({ path: route, meta: { title, description }});
-      const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, inst, programmes));
+
+      const courseJson = getCourseSchema(p);
+      const breadcrumbsJson = getBreadcrumbSchema([
+        { name: 'Home', url: CANONICAL_DOMAIN },
+        { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
+        { name: p.category, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(p.category)}` },
+        { name: p.title, url: `${CANONICAL_DOMAIN}${route}` }
+      ]);
+
+      const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}]`;
+      const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, inst, programmes), combinedJsonLd);
       writeShell(route, shellHtml);
     }
+
 
     // 2. Institutional
     const instRoutes = [
@@ -625,13 +698,18 @@ async function run() {
       { path: '/privacy-policy', title: 'Privacy Policy | Goshen International Business School', desc: 'Learn how GIBS handles your information, stores concierge history, and your data-protection rights.' },
     ];
     for (const r of instRoutes) {
-      // All institutional route descriptions must be explicitly under 160 chars.
-      // We use the provided desc, which is now pre-validated in this list.
       const boundedTitle = r.title.length <= 60 ? r.title : programmeTitle(r.title.replace(' | GIBS', ''));
       routes.push({ path: r.path, meta: { title: boundedTitle, description: r.desc }});
-      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, inst, programmes));
+
+      const breadcrumbsJson = getBreadcrumbSchema([
+        { name: 'Home', url: CANONICAL_DOMAIN },
+        { name: r.title.split('|')[0].trim(), url: `${CANONICAL_DOMAIN}${r.path}` }
+      ]);
+
+      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, inst, programmes), breadcrumbsJson);
       writeShell(r.path, shellHtml);
     }
+
 
     // 3. Categories
     const categories = [...new Set(programmes.map(p => p.category))];
@@ -646,9 +724,17 @@ async function run() {
       const route = `/programmes/category/${slug}`;
       const catTitle = programmeTitle(`${cat} Training Programmes`);
       routes.push({ path: route, meta: { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }});
-      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, inst, programmes));
+
+      const breadcrumbsJson = getBreadcrumbSchema([
+        { name: 'Home', url: CANONICAL_DOMAIN },
+        { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
+        { name: cat, url: `${CANONICAL_DOMAIN}${route}` }
+      ]);
+
+      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, inst, programmes), breadcrumbsJson);
       writeShell(route, shellHtml);
     }
+
 
     // 4. Sitemap
     const sitemapEntries = routes.map(r => `  <url>\n    <loc>${escapeHtml(CANONICAL_DOMAIN + r.path)}</loc>\n  </url>`).join('\n');
@@ -687,6 +773,13 @@ async function run() {
       if (!homeHtml.includes('href="/images/gibs-hero-branded.webp"')) {
         homeHtml = homeHtml.replace('</head>', `  ${heroPreloadTag}\n  </head>`);
       }
+
+      const orgSchema = getOrgSchema(inst);
+      homeHtml = homeHtml.replace('<script type="application/ld+json"></script>', `<script type="application/ld+json">${orgSchema}</script>`);
+      if (!homeHtml.includes('<script type="application/ld+json"')) {
+        homeHtml = homeHtml.replace('</head>', `  <script type="application/ld+json">${orgSchema}</script>\n  </head>`);
+      }
+
 
       fs.writeFileSync(MASTER_SHELL_PATH, homeHtml);
       console.log('Injected static body content and bounded metadata into dist/index.html (homepage)');

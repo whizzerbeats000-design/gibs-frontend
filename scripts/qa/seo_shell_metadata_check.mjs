@@ -200,8 +200,8 @@ checkStaticShell("gallery", {
   intro: "Photographs of GIBS headquarters architecture, classroom, reception and guest residence, and the Ibafo facility.",
 });
 checkStaticShell("concierge", {
-  title: "GIBS AI — Ask about programmes and locations",
-  description: "GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.",
+  title: "GIBS Programme Assistant — Ask about programmes & locations",
+  description: "Ask the GIBS Programme Assistant about our 135 2026 executive training programmes, overseas locations, and how to enquire.",
   canonical: "https://gibs.com.ng/concierge",
   h1: "Find the right programme",
   intro: "Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire.",
@@ -235,6 +235,26 @@ for (const shellPath of htmlShells(distDir)) {
 }
 assert.ok(contact.includes("08160010401"), "contact shell must retain the approved existing number");
 assert.ok(contact.includes("08160010400"), "contact shell must publish the current training-desk number");
+
+// No-JS enquiry: the contact static shell must expose clickable tel: and
+// mailto: links so visitors without JavaScript can still call or email.
+const telLinks = (contact.match(/href="tel:/g) || []).length;
+const mailtoLinks = (contact.match(/href="mailto:/g) || []).length;
+assert.ok(telLinks >= 1, `/contact static shell must contain a tel: link (found ${telLinks})`);
+assert.ok(mailtoLinks >= 1, `/contact static shell must contain a mailto: link (found ${mailtoLinks})`);
+
+// Crawlability: the /programmes directory shell must publish a static <a> for
+// every canonical programme so crawlers can reach all 135 programme pages.
+const programmesDirShell = readShell("programmes");
+let linkedProgrammes = 0;
+for (const p of PROGRAMMES) {
+  if (programmesDirShell.includes(`href="/programmes/${p.slug}"`)) linkedProgrammes++;
+}
+assert.equal(
+  linkedProgrammes,
+  PROGRAMMES.length,
+  `/programmes static shell must link all ${PROGRAMMES.length} programmes (linked ${linkedProgrammes})`
+);
 
 // --- Crawlability & Static Navigation Checks ---
 const dataTsContent = readFileSync(join(root, "src", "lib", "data.ts"), "utf8");

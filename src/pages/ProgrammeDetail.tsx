@@ -74,7 +74,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         meta={
           <div className="flex flex-wrap gap-3">
             <BtnLink
-              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
+              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}&programme=${encodeURIComponent(programme.slug)}`}
               variant="gold"
               size="md"
             >
@@ -82,7 +82,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-ink" size="md">
-              Ask GIBS AI
+              Ask the Programme Assistant
             </BtnLink>
           </div>
         }
@@ -142,7 +142,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   </dl>
 
                   <BtnLink
-                    to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
+                    to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}&programme=${encodeURIComponent(programme.slug)}`}
                     variant="primary"
                     size="lg"
                     className="mt-7 w-full whitespace-normal px-4 text-sm sm:px-7"
@@ -152,7 +152,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   </BtnLink>
                   {programme.inPlantAvailable && (
                     <BtnLink
-                      to="/contact?type=Customized+In-Plant+Workshop+Request"
+                      to={`/contact?type=Customized+In-Plant+Workshop+Request&programme=${encodeURIComponent(programme.slug)}`}
                       variant="outline-ink"
                       size="md"
                       className="mt-3 w-full whitespace-normal"
@@ -293,7 +293,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           </div>
           <div className="flex w-full flex-wrap items-center gap-4 sm:w-auto">
             <BtnLink
-              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
+              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}&programme=${encodeURIComponent(programme.slug)}`}
               variant="gold"
               size="lg"
               className="min-w-0 w-full sm:w-auto"
@@ -302,7 +302,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               <ArrowUpRight className="h-4 w-4" />
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="lg">
-              Ask GIBS AI
+              Ask the Programme Assistant
             </BtnLink>
           </div>
         </div>

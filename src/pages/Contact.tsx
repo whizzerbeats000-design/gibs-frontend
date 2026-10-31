@@ -10,7 +10,7 @@ import {
 import { Reveal } from "../components/motion";
 import { ArrowUpRight, ChatIcon, MapPinIcon, PhoneIcon, MailIcon } from "../components/icons";
 import { useRoute, useSeo } from "../lib/router";
-import { ENQUIRY_TYPES, INSTITUTIONAL_DATA, CAMPUSES } from "../lib/data";
+import { ENQUIRY_TYPES, INSTITUTIONAL_DATA, CAMPUSES, getProgramme } from "../lib/data";
 import { activePhoneNumbers } from "../lib/phones";
 import { useConcierge } from "../components/Concierge";
 
@@ -49,14 +49,33 @@ export default function Contact() {
 
   const { query } = useRoute();
   const preselect = query.get("type") ?? "";
+  const progParam = query.get("programme") ?? "";
+  const matchedProgramme = useMemo(() => (progParam ? getProgramme(progParam) : undefined), [progParam]);
   const { setOpen } = useConcierge();
+
+  const resolvedInitialType = useMemo(() => {
+    if (ENQUIRY_TYPES.includes(preselect as never)) return preselect;
+    if (matchedProgramme) {
+      return matchedProgramme.destination === "Local"
+        ? "Local Open Training Registration"
+        : "Foreign Training Programmes (Kigali, Dubai, London, Houston)";
+    }
+    return "";
+  }, [preselect, matchedProgramme]);
+
+  const resolvedInitialMessage = useMemo(() => {
+    if (matchedProgramme) {
+      return `I would like to make an enquiry regarding "${matchedProgramme.title}" (${matchedProgramme.code}). Please provide details on programme schedule dates, venue logistics, and nomination/registration requirements.`;
+    }
+    return "";
+  }, [matchedProgramme]);
 
   const [values, setValues] = useState<Values>({
     name: "",
     email: "",
     phone: "",
-    type: ENQUIRY_TYPES.includes(preselect as never) ? preselect : "",
-    message: "",
+    type: resolvedInitialType,
+    message: resolvedInitialMessage,
   });
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<Status>("idle");
@@ -64,19 +83,28 @@ export default function Contact() {
   currentTypeRef.current = values.type;
 
   /* The enquiry type is pre-selected from the ?type= query parameter, which
-     the concierge replies and the programme/admissions CTAs link to. The
-     useState initialiser above only runs on the first mount, so a link that
-     arrives while the contact page is already open used to be dropped: the
-     form would keep an empty enquiry type even though the URL asked for one.
-     Re-applying the parameter whenever it changes closes that gap. A link
-     that arrives with no (or an unknown) type leaves whatever the visitor
-     has chosen in the form alone. */
+     the concierge replies and the programme/admissions CTAs link to. Re-applying
+     the parameter whenever it changes ensures that deep links or in-app route
+     transitions keep the form synchronised. */
   useEffect(() => {
-    if (!ENQUIRY_TYPES.includes(preselect as never)) return;
-    const typeChanged = currentTypeRef.current !== preselect;
-    setValues((v) => (v.type === preselect ? v : { ...v, type: preselect }));
-    if (typeChanged) setStatus("idle");
-  }, [preselect]);
+    if (matchedProgramme) {
+      const targetType = ENQUIRY_TYPES.includes(preselect as never)
+        ? preselect
+        : matchedProgramme.destination === "Local"
+        ? "Local Open Training Registration"
+        : "Foreign Training Programmes (Kigali, Dubai, London, Houston)";
+      setValues((v) => ({
+        ...v,
+        type: targetType,
+        message: v.message || resolvedInitialMessage,
+      }));
+      setStatus("idle");
+    } else if (ENQUIRY_TYPES.includes(preselect as never)) {
+      const typeChanged = currentTypeRef.current !== preselect;
+      setValues((v) => (v.type === preselect ? v : { ...v, type: preselect }));
+      if (typeChanged) setStatus("idle");
+    }
+  }, [preselect, matchedProgramme, resolvedInitialMessage]);
 
   const primaryEmail = INSTITUTIONAL_DATA.emails?.[0] ?? "gibsilorin@gmail.com";
 
@@ -86,12 +114,16 @@ export default function Contact() {
   };
 
   const mailtoHref = useMemo(() => {
-    const subject = encodeURIComponent(`GIBS Enquiry — ${values.type || "General"}`);
+    const programmeTag = matchedProgramme ? ` [${matchedProgramme.code}]` : "";
+    const subject = encodeURIComponent(`GIBS Enquiry — ${values.type || "General"}${programmeTag}`);
+    const programmeHeader = matchedProgramme
+      ? `Programme: ${matchedProgramme.title} (${matchedProgramme.code})\nDestination: ${matchedProgramme.destination}\nFee: ${matchedProgramme.fees}\n`
+      : "";
     const body = encodeURIComponent(
-      `Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phone || "—"}\nEnquiry Type: ${values.type}\n\nMessage:\n${values.message}`
+      `Name: ${values.name}\nEmail: ${values.email}\nPhone: ${values.phone || "—"}\nEnquiry Type: ${values.type}\n${programmeHeader}\nMessage:\n${values.message}`
     );
     return `mailto:${primaryEmail}?subject=${subject}&body=${body}`;
-  }, [values, primaryEmail]);
+  }, [values, primaryEmail, matchedProgramme]);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -128,7 +160,7 @@ export default function Contact() {
         eyebrow="Contact & Locations"
         title="Connect with"
         italic="GIBS."
-        intro="Reach our headquarters in Ilorin, Abuja and Ibafo training centers, or make an enquiry below for any programme, in-plant workshop, or executive education question. GIBS AI is also available to help."
+        intro="Reach our headquarters in Ilorin, Abuja and Ibafo training centers, or make an enquiry below for any programme, in-plant workshop, or executive education question. GIBS Programme Assistant is also available to help."
         breadcrumbs={[{ label: "Contact" }]}
       />
 
@@ -169,6 +201,19 @@ export default function Contact() {
               </SuccessPanel>
             ) : (
               <form onSubmit={onSubmit} noValidate className="space-y-7 max-w-editorial">
+                {matchedProgramme && (
+                  <div className="rounded border border-forest-200 bg-forest-50/70 p-4 text-ink">
+                    <span className="meta text-xs font-semibold uppercase tracking-wider text-forest-800">
+                      Programme Enquiry
+                    </span>
+                    <h3 className="display-serif mt-1 text-base font-semibold text-ink sm:text-lg">
+                      {matchedProgramme.title}
+                    </h3>
+                    <p className="mt-1 text-xs text-muted">
+                      Code: <strong className="text-ink">{matchedProgramme.code}</strong> · Destination: {matchedProgramme.destination} · Official Fee: {matchedProgramme.fees} · Schedule: {matchedProgramme.schedule}
+                    </p>
+                  </div>
+                )}
                 <div className="grid gap-7 sm:grid-cols-2">
                   <Field label="Full name" htmlFor="name" required error={errors.name}>
                     <TextInput
@@ -264,9 +309,9 @@ export default function Contact() {
             <Reveal y={32}>
               <div className="space-y-6">
                 <div className="rounded-panel border border-line border-t-2 border-t-forest-600 bg-paper p-7 shadow-crisp max-w-card">
-                  <p className="eyebrow">GIBS AI</p>
+                  <p className="eyebrow">GIBS Programme Assistant</p>
                   <p className="mt-3 type-body max-w-prose">
-                    GIBS AI is available to help guide you through programme selection, overseas hub schedules, and fee breakdowns.
+                    GIBS Programme Assistant is available to help guide you through programme selection, overseas hub schedules, and fee breakdowns.
                   </p>
                   <button
                     type="button"
@@ -274,7 +319,7 @@ export default function Contact() {
                     className="btn btn-ink btn-md mt-5"
                   >
                     <ChatIcon className="h-4 w-4" />
-                    Open GIBS AI
+                    Open the Programme Assistant
                   </button>
                 </div>
 

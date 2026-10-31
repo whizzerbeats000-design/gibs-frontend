@@ -14,6 +14,8 @@ function cacheControl(path) {
 const stablePaths = [
   "/robots.txt",
   "/sitemap.xml",
+  "/llms.txt",
+  "/.well-known/llms.txt",
   "/images/gibs-logo.webp",
   "/fonts/instrument-serif-400-latin.woff2",
 ];

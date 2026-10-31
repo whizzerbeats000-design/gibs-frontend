@@ -261,7 +261,7 @@ console.log("6. Overlay contract (focus containment / restoration / Escape)");
 const overlaySpec = [
   { name: "mobile-nav", vp: [390, 844], open: 'button[aria-controls="mobile-navigation"]', dialog: "#mobile-navigation", trigger: 'button[aria-controls="mobile-navigation"]', tabs: 24 },
   { name: "search", vp: [1280, 900], open: 'button[aria-label="Search GIBS"]', dialog: '[role="dialog"][aria-label="Search GIBS"]', trigger: 'button[aria-label="Search GIBS"]', tabs: 24 },
-  { name: "concierge", vp: [1280, 900], open: 'button[aria-label*="GIBS AI" i]', dialog: '[role="dialog"][aria-modal="true"]', trigger: 'button[aria-label*="GIBS AI" i]', tabs: 20 },
+  { name: "concierge", vp: [1280, 900], open: 'button[aria-label*="Programme Assistant" i]', dialog: '[role="dialog"][aria-modal="true"]', trigger: 'button[aria-label*="Programme Assistant" i]', tabs: 20 },
   { name: "gallery-lightbox", vp: [1280, 900], open: 'button[aria-label*="lightbox" i]', dialog: '[role="dialog"][aria-modal="true"]', trigger: null, tabs: 16 },
 ];
 for (const spec of overlaySpec) {

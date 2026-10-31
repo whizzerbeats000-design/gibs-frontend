@@ -15,9 +15,9 @@ const TOPICS = [
 
 export default function ConciergePage() {
   useSeo({
-    title: "GIBS AI — Ask about programmes and locations",
+    title: "GIBS Programme Assistant — Ask about programmes and locations",
     description:
-      "GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.",
+      "GIBS Programme Assistant provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.",
   });
   const { setOpen } = useConcierge();
 
@@ -26,7 +26,7 @@ export default function ConciergePage() {
       <PageHero
         title="Find the right programme"
         intro="Ask about the 2026 training catalogue, overseas destinations, training locations or how to enquire."
-        breadcrumbs={[{ label: "GIBS AI" }]}
+        breadcrumbs={[{ label: "GIBS Programme Assistant" }]}
       />
 
       <section className="bg-white">
@@ -39,7 +39,7 @@ export default function ConciergePage() {
                   <ChatIcon className="h-5 w-5" />
                 </span>
                 <h2 className="type-h2 mt-6 text-ink">
-                  Welcome to GIBS AI. How can we help?
+                  Welcome to GIBS Programme Assistant. How can we help?
                 </h2>
                 <p className="mt-4 max-w-prose type-body">
                   A programme guide built on GIBS’ published records.
@@ -58,7 +58,7 @@ export default function ConciergePage() {
 
               <div className="mt-9 flex flex-wrap gap-3">
                 <button type="button" onClick={() => setOpen(true)} className="btn btn-outline-ink btn-md">
-                  Open floating GIBS AI
+                  Open the Programme Assistant
                 </button>
                 <BtnLink to="/contact" variant="outline-ink" size="md">
                   Contact GIBS directly
@@ -77,7 +77,7 @@ export default function ConciergePage() {
                       <span className="relative flex h-2 w-2">
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
                       </span>
-                      GIBS AI
+                      GIBS Programme Assistant
                     </p>
                     <p className="mt-0.5 text-xs text-ivory/75">
                       Programme guide
@@ -86,7 +86,7 @@ export default function ConciergePage() {
                 </div>
                 <div className="min-h-0 flex-1">
                   <ConciergeConversation
-                    label="GIBS AI conversation on this page"
+                    label="GIBS Programme Assistant conversation on this page"
                     storageKey={PAGE_STORAGE_KEY}
                   />
                 </div>

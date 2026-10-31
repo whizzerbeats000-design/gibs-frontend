@@ -226,7 +226,7 @@ export default function ExecutiveEducation() {
               Make an Enquiry
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-ink" size="lg">
-              Ask GIBS AI
+              Ask the Programme Assistant
             </BtnLink>
           </>
         }

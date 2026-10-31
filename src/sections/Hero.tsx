@@ -11,9 +11,9 @@ import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
    Colour always references the brand green CSS var
    (--color-forest-600) so the palette never hardcodes a hex here. */
 const OVERLAY_OPACITY_TOP = 10; // % brand green at the top edge (subtle tint)
-const OVERLAY_OPACITY_MID = 20; // % brand green at mid-height (subtle tint)
-const OVERLAY_OPACITY_BOTTOM = 85; // % dark green at the bottom (text zone)
-const DARK_GREEN_BLEND = 35; // % brand green when mixed with black for the bottom stop
+const OVERLAY_OPACITY_MID = 30; // % brand green at mid-height (increased for better transition)
+const OVERLAY_OPACITY_BOTTOM = 92; // % dark green at the bottom (increased for text punch)
+const DARK_GREEN_BLEND = 25; // % brand green mixed with black (darkened for higher contrast)
 
 const line = {
   hidden: { y: "112%" },
@@ -86,7 +86,7 @@ export default function Hero() {
           Layer 4 (grounding)   bottom vignette and top sheen.
         */}
         <div
-          className="pointer-events-none absolute inset-0 z-[1]"
+          className="pointer-events-none absolute inset-0 z-20"
           style={{
             background:
               "linear-gradient(95deg, rgba(0,20,9,0.72) 0%, rgba(0,26,11,0.52) 28%, rgba(0,26,11,0.18) 52%, transparent 70%)",
@@ -94,7 +94,7 @@ export default function Hero() {
           aria-hidden="true"
         />
         <div
-          className="pointer-events-none absolute inset-0 z-[1]"
+          className="pointer-events-none absolute inset-0 z-20"
           style={{
             background:
               "linear-gradient(180deg, transparent 0%, rgba(0,15,7,0.08) 58%, rgba(0,15,7,0.32) 100%)",
@@ -109,7 +109,7 @@ export default function Hero() {
             opacity ramp is the constants block above. pointer-events:none
             so clicks on the CTAs below are never intercepted. */}
         <div
-          className="pointer-events-none absolute inset-0 z-[2]"
+          className="pointer-events-none absolute inset-0 z-30"
           style={{
             background: `linear-gradient(180deg,
               color-mix(in srgb, var(--color-forest-600) ${OVERLAY_OPACITY_TOP}%, transparent) 0%,
@@ -120,8 +120,8 @@ export default function Hero() {
           aria-hidden="true"
         />
 
-        {/* Foreground Spatial Content Plane (Z: 28px) */}
-        <div className="layer-z-fore relative z-10 container-x flex h-full flex-col">
+        {/* Foreground Spatial Content Plane (Z: 40px) */}
+        <div className="layer-z-fore relative z-40 container-x flex h-full flex-col">
           {/* Spacer to keep text positioned cleanly in the lower third */}
           <div className="flex-1" />
 

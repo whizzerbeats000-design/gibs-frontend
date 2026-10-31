@@ -8,6 +8,13 @@ const DIST_DIR = path.resolve(process.env.GIBS_DIST_DIR || 'dist');
 const MASTER_SHELL_PATH = path.join(DIST_DIR, 'index.html');
 const CLEAN_TEMPLATE_PATH = path.join(DIST_DIR, '.master-template.html');
 
+/* Vite build manifest (dist/manifest.json) maps source modules to their
+ * emitted chunk file. Loaded in run() so every static shell can emit a
+ * <link rel="modulepreload"> for the lazy chunk that hydrates it — this is
+ * what keeps the statically-rendered shell from blanking during the brief
+ * React.lazy suspense window on direct entry. */
+let MANIFEST = null;
+
 function extractProgrammes() {
   const content = fs.readFileSync('src/lib/data.ts', 'utf8');
   const startMatch = content.match(/export const PROGRAMMES: Programme\[\] = \[(.*)/s);
@@ -135,32 +142,65 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
-function programmeTitle(title) {
-  const brand = ' | GIBS';
+function programmeTitle(pOrTitle, maybeDestination, maybeCode) {
+  const isObj = typeof pOrTitle === 'object' && pOrTitle !== null;
+  const title = isObj ? pOrTitle.title : pOrTitle;
+  const destination = isObj ? pOrTitle.destination : maybeDestination;
+  const code = isObj ? pOrTitle.code : maybeCode;
+
+  let suffix = ' | GIBS';
+  if (destination && destination !== 'Local') {
+    suffix = ` (${destination} Hub) | GIBS`;
+  } else if (code === 'GIBS-LOC-103') {
+    suffix = ' (Special Executive) | GIBS';
+  } else if (code === 'GIBS-LOC-077') {
+    suffix = ' (Power & Energy) | GIBS';
+  }
+
   // We increase the limit to allow most programme titles to fit fully.
   // Most titles are under 100 characters. 120 is a safe upper bound
   // that prevents SERP destruction while preserving essential meaning.
   const limit = 120;
-  if (title.length + brand.length <= limit) return `${title}${brand}`;
+  if (title.length + suffix.length <= limit) return `${title}${suffix}`;
 
-  const maxTitleLength = limit - brand.length;
+  const maxTitleLength = limit - suffix.length;
   const excerpt = title.slice(0, maxTitleLength);
   const boundary = excerpt.lastIndexOf(' ');
 
   // If we have a reasonable boundary, use it.
   if (boundary > 15) {
-    return `${title.slice(0, boundary).trim()}${brand}`;
+    return `${title.slice(0, boundary).trim()}${suffix}`;
   }
 
   // FALLBACK: If the title is very long and has no early boundary,
   // we must still cap it at the limit.
   const forcedBoundary = title.slice(0, maxTitleLength).lastIndexOf(' ');
   if (forcedBoundary > 0) {
-    return `${title.slice(0, forcedBoundary).trim()}${brand}`;
+    return `${title.slice(0, forcedBoundary).trim()}${suffix}`;
   }
 
   // Absolute last resort: hard cut
-  return `${title.slice(0, maxTitleLength)}${brand}`;
+  return `${title.slice(0, maxTitleLength)}${suffix}`;
+}
+
+function parseOffer(feeString) {
+  if (!feeString) return null;
+  let currency = 'NGN';
+  if (feeString.includes('₦')) currency = 'NGN';
+  else if (feeString.includes('$') || feeString.includes('USD')) currency = 'USD';
+  else if (feeString.includes('£') || feeString.includes('GBP')) currency = 'GBP';
+
+  const m = feeString.match(/([0-9]+(?:,[0-9]+)*)/);
+  if (!m) return null;
+  const price = parseInt(m[1].replace(/,/g, ''), 10);
+  if (!price || isNaN(price)) return null;
+  return {
+    "@type": "Offer",
+    "price": price,
+    "priceCurrency": currency,
+    "category": "Tuition Fee",
+    "url": `${CANONICAL_DOMAIN}/admissions`
+  };
 }
 
 function programmeMetaDescription(summary) {
@@ -183,11 +223,14 @@ function programmeMetaDescription(summary) {
 }
 
 function getOrgSchema(inst) {
+  const activePhones = activePhoneNumbers(inst.phoneNumbers);
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "name": inst.legalName,
     "alternateName": "GIBS",
+    "identifier": "RC 1178333",
+    "slogan": inst.slogan,
     "url": CANONICAL_DOMAIN,
     "logo": `${CANONICAL_DOMAIN}/images/gibs-logo.webp`,
     "description": inst.positioningStatement,
@@ -198,27 +241,82 @@ function getOrgSchema(inst) {
       "addressRegion": "Kwara State",
       "addressCountry": "NG"
     },
-    "contactPoint": {
+    "contactPoint": activePhones.map((ph, idx) => ({
       "@type": "ContactPoint",
-      "telephone": inst.phoneNumbers[0] || '',
-      "contactType": "enquiry"
-    }
+      "telephone": ph,
+      "contactType": idx === 0 ? "Training Desk & Programme Enquiries" : "Programme Enquiries",
+      "email": inst.emails[idx] || inst.emails[0]
+    })),
+    "sameAs": [
+      CANONICAL_DOMAIN
+    ]
   });
 }
 
+function convertDurationToIso(durationStr) {
+  if (!durationStr) return null;
+  const s = durationStr.trim();
+  if (s === '5 Days') return 'P5D';
+  if (s === '1 Week') return 'P1W';
+  if (s === '2 Weeks') return 'P2W';
+  // Duration ranges (e.g. '1–2 Weeks') are omitted to avoid misleading exact representation
+  return null;
+}
+
 function getCourseSchema(p) {
-  return JSON.stringify({
+  const offer = parseOffer(p.fees);
+  const isoDuration = convertDurationToIso(p.duration);
+  const locationName = p.destination === 'Local'
+    ? 'GIBS Training Centres (Ilorin, Abuja, Lagos, Ibafo)'
+    : `GIBS ${p.destination} Executive Training Centre`;
+
+  const instance = {
+    "@type": "CourseInstance",
+    "courseMode": "onsite",
+    "location": {
+      "@type": "Place",
+      "name": locationName,
+      "address": p.destination === 'Local' ? {
+        "@type": "PostalAddress",
+        "streetAddress": "Goshen Complex, Along Old Jebba Road, Beside Dangote Flour Mills",
+        "addressLocality": "Ilorin",
+        "addressRegion": "Kwara State",
+        "addressCountry": "NG"
+      } : {
+        "@type": "PostalAddress",
+        "addressLocality": p.destination
+      }
+    }
+  };
+  if (isoDuration) {
+    instance.duration = isoDuration;
+  }
+  if (offer) {
+    instance.offers = offer;
+  }
+
+  const courseObj = {
     "@context": "https://schema.org",
     "@type": "Course",
     "name": p.title,
+    "courseCode": p.code,
     "description": p.summary,
     "provider": {
       "@type": "EducationalOrganization",
       "name": "Goshen International Business School",
       "sameAs": CANONICAL_DOMAIN
     },
-    "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`
-  });
+    "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`,
+    "hasCourseInstance": instance
+  };
+  if (isoDuration) {
+    courseObj.timeRequired = isoDuration;
+  }
+  if (offer) {
+    courseObj.offers = offer;
+  }
+
+  return JSON.stringify(courseObj);
 }
 
 function getBreadcrumbSchema(items) {
@@ -230,6 +328,18 @@ function getBreadcrumbSchema(items) {
       "position": idx + 1,
       "name": item.name,
       "item": item.url
+    }))
+  });
+}
+
+function getCourseListSchema(programmes, categoryUrl) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "itemListElement": programmes.map((p, idx) => ({
+      "@type": "ListItem",
+      "position": idx + 1,
+      "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`
     }))
   });
 }
@@ -278,7 +388,7 @@ const PRIMARY_INSTITUTIONAL_ROUTES = [
   { path: '/admissions', label: 'Programme Enquiries & Registration' },
   { path: '/executive-education', label: 'Foreign Executive Training (Kigali, Dubai, London, Houston)' },
   { path: '/gallery', label: 'Campus & Facility Gallery' },
-  { path: '/concierge', label: 'GIBS AI Programme Assistant' },
+  { path: '/concierge', label: 'GIBS Programme Assistant' },
   { path: '/privacy-policy', label: 'Privacy Policy' },
 ];
 
@@ -305,6 +415,60 @@ function generateCategoryNav(allProgrammes) {
         <h2>Training Sectors & Categories</h2>
         <ul>${items}</ul>
       </nav>`;
+}
+
+function generateLlmsTxt(inst, allProgrammes) {
+  const activePhones = activePhoneNumbers(inst.phoneNumbers);
+  const categories = [...new Set((allProgrammes || []).map((p) => p.category))];
+  const categoryLinks = categories
+    .map((cat, idx) => {
+      const slug = categoryToSlug(cat);
+      return `${idx + 1}. [${cat}](${CANONICAL_DOMAIN}/programmes/category/${slug})`;
+    })
+    .join('\n');
+
+  const localCount = allProgrammes.filter((p) => p.destination === 'Local').length;
+  const foreignCount = allProgrammes.filter((p) => p.destination !== 'Local').length;
+
+  return `# Goshen International Business School (GIBS)
+
+> ${inst.positioningStatement || 'Goshen International Business School Limited (GIBS) is a premier Nigerian business school and executive education institution offering accredited professional development, executive management programmes, and institutional training.'}
+
+## Institutional Metadata & Governance
+- Legal Name: ${inst.legalName}
+- Short Name: GIBS
+- CAC Registration: RC 1178333
+- Slogan: ${inst.slogan}
+- Website: ${CANONICAL_DOMAIN}
+- Postal Address: ${inst.postalAddress}
+- Primary Phone Numbers: ${activePhones.join(', ')}
+- Email: ${inst.emails.join(', ')}
+- Technical Partner: ${inst.technicalPartner}
+- Accreditations: ${inst.accreditations.join(', ')}
+- Overseas Executive Hubs: ${inst.overseasHubs.join(', ')}
+- Domestic Training Centres: Ilorin, Abuja, Lagos, Ibafo
+
+## 2026 Training Programme Catalogue
+- Total Canonical Programmes: ${allProgrammes.length}
+- Local Open Programmes: ${localCount} programmes (5-day intensive onsite courses in Ilorin, Abuja, Lagos, Ibafo)
+- Foreign Executive Programmes: ${foreignCount} programmes (Kigali, Dubai, London, Houston)
+- Local Tuition Fees: ₦300,000 to ₦800,000 NGN
+- Foreign Tuition Fees: $4,800 USD to $9,500 USD / £4,800 GBP
+
+## Programme Categories & Specialisations
+${categoryLinks}
+
+## Key Institutional Routes
+- 2026 Training Calendar (Full Catalogue): ${CANONICAL_DOMAIN}/programmes
+- About GIBS (Mission, Vision & Accreditations): ${CANONICAL_DOMAIN}/about
+- Admissions & Enquiry Desk: ${CANONICAL_DOMAIN}/admissions
+- Contact & Campus Registry: ${CANONICAL_DOMAIN}/contact
+- Foreign Executive Education: ${CANONICAL_DOMAIN}/executive-education
+- Campus & Facility Gallery: ${CANONICAL_DOMAIN}/gallery
+- GIBS Programme Assistant: ${CANONICAL_DOMAIN}/concierge
+- Privacy Policy: ${CANONICAL_DOMAIN}/privacy-policy
+- XML Sitemap: ${CANONICAL_DOMAIN}/sitemap.xml
+`;
 }
 
 function generateStaticBody(route, programme, inst, allProgrammes) {
@@ -365,10 +529,10 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
        drift apart. */
     const activePhones = activePhoneNumbers(inst.phoneNumbers);
     const phones = activePhones
-      .map((n) => `<li><strong>Phone:</strong> ${escapeHtml(n)}</li>`)
+      .map((n) => `<li><strong>Phone:</strong> <a href="tel:${n}">${escapeHtml(n)}</a></li>`)
       .join('');
     const emails = inst.emails
-      .map((e) => `<li><strong>Email:</strong> ${escapeHtml(e)}</li>`)
+      .map((e) => `<li><strong>Email:</strong> <a href="mailto:${e}">${escapeHtml(e)}</a></li>`)
       .join('');
     const hubs = inst.overseasHubs.map((h) => `<li>${escapeHtml(h)}</li>`).join('');
     return `<main>
@@ -376,7 +540,7 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
       <h2>Postal Address</h2>
       <p>${address}</p>
       <h2>Website</h2>
-      <p>${website}</p>
+      <p>${inst.website ? `<a href="${inst.website}">${website}</a>` : website}</p>
       <h2>Phone Numbers</h2>
       <ul>${phones}</ul>
       <h2>Email Addresses</h2>
@@ -431,6 +595,11 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
       'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Training Programmes in Kigali, Dubai, London, and Houston.',
     );
     const catNav = generateCategoryNav(allProgrammes);
+    const localCount = (allProgrammes || []).filter((p) => p.destination === 'Local').length;
+    const foreignCount = (allProgrammes || []).filter((p) => p.destination !== 'Local').length;
+    const programmeLinks = (allProgrammes || [])
+      .map((p) => `<li><a href="/programmes/${p.slug}">${escapeHtml(p.code)} — ${escapeHtml(p.title)}</a></li>`)
+      .join('');
     return `<main>
       <h1>2026 Training Calendar (135 Programmes) | GIBS</h1>
       <p>${desc}</p>
@@ -441,6 +610,11 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
         </ol>
       </nav>
       ${catNav}
+      <section>
+        <h2>2026 Programme Directory</h2>
+        <p>Canonical listing of all ${allProgrammes.length} programmes: ${localCount} Local Open Training and ${foreignCount} Foreign Executive Training programmes. Each link reaches the full programme shell.</p>
+        <ul>${programmeLinks}</ul>
+      </section>
     </main>`;
   }
 
@@ -456,6 +630,7 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
           `<li><a href="/programmes/${p.slug}">${escapeHtml(p.code)} — ${escapeHtml(p.title)}</a></li>`,
       )
       .join('');
+    const instNav = generateInstitutionalNav();
     return `<main>
       <h1>${escapeHtml(catName)} Training Programmes | GIBS</h1>
       <p>Explore our executive training programmes in ${escapeHtml(catName)} at GIBS.</p>
@@ -468,6 +643,7 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
       </nav>
       <h2>Programmes in this category</h2>
       <ol>${links}</ol>
+      ${instNav}
     </main>`;
   }
 
@@ -501,6 +677,13 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
           )
           .join('')
       : '';
+    const isForeign = programme.destination && programme.destination !== 'Local';
+    const enquiryType = isForeign
+      ? 'Foreign Training Programmes (Kigali, Dubai, London, Houston)'
+      : 'Local Open Training Registration';
+    const enquiryHref = `/contact?type=${encodeURIComponent(enquiryType)}&programme=${encodeURIComponent(programme.slug)}`;
+    const instNav = generateInstitutionalNav();
+
     return `<main>
       <h1>${title}</h1>
       <nav aria-label="Breadcrumb">
@@ -519,9 +702,11 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
       <p><strong>Tuition Fee:</strong> ${fees}</p>
       <p><strong>Target Audience:</strong> ${targetAudience}</p>
       <p>${summary}</p>
+      <p><a href="${enquiryHref}">Enquire About This Programme &rarr;</a></p>
       ${outcomes}
       ${structure}
       ${faqList}
+      ${instNav}
     </main>`;
   }
 
@@ -542,6 +727,85 @@ function replaceMetaContent(html, name, newValue) {
   if (!contentRegex.test(tag)) throw new Error(`Meta tag ${name} is missing the content attribute.`);
   const updatedTag = tag.replace(contentRegex, `content="${escapedValue}"`);
   return html.replace(tag, updatedTag);
+}
+
+/* ----- Build-manifest modulepreload injection -----
+ * For code-split (React.lazy) routes, Vite emits a separate chunk per page.
+ * We modulepreload that chunk into the matching static shell so a direct hit
+ * hydrates from a chunk already in flight (the shell's HTML is already
+ * complete for non-JS clients). Eager pages have no separate chunk, so they
+ * resolve to [] and receive no extra hint. */
+function findPreloadFile(moduleSuffixes) {
+  if (!MANIFEST) return null;
+  for (const suffix of moduleSuffixes) {
+    for (const [key, entry] of Object.entries(MANIFEST)) {
+      if (
+        key.endsWith(suffix) &&
+        entry &&
+        typeof entry.file === 'string' &&
+        /\.(m?js|mjs|css)$/.test(entry.file)
+      ) {
+        return '/' + entry.file;
+      }
+    }
+  }
+  return null;
+}
+
+// Map a served route to the lazy module(s) whose chunk hydrates its shell.
+function moduleSuffixForRoute(route) {
+  if (/^\/programmes\/category\//.test(route)) return ['pages/Programmes.tsx'];
+  if (/^\/programmes\//.test(route)) return ['pages/ProgrammeDetail.tsx'];
+  switch (route) {
+    case '/programmes': return ['pages/Programmes.tsx'];
+    case '/executive-education': return ['pages/ExecutiveEducation.tsx'];
+    case '/admissions': return ['pages/Admissions.tsx'];
+    case '/contact': return ['pages/Contact.tsx'];
+    case '/concierge': return ['pages/ConciergePage.tsx'];
+    default: return [];
+  }
+}
+
+function injectModulePreload(html, moduleSuffixes) {
+  const file = findPreloadFile(moduleSuffixes);
+  if (!file) return html;
+  const tag = `<link rel="modulepreload" href="${file}">`;
+  if (html.includes(tag)) return html;
+  // Place after Vite's own modulepreload cluster in <head>; fall back to just
+  // before </head> if the entry preload is absent.
+  const m = html.match(/(<link rel="modulepreload"[^>]*>\s*)/);
+  if (m) return html.replace(m[1], `${m[0]}${tag}`);
+  return html.replace('</head>', `  ${tag}\n  </head>`);
+}
+
+/* ----- Duration validation gate -----
+ * convertDurationToIso only accepts exact 5 Days / 1 Week / 2 Weeks. Recognised
+ * ranges (e.g. "1–2 Weeks") are intentionally OMITTED from ISO 8601 rather than
+ * fabricated as an exact value. Anything that is non-empty AND neither an exact
+ * mapping nor a recognised range is "unknown": it must be reported (and block
+ * the build) instead of being silently dropped. */
+const EXACT_DURATIONS = new Set(['5 Days', '1 Week', '2 Weeks']);
+function classifyDuration(d) {
+  if (!d) return 'empty';
+  const s = d.trim();
+  if (EXACT_DURATIONS.has(s)) return 'exact';
+  if (/^\d+[–\-]\d+ (Days|Weeks)$/.test(s)) return 'range';
+  return 'unknown';
+}
+function reportUnknownDurations(programmes) {
+  const unknowns = programmes.filter((p) => classifyDuration(p.duration) === 'unknown');
+  if (unknowns.length > 0) {
+    console.error('seo-gen: refusing to silently omit unknown durations:');
+    for (const p of unknowns) {
+      console.error(`  - ${p.code} ("${p.duration}"): "${p.title}"`);
+    }
+    throw new Error(
+      unknowns.length + ' programme(s) have durations that are neither an exact ISO ' +
+      'mapping nor a recognised range. Add an exact case to convertDurationToIso, ' +
+      'or confirm the range pattern, before omitting. Refusing to fabricate.'
+    );
+  }
+  console.log('Duration gate passed: ' + programmes.length + ' programmes scanned; no unknown durations.');
 }
 
 function generateShell(masterHtml, route, meta, staticBody, jsonLd = '') {
@@ -577,6 +841,8 @@ function generateShell(masterHtml, route, meta, staticBody, jsonLd = '') {
   if (staticBody) {
     html = html.replace('<div id="root"></div>', `<div id="root">${staticBody}</div>`);
   }
+  // Modulepreload the lazy chunk that hydrates this shell (if any).
+  html = injectModulePreload(html, moduleSuffixForRoute(route));
   return html;
 }
 
@@ -663,13 +929,31 @@ async function run() {
     const inst = extractInstitutionalData();
     console.log(`Extracted institutional metadata ${inst.website ? 'OK' : '(partial)'}.`);
 
+    // Load the Vite build manifest so each static shell can modulepreload the
+    // exact lazy chunk that hydrates it.
+const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
+    if (fs.existsSync(manifestPath)) {
+      try {
+        MANIFEST = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+        console.log(`Loaded build manifest (${Object.keys(MANIFEST).length} module entries).`);
+      } catch (e) {
+        console.warn('seo-gen: manifest.json present but unparseable; skipping modulepreload injection.');
+      }
+    } else {
+      console.warn('seo-gen: dist/manifest.json not found; skipping modulepreload injection (run a fresh vite build first).');
+    }
+
+    // Fail fast on any duration that cannot be classified (exact or range)
+    // rather than silently omitting it from structured data.
+    reportUnknownDurations(programmes);
+
     const routes = [];
 
     // 1. Programmes
     for (const p of programmes) {
       const route = `/programmes/${p.slug}`;
       const description = programmeMetaDescription(p.summary);
-      const title = programmeTitle(p.title);
+      const title = programmeTitle(p);
       routes.push({ path: route, meta: { title, description }});
 
       const courseJson = getCourseSchema(p);
@@ -694,7 +978,7 @@ async function run() {
       { path: '/admissions', title: 'Programme Enquiries — Goshen International Business School', desc: 'The GIBS programme enquiry process: browse the 2026 calendar, make an enquiry, and GIBS handles the rest.' },
       { path: '/executive-education', title: 'Foreign Executive Training | GIBS', desc: 'Global training hubs in Kigali, Dubai, London and Houston.' },
       { path: '/gallery', title: 'Gallery — GIBS', desc: 'Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.' },
-      { path: '/concierge', title: 'GIBS AI — Ask about programmes and locations', desc: 'GIBS AI provides guided assistance for exploring our 113 local programmes, 22 foreign executive programmes, training locations, and programme enquiries.' },
+      { path: '/concierge', title: 'GIBS Programme Assistant — Ask about programmes & locations', desc: 'Ask the GIBS Programme Assistant about our 135 2026 executive training programmes, overseas locations, and how to enquire.' },
       { path: '/privacy-policy', title: 'Privacy Policy | Goshen International Business School', desc: 'Learn how GIBS handles your information, stores concierge history, and your data-protection rights.' },
     ];
     for (const r of instRoutes) {
@@ -731,7 +1015,14 @@ async function run() {
         { name: cat, url: `${CANONICAL_DOMAIN}${route}` }
       ]);
 
-      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, inst, programmes), breadcrumbsJson);
+      let combinedJsonLd = breadcrumbsJson;
+      const catProgrammes = programmes.filter(p => p.category === cat);
+      if (catProgrammes.length >= 3) {
+        const listJson = getCourseListSchema(catProgrammes, `${CANONICAL_DOMAIN}${route}`);
+        combinedJsonLd = `[${breadcrumbsJson}, ${listJson}]`;
+      }
+
+      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, inst, programmes), combinedJsonLd);
       writeShell(route, shellHtml);
     }
 
@@ -741,7 +1032,23 @@ async function run() {
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url>\n    <loc>${CANONICAL_DOMAIN}/</loc>\n  </url>\n${sitemapEntries}\n</urlset>`;
     fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemapXml);
 
-    // 5. Inject homepage-specific hero image preload into master shell (dist/index.html)
+    // 5. Generate llms.txt and .well-known/llms.txt
+    const llmsContent = generateLlmsTxt(inst, programmes);
+    fs.writeFileSync(path.join(DIST_DIR, 'llms.txt'), llmsContent);
+    const wellKnownDir = path.join(DIST_DIR, '.well-known');
+    fs.mkdirSync(wellKnownDir, { recursive: true });
+    fs.writeFileSync(path.join(wellKnownDir, 'llms.txt'), llmsContent);
+
+    // Also persist in public/ directory so it stays in source control and Vite build
+    const publicDir = path.resolve('public');
+    if (fs.existsSync(publicDir)) {
+      fs.writeFileSync(path.join(publicDir, 'llms.txt'), llmsContent);
+      const publicWellKnown = path.join(publicDir, '.well-known');
+      fs.mkdirSync(publicWellKnown, { recursive: true });
+      fs.writeFileSync(path.join(publicWellKnown, 'llms.txt'), llmsContent);
+    }
+
+    // 6. Inject homepage-specific hero image preload into master shell (dist/index.html)
     // Preloads the exact responsive image selected by src/sections/Hero.tsx without leaking to other routes.
     const hero640Path = path.join(DIST_DIR, 'images', 'gibs-hero-branded-640.webp');
     const hero1050Path = path.join(DIST_DIR, 'images', 'gibs-hero-branded.webp');
@@ -773,6 +1080,10 @@ async function run() {
       if (!homeHtml.includes('href="/images/gibs-hero-branded.webp"')) {
         homeHtml = homeHtml.replace('</head>', `  ${heroPreloadTag}\n  </head>`);
       }
+
+      // Modulepreload the lazy homepage ProgrammeDiscovery (catalogue) section
+      // chunk so the director hydrates from a chunk already in flight.
+      homeHtml = injectModulePreload(homeHtml, ['sections/Programs.tsx']);
 
       const orgSchema = getOrgSchema(inst);
       homeHtml = homeHtml.replace('<script type="application/ld+json"></script>', `<script type="application/ld+json">${orgSchema}</script>`);

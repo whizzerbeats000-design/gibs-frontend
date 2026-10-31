@@ -24,7 +24,7 @@
         "X-Frame-Options": "DENY",
         "Referrer-Policy": "strict-origin-when-cross-origin",
         "Permissions-Policy": "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()",
-        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+        "Content-Security-Policy": "default-src 'self'; script-src 'self' 'sha256-OuZY6WzJOIh2C89ThsUSxQtxIJomDP4jHuL8NXL3o5c='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
       },
       "continue": true
     },
@@ -36,7 +36,7 @@
       "continue": true
     },
     {
-      "src": "/(images|fonts)/.*\\.(woff2|webp|jpg|jpeg|png|svg|ico|css|js)$|/(favicon\\.ico|robots\\.txt|sitemap\\.xml)$",
+      "src": "/(images|fonts)/.*\\.(woff2|webp|jpg|jpeg|png|svg|ico|css|js)$|/(favicon\\.ico|robots\\.txt|sitemap\\.xml|llms\\.txt|\\.well-known/.*)$",
       "headers": {
         "Cache-Control": "public, max-age=0, must-revalidate"
       },

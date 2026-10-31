@@ -2,8 +2,10 @@ import { PROGRAMMES, INSTITUTIONAL_DATA } from "./data";
 import { activePhoneNumbers, scrubRetiredNumbersInProse } from "./phones";
 
 /* ==========================================================================
-   GIBS AI — frontend conversational intelligence engine.
-   Official catalogue & institutional guide for Goshen International Business School (GIBS)
+   GIBS Programme Assistant — a rule-based frontend guide that resolves user
+   questions against GIBS' published 2026 programme and institutional records.
+   There is no external model, LLM, or network call: every reply is produced
+   by deterministic rules in getConciergeReply against src/lib/data.ts.
    ========================================================================== */
 
 /* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
@@ -445,7 +447,7 @@ function extractContextFromHistory(history: ConversationTurn[]): ConciergeContex
       const dest = destinationFromText(text);
       if (dest) lastDestination = dest;
     } else if (msg.role === "concierge") {
-      if (/\bWelcome to Goshen International Business School\b/i.test(text) || /\bWelcome to GIBS AI\b/i.test(text)) {
+      if (/\bWelcome to Goshen International Business School\b/i.test(text) || /\bWelcome to GIBS Programme Assistant\b/i.test(text)) {
         hasGreeted = true;
       }
       if (/Would you prefer training in Nigeria \(Local\) or at one of our overseas hubs/i.test(text)) {
@@ -522,7 +524,7 @@ export function getConciergeReply(
   // 2. Capabilities ("What can you do?")
   if (/\b(what can you do|how can you help|what are your capabilities|what do you do)\b/i.test(q)) {
     return publishable({
-      text: "I am the GIBS AI concierge. I can help you navigate our institutional offerings by:\n\n• Finding and exploring local and foreign training programmes\n• Providing details on our international hubs (Kigali, Dubai, London, and Houston)\n• Answering questions about GIBS locations, governance, and purpose\n• Guiding you through the enquiry and registration process\n• Directing you to the right contact for customized in-plant workshops\n\nWould you like to start by browsing the 2026 Training Calendar or asking about a specific topic?",
+      text: "I am the GIBS Programme Assistant — a rule-based guide built on GIBS' published 2026 programme and institutional records (no external model or API). I can help you navigate our institutional offerings by:\n\n• Finding and exploring local and foreign training programmes\n• Providing details on our international hubs (Kigali, Dubai, London, and Houston)\n• Answering questions about GIBS locations, governance, and purpose\n• Guiding you through the enquiry and registration process\n• Directing you to the right contact for customized in-plant workshops\n\nWould you like to start by browsing the 2026 Training Calendar or asking about a specific topic?",
       cards: [
         { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes" },
         { kind: "link", label: "Foreign Training Hubs", to: "/executive-education" },

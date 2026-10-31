@@ -45,7 +45,7 @@ async function run() {
         assert.ok(!/Hello again/i.test(r.text));
     }},
     { user: "What can you do?", verify: (r) => {
-        assert.ok(/I am the GIBS AI concierge/i.test(r.text));
+        assert.ok(/I am the GIBS Programme Assistant/i.test(r.text));
     }},
     { user: "Tell me more about GIBS", verify: (r) => {
         assert.ok(/professional development institution/i.test(r.text));

@@ -224,14 +224,14 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
                 No results for “{trimmed}”
               </p>
               <p className="mx-auto mt-2 max-w-sm type-body text-muted">
-                Nothing in the site index matches. Try Accounting, Procurement, Kigali or Dubai, or ask GIBS AI.
+                Nothing in the site index matches. Try Accounting, Procurement, Kigali or Dubai, or ask the Programme Assistant.
               </p>
               <Link
                 to="/concierge"
                 onClick={onClose}
                 className="btn btn-primary btn-md mt-6"
               >
-                Ask GIBS AI
+                Ask the Programme Assistant
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             </div>

@@ -11,6 +11,16 @@ const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
+    manifest: true,
+    rollupOptions: {
+      output: {
+        // Split third-party framework code into a long-lived cached chunk so the
+        // main entry no longer carries react/react-dom/framer-motion inline.
+        manualChunks: {
+          vendor: ["react", "react-dom", "framer-motion"],
+        },
+      },
+    },
     outDir: process.env.GIBS_DIST_DIR
       ? path.resolve(__dirname, process.env.GIBS_DIST_DIR)
       : "dist",

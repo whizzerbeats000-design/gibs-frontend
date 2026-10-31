@@ -108,7 +108,7 @@ export function ProgrammeNav({ sections }: { sections: ProgrammeSection[] }) {
           </ul>
           <div className="flex shrink-0 items-center gap-3">
             <Link to="/concierge" className="text-[12.5px] font-bold uppercase tracking-[0.12em] text-forest-700 hover:underline">
-              Ask GIBS AI
+              Ask the Programme Assistant
             </Link>
             <Link to="/admissions" className="btn btn-primary btn-md">
               Make an Enquiry

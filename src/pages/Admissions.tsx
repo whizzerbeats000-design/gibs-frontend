@@ -100,7 +100,7 @@ export default function Admissions() {
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="md">
-              Ask GIBS AI
+              Ask the Programme Assistant
             </BtnLink>
           </div>
         }
@@ -262,13 +262,13 @@ export default function Admissions() {
             <div>
               <h2 className="type-h2 text-ink">Need guidance on programme selection?</h2>
               <p className="mt-2 max-w-lg type-body">
-                GIBS AI searches published programme titles, categories, stated audiences, and listed locations or schedule months. Quarter matches use the months shown in programme records; sector, cadre, and department are matched only when a record names them.
+                GIBS Programme Assistant searches published programme titles, categories, stated audiences, and listed locations or schedule months. Quarter matches use the months shown in programme records; sector, cadre, and department are matched only when a record names them.
               </p>
             </div>
           </div>
           <div className="flex shrink-0 flex-wrap gap-3">
             <button type="button" onClick={() => openConcierge(true)} className="btn btn-primary btn-md">
-              Ask GIBS AI
+              Ask the Programme Assistant
             </button>
           </div>
         </div>

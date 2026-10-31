@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, lazy, Suspense } from "react";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { RouterProvider, ScrollManager, matchRoute, useRoute } from "./lib/router";
 import { ConciergeProvider, ConciergeLauncher, ConciergeDialog, useConcierge } from "./components/Concierge";
@@ -6,17 +6,24 @@ import { Header, MobileNav, GlobalFooter, SkipLink, ErrorBoundary } from "./comp
 import { SearchModal } from "./components/Search";
 
 import Home from "./pages/Home";
-import Programmes from "./pages/Programmes";
-import ProgrammeDetail from "./pages/ProgrammeDetail";
-import ExecutiveEducation from "./pages/ExecutiveEducation";
-import Admissions from "./pages/Admissions";
 import About from "./pages/About";
 import Gallery from "./pages/Gallery";
-import Contact from "./pages/Contact";
-import ConciergePage from "./pages/ConciergePage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import { slugToCategory } from "./lib/categoryUtils.ts";
+
+/* Catalogue-heavy routes are code-split with React.lazy so the ~395 KB GIBS
+ * programme catalogue (src/lib/data.ts) is no longer bundled into the
+ * initial/homepage payload. scripts/seo-gen.mjs injects a
+ * <link rel="modulepreload"> for each route's chunk into the matching static
+ * shell, so a direct hit serves full static HTML and hydration finds the
+ * chunk already in flight. */
+const Programmes = lazy(() => import("./pages/Programmes"));
+const ProgrammeDetail = lazy(() => import("./pages/ProgrammeDetail"));
+const ExecutiveEducation = lazy(() => import("./pages/ExecutiveEducation"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Admissions = lazy(() => import("./pages/Admissions"));
+const ConciergePage = lazy(() => import("./pages/ConciergePage"));
 
 /**
  * Resolves a path to a page.
@@ -134,6 +141,18 @@ export default function App() {
   );
 }
 
+/* Fallback shown only while a lazy (catalogue) route chunk is streaming in
+ * during client-side navigation. Direct entry is covered by the static shell
+ * (pre-rendered by seo-gen) plus a modulepreload hint, so this loader is a
+ * last line of defence on slower connections, never the primary paint. */
+function RouteLoader() {
+  return (
+    <div aria-busy="true" className="py-12 text-center text-ink/60">
+      Loading…
+    </div>
+  );
+}
+
 /** Restrained cross-fade between routes; transform/opacity only. */
 function AnimatedRoutes() {
   const { path } = useRoute();
@@ -146,7 +165,9 @@ function AnimatedRoutes() {
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       >
-        <RouteView path={path} />
+        <Suspense fallback={<RouteLoader />}>
+          <RouteView path={path} />
+        </Suspense>
       </motion.div>
     </AnimatePresence>
   );

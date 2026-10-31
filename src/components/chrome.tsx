@@ -26,7 +26,7 @@ const FOOTER_PHONE_LINES: string[] = activePhoneNumbers(
 /* ---------------- Navigation simplification ----------------
  * The site architecture has been simplified to four primary
  * destinations — All Programmes, About GIBS, Gallery,
- * Contact & Registry — plus the utility (Search, GIBS AI).
+ * Contact & Registry — plus the utility (Search, GIBS Programme Assistant).
  * All four destinations receive equal visual weight in both
  * the desktop header and the mobile sheet.
  */
@@ -148,7 +148,7 @@ export function Header({
           <button
             type="button"
             onClick={onOpenConcierge}
-            aria-label="Open GIBS AI"
+            aria-label="Open the Programme Assistant"
             className={cn(
               "hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
               path === "/programmes" ? "lg:inline-flex" : "xl:inline-flex"
@@ -157,7 +157,7 @@ export function Header({
             <span className="relative flex h-2 w-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-500" />
             </span>
-            GIBS AI
+            GIBS Programme Assistant
           </button>
           <Link to="/admissions" className="btn btn-primary btn-md hidden lg:inline-flex">
             Make an Enquiry
@@ -293,7 +293,7 @@ export function MobileNav({
                 </h2>
                 <p className="mt-5 max-w-md text-[14px] leading-[1.55] text-muted">
                   Explore the 2026 Training Calendar of 113 Local and 22 Foreign
-                  Executive Programmes, or ask GIBS AI to guide you.
+                  Executive Programmes, or ask the Programme Assistant to guide you.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -317,7 +317,7 @@ export function MobileNav({
                     className="inline-flex items-center gap-2.5 rounded-full border border-ink/20 px-5 py-3 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-forest-600 hover:text-ivory"
                   >
                     <ChatIcon className="h-4 w-4" />
-                    GIBS AI
+                    GIBS Programme Assistant
                   </button>
                 </div>
               </div>
@@ -387,7 +387,7 @@ const FOOTER_COLUMNS = [
     title: "Connect",
     links: [
       { label: "Contact Registry", to: "/contact" },
-      { label: "GIBS AI", to: "/concierge" },
+      { label: "GIBS Programme Assistant", to: "/concierge" },
       { label: "Privacy Policy", to: "/privacy-policy" },
     ],
   },

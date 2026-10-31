@@ -11,7 +11,7 @@ import {
 } from "react";
 import { motion } from "framer-motion";
 import { Link } from "../lib/router";
-import { getConciergeReply, type ConciergeCard } from "../lib/concierge";
+import type { ConciergeCard } from "../lib/concierge";
 import { EASE } from "./motion";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { ChatIcon, CloseIcon, SendIcon, ArrowUpRight } from "./icons";
@@ -51,7 +51,7 @@ type Message = {
 const WELCOME: Message = {
   id: 0,
   role: "concierge",
-  text: "Welcome to GIBS AI. I can help with 2026 programmes, foreign training hubs, training locations, and programme enquiries. What would you like to explore?",
+  text: "Welcome to GIBS Programme Assistant. I can help with 2026 programmes, foreign training hubs, training locations, and programme enquiries. What would you like to explore?",
 };
 
 const STORAGE_KEY = "gibs-concierge-v2";
@@ -129,7 +129,7 @@ function CardView({ card, onNavigate }: { card: ConciergeCard; onNavigate?: () =
 
 export function ConciergeConversation({
   compact = false,
-  label = "GIBS AI conversation",
+  label = "GIBS Programme Assistant conversation",
   storageKey = STORAGE_KEY,
 }: {
   compact?: boolean;
@@ -234,9 +234,12 @@ export function ConciergeConversation({
       setInput("");
       setTyping(true);
       // Simulated turn latency of the deterministic frontend engine.
-      // Replace with a provider request in getConciergeReply when integrating.
-      pendingReplyRef.current = window.setTimeout(() => {
+      pendingReplyRef.current = window.setTimeout(async () => {
         pendingReplyRef.current = null;
+        // The rule engine (and the ~395 KB catalogue it imports) is lazy-loaded
+        // on first use, so pages that only mount the concierge chrome never pay
+        // for the full catalogue in their initial bundle.
+        const { getConciergeReply } = await import("../lib/concierge");
         const reply = getConciergeReply(text, messages);
         setMessages((m) => [
           ...m,
@@ -282,7 +285,7 @@ export function ConciergeConversation({
             >
               {m.role === "concierge" && (
                 <p className="mb-1.5 eyebrow text-forest-600">
-                  GIBS AI
+                  GIBS Programme Assistant
                 </p>
               )}
               <p>{m.text}</p>
@@ -316,7 +319,7 @@ export function ConciergeConversation({
         }}
       >
         <label htmlFor={compact ? "concierge-input-modal" : "concierge-input-page"} className="sr-only">
-          Ask GIBS AI
+          Ask the Programme Assistant
         </label>
         <input
           id={compact ? "concierge-input-modal" : "concierge-input-page"}
@@ -363,7 +366,7 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
     <button
       type="button"
       onClick={() => setOpen(true)}
-      aria-label="Open GIBS AI"
+      aria-label="Open the Programme Assistant"
       aria-expanded={open}
       tabIndex={hidden ? -1 : 0}
       className={cn(
@@ -373,7 +376,7 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
     >
       <span className="h-2 w-2 shrink-0 rounded-full bg-gold-300" aria-hidden="true" />
       <ChatIcon className="h-4.5 w-4.5" />
-      <span className="hidden sm:inline">GIBS AI</span>
+      <span className="hidden sm:inline">GIBS Programme Assistant</span>
     </button>
   );
 }
@@ -418,7 +421,7 @@ export function ConciergeDialog() {
       {/* Scrim */}
       <button
         type="button"
-        aria-label="Close GIBS AI"
+        aria-label="Close the Programme Assistant"
         onClick={() => setOpen(false)}
         className="absolute inset-0 h-full w-full cursor-default bg-ink/45 backdrop-blur-[2px]"
       />
@@ -427,7 +430,7 @@ export function ConciergeDialog() {
         ref={ref}
         role="dialog"
         aria-modal="true"
-        aria-label="GIBS AI"
+        aria-label="GIBS Programme Assistant"
         initial={{ y: 48, opacity: 0, scale: 0.985 }}
         animate={{
           y: open ? 0 : 32,
@@ -443,7 +446,7 @@ export function ConciergeDialog() {
               <span className="relative flex h-2 w-2">
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
               </span>
-              GIBS AI
+              GIBS Programme Assistant
             </p>
             <p className="mt-0.5 text-[11px] text-ivory/75">Your programme and enquiry guide</p>
           </div>
@@ -451,7 +454,7 @@ export function ConciergeDialog() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              aria-label="Close GIBS AI panel"
+              aria-label="Close the Programme Assistant panel"
               className="flex h-11 w-11 items-center justify-center rounded-pill text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory"
             >
               <CloseIcon className="h-5 w-5" />

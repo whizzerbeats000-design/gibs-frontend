@@ -26,7 +26,7 @@ export default function NotFound() {
         </div>
         <div className="mt-14 border-t rule-light pt-6">
           <ArrowTextLink to="/concierge" light>
-            Or ask GIBS AI to find a programme
+            Or ask the Programme Assistant to find a programme
           </ArrowTextLink>
         </div>
       </div>

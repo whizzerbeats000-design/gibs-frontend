@@ -4,6 +4,8 @@ import { ProgrammeCard } from "../components/cards";
 import { BtnLink, Breadcrumbs, EmptyState } from "../components/ui";
 import { SearchIcon, CloseIcon } from "../components/icons";
 import { PROGRAMMES, PROGRAM_CATEGORIES } from "../lib/data";
+import { formatCategoryDisplayName } from "../lib/categoryUtils";
+import { approvedCategoryIntro, resolveRenderedCategory } from "../lib/programme-content";
 import { Reveal, staggerItem } from "../components/motion";
 import { useSeo } from "../lib/router";
 import { cn } from "../utils/cn";
@@ -63,6 +65,23 @@ function ScopeToggle({ pressed, activeClass, onClick, label, count }: {
   );
 }
 
+/** Category-landing introduction paragraph.
+ *  Only GIBS-verified (`approved`) intros render; otherwise nothing renders,
+ *  matching the static shell's fallback behaviour (the static shell emits the
+ *  catalogue's generic line on its own). The same `approvedCategoryIntro`
+ *  gate is used in scripts/seo-gen.mjs so server and client agree. */
+function CategoryIntro({ category }: { category: string }) {
+  const ci = approvedCategoryIntro(category);
+  if (!ci) return null;
+  return (
+    <Reveal delay={0.04}>
+      <p className="container-x mt-4 max-w-3xl type-body text-ink/85">
+        {ci.intro}
+      </p>
+    </Reveal>
+  );
+}
+
 export default function ProgrammesPage({
   initialCategory = "All",
 }: {
@@ -73,7 +92,7 @@ export default function ProgrammesPage({
 
   useSeo({
     title: isCategoryFilter
-      ? `${initialCategory} Training Programmes | GIBS`
+      ? `${formatCategoryDisplayName(initialCategory)} | GIBS`
       : "2026 Training Calendar (135 Programmes) — GIBS",
     description: isCategoryFilter
       ? `Explore our executive training programmes in ${initialCategory} at GIBS.`
@@ -89,7 +108,7 @@ export default function ProgrammesPage({
     const q = deferredQuery.trim().toLowerCase();
     if (!q) {
       return PROGRAMMES.filter((p) => {
-        const categoryMatch = category === "All" || p.category === category;
+        const categoryMatch = category === "All" || resolveRenderedCategory(p) === category;
         const destinationMatch =
           destination === "All"
             ? true
@@ -101,7 +120,7 @@ export default function ProgrammesPage({
     }
 
     return PROGRAMMES.filter((p) => {
-      const categoryMatch = category === "All" || p.category === category;
+      const categoryMatch = category === "All" || resolveRenderedCategory(p) === category;
       const destinationMatch =
         destination === "All"
           ? true
@@ -113,7 +132,7 @@ export default function ProgrammesPage({
       const queryMatch = tokens.every((token) =>
         p.title.toLowerCase().includes(token) ||
         p.code.toLowerCase().includes(token) ||
-        p.category.toLowerCase().includes(token) ||
+        resolveRenderedCategory(p).toLowerCase().includes(token) ||
         p.destination.toLowerCase().includes(token) ||
         p.schedule.toLowerCase().includes(token) ||
         p.targetAudience.toLowerCase().includes(token) ||
@@ -172,6 +191,10 @@ export default function ProgrammesPage({
           </Reveal>
         </div>
       </section>
+
+      {isCategoryFilter && (
+        <CategoryIntro category={initialCategory} />
+      )}
 
       <section className="bg-paper border-t border-line" aria-labelledby="programme-results-heading">
         <div className="container-x pb-20 pt-6 sm:pb-24 sm:pt-8">

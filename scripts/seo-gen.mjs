@@ -1,12 +1,21 @@
 import fs from 'fs';
 import path from 'path';
-import { categoryToSlug } from '../src/lib/categoryUtils.ts';
+import { categoryToSlug, formatCategoryDisplayName } from '../src/lib/categoryUtils.ts';
 import { activePhoneNumbers, scrubRetiredNumbersInProse } from '../src/lib/phones.ts';
 
 const CANONICAL_DOMAIN = 'https://gibs.com.ng';
 const DIST_DIR = path.resolve(process.env.GIBS_DIST_DIR || 'dist');
 const MASTER_SHELL_PATH = path.join(DIST_DIR, 'index.html');
 const CLEAN_TEMPLATE_PATH = path.join(DIST_DIR, '.master-template.html');
+
+/* Category-correction approval gate. The 10 audited reclassifications live in
+ * src/lib/programme-content.ts (CATEGORY_CORRECTIONS). They are applied to
+ * static shells / JSON-LD / breadcrumbs / sitemap / llms.txt ONLY when an
+ * operator sets APPLY_CATEGORY_CORRECTIONS=true at generation time; when the
+ * gate is OFF (default) resolveCategory() returns each programme's locked
+ * data.ts category verbatim, so published output is byte-identical to the
+ * verified catalogue. data.ts is never edited. */
+const APPLY_CATEGORY_CORRECTIONS = process.env.APPLY_CATEGORY_CORRECTIONS === 'true';
 
 /* Vite build manifest (dist/manifest.json) maps source modules to their
  * emitted chunk file. Loaded in run() so every static shell can emit a
@@ -84,9 +93,177 @@ function decodeJsonString(raw) {
   return raw.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => String.fromCharCode(parseInt(hex, 16)));
 }
 
+/* ----- Content layer (src/lib/programme-content.ts) -----
+ * The catalogue duplication (outcomes/structure/summary/faqs) lives in the
+ * byte-locked src/lib/data.ts, which cannot be edited. Curated, topic-specific
+ * copy lives in the SEPARATE src/lib/programme-content.ts and is parsed here
+ * with the SAME balanced-bracket + quoted-key extractors used above for
+ * data.ts. Only content whose `status` is `approved` is applied; every other
+ * entry is ignored so drafts can never reach generated HTML/JSON-LD/sitemap/
+ * llms.txt. This parser must stay in lock-step with ProgrammeContent fields. */
+/* Capture the body (excluding the outer braces) of `export const NAME = { ... }`
+ * using balanced-brace scanning. A regex capture with a greedy `([\s\S]*)\}`
+ * is unsafe: once a second `export const ... = {...};` appears later in the
+ * same file, the greedy capture extends into it and over-counts entries. */
+function extractObjectBody(src, constName) {
+  const re = new RegExp('export const ' + constName + '\\b[\\s\\S]*?=[\\s\\S]*?\\{');
+  const m = src.match(re);
+  if (!m) return null;
+  let i = m.index + m[0].length;
+  let depth = 1;
+  let body = '';
+  while (i < src.length && depth > 0) {
+    const ch = src[i++];
+    if (ch === '{') depth++;
+    else if (ch === '}') {
+      depth--;
+      if (depth === 0) break;
+    }
+    body += ch;
+  }
+  return body;
+}
+
+function extractProgrammeContent() {
+  const contentPath = path.join(process.cwd(), 'src', 'lib', 'programme-content.ts');
+  const content = fs.readFileSync(contentPath, 'utf8');
+
+  // Find the export const PROGRAMME_CONTENT = { ... } literal (balanced-brace).
+  const objectBody = extractObjectBody(content, 'PROGRAMME_CONTENT');
+  if (!objectBody) return {};
+  // Split top-level entries: "CODE": { ... }  (braceDepth tracks nested braces)
+  const entries = [];
+  let current = '';
+  let braceDepth = 0;
+  for (let i = 0; i < objectBody.length; i++) {
+    const ch = objectBody[i];
+    if (ch === '{') { braceDepth++; current += ch; continue; }
+    if (ch === '}') { braceDepth--; current += ch; continue; }
+    if (braceDepth === 0 && ch === ',') { entries.push(current.trim()); current = ''; continue; }
+    current += ch;
+  }
+  if (current.trim()) entries.push(current.trim());
+
+  const map = {};
+  for (const entry of entries) {
+    // Each entry is: "CODE": { ...object body... }
+    const keyMatch = entry.match(/^\s*"([^"]+)"\s*:/);
+    if (!keyMatch) continue;
+    const code = decodeJsonString(keyMatch[1]);
+    const objMatch = entry.match(/\{\s*([\s\S]*)\}\s*$/);
+    const objBody = objMatch ? objMatch[1] : '';
+    if (!objBody) continue;
+
+    const record = {
+      code,
+      status: extractStringProp(objBody, 'status') || 'draft',
+      summary: extractStringProp(objBody, 'summary'),
+      outcomes: extractStringArrayProp(objBody, 'outcomes'),
+      structure: extractStringArrayProp(objBody, 'structure'),
+      relatedSlugs: extractStringArrayProp(objBody, 'relatedSlugs'),
+      intro: extractStringProp(objBody, 'intro'),
+      source: extractStringProp(objBody, 'source'),
+      faqs: extractFaqProp(objBody, 'faqs'),
+    };
+    map[code] = record;
+  }
+  return map;
+}
+
+/* Parse CATEGORY_INTRO_CONTENT (keyed by canonical category name) the same way
+ * PROGRAMME_CONTENT is parsed. Returns Record<category, {status,intro,source}>. */
+function extractCategoryIntros() {
+  const contentPath = path.join(process.cwd(), 'src', 'lib', 'programme-content.ts');
+  const src = fs.readFileSync(contentPath, 'utf8');
+  // Balanced-brace capture of the CATEGORY_INTRO_CONTENT object body.
+  const objectBody = extractObjectBody(src, 'CATEGORY_INTRO_CONTENT');
+  if (!objectBody) return {};
+  const entries = [];
+  let current = '';
+  let braceDepth = 0;
+  for (let i = 0; i < objectBody.length; i++) {
+    const ch = objectBody[i];
+    if (ch === '{') { braceDepth++; current += ch; continue; }
+    if (ch === '}') { braceDepth--; current += ch; continue; }
+    if (braceDepth === 0 && ch === ',') { entries.push(current.trim()); current = ''; continue; }
+    current += ch;
+  }
+  if (current.trim()) entries.push(current.trim());
+  const map = {};
+  for (const entry of entries) {
+    const keyMatch = entry.match(/^\s*"([^"]+)"\s*:\s*\{([\s\S]*)\}\s*$/);
+    if (!keyMatch) continue;
+    const category = decodeJsonString(keyMatch[1]);
+    const objBody = keyMatch[2];
+    if (!objBody) continue;
+    map[category] = {
+      category,
+      status: extractStringProp(objBody, 'status') || 'draft',
+      intro: extractStringProp(objBody, 'intro'),
+      source: extractStringProp(objBody, 'source'),
+    };
+  }
+  return map;
+}
+
+/* The resolved (post-gate) narrative for a programme. Only `approved` content
+ * overrides the locked catalogue values; everything else falls back to data.ts,
+ * so the published output is identical to today unless/until GIBS approves a
+ * replacement. `relatedSlugs` is empty unless approved content supplies it. */
+function applyContent(programme, contentByCode) {
+  const cc = contentByCode && contentByCode[programme.code];
+  const approved = cc && cc.status === 'approved';
+  if (!approved) {
+    return {
+      summary: programme.summary,
+      outcomes: programme.outcomes || [],
+      structure: programme.indicativeStructure || [],
+      faqs: programme.faqs || [],
+      relatedSlugs: [],
+    };
+  }
+  return {
+    summary: cc.summary || programme.summary,
+    outcomes: (cc.outcomes && cc.outcomes.length) ? cc.outcomes : (programme.outcomes || []),
+    structure: (cc.structure && cc.structure.length) ? cc.structure : (programme.indicativeStructure || []),
+    faqs: (cc.faqs && cc.faqs.length) ? cc.faqs : (programme.faqs || []),
+    relatedSlugs: (cc.relatedSlugs || []).slice(0, 3),
+  };
+}
+
+/* Parse the lean CATEGORY_CORRECTIONS map from src/lib/programme-content.ts
+ * ({ "code": "canonicalCategory", ... }). Returns Record<code, category>. */
+function extractCategoryCorrections() {
+  const contentPath = path.join(process.cwd(), 'src', 'lib', 'programme-content.ts');
+  const content = fs.readFileSync(contentPath, 'utf8');
+  const body = extractObjectBody(content, 'CATEGORY_CORRECTIONS');
+  if (!body) return {};
+  const map = {};
+  const re = /"([^"]+)"\s*:\s*"([^"]+)"/g;
+  for (const m of body.matchAll(re)) {
+    map[decodeJsonString(m[1])] = decodeJsonString(m[2]);
+  }
+  return map;
+}
+
+/* Category resolver honoring the approval gate. OFF (default) → data.ts
+ * category verbatim → output identical to verified catalogue. ON (operator
+ * authorisation via APPLY_CATEGORY_CORRECTIONS=true) → audited destination. */
+function resolveCategory(programme, contentByCode) {
+  const corrections = (contentByCode && contentByCode.corrections) || {};
+  if (APPLY_CATEGORY_CORRECTIONS && programme && programme.code && corrections[programme.code]) {
+    return corrections[programme.code];
+  }
+  return programme ? (programme.category || '') : '';
+}
+
 // Extract a quoted string property value from a record body.
 function extractStringProp(rec, key) {
-  const m = rec.match(new RegExp(`"${key}"\\s*:\\s*"([^"]*)"`));
+  // Quote-tolerant: matches `"key": "value"` (data.ts / ProgrammeContent) AND
+  // bare `key: "value"` (unquoted TS object keys). The `\\b` guard on the bare
+  // fallback prevents matching `key` as a substring of a longer identifier.
+  const m = rec.match(new RegExp(`"${key}"\\s*:\\s*"([^"]*)"`)) ||
+            rec.match(new RegExp(`\\b${key}\\s*:\\s*"([^"]*)"`));
   return m ? decodeJsonString(m[1]) : null;
 }
 
@@ -417,9 +594,13 @@ function generateCategoryNav(allProgrammes) {
       </nav>`;
 }
 
-function generateLlmsTxt(inst, allProgrammes) {
+function generateLlmsTxt(inst, allProgrammes, contentLayer) {
   const activePhones = activePhoneNumbers(inst.phoneNumbers);
   const categories = [...new Set((allProgrammes || []).map((p) => p.category))];
+  const progPending = Object.values(contentLayer.programmes || {}).filter((c) => c.status === 'pending-verification').length;
+  const progApproved = Object.values(contentLayer.programmes || {}).filter((c) => c.status === 'approved').length;
+  const catPending = Object.values(contentLayer.categories || {}).filter((c) => c.status === 'pending-verification').length;
+  const catApproved = Object.values(contentLayer.categories || {}).filter((c) => c.status === 'approved').length;
   const categoryLinks = categories
     .map((cat, idx) => {
       const slug = categoryToSlug(cat);
@@ -455,6 +636,16 @@ function generateLlmsTxt(inst, allProgrammes) {
 - Local Tuition Fees: ₦300,000 to ₦800,000 NGN
 - Foreign Tuition Fees: $4,800 USD to $9,500 USD / £4,800 GBP
 
+## Programme Content Status
+- Programmes with GIBS-verified, topic-specific content: 0 of ${allProgrammes.length}
+- Programmes currently using the shared catalogue template (outcomes/structure/summary): ${allProgrammes.length} of ${allProgrammes.length}
+- Per-programme faculty or instructor attribution present in the catalogue: No
+- Topic-specific content is curated separately and is published on a per-programme page ONLY when a GIBS syllabus owner has verified it (status = approved). Until then each page renders the verified catalogue values (code, category, destination, duration, schedule, fee, target audience). No programme is described using unverified claims.
+- Supplementary content layer: ${Object.keys(contentLayer.programmes || {}).length} per-programme records (${progApproved} approved, ${progPending} pending verification) and ${Object.keys(contentLayer.categories || {}).length} category-page introductions (${catApproved} approved, ${catPending} pending verification).
+${APPLY_CATEGORY_CORRECTIONS
+  ? `- Category classifications applied to the catalogue via operator gate (APPLY_CATEGORY_CORRECTIONS=true): ${Object.keys(contentLayer.corrections || {}).length} (audit-registered; src/lib/data.ts unchanged).`
+  : '- Category classifications pending operator review (not yet applied to the locked catalogue): 10'}
+
 ## Programme Categories & Specialisations
 ${categoryLinks}
 
@@ -471,7 +662,7 @@ ${categoryLinks}
 `;
 }
 
-function generateStaticBody(route, programme, inst, allProgrammes) {
+function generateStaticBody(route, programme, contentByCode, inst, allProgrammes) {
   const catMatch = route.match(/^\/programmes\/category\/(.+)$/);
   const progMatch = route.match(/^\/programmes\/(.+)$/);
 
@@ -553,12 +744,24 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
   if (route === '/executive-education') {
     const hubs = inst.overseasHubs.map((h) => `<li>${escapeHtml(h)}</li>`).join('');
     const partner = escapeHtml(inst.technicalPartner || '');
+    const foreignProgrammes = (allProgrammes || []).filter((p) => p.destination !== 'Local');
+    const foreignLinks = foreignProgrammes
+      .map(
+        (p) =>
+          `<li><a href="/programmes/${p.slug}">${escapeHtml(p.code)} — ${escapeHtml(p.title)}</a> &middot; ${escapeHtml(p.destination)} Hub &middot; ${escapeHtml(p.fees || '')}</li>`,
+      )
+      .join('');
+    const enquiryHref = '/contact?type=' + encodeURIComponent('Foreign Training Programmes (Kigali, Dubai, London, Houston)');
     return `<main>
       <h1>Foreign Executive Training | GIBS</h1>
-      <p>GIBS offers executive training programmes across global hubs in Kigali, Dubai, London, and Houston.</p>
+      <p>${escapeHtml(inst.positioningStatement || 'GIBS offers executive training programmes across global hubs in Kigali, Dubai, London, and Houston.')} The foreign executive portfolio is delivered in partnership with ${escapeHtml(inst.technicalPartner || '')}; each of the ${foreignProgrammes.length} programmes below links to its 2026 schedule and fee.</p>
       <h2>Overseas Training Hubs</h2>
       <ul>${hubs}</ul>
       <p><strong>Technical Partner:</strong> ${partner}</p>
+      <h2>2026 Foreign Executive Programmes (${foreignProgrammes.length})</h2>
+      <p>Each programme below links to its full detail shell (duration, schedule, fee and target audience):</p>
+      <ul>${foreignLinks}</ul>
+      <p><strong>Enrolment:</strong> <a href="${enquiryHref}">Enquire about Foreign Executive Training Programmes (Kigali, Dubai, London, Houston)</a>.</p>
     </main>`;
   }
 
@@ -621,9 +824,9 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
   if (catMatch && programme === null) {
     const categorySlug = catMatch[1];
     const catProgrammes = (allProgrammes || []).filter(
-      (p) => categoryToSlug(p.category) === categorySlug,
+      (p) => categoryToSlug(resolveCategory(p, contentByCode)) === categorySlug,
     );
-    const catName = catProgrammes[0]?.category || 'Training Programmes';
+    const catName = (catProgrammes[0] ? resolveCategory(catProgrammes[0], contentByCode) : '') || 'Training Programmes';
     const links = catProgrammes
       .map(
         (p) =>
@@ -631,9 +834,18 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
       )
       .join('');
     const instNav = generateInstitutionalNav();
+    /* Approved, topic-specific category introduction (status-gated). When no
+     * approved intro exists, fall back to the catalogue's generic line. */
+    const catIntroRec = contentByCode.categories && contentByCode.categories[catName];
+    /* approvedCatIntro holds the RECORD (or null), not its .intro string, so
+     * .intro can be read safely below. */
+    const approvedCatIntro = (catIntroRec && catIntroRec.status === 'approved' && catIntroRec.intro) ? catIntroRec : null;
+    const introHtml = approvedCatIntro
+      ? `<p>${escapeHtml(approvedCatIntro.intro)}</p>`
+      : `<p>Explore our executive training programmes in ${escapeHtml(catName)} at GIBS.</p>`;
     return `<main>
-      <h1>${escapeHtml(catName)} Training Programmes | GIBS</h1>
-      <p>Explore our executive training programmes in ${escapeHtml(catName)} at GIBS.</p>
+      <h1>${escapeHtml(formatCategoryDisplayName(catName))} | GIBS</h1>
+      ${introHtml}
       <nav aria-label="Breadcrumb">
         <ol>
           <li><a href="/">Home</a></li>
@@ -650,34 +862,51 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
   if (progMatch && programme) {
     const code = escapeHtml(programme.code || '');
     const title = escapeHtml(programme.title || '');
-    const category = escapeHtml(programme.category || '');
-    const catSlug = categoryToSlug(programme.category || '');
+    const resolvedCategory = resolveCategory(programme, contentByCode);
+    const category = escapeHtml(resolvedCategory || '');
+    const catSlug = categoryToSlug(resolvedCategory || '');
     const destination = escapeHtml(programme.destination || 'Local');
     const schedule = escapeHtml(programme.schedule || '');
     const fees = escapeHtml(programme.fees || '');
     const duration = escapeHtml(programme.duration || '5 Days');
     const targetAudience = escapeHtml(programme.targetAudience || '');
-    const summary = escapeHtml(programme.summary || '');
-    const outcomes = programme.outcomes?.length
+    const isForeign = programme.destination && programme.destination !== 'Local';
+    /* Apply the content-layer status gate: only `approved` overrides the locked
+     * catalogue values. Unapproved drafts fall back to data.ts exactly, so the
+     * published shell is identical to today unless GIBS approves a replacement.
+     * Related links only render when approved content supplies them. */
+    const resolved = applyContent(programme, contentByCode.programmes);
+    const summary = escapeHtml(resolved.summary || '');
+    const outcomes = (resolved.outcomes || []).length
       ? '<h2>Learning Outcomes</h2><ul>' +
-        programme.outcomes.map((o) => `<li>${escapeHtml(o)}</li>`).join('') +
+        resolved.outcomes.map((o) => `<li>${escapeHtml(o)}</li>`).join('') +
         '</ul>'
       : '';
-    const structure = programme.indicativeStructure?.length
+    const structure = (resolved.structure || []).length
       ? '<h2>Programme Structure</h2><ol>' +
-        programme.indicativeStructure.map((s) => `<li>${escapeHtml(s)}</li>`).join('') +
+        resolved.structure.map((s) => `<li>${escapeHtml(s)}</li>`).join('') +
         '</ol>'
       : '';
-    const faqList = programme.faqs?.length
+    const faqList = (resolved.faqs || []).length
       ? '<h2>Frequently Asked Questions</h2>' +
-        programme.faqs
+        resolved.faqs
           .map(
             (f) =>
               `<div><strong>${escapeHtml(f.q)}</strong><p>${escapeHtml(scrubRetiredNumbersInProse(f.a))}</p></div>`,
           )
           .join('')
       : '';
-    const isForeign = programme.destination && programme.destination !== 'Local';
+    const relatedLinks = (resolved.relatedSlugs || []).length
+      ? '<h2>Related Programmes</h2><ul>' +
+        resolved.relatedSlugs
+          .map((sl) => {
+            const related = (allProgrammes || []).find((p) => p.slug === sl);
+            const label = related ? `${related.code} — ${related.title}` : sl;
+            return `<li><a href="/programmes/${escapeHtml(sl)}">${escapeHtml(label)}</a></li>`;
+          })
+          .join('') +
+        '</ul>'
+      : '';
     const enquiryType = isForeign
       ? 'Foreign Training Programmes (Kigali, Dubai, London, Houston)'
       : 'Local Open Training Registration';
@@ -706,6 +935,7 @@ function generateStaticBody(route, programme, inst, allProgrammes) {
       ${outcomes}
       ${structure}
       ${faqList}
+      ${relatedLinks}
       ${instNav}
     </main>`;
   }
@@ -926,6 +1156,16 @@ async function run() {
     const programmes = extractProgrammes();
     console.log(`Extracted ${programmes.length} programmes.`);
 
+    const contentByCode = {
+      programmes: extractProgrammeContent(),
+      categories: extractCategoryIntros(),
+      corrections: extractCategoryCorrections(),
+    };
+    const approvedProgCount = Object.values(contentByCode.programmes).filter((c) => c.status === 'approved').length;
+    const approvedCatCount = Object.values(contentByCode.categories).filter((c) => c.status === 'approved').length;
+    const correctionCount = Object.keys(contentByCode.corrections).length;
+    console.log(`Loaded content layer: ${Object.keys(contentByCode.programmes).length} programme entries (${approvedProgCount} approved), ${Object.keys(contentByCode.categories).length} category intros (${approvedCatCount} approved), ${correctionCount} category corrections (${APPLY_CATEGORY_CORRECTIONS ? 'APPLIED (operator gate ON)' : 'pending — gate OFF'}).`);
+
     const inst = extractInstitutionalData();
     console.log(`Extracted institutional metadata ${inst.website ? 'OK' : '(partial)'}.`);
 
@@ -952,20 +1192,25 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
     // 1. Programmes
     for (const p of programmes) {
       const route = `/programmes/${p.slug}`;
-      const description = programmeMetaDescription(p.summary);
+      /* Resolved narrative: only `approved` content overrides the locked
+       * catalogue; the meta description and Course JSON-LD description must
+       * match the rendered body, so both are fed from the same resolved copy. */
+      const resolved = applyContent(p, contentByCode);
+      const description = programmeMetaDescription(resolved.summary);
       const title = programmeTitle(p);
       routes.push({ path: route, meta: { title, description }});
 
-      const courseJson = getCourseSchema(p);
+      const courseJson = getCourseSchema({ ...p, summary: resolved.summary });
+      const resolvedCategory = resolveCategory(p, contentByCode);
       const breadcrumbsJson = getBreadcrumbSchema([
         { name: 'Home', url: CANONICAL_DOMAIN },
         { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
-        { name: p.category, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(p.category)}` },
+        { name: resolvedCategory, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(resolvedCategory)}` },
         { name: p.title, url: `${CANONICAL_DOMAIN}${route}` }
       ]);
 
       const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}]`;
-      const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, inst, programmes), combinedJsonLd);
+      const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, contentByCode, inst, programmes), combinedJsonLd);
       writeShell(route, shellHtml);
     }
 
@@ -990,13 +1235,13 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
         { name: r.title.split('|')[0].trim(), url: `${CANONICAL_DOMAIN}${r.path}` }
       ]);
 
-      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, inst, programmes), breadcrumbsJson);
+      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, contentByCode, inst, programmes), breadcrumbsJson);
       writeShell(r.path, shellHtml);
     }
 
 
     // 3. Categories
-    const categories = [...new Set(programmes.map(p => p.category))];
+    const categories = [...new Set(programmes.map((p) => resolveCategory(p, contentByCode)))];
     const seenCategorySlugs = new Set();
     for (const cat of categories) {
       const slug = categoryToSlug(cat);
@@ -1006,7 +1251,7 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
       seenCategorySlugs.add(slug);
 
       const route = `/programmes/category/${slug}`;
-      const catTitle = programmeTitle(`${cat} Training Programmes`);
+      const catTitle = programmeTitle(formatCategoryDisplayName(cat));
       routes.push({ path: route, meta: { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }});
 
       const breadcrumbsJson = getBreadcrumbSchema([
@@ -1016,13 +1261,13 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
       ]);
 
       let combinedJsonLd = breadcrumbsJson;
-      const catProgrammes = programmes.filter(p => p.category === cat);
+      const catProgrammes = programmes.filter((p) => resolveCategory(p, contentByCode) === cat);
       if (catProgrammes.length >= 3) {
         const listJson = getCourseListSchema(catProgrammes, `${CANONICAL_DOMAIN}${route}`);
         combinedJsonLd = `[${breadcrumbsJson}, ${listJson}]`;
       }
 
-      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, inst, programmes), combinedJsonLd);
+      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, contentByCode, inst, programmes), combinedJsonLd);
       writeShell(route, shellHtml);
     }
 
@@ -1033,7 +1278,7 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
     fs.writeFileSync(path.join(DIST_DIR, 'sitemap.xml'), sitemapXml);
 
     // 5. Generate llms.txt and .well-known/llms.txt
-    const llmsContent = generateLlmsTxt(inst, programmes);
+    const llmsContent = generateLlmsTxt(inst, programmes, contentByCode);
     fs.writeFileSync(path.join(DIST_DIR, 'llms.txt'), llmsContent);
     const wellKnownDir = path.join(DIST_DIR, '.well-known');
     fs.mkdirSync(wellKnownDir, { recursive: true });
@@ -1058,7 +1303,7 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
     const heroPreloadTag = '<link rel="preload" as="image" href="/images/gibs-hero-branded.webp" imagesrcset="/images/gibs-hero-branded-640.webp 640w, /images/gibs-hero-branded.webp 1050w" imagesizes="100vw" fetchpriority="high" />';
 
     // Inject static body content into the homepage for non-JS crawlers
-    const homepageStaticBody = generateStaticBody('/', null, inst, programmes);
+    const homepageStaticBody = generateStaticBody('/', null, contentByCode, inst, programmes);
     if (homepageStaticBody) {
       let homeHtml = masterHtml;
       homeHtml = homeHtml.replace('<div id="root"></div>', `<div id="root">${homepageStaticBody}</div>`);

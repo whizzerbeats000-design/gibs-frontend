@@ -22,6 +22,25 @@ export const VALID_CATEGORIES: ProgrammeCategory[] = PROGRAM_CATEGORIES.filter(
 );
 
 /**
+ * Human-readable category heading with a consistent "... Programmes" suffix.
+ *
+ * Several catalogue category names already end in "Training" (e.g. "Special
+ * Executive Training"). Naively appending " Training Programmes" produced a
+ * doubled "Special Executive Training Training Programmes". This helper avoids
+ * the duplication: categories ending in "Training" only gain the " Programmes"
+ * suffix, while all others gain the full " Training Programmes".
+ *
+ * The underlying category name and its slug are unchanged, so this is a purely
+ * presentational fix that touches no identifiers and no URLs.
+ */
+export function formatCategoryDisplayName(category: string): string {
+  const trimmed = (category || "").trim();
+  if (!trimmed) return "Training Programmes";
+  if (/Training$/i.test(trimmed)) return `${trimmed} Programmes`;
+  return `${trimmed} Training Programmes`;
+}
+
+/**
  * Resolves a URL slug to its canonical catalogue category name.
  * Returns undefined if the slug does not match any known category.
  */

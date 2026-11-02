@@ -23,6 +23,14 @@
 - Local Tuition Fees: ₦300,000 to ₦800,000 NGN
 - Foreign Tuition Fees: $4,800 USD to $9,500 USD / £4,800 GBP
 
+## Programme Content Status
+- Programmes with GIBS-verified, topic-specific content: 0 of 135
+- Programmes currently using the shared catalogue template (outcomes/structure/summary): 135 of 135
+- Per-programme faculty or instructor attribution present in the catalogue: No
+- Topic-specific content is curated separately and is published on a per-programme page ONLY when a GIBS syllabus owner has verified it (status = approved). Until then each page renders the verified catalogue values (code, category, destination, duration, schedule, fee, target audience). No programme is described using unverified claims.
+- Supplementary content layer: 10 per-programme records (0 approved, 10 pending verification) and 15 category-page introductions (0 approved, 15 pending verification).
+- Category classifications pending operator review (not yet applied to the locked catalogue): 10
+
 ## Programme Categories & Specialisations
 1. [Accounting and Financial Management](https://gibs.com.ng/programmes/category/accounting-and-financial-management)
 2. [General Administration and Management](https://gibs.com.ng/programmes/category/general-administration-and-management)

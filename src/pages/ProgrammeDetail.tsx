@@ -5,6 +5,8 @@ import { ProgrammeNav, type ProgrammeSection } from "../components/ProgrammeNav"
 import { CheckIcon, ArrowUpRight, ArrowLeft, Diamond } from "../components/icons";
 import { Link } from "../lib/router";
 import { getProgramme, relatedProgrammes } from "../lib/data";
+import type { Programme } from "../types/data";
+import { approvedContent, resolveRenderedCategory } from "../lib/programme-content";
 import { scrubRetiredNumbersInProse } from "../lib/phones";
 import { useSeo } from "../lib/router";
 import { Reveal } from "../components/motion";
@@ -46,9 +48,14 @@ function FactCard({ label, value, valueClass = "text-ink" }: { label: string; va
 export default function ProgrammeDetail({ slug }: { slug: string }) {
   const programme = getProgramme(slug);
 
+  /* Status-gated content: only `approved` overrides the locked catalogue.
+   * scripts/seo-gen.mjs applies the identical gate when emitting static shells,
+   * so the client and the server render the same narrative for every route. */
+  const content = programme ? approvedContent(programme) : undefined;
+
   useSeo({
     title: programme ? `${programme.code} · ${programme.title} — GIBS` : "Programme not found — GIBS",
-    description: programme?.summary ?? "",
+    description: (content?.summary ?? programme?.summary) ?? "",
     /* A programme is reachable by slug, by id, by code and by slug suffix.
        Point the canonical address at the one URL the sitemap lists, so the
        alternative addresses do not each publish the same content as their
@@ -58,15 +65,22 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
   if (!programme) return <NotFound />;
 
-  const related = relatedProgrammes(slug, 3);
+  const related = (content?.relatedSlugs?.length
+    ? content.relatedSlugs.map((s) => getProgramme(s)).filter((p): p is Programme => Boolean(p))
+    : relatedProgrammes(slug, 3));
   const isForeign = programme.destination !== "Local";
+
+  const summary = content?.summary ?? programme.summary;
+  const outcomes = content?.outcomes ?? programme.outcomes ?? [];
+  const structure = content?.structure ?? programme.indicativeStructure ?? [];
+  const faqs = content?.faqs ?? programme.faqs ?? [];
 
   return (
     <>
       <PageHero
-        eyebrow={`${programme.category} · ${programme.code}`}
+        eyebrow={`${resolveRenderedCategory(programme)} · ${programme.code}`}
         title={programme.title}
-        intro={programme.tagline ?? programme.summary}
+        intro={content?.intro ?? programme.tagline ?? programme.summary}
         breadcrumbs={[
           { label: "2026 Calendar", to: "/programmes" },
           { label: programme.code },
@@ -109,7 +123,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                 )}
               </div>
               <p className="prose-editorial mt-6 max-w-[62ch] type-body text-ink">
-                {programme.summary}
+                {summary}
               </p>
             </Reveal>
 
@@ -127,7 +141,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   <p className="eyebrow">Programme Summary</p>
                   <dl className="mt-5">
                     <FactRow label="Course Code" value={programme.code} />
-                    <FactRow label="Sector / Category" value={programme.category} />
+                    <FactRow label="Sector / Category" value={resolveRenderedCategory(programme)} />
                     <FactRow
                       label="Scope / Location"
                       value={
@@ -191,7 +205,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               Key <em className="italic text-gold-600">takeaways.</em>
             </h2>
             <ul className="mt-7 space-y-4">
-              {programme.outcomes?.map((o) => (
+              {outcomes.map((o) => (
                 <li key={o} className="flex items-start gap-3.5 type-body text-ink/85">
                   <Diamond className="mt-1.5 h-2 w-2 shrink-0 text-gold-600" />
                   {o}
@@ -214,7 +228,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
           <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <ol className="border-t rule lg:col-span-7">
-              {programme.indicativeStructure?.map((item, i) => (
+              {structure.map((item, i) => (
                 <li key={i} className="grid grid-cols-[2.75rem_1fr] gap-4 border-b rule py-6">
                   <span className="text-xs font-bold tracking-[0.16em] text-forest-600">
                     {String(i + 1).padStart(2, "0")}
@@ -272,7 +286,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           </div>
           <div className="lg:col-span-8">
             <FaqAccordion
-              items={(programme.faqs ?? []).map((faq) => ({
+              items={faqs.map((faq) => ({
                 ...faq,
                 a: scrubRetiredNumbersInProse(faq.a),
               }))}

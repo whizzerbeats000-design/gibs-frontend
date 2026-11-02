@@ -41,3 +41,4 @@ __pycache__/
 
 # stray full-page captures
 scratch-*.png
+.env*

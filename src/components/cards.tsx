@@ -50,7 +50,7 @@ export function ProgrammeCard({
 
         <div className="mt-1.5 flex min-w-0 flex-col gap-x-4 gap-y-1 sm:flex-row sm:items-baseline sm:justify-between">
           <h3 className="card-title min-w-0 text-ink">{programme.title}</h3>
-          <p className="shrink-0 font-serif text-xs tracking-[0.04em] text-muted">{programme.code}</p>
+          <p className="shrink-0 font-mono text-xs font-medium tabular-nums tracking-[0.04em] text-muted">{programme.code}</p>
         </div>
 
         <dl className="mt-3 grid min-w-0 gap-x-8 gap-y-2 sm:grid-cols-2">
@@ -70,7 +70,7 @@ export function ProgrammeCard({
         <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
           <div>
             <span className="card-field-label">Standard Tuition</span>
-            <span className="mt-0.5 block font-serif text-base font-normal tabular-nums tracking-tight text-ink sm:text-lg">
+            <span className="mt-0.5 block font-display text-base font-semibold tabular-nums tracking-tight text-ink sm:text-lg">
               {programme.fees}
             </span>
           </div>
@@ -88,7 +88,7 @@ export function ProgrammeCard({
       to={`/programmes/${programme.slug}`}
       data-programme-card
       className={cn(
-        "group relative block overflow-hidden bg-white border border-line rounded-panel p-4 sm:p-5 shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card",
+        "group relative block overflow-hidden bg-white border border-line rounded-panel p-4 sm:p-5 shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
         className
       )}
     >
@@ -108,7 +108,7 @@ export function ProgrammeCard({
       {/* Primary Identity */}
       <div className="mt-2.5">
         <h3 className="card-title">{programme.title}</h3>
-        <p className="mt-1 font-serif text-xs tracking-[0.04em] text-gold-700">
+        <p className="mt-1 font-mono text-xs font-medium tabular-nums tracking-[0.04em] text-gold-700">
           {programme.code}
         </p>
       </div>
@@ -153,7 +153,7 @@ export function ProgrammeCard({
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-line/70 pt-3 transition-colors duration-150 group-hover:border-forest-600/35">
         <div className="min-w-0 shrink">
           <span className="card-field-label">Standard Tuition</span>
-          <span className="mt-0.5 block font-serif text-lg font-normal tabular-nums tracking-tight text-ink sm:text-xl">
+          <span className="mt-0.5 block font-display text-lg font-semibold tabular-nums tracking-tight text-forest-900 sm:text-xl">
             {programme.fees}
           </span>
         </div>
@@ -188,7 +188,7 @@ export function FaqAccordion({
       {items.map((item, i) => (
         <details key={i} className="group border-b rule">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-forest-600 rounded-xs [&::-webkit-details-marker]:hidden">
-            <span className="display-serif text-lg leading-snug text-ink sm:text-xl">{item.q}</span>
+            <span className="font-display text-lg font-semibold leading-snug text-ink sm:text-xl">{item.q}</span>
             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-ink/20 text-ink transition-colors duration-300 group-open:border-forest-600 group-open:bg-forest-600 group-open:text-ivory">
               <PlusIcon className="h-4 w-4 transition-transform duration-300 group-open:rotate-45" />
             </span>

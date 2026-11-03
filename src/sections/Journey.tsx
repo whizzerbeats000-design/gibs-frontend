@@ -47,7 +47,7 @@ export default function AdmissionsTeaser() {
                   key={step.n}
                   className="grid grid-cols-[3rem_1fr] items-baseline gap-x-5 border-b rule-light py-5 sm:grid-cols-[4rem_1fr] sm:gap-x-8"
                 >
-                  <span className="text-[12px] font-medium tracking-[0.14em] text-gold-300">{step.n}</span>
+                  <span className="font-mono text-[12px] font-medium tabular-nums tracking-[0.08em] text-gold-300">{step.n}</span>
                   <h3 className="type-h3 text-ivory">{step.title}</h3>
                 </li>
               ))}

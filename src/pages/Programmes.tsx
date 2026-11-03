@@ -249,7 +249,7 @@ export default function ProgrammesPage({
                     type="button"
                     onClick={() => setQuery("")}
                     aria-label="Clear search"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-ink p-1"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 flex h-11 w-11 items-center justify-center rounded-pill text-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2"
                   >
                     <CloseIcon className="h-4 w-4" />
                   </button>
@@ -306,7 +306,7 @@ export default function ProgrammesPage({
                   setDestination("All");
                   setQuery("");
                 }}
-                className="text-[12px] font-semibold uppercase tracking-[0.12em] text-forest-700 hover:text-forest-800 hover:underline"
+                className="inline-flex min-h-[44px] items-center text-[12px] font-semibold uppercase tracking-[0.12em] text-forest-700 hover:text-forest-800 hover:underline focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2 rounded-xs"
               >
                 Reset all filters
               </button>

@@ -49,49 +49,24 @@
     <link rel="icon" type="image/webp" href="/images/gibs-logo.webp" />
     <link rel="icon" href="/favicon.ico" />
 
-    <!-- Fonts are self-hosted (see the @font-face block at the top of src/index.css).
-         All five homepage faces are preloaded: Instrument Serif (normal + italic) for
-         display headings, Fraunces (normal + italic) for card titles and footers, and
-         Space Grotesk for UI and body copy. Preloading moves the font fetch off the
-         critical path's tail — without these tags the browser only discovers the
-         @font-face declarations during CSS parsing (~2.4s in), starts downloading at
-         ~3.5s, and occupies the main thread until ~5.4s, which delays FCP by ~1.4s.
-         crossorigin is required on a font preload even for same-origin files, because
-         the fetch is made in CORS mode.
-
-         Libre Baskerville is deliberately NOT preloaded: it is only used by the
-         mobile-nav sheet, which is not rendered on the initial page paint. -->
+    <!-- Modern Editorial Typography: Manrope (Headings), Inter (Body & UI), DM Mono (Technical Labels) -->
     <link
       rel="preload"
-      href="/fonts/instrument-serif-400-latin.woff2"
+      href="/fonts/manrope-var-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/instrument-serif-italic-latin.woff2"
+      href="/fonts/inter-var-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin
     />
     <link
       rel="preload"
-      href="/fonts/fraunces-var-latin.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/fraunces-italic-var-latin.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      href="/fonts/space-grotesk-var-latin.woff2"
+      href="/fonts/dm-mono-400-latin.woff2"
       as="font"
       type="font/woff2"
       crossorigin

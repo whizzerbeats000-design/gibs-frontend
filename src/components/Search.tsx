@@ -220,7 +220,7 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
           {/* No results */}
           {trimmed.length >= 2 && results.length === 0 && (
             <div className="px-5 py-12 text-center">
-              <p className="display-serif text-xl text-ink">
+              <p className="font-display text-xl font-bold text-ink">
                 No results for “{trimmed}”
               </p>
               <p className="mx-auto mt-2 max-w-sm type-body text-muted">

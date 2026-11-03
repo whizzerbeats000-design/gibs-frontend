@@ -26,149 +26,90 @@
    Global Excellence, African Heart
    ============================================================ */
 
-/* ---------------- Self-hosted web fonts ----------------
-   These seven faces are the exact woff2 binaries Google Fonts serves for this
-   project's families, copied locally so the page no longer depends on a
-   render-blocking third-party stylesheet.
+/* ---------------- Self-hosted Modern Editorial Typography ----------------
+   GIBS typography system replaces obsolete handwriting-like fonts with a
+   modern, confident, institutional type hierarchy:
+   1. Primary Headings: Manrope (geometric, confident, editorial weights 600–800)
+   2. Body & UI Text: Inter (high readability, neutral, weights 400–600)
+   3. Technical Labels: DM Mono (monospaced, structured codes and metadata)
 
-   Why this matters: the site used to ship
-   <link href="https://fonts.googleapis.com/css2?..." rel="stylesheet"> in <head>.
-   A stylesheet link is render-blocking, so first paint could not begin until
-   that request finished — measured in Chromium, that single request was the
-   critical path to FCP on every route (e.g. 1440x900 home: request resolved
-   at 1728ms, the render-blocking task started at 1741ms, first paint at
-   2152ms). It also put a third-party DNS + TLS + RTT chain in front of every
-   first visit, for both the CSS and every font file behind it.
-
-   Self-hosting removes the blocking chain entirely and keeps the rendering
-   identical: same binaries, same descriptors, same `font-display: swap`, so
-   the fallback-then-swap behaviour the site already had is unchanged.
-
-   Every one of the seven woff2 files below is byte-identical (sha256) to the
-   file Google Fonts serves for the same family/style/weight/latin subset, so
-   rendering is unchanged — this is a delivery change, not a design change.
-
-   What actually got dropped is the non-latin subsets. Google's stylesheet
-   declares 19 @font-face blocks across vietnamese, latin-ext and latin; only
-   the 8 latin faces are ever needed for this site's copy, so the other 11 are
-   gone (~130 kB of woff2 that a browser could still prefetch). Libre Baskerville
-   700 was also dropped as a separate declaration, though it resolves to the
-   same variable file as 400, so it saved no bytes — it is declared as
-   `font-weight: 400 700` on one face.
-
-   One thing to know when comparing screenshots against the old build: this is a
-   visual *fix*, not just a delivery change. With the Google stylesheet, the
-   latin faces for Fraunces and Libre Baskerville were still `loading` 3.5s
-   after load in a throttled local run, so those families rendered in system
-   fallback. Served from /fonts they are loaded (verified via the CSS Font
-   Loading API: Instrument Serif, Fraunces and Space Grotesk all reach
-   `loaded`). Any screenshot delta on Fraunces-bearing text is the old build
-   showing fallback metrics, not this build regressing — check
-   `document.fonts` status before treating a diff as real.
-
-   The currency sign U+20A6 (naira) is outside the latin `unicode-range` and
-   outside every subset Google declares, so it renders from a system font in
-   both builds. That is unchanged behaviour.
-
-   `unicode-range` is kept per-face and matches Google's latin range exactly.
-   It is what lets the browser skip a face entirely when no glyph on the page
-   needs it, which is how Libre Baskerville (mobile-nav sheet only) stays off
-   the critical path.
+   All faces are self-hosted locally in /fonts/ as Brotli-compressed .woff2
+   latin subsets with `font-display: swap` to prevent render blocking and layout shifts.
    ------------------------------------------------------------- */
+/* Modern Editorial Typography System: Manrope (Headings), Inter (Body & UI), DM Mono (Technical Labels) */
 @font-face {
-  font-family: "Instrument Serif";
+  font-family: "Manrope";
   font-style: normal;
-  font-weight: 400;
+  font-weight: 400 800;
   font-display: swap;
-  src: url("/fonts/instrument-serif-400-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-/* Instrument Serif italic is needed: PageHero renders its `italic` slot as a
-   bare <em> inside a `.type-hero` h1, and `.type-hero` is Instrument Serif
-   (--font-display). So "Business School." on /about and "programme." on
-   /admissions are set in true italic Instrument Serif. An earlier revision of
-   this file dropped this face on the assumption no caller passed `italic` —
-   which is true of the prop, but the <em> default font-style still applies. */
-@font-face {
-  font-family: "Instrument Serif";
-  font-style: italic;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/fonts/instrument-serif-italic-latin.woff2") format("woff2");
+  src: url("/fonts/manrope-var-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: "Space Grotesk";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("/fonts/space-grotesk-var-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "Fraunces";
-  font-style: normal;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("/fonts/fraunces-var-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "Fraunces";
-  font-style: italic;
-  font-weight: 300 700;
-  font-display: swap;
-  src: url("/fonts/fraunces-italic-var-latin.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
-    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
-    U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-  font-family: "Libre Baskerville";
+  font-family: "Inter";
   font-style: normal;
   font-weight: 400 700;
   font-display: swap;
-  src: url("/fonts/libre-baskerville-var-latin.woff2") format("woff2");
+  src: url("/fonts/inter-var-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
-/* Libre Baskerville italic is a genuinely separate face, not a slanted copy of
-   the roman, and the mobile-nav "Goshen." heading renders <em class="italic">
-   inside `font-baskerville` (src/components/chrome.tsx). Without this face the
-   browser would synthesise an oblique and the wordmark's slant would change. */
 @font-face {
-  font-family: "Libre Baskerville";
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/inter-italic-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dm-mono-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/dm-mono-500-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Mono";
   font-style: italic;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/libre-baskerville-italic-latin.woff2") format("woff2");
+  src: url("/fonts/dm-mono-italic-400-latin.woff2") format("woff2");
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
     U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
     U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @theme {
-  /* Fraunces — variable display serif (weight 300–700, optical size 9–144).
-      SOFT/WONK are pinned to 0 so the family reads controlled and architectural
-      rather than wonky; display sizes use the wide rendering it was designed for. */
-  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
-  /* Instrument Serif — high-contrast Modern Editorial Serif for display */
-  --font-display: "Instrument Serif", Georgia, serif;
-  /* Libre Baskerville — wide, low-contrast Transitional Serif. Mobile menu
-      sheet only; site-wide display font is unaffected. */
-  --font-baskerville: "Libre Baskerville", Georgia, serif;
-  /* Space Grotesk — architectural grotesque for UI, micro-type and body. */
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  /* Manrope — confident modern geometric display sans for headings and major editorial titles */
+  --font-display: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-baskerville: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Inter — modern neutral sans for body copy, paragraphs, UI, navigation, buttons, forms */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* DM Mono — precision monospaced typeface for codes, technical metadata, labels */
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Forest green — primary signal (600 = brand #006B1B) */
   --color-forest-50: #edf6ee;
@@ -397,12 +338,11 @@ body {
    @apply them (Tailwind v4 only applies registered utilities). */
 @utility type-h1 {
   font-family: var(--font-display);
-  font-weight: 400;
-  /* Page-title rung — mobile floor held at 36px so the longest real programme
-     titles (~184 chars) render sanely at 320px; desktop caps at 64px. */
-  font-size: clamp(2.25rem, 5vw, 4rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
+  font-weight: 700;
+  /* Page-title rung — confident modern editorial heading */
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -410,11 +350,10 @@ body {
 }
 @utility type-h2 {
   font-family: var(--font-display);
-  font-weight: 400;
-  /* Section headings — one rung quieter than H1.
-     Mobile: 28px (1.75rem) -> Desktop: 48px (3rem). */
-  font-size: clamp(1.75rem, 3.5vw, 3rem);
-  line-height: 1.1;
+  font-weight: 700;
+  /* Section headings — one rung quieter than H1 */
+  font-size: clamp(1.65rem, 3.2vw, 2.5rem);
+  line-height: 1.15;
   letter-spacing: -0.02em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
@@ -423,11 +362,11 @@ body {
 }
 @utility type-hero {
   font-family: var(--font-display);
-  font-weight: 400;
-  /* The one loud rung — reserved for the full-bleed home hero. */
-  font-size: clamp(2.25rem, 5.5vw, 4.25rem);
-  line-height: 1.02;
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  /* The one loud rung — reserved for the full-bleed home hero */
+  font-size: clamp(2.25rem, 5.2vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -435,19 +374,22 @@ body {
 }
 @utility type-h3 {
   font-family: var(--font-display);
-  font-weight: 400;
-  /* Sub-section headings — scaled below H2.
-     Mobile: 24px (1.5rem) -> Desktop: 32px (2rem). */
-  font-size: clamp(1.5rem, 2.5vw, 2rem);
-  line-height: 1.1;
-  letter-spacing: -0.01em;
+  font-weight: 600;
+  /* Sub-section headings — scaled below H2 */
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
 }
 @utility label-base {
-  @apply text-[12px] font-bold uppercase tracking-[0.15em] sm:text-[13px];
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 @layer components {
@@ -486,23 +428,20 @@ body {
   }
 
   /* ---------------- Typography roles ----------------
-     GIBS type system — Instrument Serif for display (Modern Editorial), Fraunces fallback, Space Grotesk for UI/body.
-     Display weights use Instrument Serif for high-contrast editorial impact; Fraunces remains for refined light cuts.
+     GIBS modern typography system — Manrope for display headings, Inter for UI & body copy, DM Mono for technical labels.
   ------------------------------------------------------------- */
   .fraunces {
-    font-family: var(--font-serif);
-    font-optical-sizing: auto;
-    font-variation-settings: "SOFT" 0, "WONK" 0;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.015em;
   }
-  /* Arbitrary-size editorial serif — for display moments that sit between the
-     type scale rungs (card titles, figure labels, quote pulls). When a heading
-     DOES match the scale, use .type-h1/h2/h3 alone: they declare family,
-     weight, tracking and line-height, so stacking both is redundant. */
+  /* Arbitrary-size editorial heading — for display moments that sit between the
+     type scale rungs (card titles, figure labels, quote pulls). */
   .display-serif {
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 1.05;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
     text-wrap: balance;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -510,39 +449,31 @@ body {
   }
   /* Section headings — large but not every heading at the same ceiling.
      The hero owns the biggest size; sections sit one rung quieter so the
-     full-page scale reads as an intentional climb, not an equal shout.
-     (.type-h1/h2/h3 are @utility classes emitted from the block above;
-     they need no component-layer wrapper.) */
-  /* Hero headline — Instrument Serif (spans within a .type-h1 headline that
-     need the same family/size; the headline itself uses .type-h1 now). */
+     full-page scale reads as an intentional climb, not an equal shout. */
   .hero-title-white {
     color: #ffffff;
-    font-weight: 400;
+    font-weight: 800;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
   .hero-title-gold {
     color: var(--color-gold-focus, #e2c06b);
-    font-weight: 400;
+    font-weight: 800;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
   .type-body {
-    font-size: clamp(1rem, 1.3vw, 1.125rem);
-    line-height: 1.7;
+    font-family: var(--font-sans);
+    font-size: clamp(0.95rem, 1.2vw, 1.0625rem);
+    line-height: 1.65;
     text-wrap: pretty;
     @apply text-muted;
   }
-  /* Section labels — deliberately quiet: medium weight, tighter tracking.
-     Hierarchy comes from size and space, not from shouting labels.
-     One base (label-base) owns the size/weight/letterspacing so `.eyebrow`,
-     `.eyebrow-light`, `.meta`, `.field-label` and `.card-eyebrow` can never
-     drift apart — they previously duplicated the same 11/12px scale five
-     times and did already (forest-700 vs 600 vs ink). */
+  /* Section labels — clean, technical and legible via DM Mono. */
   .eyebrow {
     @apply label-base text-forest-700;
   }
@@ -550,23 +481,25 @@ body {
     @apply label-base text-gold-300;
   }
   .meta {
-    @apply label-base tracking-[0.1em] text-muted;
+    @apply label-base tracking-[0.08em] text-muted;
   }
   .prose-editorial {
-    @apply text-[17px] leading-[2] text-ink/85;
+    @apply text-[16px] leading-[1.8] text-ink/85 sm:text-[17px];
   }
   .prose-editorial p + p {
-    margin-top: 1.6em;
+    margin-top: 1.5em;
   }
   .prose-editorial h2 {
     @apply type-h2;
     color: var(--color-ink);
-    margin: 2.2em 0 0.8em;
+    margin: 2em 0 0.75em;
   }
   .prose-editorial blockquote {
-    font-family: var(--font-serif);
-    font-size: 1.45rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.25rem;
     line-height: 1.5;
+    letter-spacing: -0.01em;
     color: var(--color-forest-800);
     border-left: 2px solid var(--color-gold-500);
     padding-left: 1.5rem;
@@ -728,7 +661,7 @@ body {
     @apply label-base mb-2 block font-semibold text-ink;
   }
   .field-input {
-    @apply w-full rounded-panel border border-ink/20 bg-white px-4 py-3.5 text-base text-ink placeholder:text-muted/60 transition-colors duration-200 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-[15px];
+    @apply w-full rounded-panel border border-ink/20 bg-white px-4 py-3.5 text-base text-ink placeholder:text-muted/60 transition-colors duration-200 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 disabled:bg-stone/40 disabled:text-muted disabled:cursor-not-allowed sm:text-[15px];
   }
   .field-input-error {
     @apply border-error/60 focus:border-error focus:ring-error/15;
@@ -795,7 +728,23 @@ body {
      the two card families can never drift apart again — this is what let the
      programme card fall behind the homepage editorial card in the first place. */
   .card-title {
-    @apply font-serif text-[16px] font-normal leading-[1.2] tracking-[-0.01em] text-ink transition-colors duration-150 group-hover:text-forest-700 group-focus-visible:text-forest-700 sm:text-[18px];
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    color: var(--color-ink);
+    transition: color 150ms ease;
+  }
+  @media (min-width: 640px) {
+    .card-title {
+      font-size: 17.5px;
+    }
+  }
+  .group:hover .card-title,
+  .card-title:hover {
+    color: var(--color-forest-700);
   }
   /* Editorial card label — the single definition behind the homepage featured
      card's category line. The programme catalogue pulls this same class so the

@@ -73,7 +73,7 @@ export default function ConciergePage() {
               <div className="flex h-[640px] max-h-[85dvh] flex-col overflow-hidden rounded-panel border border-line shadow-card sm:h-[700px] sm:max-h-[85dvh]">
                 <div className="flex items-center justify-between gap-3 bg-forest-800 px-6 py-4 text-ivory">
                   <div>
-                    <p className="flex items-center gap-2.5 font-serif text-sm font-semibold">
+                    <p className="flex items-center gap-2.5 font-display text-sm font-bold">
                       <span className="relative flex h-2 w-2">
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
                       </span>

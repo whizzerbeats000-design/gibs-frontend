@@ -17,7 +17,7 @@ const stablePaths = [
   "/llms.txt",
   "/.well-known/llms.txt",
   "/images/gibs-logo.webp",
-  "/fonts/instrument-serif-400-latin.woff2",
+  "/fonts/manrope-var-latin.woff2",
 ];
 for (const path of stablePaths) {
   const value = cacheControl(path);

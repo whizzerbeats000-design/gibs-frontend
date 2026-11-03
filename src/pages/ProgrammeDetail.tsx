@@ -26,7 +26,7 @@ function FactRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div className="flex items-start justify-between gap-4 border-b rule py-3.5 last:border-b-0 sm:gap-6">
       <dt className="meta shrink-0 text-muted">{label}</dt>
-      <dd className="min-w-0 text-right text-sm font-semibold text-ink">{value}</dd>
+      <dd className="min-w-0 text-right text-sm font-semibold tabular-nums text-ink">{value}</dd>
     </div>
   );
 }
@@ -40,7 +40,7 @@ function FactCard({ label, value, valueClass = "text-ink" }: { label: string; va
   return (
     <div className="border border-line bg-paper p-6">
       <p className="eyebrow">{label}</p>
-      <h3 className={`display-serif mt-3 text-lg ${valueClass}`}>{value}</h3>
+      <h3 className={`display-serif mt-3 text-lg tabular-nums ${valueClass}`}>{value}</h3>
     </div>
   );
 }
@@ -202,12 +202,12 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           <Reveal delay={0.1}>
             <p className="eyebrow">Learning Outcomes</p>
             <h2 className="type-h2 mt-4 text-ink">
-              Key <em className="italic text-gold-600">takeaways.</em>
+              Key <em className="italic text-gold-700">takeaways.</em>
             </h2>
             <ul className="mt-7 space-y-4">
               {outcomes.map((o) => (
                 <li key={o} className="flex items-start gap-3.5 type-body text-ink/85">
-                  <Diamond className="mt-1.5 h-2 w-2 shrink-0 text-gold-600" />
+                  <Diamond className="mt-1.5 h-2 w-2 shrink-0 text-gold-700" />
                   {o}
                 </li>
               ))}
@@ -230,7 +230,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <ol className="border-t rule lg:col-span-7">
               {structure.map((item, i) => (
                 <li key={i} className="grid grid-cols-[2.75rem_1fr] gap-4 border-b rule py-6">
-                  <span className="text-xs font-bold tracking-[0.16em] text-forest-600">
+                  <span className="font-mono text-xs font-bold tabular-nums tracking-[0.08em] text-forest-600">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p className="type-body font-medium text-ink/90">{item}</p>

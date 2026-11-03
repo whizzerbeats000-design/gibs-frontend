@@ -124,7 +124,7 @@ export default function Admissions() {
                   key={step.n}
                   className="group grid grid-cols-[3.5rem_1fr] items-baseline gap-5 border-b rule py-7 sm:grid-cols-[5rem_auto_1fr] sm:gap-10"
                 >
-                  <span className="display-serif text-3xl text-gold-600 sm:text-4xl">{step.n}</span>
+                  <span className="display-serif text-3xl tabular-nums text-gold-700 sm:text-4xl">{step.n}</span>
                   <h3 className="type-h3 w-44 shrink-0 text-ink sm:w-52">
                     {step.title}
                   </h3>
@@ -179,7 +179,7 @@ export default function Admissions() {
                           {d.status}
                         </span>
                       </dt>
-                      <dd className="mt-1 text-sm text-muted">
+                      <dd className="mt-1 text-sm tabular-nums text-muted">
                         {d.v}
                       </dd>
                     </div>

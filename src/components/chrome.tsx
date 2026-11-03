@@ -102,7 +102,7 @@ export function Header({
         <Link to="/" className="flex min-w-0 shrink-0 items-center gap-3" aria-label="GIBS home">
           <HexMark compact className="h-11 w-11 shrink-0" />
           <span className="hidden leading-tight xl:block">
-            <span className="block font-serif text-[14px] font-semibold tracking-wide text-forest-900">
+            <span className="block font-display text-[14px] font-bold tracking-tight text-forest-900">
               Goshen International
             </span>
             <span className="block eyebrow text-forest-600">
@@ -120,7 +120,7 @@ export function Header({
               to={link.to}
               aria-current={isActive(link.to) ? "page" : undefined}
               className={cn(
-                "relative py-2 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors duration-200",
+                "relative py-2 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-4 rounded-xs",
                 isActive(link.to) ? "text-forest-700" : "text-ink/75 hover:text-forest-700"
               )}
             >
@@ -276,7 +276,7 @@ export function MobileNav({
               type="button"
               onClick={onClose}
               aria-label="Close menu"
-              className="fixed right-5 top-[18px] z-10 flex h-[52px] w-[52px] items-center justify-center rounded-pill bg-stone text-ink transition-colors hover:bg-forest-600 hover:text-ivory"
+              className="fixed right-5 top-[18px] z-10 flex h-[52px] w-[52px] items-center justify-center rounded-pill bg-stone text-ink transition-colors hover:bg-forest-600 hover:text-ivory focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2"
             >
               <CloseIcon className="h-5 w-5" />
             </button>
@@ -286,10 +286,10 @@ export function MobileNav({
                 <p className="eyebrow text-forest-600">
                   GIBS / Navigation
                 </p>
-                <h2 className="mt-6 font-baskerville text-[38px] leading-[0.95] tracking-[-0.02em] text-ink">
+                <h2 className="mt-6 font-display text-[34px] font-bold leading-[1.02] tracking-[-0.025em] text-ink sm:text-[38px]">
                   Explore
                   <br />
-                  <em className="italic text-forest-600">Goshen.</em>
+                  <em className="text-forest-600">Goshen.</em>
                 </h2>
                 <p className="mt-5 max-w-md text-[14px] leading-[1.55] text-muted">
                   Explore the 2026 Training Calendar of 113 Local and 22 Foreign
@@ -340,7 +340,7 @@ export function MobileNav({
                       >
                         <span
                           className={cn(
-                            "font-baskerville text-[27px] leading-none tracking-[-0.01em] text-ink transition-transform duration-300 group-hover:translate-x-2",
+                            "font-display text-[23px] font-semibold leading-none tracking-[-0.015em] text-ink transition-transform duration-300 group-hover:translate-x-2 sm:text-[26px]",
                             isActiveRoute(link.to, routePath) && "text-forest-700"
                           )}
                         >
@@ -457,7 +457,7 @@ function Newsletter() {
         <button
           type="submit"
           aria-label="Sign up for updates"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 focus-visible:outline-gold-300"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 focus-visible:outline-2 focus-visible:outline-gold-300 focus-visible:outline-offset-2"
         >
           <ArrowUpRight className="h-4 w-4" />
         </button>
@@ -482,13 +482,13 @@ export function GlobalFooter() {
                 <HexMark compact className="h-full w-full" />
               </span>
               <div className="leading-tight">
-                <p className="fraunces font-semibold text-base text-ivory">Goshen International</p>
+                <p className="font-display font-bold text-base text-ivory">Goshen International</p>
                 <p className="eyebrow-light">
                   Business School
                 </p>
               </div>
             </div>
-            <p className="mt-5 text-[13px] font-serif italic text-gold-300">
+            <p className="mt-5 text-[13px] font-sans italic text-gold-300">
               “Take advantage of us, so that no one takes advantage of you”
             </p>
             <div className="mt-5 space-y-1.5 text-[12px] leading-relaxed text-ivory/75">
@@ -527,7 +527,7 @@ export function GlobalFooter() {
         </div>
 
         <div className="mt-20 select-none overflow-hidden border-t rule-light pt-10">
-          <p className="display-serif type-extrude-ink bg-[linear-gradient(180deg,rgba(245,245,240,0.16),rgba(245,245,240,0.03))] bg-clip-text text-[clamp(4.5rem,17vw,15rem)] leading-[0.85] text-transparent">
+          <p className="font-display font-extrabold tracking-tighter bg-[linear-gradient(180deg,rgba(245,245,240,0.16),rgba(245,245,240,0.03))] bg-clip-text text-[clamp(4.5rem,17vw,15rem)] leading-[0.85] text-transparent">
             GIBS
           </p>
         </div>
@@ -570,7 +570,7 @@ export class ErrorBoundary extends Component<
         <div className="flex min-h-screen items-center justify-center bg-paper px-6">
           <div className="max-w-md text-center">
             <HexMark compact className="mx-auto h-16 w-16" />
-            <h1 className="display-serif mt-6 text-3xl text-ink">The page encountered a problem</h1>
+            <h1 className="font-display font-bold mt-6 text-3xl text-ink">The page encountered a problem</h1>
             <p className="mt-4 type-body text-muted">
               An unexpected error interrupted this page. You can return to the
               homepage or retry. Nothing you entered elsewhere has been lost

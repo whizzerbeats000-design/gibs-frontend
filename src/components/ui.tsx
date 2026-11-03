@@ -153,7 +153,7 @@ export function SuccessPanel({ title, children }: { title: string; children: Rea
       role="status"
       className="border-l-2 border-forest-600 bg-forest-50 px-6 py-7"
     >
-      <h3 className="display-serif text-xl text-forest-800">{title}</h3>
+      <h3 className="font-display text-xl font-bold text-forest-800">{title}</h3>
       <div className="mt-3 type-body text-muted">{children}</div>
     </div>
   );
@@ -190,7 +190,7 @@ export function Field({
   return (
     <div>
       <label htmlFor={htmlFor} className="field-label">
-        {label} {required && <span className="text-gold-600" aria-hidden="true">*</span>}
+        {label} {required && <span className="text-gold-700" aria-hidden="true">*</span>}
       </label>
       {control}
       {hint && !error && (

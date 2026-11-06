@@ -151,7 +151,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                       }
                     />
                     <FactRow label="Duration" value={programme.duration ?? "5 Days"} />
-                    <FactRow label="2026 Schedule" value={programme.schedule} />
+                    <FactRow label="Schedule" value="Contact GIBS for the current programme schedule." />
                     <FactRow label="Official Fee" value={programme.fees} />
                   </dl>
 
@@ -262,13 +262,13 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Delivery &amp; Venues</p>
-            <h2 className="type-h2 mt-4 text-ink">2026 Schedule.</h2>
+            <h2 className="type-h2 mt-4 text-ink">Schedule.</h2>
           </Reveal>
 
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <FactCard label="Format" value={programme.format} />
             <FactCard label="Duration" value={programme.duration ?? "5 Days"} />
-            <FactCard label="2026 Schedule" value={programme.schedule} />
+            <FactCard label="Schedule" value={programme.schedule ? "Contact GIBS for the current programme schedule." : "Contact GIBS for the current programme schedule."} />
             <FactCard label="Tuition Fee" value={programme.fees} valueClass="text-forest-900" />
           </div>
         </div>
@@ -288,7 +288,11 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <FaqAccordion
               items={faqs.map((faq) => ({
                 ...faq,
-                a: scrubRetiredNumbersInProse(faq.a),
+                a: scrubRetiredNumbersInProse(
+                  faq.a.includes("2026 calendar sessions")
+                    ? "Contact GIBS for the current programme schedule and dates."
+                    : faq.a,
+                ),
               }))}
             />
           </div>
@@ -303,7 +307,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <h2 className="type-h2 mt-3">
               Enquire About {programme.code}.
             </h2>
-            <p className="mt-2 text-sm text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
+            <p className="mt-2 text-sm text-ivory/80">Fee: {programme.fees} · Contact GIBS for the current programme schedule.</p>
           </div>
           <div className="flex w-full flex-wrap items-center gap-4 sm:w-auto">
             <BtnLink
@@ -326,7 +330,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
       <section className="bg-forest-950 text-ivory">
         <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="type-h2">Related 2026 Programmes</h2>
+            <h2 className="type-h2">Related Programmes</h2>
             <Link
               to="/programmes"
               className="group inline-flex items-center gap-2 text-sm font-bold text-gold-300"

@@ -28,8 +28,8 @@ export default function Perspective() {
           </motion.h2>
           <motion.p variants={staggerItem} className="mt-6 max-w-prose type-body">
             GIBS has trained in Ilorin since 2014. It now runs centres in Ilorin,
-            Abuja and Ibafo, and sends executives to hubs in Miami, Houston,
-            London, Dubai, Cape Town, Durban, Kigali, the Netherlands and Ghana.
+            Abuja and Ibafo, and runs foreign executive programmes in Kigali,
+            Dubai, London and Houston.
           </motion.p>
           <motion.div variants={staggerItem} className="mt-8">
             <ArrowTextLink to="/about">Institutional profile & governance</ArrowTextLink>

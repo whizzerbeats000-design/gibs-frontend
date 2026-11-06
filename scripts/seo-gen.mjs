@@ -17,6 +17,26 @@ const CLEAN_TEMPLATE_PATH = path.join(DIST_DIR, '.master-template.html');
  * verified catalogue. data.ts is never edited. */
 const APPLY_CATEGORY_CORRECTIONS = process.env.APPLY_CATEGORY_CORRECTIONS === 'true';
 
+/* Programme schedules in src/lib/data.ts reference 2026 calendar sessions.
+   As of November 2026, all 2026 dates have passed. Suppress expired schedule
+   information in generated shells without modifying the protected catalogue.
+   Replace with an enquiry message. */
+const EXPIRED_SCHEDULE_MESSAGE = 'Contact GIBS for the current programme schedule.';
+const EXPIRED_FAQ_MESSAGE = 'Contact GIBS for the current programme schedule and dates.';
+
+function suppressExpiredSchedule(schedule) {
+  if (!schedule) return schedule;
+  return EXPIRED_SCHEDULE_MESSAGE;
+}
+
+function suppressExpiredFaqAnswer(answer) {
+  if (!answer) return answer;
+  if (/2026 calendar sessions/.test(answer)) {
+    return EXPIRED_FAQ_MESSAGE;
+  }
+  return answer;
+}
+
 /* Vite build manifest (dist/manifest.json) maps source modules to their
  * emitted chunk file. Loaded in run() so every static shell can emit a
  * <link rel="modulepreload"> for the lazy chunk that hydrates it — this is
@@ -424,10 +444,7 @@ function getOrgSchema(inst) {
       "telephone": ph,
       "contactType": idx === 0 ? "Training Desk & Programme Enquiries" : "Programme Enquiries",
       "email": inst.emails[idx] || inst.emails[0]
-    })),
-    "sameAs": [
-      CANONICAL_DOMAIN
-    ]
+    }))
   });
 }
 
@@ -463,7 +480,7 @@ function getCourseSchema(p) {
   const offer = parseOffer(p.fees);
   const isoDuration = convertDurationToIso(p.duration);
   const locationName = p.destination === 'Local'
-    ? 'GIBS Training Centres (Ilorin, Abuja, Lagos, Ibafo)'
+    ? 'GIBS Training Centres, Nigeria'
     : `GIBS ${p.destination} Executive Training Centre`;
 
   const instance = {
@@ -474,13 +491,11 @@ function getCourseSchema(p) {
       "name": locationName,
       "address": p.destination === 'Local' ? {
         "@type": "PostalAddress",
-        "streetAddress": "Goshen Complex, Along Old Jebba Road, Beside Dangote Flour Mills",
-        "addressLocality": "Ilorin",
-        "addressRegion": "Kwara State",
         "addressCountry": "NG"
       } : {
         "@type": "PostalAddress",
-        "addressLocality": p.destination
+        "addressLocality": p.destination,
+        "addressCountry": "NG"
       }
     }
   };
@@ -500,17 +515,13 @@ function getCourseSchema(p) {
     "provider": {
       "@type": "EducationalOrganization",
       "name": "Goshen International Business School",
-      "legalName": "Goshen International Business School Limited",
-      "sameAs": CANONICAL_DOMAIN
+      "legalName": "Goshen International Business School Limited"
     },
     "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`,
     "hasCourseInstance": instance
   };
   if (isoDuration) {
     courseObj.timeRequired = isoDuration;
-  }
-  if (offer) {
-    courseObj.offers = offer;
   }
 
   return JSON.stringify(courseObj);
@@ -774,11 +785,11 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     const enquiryHref = '/contact?type=' + encodeURIComponent('Foreign Training Programmes (Kigali, Dubai, London, Houston)');
     return `<main>
       <h1>Foreign Executive Training | GIBS</h1>
-      <p>${escapeHtml(inst.positioningStatement || 'GIBS offers executive training programmes across global hubs in Kigali, Dubai, London, and Houston.')} The foreign executive portfolio is delivered in partnership with ${escapeHtml(inst.technicalPartner || '')}; each of the ${foreignProgrammes.length} programmes below links to its 2026 schedule and fee.</p>
+      <p>${escapeHtml(inst.positioningStatement || 'GIBS offers executive training programmes across global hubs in Kigali, Dubai, London, and Houston.')} The foreign executive portfolio is delivered in partnership with ${escapeHtml(inst.technicalPartner || '')}; each of the ${foreignProgrammes.length} programmes below links to its schedule and fee.</p>
       <h2>Overseas Training Hubs</h2>
       <ul>${hubs}</ul>
       <p><strong>Technical Partner:</strong> ${partner}</p>
-      <h2>2026 Foreign Executive Programmes (${foreignProgrammes.length})</h2>
+      <h2>Foreign Executive Programmes (${foreignProgrammes.length})</h2>
       <p>Each programme below links to its full detail shell (duration, schedule, fee and target audience):</p>
       <ul>${foreignLinks}</ul>
       <p><strong>Enrolment:</strong> <a href="${enquiryHref}">Enquire about Foreign Executive Training Programmes (Kigali, Dubai, London, Houston)</a>.</p>
@@ -886,7 +897,7 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     const category = escapeHtml(resolvedCategory || '');
     const catSlug = categoryToSlug(resolvedCategory || '');
     const destination = escapeHtml(programme.destination || 'Local');
-    const schedule = escapeHtml(programme.schedule || '');
+    const schedule = escapeHtml(suppressExpiredSchedule(programme.schedule || ''));
     const fees = escapeHtml(programme.fees || '');
     const duration = escapeHtml(programme.duration || '5 Days');
     const targetAudience = escapeHtml(programme.targetAudience || '');
@@ -912,7 +923,7 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
         resolved.faqs
           .map(
             (f) =>
-              `<div><strong>${escapeHtml(f.q)}</strong><p>${escapeHtml(scrubRetiredNumbersInProse(f.a))}</p></div>`,
+              `<div><strong>${escapeHtml(f.q)}</strong><p>${escapeHtml(scrubRetiredNumbersInProse(suppressExpiredFaqAnswer(f.a)))}</p></div>`,
           )
           .join('')
       : '';
@@ -1331,15 +1342,15 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
       // FIX: The homepage (dist/index.html) uses a different meta description source than institutional routes.
       // We must explicitly ensure its metadata is bounded.
       const homeDesc = '113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.';
-      const homeTitle = 'GIBS — 2026 Executive Training Calendar & International Programmes';
+      const homeTitle = 'GIBS 2026 Executive Training Programmes — Nigeria & International Hubs';
       homeHtml = replaceMetaContent(homeHtml, 'description', programmeMetaDescription(homeDesc));
       homeHtml = replaceMetaContent(homeHtml, 'og:description', programmeMetaDescription(homeDesc));
       homeHtml = replaceMetaContent(homeHtml, 'twitter:description', programmeMetaDescription(homeDesc));
 
       // Use a bounded title that preserves the brand identity without triggering the programme-specific helper's logic
-      const boundedHomeTitle = homeTitle.length <= 60 ? homeTitle : homeTitle.slice(0, 57) + '...';
-      homeHtml = replaceMetaContent(homeHtml, 'og:title', boundedHomeTitle);
-      homeHtml = replaceMetaContent(homeHtml, 'twitter:title', boundedHomeTitle);
+      // OG titles can be up to ~120 chars; no truncation needed when the value fits.
+      homeHtml = replaceMetaContent(homeHtml, 'og:title', homeTitle);
+      homeHtml = replaceMetaContent(homeHtml, 'twitter:title', homeTitle);
 
       // Inject homepage-specific hero image preload
       if (!homeHtml.includes('href="/images/gibs-hero-branded.webp"')) {

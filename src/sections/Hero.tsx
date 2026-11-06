@@ -155,7 +155,7 @@ export default function Hero() {
                   className="hero-title-gold"
                   aria-hidden="true"
                 >
-                  Business School
+                  GIBS 2026 Executive Training Programmes • Nigeria &amp; International Hubs
                 </motion.span>
               </span>
             </h1>
@@ -167,7 +167,7 @@ export default function Hero() {
               className="mt-5 max-w-prose text-[clamp(0.95rem,1.2vw,1.0625rem)] leading-[1.55] text-white/90"
               style={{ textShadow: "0 1px 4px rgba(0, 0, 0, 0.4)" }}
             >
-              Executive training in Nigeria and nine countries overseas, for the people who run public and private organisations.
+              Executive training in Nigeria and four international hubs, for the people who run public and private organisations.
             </motion.p>
 
             <motion.div

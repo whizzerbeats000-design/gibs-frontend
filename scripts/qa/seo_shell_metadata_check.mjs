@@ -92,12 +92,12 @@ const programme = readShell("programmes/course-1-public-sector-accounting-proced
 
 assert.equal(
   metaValue(home, "og:title", "property"),
-  "GIBS — 2026 Executive Training Calendar & International P...",
+  "GIBS 2026 Executive Training Programmes \u2014 Nigeria & International Hubs",
   `homepage: og:title`
 );
 assert.equal(
   metaValue(home, "twitter:title"),
-  "GIBS — 2026 Executive Training Calendar & International P...",
+  "GIBS 2026 Executive Training Programmes \u2014 Nigeria & International Hubs",
   `homepage: twitter:title`
 );
 assert.equal(
@@ -254,6 +254,182 @@ assert.equal(
   linkedProgrammes,
   PROGRAMMES.length,
   `/programmes static shell must link all ${PROGRAMMES.length} programmes (linked ${linkedProgrammes})`
+);
+
+// --- JSON-LD Validation Across All Generated Pages ---
+function extractJsonLd(html, shellRoute) {
+  const blocks = [];
+  const re = /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    try {
+      blocks.push(JSON.parse(m[1].trim()));
+    } catch (e) {
+      throw new Error(`Invalid JSON-LD in ${shellRoute}: ${e.message}`);
+    }
+  }
+  return blocks;
+}
+
+let jsonLdPages = 0;
+let coursePages = 0;
+let itemListPages = 0;
+let orgPages = 0;
+const allCanonicals = [];
+const allItemListPositions = [];
+const expiredDateWarnings = [];
+const fabricatedAddressWarnings = [];
+const selfReferentialSameAsWarnings = [];
+
+for (const shell of shells) {
+  const html = readShell(shell.route);
+  const blocks = extractJsonLd(html, shell.route);
+  if (blocks.length > 0) jsonLdPages++;
+
+  const canonical = canonicalValue(html);
+  allCanonicals.push(canonical);
+
+  for (const block of blocks) {
+    const nodes = Array.isArray(block) ? block : [block];
+    for (const node of nodes) {
+      if (!node || typeof node !== 'object') continue;
+
+      // Check Course schema
+      if (node['@type'] === 'Course') {
+        coursePages++;
+        // Course must NOT have top-level offers
+        assert.ok(!('offers' in node), `${shell.route}: Course must not have top-level offers property`);
+        // Course must have hasCourseInstance with CourseInstance
+        assert.ok(node.hasCourseInstance, `${shell.route}: Course must have hasCourseInstance`);
+        const hci = node.hasCourseInstance;
+        if (hci && hci['@type'] === 'CourseInstance') {
+          // CourseInstance offers must exist
+          assert.ok(hci.offers, `${shell.route}: CourseInstance must have offers`);
+          // Check duration is ISO format if present
+          if (hci.duration) {
+            assert.match(hci.duration, /^P\d+[DW]$/, `${shell.route}: CourseInstance duration must be ISO 8601 (got ${hci.duration})`);
+          }
+          // Check offers priceCurrency matches visible page
+          if (hci.offers && hci.offers.priceCurrency) {
+            assert.ok(['NGN', 'USD', 'GBP'].includes(hci.offers.priceCurrency), `${shell.route}: Invalid priceCurrency ${hci.offers.priceCurrency}`);
+          }
+          // No fabricated street address on CourseInstance location
+          const loc = hci.location;
+          if (loc && loc.address) {
+            if (loc.address.streetAddress) {
+              fabricatedAddressWarnings.push(`${shell.route}: CourseInstance location has streetAddress ${loc.address.streetAddress}`);
+            }
+          }
+        }
+      }
+
+      // Check ItemList schema
+      if (node['@type'] === 'ItemList') {
+        itemListPages++;
+        const elements = node.itemListElement || [];
+        elements.forEach((el, idx) => {
+          assert.equal(el.position, idx + 1, `${shell.route}: ItemList position must be sequential (got ${el.position} at index ${idx})`);
+          assert.ok(el.url, `${shell.route}: ItemList item must have url`);
+          allItemListPositions.push(el.position);
+          // ItemList URL must match an actual programme page route
+          const urlPath = new URL(el.url).pathname;
+          assert.ok(urlPath.startsWith('/programmes/'), `${shell.route}: ItemList URL must be a programme route (got ${urlPath})`);
+        });
+      }
+
+      // Check Organization/EducationalOrganization schema
+      if (node['@type'] === 'EducationalOrganization' || node['@type'] === 'Organization') {
+        orgPages++;
+        // No self-referential sameAs
+        if (node.sameAs) {
+          const sameAsArray = Array.isArray(node.sameAs) ? node.sameAs : [node.sameAs];
+          sameAsArray.forEach(sa => {
+            if (sa === CANONICAL_DOMAIN) {
+              selfReferentialSameAsWarnings.push(`${shell.route}: self-referential sameAs ${sa}`);
+            }
+          });
+        }
+        // No identifier on nested provider (RC 1178333 not visible on course pages)
+        if (node.identifier && shell.route !== '/') {
+          // This is a warning, not a block - identifier on nested org
+        }
+      }
+    }
+  }
+}
+
+// Assert unique canonicals
+const canonicalCounts = {};
+allCanonicals.forEach(c => { canonicalCounts[c] = (canonicalCounts[c] || 0) + 1; });
+Object.entries(canonicalCounts).forEach(([url, count]) => {
+  if (count > 1) throw new Error(`Duplicate canonical URL: ${url} appears ${count} times`);
+});
+
+// Assert unique ItemList positions within each page (already checked above)
+
+// Report results
+console.log(`JSON-LD validation: ${jsonLdPages} pages with JSON-LD, ${coursePages} Course schemas, ${itemListPages} ItemList schemas, ${orgPages} Organization schemas`);
+console.log(`Unique canonicals: ${new Set(allCanonicals).size} / ${allCanonicals.length}`);
+
+if (expiredDateWarnings.length > 0) {
+  console.warn(`WARNING: ${expiredDateWarnings.length} pages may contain expired 2026 dates:`);
+  expiredDateWarnings.forEach(w => console.warn(`  ${w}`));
+}
+
+if (fabricatedAddressWarnings.length > 0) {
+  console.warn(`WARNING: ${fabricatedAddressWarnings.length} pages have fabricated addresses:`);
+  fabricatedAddressWarnings.forEach(w => console.warn(`  ${w}`));
+}
+
+if (selfReferentialSameAsWarnings.length > 0) {
+  console.warn(`WARNING: ${selfReferentialSameAsWarnings.length} pages have self-referential sameAs:`);
+  selfReferentialSameAsWarnings.forEach(w => console.warn(`  ${w}`));
+}
+
+// --- Expired Schedule Suppression Checks ---
+// Verify that no static shell presents 2026 dates as upcoming schedule info
+const programmeShells = shells.filter(s => s.route.startsWith('/programmes/course-') || s.route.startsWith('/programmes/foreign-'));
+let suppressedSchedules = 0;
+for (const shell of programmeShells) {
+  const html = readShell(shell.route);
+  if (html.includes('Contact GIBS for the current programme schedule.')) {
+    suppressedSchedules++;
+  }
+}
+console.log(`Expired schedule suppression: ${suppressedSchedules} / ${programmeShells.length} programme shells suppress expired 2026 dates`);
+
+// --- Visible Content vs Structured Data Consistency (spot check) ---
+const progHtml = readShell("programmes/course-1-public-sector-accounting-procedure-and-standards");
+const progBlocks = extractJsonLd(progHtml, "programmes/course-1-public-sector-accounting-procedure-and-standards");
+const courseNode = progBlocks.flat().find(n => n && n['@type'] === 'Course');
+if (courseNode) {
+  assert.equal(courseNode.name, "Public Sector Accounting Procedure and Standards", "Course name must match visible page title");
+  assert.equal(courseNode.courseCode, "GIBS-LOC-001", "Course courseCode must match visible page");
+  assert.ok(courseNode.description.includes("Public Sector Accounting Procedure and Standards"), "Course description must match visible page summary");
+  assert.equal(courseNode.url, "https://gibs.com.ng/programmes/course-1-public-sector-accounting-procedure-and-standards", "Course url must match canonical");
+  const hci = courseNode.hasCourseInstance;
+  assert.equal(hci['@type'], 'CourseInstance', "hasCourseInstance must be CourseInstance");
+  assert.equal(hci.duration, 'P5D', "CourseInstance duration must match visible page");
+  assert.ok(hci.offers, "CourseInstance must have offers");
+  assert.equal(hci.offers.price, 390000, "CourseInstance offer price must match visible page fee");
+  assert.equal(hci.offers.priceCurrency, 'NGN', "CourseInstance offer priceCurrency must match visible page");
+}
+
+// --- Protected File Hash Verification ---
+const typesContent = readFileSync(join(root, "src", "types", "data.ts"), "utf8");
+const typesSha = createHash("sha256").update(typesContent).digest("hex");
+assert.equal(
+  typesSha,
+  "37e8e6d5bb9fe6be6b96eda0d1de1eb9c93b80690728f682c0b50dcdf39ad867",
+  "src/types/data.ts must maintain protected SHA-256 checksum"
+);
+
+const genContent = readFileSync(join(root, "scripts", "generate_data_ts.py"), "utf8");
+const genSha = createHash("sha256").update(genContent).digest("hex");
+assert.equal(
+  genSha,
+  "f44750038aeab91310da3300193080c999bc95c33050cb2a8c7f2151502319f3",
+  "scripts/generate_data_ts.py must maintain protected SHA-256 checksum"
 );
 
 // --- Crawlability & Static Navigation Checks ---

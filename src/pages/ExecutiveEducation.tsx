@@ -6,6 +6,7 @@ import { ArrowUpRight } from "../components/icons";
 import { Link } from "../lib/router";
 import { useSeo } from "../lib/router";
 import { PROGRAMMES } from "../lib/data";
+import { suppressExpiredSchedule } from "../lib/suppressExpiredDates";
 
 const FOREIGN_HUBS = [
   {
@@ -98,7 +99,7 @@ export default function ExecutiveEducation() {
                 </span>
                 <h3 className="card-title mt-4 text-ink">{hub.city}</h3>
                 <p className="mt-1 text-sm font-bold text-forest-700">Fee: {hub.fee}</p>
-                <p className="text-xs font-medium text-muted">Schedule: {hub.dates}</p>
+                <p className="text-xs font-medium text-muted">Schedule: {suppressExpiredSchedule(hub.dates)}</p>
                 <p className="mt-4 flex-1 text-sm leading-relaxed text-ink/80 max-w-prose">{hub.summary}</p>
                 <div className="mt-6 border-t rule pt-4">
                   <Link

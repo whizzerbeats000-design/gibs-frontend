@@ -8,6 +8,7 @@ import { getProgramme, relatedProgrammes } from "../lib/data";
 import type { Programme } from "../types/data";
 import { approvedContent, resolveRenderedCategory } from "../lib/programme-content";
 import { scrubRetiredNumbersInProse } from "../lib/phones";
+import { suppressExpiredSchedule } from "../lib/suppressExpiredDates";
 import { useSeo } from "../lib/router";
 import { Reveal } from "../components/motion";
 import NotFound from "./NotFound";
@@ -385,7 +386,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   <span className="text-xs font-bold text-ivory/80">{p.fees}</span>
                 </div>
                 <h3 className="type-h3 mt-3">{p.title}</h3>
-                <p className="mt-3 text-xs text-ivory/70 line-clamp-2">{p.schedule}</p>
+                <p className="mt-3 text-xs text-ivory/70 line-clamp-2">{suppressExpiredSchedule(p.schedule)}</p>
                 <span className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-gold-300">
                   View details
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

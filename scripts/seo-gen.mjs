@@ -461,6 +461,7 @@ function getOrgSchema(inst) {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
+    "@id": `${CANONICAL_DOMAIN}/#organization`,
     "name": inst.legalName,
     "legalName": "Goshen International Business School Limited",
     "alternateName": "GIBS",
@@ -489,12 +490,15 @@ function getWebSiteSchema() {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${CANONICAL_DOMAIN}/#website`,
     "name": "Goshen International Business School (GIBS)",
     "alternateName": "GIBS",
     "url": CANONICAL_DOMAIN,
+    "inLanguage": "en",
     "description": "Goshen International Business School offers executive training programmes across Nigeria and four overseas hubs: Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC RC 1178333).",
     "publisher": {
       "@type": "EducationalOrganization",
+      "@id": `${CANONICAL_DOMAIN}/#organization`,
       "name": "Goshen International Business School Limited",
       "legalName": "Goshen International Business School Limited",
       "identifier": "RC 1178333",
@@ -522,6 +526,7 @@ function getCourseSchema(p) {
 
   const instance = {
     "@type": "CourseInstance",
+    "@id": `${CANONICAL_DOMAIN}/programmes/${p.slug}#course-instance`,
     "courseMode": "onsite",
     "location": {
       "@type": "Place",
@@ -546,20 +551,21 @@ function getCourseSchema(p) {
   const courseObj = {
     "@context": "https://schema.org",
     "@type": "Course",
+    "@id": `${CANONICAL_DOMAIN}/programmes/${p.slug}`,
     "name": p.title,
     "courseCode": p.code,
     "description": p.summary,
     "provider": {
       "@type": "EducationalOrganization",
+      "@id": `${CANONICAL_DOMAIN}/#organization`,
       "name": "Goshen International Business School",
       "legalName": "Goshen International Business School Limited"
     },
     "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`,
+    "inLanguage": "en",
+    "timeRequired": isoDuration,
     "hasCourseInstance": instance
   };
-  if (isoDuration) {
-    courseObj.timeRequired = isoDuration;
-  }
 
   return JSON.stringify(courseObj);
 }
@@ -568,6 +574,7 @@ function getBreadcrumbSchema(items) {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${CANONICAL_DOMAIN}/#breadcrumb`,
     "itemListElement": items.map((item, idx) => ({
       "@type": "ListItem",
       "position": idx + 1,
@@ -581,11 +588,38 @@ function getCourseListSchema(programmes, categoryUrl) {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ItemList",
+    "@id": `${categoryUrl}#itemlist`,
+    "name": categoryUrl.split('/').pop() || 'Programmes',
     "itemListElement": programmes.map((p, idx) => ({
       "@type": "ListItem",
       "position": idx + 1,
+      "name": p.title,
       "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`
     }))
+  });
+}
+
+function getWebPageSchema(page) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${page.url}#webpage`,
+    "name": page.title,
+    "description": page.description,
+    "url": page.url,
+    "inLanguage": "en",
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": `${CANONICAL_DOMAIN}/#website`
+    },
+    "publisher": {
+      "@type": "EducationalOrganization",
+      "@id": `${CANONICAL_DOMAIN}/#organization`,
+      "name": "Goshen International Business School Limited",
+      "legalName": "Goshen International Business School Limited",
+      "identifier": "RC 1178333",
+      "url": CANONICAL_DOMAIN
+    }
   });
 }
 
@@ -793,7 +827,10 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     const emails = inst.emails
       .map((e) => `<li><strong>Email:</strong> <a href="mailto:${e}">${escapeHtml(e)}</a></li>`)
       .join('');
-    const hubs = inst.overseasHubs.map((h) => `<li>${escapeHtml(h)}</li>`).join('');
+    const hubs = inst.overseasHubs
+      .filter((h) => /Kigali|Dubai|London|Houston/.test(h))
+      .map((h) => `<li>${escapeHtml(h)}</li>`)
+      .join('');
     return `<main>
       <h1>Contact GIBS</h1>
       <h2>Postal Address</h2>
@@ -810,7 +847,10 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
   }
 
   if (route === '/executive-education') {
-    const hubs = inst.overseasHubs.map((h) => `<li>${escapeHtml(h)}</li>`).join('');
+    const hubs = inst.overseasHubs
+      .filter((h) => /Kigali|Dubai|London|Houston/.test(h))
+      .map((h) => `<li>${escapeHtml(h)}</li>`)
+      .join('');
     const partner = escapeHtml(inst.technicalPartner || '');
     const foreignProgrammes = (allProgrammes || []).filter((p) => p.destination !== 'Local');
     const foreignLinks = foreignProgrammes
@@ -1163,12 +1203,6 @@ function writeShell(route, shellHtml) {
   const dir = path.join(DIST_DIR, route);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), shellHtml);
-
-  // Also write clean-url HTML file (e.g. dist/about.html) alongside dist/about/index.html
-  // to guarantee direct static resolution across all server / routing configurations
-  const cleanPath = `${path.join(DIST_DIR, route)}.html`;
-  fs.mkdirSync(path.dirname(cleanPath), { recursive: true });
-  fs.writeFileSync(cleanPath, shellHtml);
 }
 
 async function run() {
@@ -1278,8 +1312,8 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
         { name: resolvedCategory, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(resolvedCategory)}` },
         { name: p.title, url: `${CANONICAL_DOMAIN}${route}` }
       ]);
-
-      const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}]`;
+      const webPageJson = getWebPageSchema({ title, description, url: `${CANONICAL_DOMAIN}${route}` });
+      const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}, ${webPageJson}]`;
       const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, contentByCode, inst, programmes), combinedJsonLd);
       writeShell(route, shellHtml);
     }
@@ -1304,8 +1338,9 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
         { name: 'Home', url: CANONICAL_DOMAIN },
         { name: r.title.split('|')[0].trim(), url: `${CANONICAL_DOMAIN}${r.path}` }
       ]);
-
-      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, contentByCode, inst, programmes), breadcrumbsJson);
+      const webPageJson = getWebPageSchema({ title: boundedTitle, description: r.desc, url: `${CANONICAL_DOMAIN}${r.path}` });
+      const combinedJsonLd = `[${breadcrumbsJson}, ${webPageJson}]`;
+      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, contentByCode, inst, programmes), combinedJsonLd);
       writeShell(r.path, shellHtml);
     }
 
@@ -1329,12 +1364,12 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
         { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
         { name: cat, url: `${CANONICAL_DOMAIN}${route}` }
       ]);
-
-      let combinedJsonLd = breadcrumbsJson;
+      const webPageJson = getWebPageSchema({ title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.`, url: `${CANONICAL_DOMAIN}${route}` });
+      let combinedJsonLd = `[${breadcrumbsJson}, ${webPageJson}]`;
       const catProgrammes = programmes.filter((p) => resolveCategory(p, contentByCode) === cat);
       if (catProgrammes.length >= 3) {
         const listJson = getCourseListSchema(catProgrammes, `${CANONICAL_DOMAIN}${route}`);
-        combinedJsonLd = `[${breadcrumbsJson}, ${listJson}]`;
+        combinedJsonLd = `[${breadcrumbsJson}, ${listJson}, ${webPageJson}]`;
       }
 
       const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, contentByCode, inst, programmes), combinedJsonLd);
@@ -1406,10 +1441,11 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
 
       const orgSchema = getOrgSchema(inst);
       const webSiteSchema = getWebSiteSchema();
+      const webPageJson = getWebPageSchema({ title: homeTitle, description: homeDesc, url: CANONICAL_DOMAIN });
       const breadcrumbSchema = getBreadcrumbSchema([
         { name: 'Home', url: CANONICAL_DOMAIN }
       ]);
-      const combinedSchema = `[${orgSchema}, ${webSiteSchema}, ${breadcrumbSchema}]`;
+      const combinedSchema = `[${orgSchema}, ${webSiteSchema}, ${webPageJson}, ${breadcrumbSchema}]`;
       if (homeHtml.includes('<script type="application/ld+json"></script>')) {
         homeHtml = homeHtml.replace('<script type="application/ld+json"></script>', `<script type="application/ld+json">${combinedSchema}</script>`);
       } else if (homeHtml.includes('<script type="application/ld+json">')) {

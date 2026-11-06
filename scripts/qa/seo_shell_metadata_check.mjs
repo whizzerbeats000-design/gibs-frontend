@@ -275,6 +275,7 @@ let jsonLdPages = 0;
 let coursePages = 0;
 let itemListPages = 0;
 let orgPages = 0;
+let webPagePages = 0;
 const allCanonicals = [];
 const allItemListPositions = [];
 const expiredDateWarnings = [];
@@ -354,6 +355,29 @@ for (const shell of shells) {
           // This is a warning, not a block - identifier on nested org
         }
       }
+
+      // Check WebPage schema
+      if (node['@type'] === 'WebPage') {
+        webPagePages++;
+        // WebPage must have @id
+        assert.ok(node['@id'], `${shell.route}: WebPage must have @id`);
+        // WebPage must have inLanguage
+        assert.ok(node['inLanguage'], `${shell.route}: WebPage must have inLanguage`);
+        // WebPage must have isPartOf
+        assert.ok(node.isPartOf, `${shell.route}: WebPage must have isPartOf`);
+        // WebPage must have publisher
+        assert.ok(node.publisher, `${shell.route}: WebPage must have publisher`);
+      }
+
+      // Check all JSON-LD nodes have @id
+      if (node['@id']) {
+        // Verify @id is a valid URL
+        try {
+          new URL(node['@id']);
+        } catch (e) {
+          throw new Error(`${shell.route}: Invalid @id: ${node['@id']}`);
+        }
+      }
     }
   }
 }
@@ -368,7 +392,7 @@ Object.entries(canonicalCounts).forEach(([url, count]) => {
 // Assert unique ItemList positions within each page (already checked above)
 
 // Report results
-console.log(`JSON-LD validation: ${jsonLdPages} pages with JSON-LD, ${coursePages} Course schemas, ${itemListPages} ItemList schemas, ${orgPages} Organization schemas`);
+console.log(`JSON-LD validation: ${jsonLdPages} pages with JSON-LD, ${coursePages} Course schemas, ${itemListPages} ItemList schemas, ${orgPages} Organization schemas, ${webPagePages} WebPage schemas`);
 console.log(`Unique canonicals: ${new Set(allCanonicals).size} / ${allCanonicals.length}`);
 
 if (expiredDateWarnings.length > 0) {

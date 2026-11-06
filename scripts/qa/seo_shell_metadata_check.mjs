@@ -398,7 +398,42 @@ for (const shell of programmeShells) {
 }
 console.log(`Expired schedule suppression: ${suppressedSchedules} / ${programmeShells.length} programme shells suppress expired 2026 dates`);
 
-// --- Visible Content vs Structured Data Consistency (spot check) ---
+// --- Expired Date Suppression in Metadata (all 135 programme pages) ---
+// Verify no meta description, og:description, or twitter:description contains
+// expired 2026 schedule dates (March 2, April 13, Sept 7).
+let expiredMetaDescCount = 0;
+let expiredOgDescCount = 0;
+let expiredTwitterDescCount = 0;
+for (const shell of programmeShells) {
+  const html = readShell(shell.route);
+  const metaDesc = metaValue(html, 'description');
+  const ogDesc = metaValue(html, 'og:description', 'property');
+  const twitterDesc = metaValue(html, 'twitter:description');
+  const expiredPatterns = ['March 2', 'April 13', 'Sept 7', 'Scheduled across'];
+  if (expiredPatterns.some(p => metaDesc.includes(p))) expiredMetaDescCount++;
+  if (expiredPatterns.some(p => ogDesc.includes(p))) expiredOgDescCount++;
+  if (expiredPatterns.some(p => twitterDesc.includes(p))) expiredTwitterDescCount++;
+}
+assert.equal(expiredMetaDescCount, 0, `${expiredMetaDescCount} programme pages have expired dates in meta description`);
+assert.equal(expiredOgDescCount, 0, `${expiredOgDescCount} programme pages have expired dates in og:description`);
+assert.equal(expiredTwitterDescCount, 0, `${expiredTwitterDescCount} programme pages have expired dates in twitter:description`);
+console.log(`Expired date suppression in metadata: 0 / ${programmeShells.length} pages contain expired 2026 dates`);
+
+// --- Homepage Metadata Consistency ---
+// Homepage <title> must match og:title and twitter:title
+const homeHtml = readShell("");
+const homeTitle = titleValue(homeHtml);
+const homeOgTitle = metaValue(homeHtml, "og:title", "property");
+const homeTwitterTitle = metaValue(homeHtml, "twitter:title");
+assert.equal(homeTitle, homeOgTitle, "Homepage <title> must match og:title");
+assert.equal(homeTitle, homeTwitterTitle, "Homepage <title> must match twitter:title");
+// Homepage meta description must match og:description and twitter:description
+const homeMetaDesc = metaValue(homeHtml, "description");
+const homeOgDesc = metaValue(homeHtml, "og:description", "property");
+const homeTwitterDesc = metaValue(homeHtml, "twitter:description");
+assert.equal(homeMetaDesc, homeOgDesc, "Homepage meta description must match og:description");
+assert.equal(homeMetaDesc, homeTwitterDesc, "Homepage meta description must match twitter:description");
+console.log(`Homepage metadata consistency: title=og:title=twitter:title, desc=og:desc=twitter:desc`);
 const progHtml = readShell("programmes/course-1-public-sector-accounting-procedure-and-standards");
 const progBlocks = extractJsonLd(progHtml, "programmes/course-1-public-sector-accounting-procedure-and-standards");
 const courseNode = progBlocks.flat().find(n => n && n['@type'] === 'Course');

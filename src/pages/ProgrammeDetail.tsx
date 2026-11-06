@@ -45,6 +45,37 @@ function FactCard({ label, value, valueClass = "text-ink" }: { label: string; va
   );
 }
 
+/* Suppress expired 2026 schedule dates from programme summaries and taglines
+   used in meta descriptions, Open Graph descriptions, Twitter descriptions,
+   visible page content, and PageHero intros. All programme summaries in
+   data.ts end with a date schedule ("… Scheduled across GIBS training
+   centres and regional hubs: March 2–6 (Ibafo), April 13–17 (Ilorin),
+   Sept 7–11 (Abuja).") that has passed as of November 2026. Remove only
+   the date schedule, preserving the accurate programme name, audience,
+   duration, and description. */
+function suppressExpiredDatesInSummary(text: string | undefined | null): string {
+  if (!text) return '';
+  let result = text!.replace(/\s+Scheduled across.*$/, '');
+  // Remove expired schedule: " Dates: [dates]." (foreign programmes)
+  result = result!.replace(/\s+Dates:.*$/, '');
+  // Clean up double periods left behind (e.g. "Dept.." → "Dept.")
+  result = result.replace(/\.\./g, '.');
+  return result.trim();
+}
+
+function suppressExpiredDatesInTagline(text: string | undefined | null): string {
+  if (!text) return '';
+  const dotIndex = text!.lastIndexOf('\u00b7');
+  if (dotIndex > 0) {
+    const afterDot = text!.slice(dotIndex + 1).trim();
+    // Check if after · contains date patterns
+    if (/\d[\u2013\-]\d/.test(afterDot) || /2026/.test(afterDot)) {
+      return text!.slice(0, dotIndex).trim();
+    }
+  }
+  return text.trim();
+}
+
 export default function ProgrammeDetail({ slug }: { slug: string }) {
   const programme = getProgramme(slug);
 
@@ -53,24 +84,25 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
    * so the client and the server render the same narrative for every route. */
   const content = programme ? approvedContent(programme) : undefined;
 
-  useSeo({
-    title: programme ? `${programme.code} · ${programme.title} — GIBS` : "Programme not found — GIBS",
-    description: (content?.summary ?? programme?.summary) ?? "",
-    /* A programme is reachable by slug, by id, by code and by slug suffix.
-       Point the canonical address at the one URL the sitemap lists, so the
-       alternative addresses do not each publish the same content as their
-       own canonical page. */
-    canonicalPath: programme ? `/programmes/${programme.slug}` : undefined,
-  });
-
   if (!programme) return <NotFound />;
+
+  /* Suppress expired 2026 dates from the summary used in meta description
+   * and visible page content. Both static shell and React render must agree. */
+  const resolvedSummary = suppressExpiredDatesInSummary(content?.summary ?? programme.summary ?? '');
+  const resolvedTagline = suppressExpiredDatesInTagline(programme.tagline ?? '');
+
+  useSeo({
+    title: `${programme.code} · ${programme.title} — GIBS`,
+    description: resolvedSummary,
+    canonicalPath: `/programmes/${programme.slug}`,
+  });
 
   const related = (content?.relatedSlugs?.length
     ? content.relatedSlugs.map((s) => getProgramme(s)).filter((p): p is Programme => Boolean(p))
     : relatedProgrammes(slug, 3));
   const isForeign = programme.destination !== "Local";
 
-  const summary = content?.summary ?? programme.summary;
+  const summary = resolvedSummary;
   const outcomes = content?.outcomes ?? programme.outcomes ?? [];
   const structure = content?.structure ?? programme.indicativeStructure ?? [];
   const faqs = content?.faqs ?? programme.faqs ?? [];
@@ -80,7 +112,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
       <PageHero
         eyebrow={`${resolveRenderedCategory(programme)} · ${programme.code}`}
         title={programme.title}
-        intro={content?.intro ?? programme.tagline ?? programme.summary}
+        intro={content?.intro ?? resolvedTagline ?? resolvedSummary}
         breadcrumbs={[
           { label: "2026 Calendar", to: "/programmes" },
           { label: programme.code },
@@ -290,6 +322,8 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                 ...faq,
                 a: scrubRetiredNumbersInProse(
                   faq.a.includes("2026 calendar sessions")
+                    ? "Contact GIBS for the current programme schedule and dates."
+                    : faq.a.includes("confirmed dates:")
                     ? "Contact GIBS for the current programme schedule and dates."
                     : faq.a,
                 ),

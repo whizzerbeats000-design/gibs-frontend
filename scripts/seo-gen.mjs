@@ -34,7 +34,44 @@ function suppressExpiredFaqAnswer(answer) {
   if (/2026 calendar sessions/.test(answer)) {
     return EXPIRED_FAQ_MESSAGE;
   }
+  // Foreign programme FAQs: "The programme takes place in [place] on the confirmed dates: [dates]."
+  if (/confirmed dates:.*/.test(answer)) {
+    return EXPIRED_FAQ_MESSAGE;
+  }
   return answer;
+}
+
+/* Suppress expired 2026 schedule dates from programme summaries used in
+ * meta descriptions, Open Graph descriptions, Twitter descriptions, and
+ * Course JSON-LD. All programme summaries in data.ts end with a date
+ * schedule that has passed as of November 2026. Remove only the date
+ * schedule, preserving the accurate programme name, audience, duration,
+ * and description. Handles both " Scheduled across ...:" and " Dates: ..."
+ * patterns. */
+function suppressExpiredDatesInSummary(text) {
+  if (!text) return text;
+  // Remove expired schedule: " Scheduled across [locations] and regional hubs: [dates]."
+  let result = text.replace(/\s+Scheduled across.*$/, '');
+  // Remove expired schedule: " Dates: [dates]." (foreign programmes)
+  result = result.replace(/\s+Dates:.*$/, '');
+  // Clean up double periods left behind (e.g. "Dept.." → "Dept.")
+  result = result.replace(/\.\./g, '.');
+  return result.trim();
+}
+
+/* Suppress expired 2026 schedule dates from programme taglines used in
+ * PageHero intros. Taglines end with " · [dates]." which has passed. */
+function suppressExpiredDatesInTagline(text) {
+  if (!text) return text;
+  const dotIndex = text.lastIndexOf('\u00b7');
+  if (dotIndex > 0) {
+    const afterDot = text.slice(dotIndex + 1).trim();
+    // Check if after · contains date patterns
+    if (/\d[\u2013\-]\d/.test(afterDot) || /2026/.test(afterDot)) {
+      return text.slice(0, dotIndex).trim();
+    }
+  }
+  return text;
 }
 
 /* Vite build manifest (dist/manifest.json) maps source modules to their
@@ -907,7 +944,8 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
      * published shell is identical to today unless GIBS approves a replacement.
      * Related links only render when approved content supplies them. */
     const resolved = applyContent(programme, contentByCode.programmes);
-    const summary = escapeHtml(resolved.summary || '');
+    const resolvedSummary = suppressExpiredDatesInSummary(resolved.summary);
+    const summary = escapeHtml(resolvedSummary || '');
     const outcomes = (resolved.outcomes || []).length
       ? '<h2>Learning Outcomes</h2><ul>' +
         resolved.outcomes.map((o) => `<li>${escapeHtml(o)}</li>`).join('') +
@@ -1227,11 +1265,12 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
        * catalogue; the meta description and Course JSON-LD description must
        * match the rendered body, so both are fed from the same resolved copy. */
       const resolved = applyContent(p, contentByCode);
-      const description = programmeMetaDescription(resolved.summary);
+      const resolvedSummary = suppressExpiredDatesInSummary(resolved.summary);
+      const description = programmeMetaDescription(resolvedSummary);
       const title = programmeTitle(p);
       routes.push({ path: route, meta: { title, description }});
 
-      const courseJson = getCourseSchema({ ...p, summary: resolved.summary });
+      const courseJson = getCourseSchema({ ...p, summary: resolvedSummary });
       const resolvedCategory = resolveCategory(p, contentByCode);
       const breadcrumbsJson = getBreadcrumbSchema([
         { name: 'Home', url: CANONICAL_DOMAIN },
@@ -1343,6 +1382,10 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
       // We must explicitly ensure its metadata is bounded.
       const homeDesc = '113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.';
       const homeTitle = 'GIBS 2026 Executive Training Programmes — Nigeria & International Hubs';
+      // Explicitly set the homepage <title> to match og:title so static HTML
+      // and runtime metadata are consistent. The Vite master shell's default
+      // title is replaced here; useSeo() at runtime sets the same value.
+      homeHtml = homeHtml.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(homeTitle)}</title>`);
       homeHtml = replaceMetaContent(homeHtml, 'description', programmeMetaDescription(homeDesc));
       homeHtml = replaceMetaContent(homeHtml, 'og:description', programmeMetaDescription(homeDesc));
       homeHtml = replaceMetaContent(homeHtml, 'twitter:description', programmeMetaDescription(homeDesc));

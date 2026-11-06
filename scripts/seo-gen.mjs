@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import { tmpdir } from 'os';
 import { categoryToSlug, formatCategoryDisplayName } from '../src/lib/categoryUtils.ts';
 import { activePhoneNumbers, scrubRetiredNumbersInProse } from '../src/lib/phones.ts';
 
 const CANONICAL_DOMAIN = 'https://gibs.com.ng';
 const DIST_DIR = path.resolve(process.env.GIBS_DIST_DIR || 'dist');
 const MASTER_SHELL_PATH = path.join(DIST_DIR, 'index.html');
-const CLEAN_TEMPLATE_PATH = path.join(DIST_DIR, '.master-template.html');
+const CLEAN_TEMPLATE_PATH = path.join(tmpdir(), 'gibs-master-template.html');
 
 /* Category-correction approval gate. The 10 audited reclassifications live in
  * src/lib/programme-content.ts (CATEGORY_CORRECTIONS). They are applied to
@@ -1292,31 +1293,62 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
 
     const routes = [];
 
-    // 1. Programmes
-    for (const p of programmes) {
-      const route = `/programmes/${p.slug}`;
-      /* Resolved narrative: only `approved` content overrides the locked
-       * catalogue; the meta description and Course JSON-LD description must
-       * match the rendered body, so both are fed from the same resolved copy. */
-      const resolved = applyContent(p, contentByCode);
-      const resolvedSummary = suppressExpiredDatesInSummary(resolved.summary);
-      const description = programmeMetaDescription(resolvedSummary);
-      const title = programmeTitle(p);
-      routes.push({ path: route, meta: { title, description }});
+    // Phase 1: Build all programme routes with metadata (no shell generation yet)
+const programmeRoutes = [];
+for (const p of programmes) {
+  const route = `/programmes/${p.slug}`;
+  /* Resolved narrative: only `approved` content overrides the locked
+   * catalogue; the meta description and Course JSON-LD description must
+   * match the rendered body, so both are fed from the same resolved copy. */
+  const resolved = applyContent(p, contentByCode);
+  const resolvedSummary = suppressExpiredDatesInSummary(resolved.summary);
+  const description = programmeMetaDescription(resolvedSummary);
+  const title = programmeTitle(p);
+  programmeRoutes.push({ path: route, meta: { title, description }, programme: p });
+}
 
-      const courseJson = getCourseSchema({ ...p, summary: resolvedSummary });
-      const resolvedCategory = resolveCategory(p, contentByCode);
-      const breadcrumbsJson = getBreadcrumbSchema([
-        { name: 'Home', url: CANONICAL_DOMAIN },
-        { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
-        { name: resolvedCategory, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(resolvedCategory)}` },
-        { name: p.title, url: `${CANONICAL_DOMAIN}${route}` }
-      ]);
-      const webPageJson = getWebPageSchema({ title, description, url: `${CANONICAL_DOMAIN}${route}` });
-      const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}, ${webPageJson}]`;
-      const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, contentByCode, inst, programmes), combinedJsonLd);
-      writeShell(route, shellHtml);
-    }
+// Phase 2: Fix duplicate descriptions across programme pages by adding
+// category information to disambiguate them.
+const descCounts = {};
+programmeRoutes.forEach(r => {
+  const desc = r.meta.description;
+  descCounts[desc] = (descCounts[desc] || 0) + 1;
+});
+programmeRoutes.forEach(route => {
+  const desc = route.meta.description;
+  if (descCounts[desc] > 1) {
+    const p = route.programme;
+    const category = resolveCategory(p, contentByCode);
+    const combined = `${desc} Category: ${category}.`;
+    route.meta.description = combined.length > 159 ? `${combined.slice(0, 156)}...` : combined;
+    p.summary = combined.length > 159 ? `${combined.slice(0, 156)}...` : combined;
+  }
+});
+
+// Phase 3: Generate shells for all programme routes
+for (const route of programmeRoutes) {
+  const p = route.programme;
+  const resolved = applyContent(p, contentByCode);
+  const resolvedSummary = suppressExpiredDatesInSummary(resolved.summary);
+  const description = programmeMetaDescription(resolvedSummary);
+  const title = programmeTitle(p);
+
+  const courseJson = getCourseSchema({ ...p, summary: resolvedSummary });
+  const resolvedCategory = resolveCategory(p, contentByCode);
+  const breadcrumbsJson = getBreadcrumbSchema([
+    { name: 'Home', url: CANONICAL_DOMAIN },
+    { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
+    { name: resolvedCategory, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(resolvedCategory)}` },
+    { name: p.title, url: `${CANONICAL_DOMAIN}${route.path}` }
+  ]);
+  const webPageJson = getWebPageSchema({ title, description: route.meta.description, url: `${CANONICAL_DOMAIN}${route.path}` });
+  const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}, ${webPageJson}]`;
+  const shellHtml = generateShell(masterHtml, route.path, { title, description: route.meta.description }, generateStaticBody(route.path, p, contentByCode, inst, programmes), combinedJsonLd);
+  writeShell(route.path, shellHtml);
+}
+
+// Add programme routes to main routes array for sitemap generation
+routes.push(...programmeRoutes);
 
 
     // 2. Institutional
@@ -1415,7 +1447,7 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
 
       // FIX: The homepage (dist/index.html) uses a different meta description source than institutional routes.
       // We must explicitly ensure its metadata is bounded.
-      const homeDesc = '113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.';
+      const homeDesc = 'Goshen International Business School Limited — 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.';
       const homeTitle = 'GIBS 2026 Executive Training Programmes — Nigeria & International Hubs';
       // Explicitly set the homepage <title> to match og:title so static HTML
       // and runtime metadata are consistent. The Vite master shell's default

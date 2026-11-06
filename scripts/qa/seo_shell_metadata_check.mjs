@@ -102,12 +102,12 @@ assert.equal(
 );
 assert.equal(
   metaValue(home, "og:description", "property"),
-  "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs…",
+  "Goshen International Business School Limited — 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and…",
   `homepage: description`
 );
 assert.equal(
   metaValue(home, "twitter:description"),
-  "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs…",
+  "Goshen International Business School Limited — 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and…",
   `homepage: description`
 );
 assert.equal(canonicalValue(home), "https://gibs.com.ng/");

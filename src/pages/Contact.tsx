@@ -160,7 +160,7 @@ export default function Contact() {
         eyebrow="Contact & Locations"
         title="Connect with"
         italic="GIBS."
-        intro="Reach our headquarters in Ilorin, Abuja and Ibafo training centers, or make an enquiry below for any programme, in-plant workshop, or executive education question. GIBS Programme Assistant is also available to help."
+        intro="Reach our headquarters in Ilorin, Abuja and Ibafo training centers, or make an enquiry below for any programme, in-plant workshop, or executive education question. GIBS AI is also available to help."
         breadcrumbs={[{ label: "Contact" }]}
       />
 
@@ -309,17 +309,17 @@ export default function Contact() {
             <Reveal y={32}>
               <div className="space-y-6">
                 <div className="rounded-panel border border-line border-t-2 border-t-forest-600 bg-paper p-7 shadow-crisp max-w-card">
-                  <p className="eyebrow">GIBS Programme Assistant</p>
+                  <p className="eyebrow">GIBS AI</p>
                   <p className="mt-3 type-body max-w-prose">
-                    GIBS Programme Assistant is available to help guide you through programme selection, overseas hub schedules, and fee breakdowns.
+                    GIBS AI is available to help guide you through programme selection, overseas hub schedules, and fee breakdowns.
                   </p>
                   <button
                     type="button"
                     onClick={() => setOpen(true)}
-                    className="btn btn-ink btn-md mt-5"
+                    className="btn btn-ink btn-md mt-5 w-full sm:w-auto"
                   >
                     <ChatIcon className="h-4 w-4" />
-                    Open the Programme Assistant
+                    Open GIBS AI
                   </button>
                 </div>
 

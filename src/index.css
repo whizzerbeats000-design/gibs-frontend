@@ -430,7 +430,7 @@ body {
   /* ---------------- Typography roles ----------------
      GIBS modern typography system — Manrope for display headings, Inter for UI & body copy, DM Mono for technical labels.
   ------------------------------------------------------------- */
-  .fraunces {
+  .type-display {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.015em;

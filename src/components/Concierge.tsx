@@ -51,7 +51,7 @@ type Message = {
 const WELCOME: Message = {
   id: 0,
   role: "concierge",
-  text: "Welcome to GIBS Programme Assistant. I can help with 2026 programmes, foreign training hubs, training locations, and programme enquiries. What would you like to explore?",
+  text: "Welcome to GIBS AI. I can help with 2026 programmes, foreign training hubs, training locations, and programme enquiries. What would you like to explore?",
 };
 
 const STORAGE_KEY = "gibs-concierge-v2";
@@ -129,7 +129,7 @@ function CardView({ card, onNavigate }: { card: ConciergeCard; onNavigate?: () =
 
 export function ConciergeConversation({
   compact = false,
-  label = "GIBS Programme Assistant conversation",
+  label = "GIBS AI conversation",
   storageKey = STORAGE_KEY,
 }: {
   compact?: boolean;
@@ -164,6 +164,10 @@ export function ConciergeConversation({
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
   const pendingReplyRef = useRef<number | null>(null);
+  // Generation counter for in-flight reply timeouts. Incremented on every
+  // reset so a delayed callback that fires after reset can detect that the
+  // conversation was cleared and must not restore deleted history.
+  const replyGenerationRef = useRef(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { setOpen } = useConcierge();
 
@@ -172,6 +176,10 @@ export function ConciergeConversation({
       window.clearTimeout(pendingReplyRef.current);
       pendingReplyRef.current = null;
     }
+    // Bump the generation so any in-flight reply timeout that fires after this
+    // reset detects that the conversation was cleared and discards its stale
+    // result instead of restoring deleted history.
+    replyGenerationRef.current += 1;
     savedAtRef.current = null;
     setMessages([WELCOME]);
     setInput("");
@@ -234,13 +242,26 @@ export function ConciergeConversation({
       setInput("");
       setTyping(true);
       // Simulated turn latency of the deterministic frontend engine.
+      // Capture the reply generation at schedule time; if a reset bumps the
+      // generation before this callback fires, discard the stale result and
+      // do not restore deleted history.
+      const scheduledGeneration = replyGenerationRef.current;
       pendingReplyRef.current = window.setTimeout(async () => {
+        if (scheduledGeneration !== replyGenerationRef.current) {
+          pendingReplyRef.current = null;
+          setTyping(false);
+          return;
+        }
         pendingReplyRef.current = null;
         // The rule engine (and the ~395 KB catalogue it imports) is lazy-loaded
         // on first use, so pages that only mount the concierge chrome never pay
         // for the full catalogue in their initial bundle.
         const { getConciergeReply } = await import("../lib/concierge");
-        const reply = getConciergeReply(text, messages);
+        const reply = await getConciergeReply(text, messages);
+        if (scheduledGeneration !== replyGenerationRef.current) {
+          setTyping(false);
+          return;
+        }
         setMessages((m) => [
           ...m,
           { id: idRef.current++, role: "concierge", text: reply.text, cards: reply.cards },
@@ -285,7 +306,7 @@ export function ConciergeConversation({
             >
               {m.role === "concierge" && (
                 <p className="mb-1.5 eyebrow text-forest-600">
-                  GIBS Programme Assistant
+                  GIBS AI
                 </p>
               )}
               <p>{m.text}</p>
@@ -319,7 +340,7 @@ export function ConciergeConversation({
         }}
       >
         <label htmlFor={compact ? "concierge-input-modal" : "concierge-input-page"} className="sr-only">
-          Ask the Programme Assistant
+          Ask GIBS AI
         </label>
         <input
           id={compact ? "concierge-input-modal" : "concierge-input-page"}
@@ -366,7 +387,7 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
     <button
       type="button"
       onClick={() => setOpen(true)}
-      aria-label="Open the Programme Assistant"
+      aria-label="Open GIBS AI"
       aria-expanded={open}
       tabIndex={hidden ? -1 : 0}
       className={cn(
@@ -376,7 +397,7 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
     >
       <span className="h-2 w-2 shrink-0 rounded-full bg-gold-300" aria-hidden="true" />
       <ChatIcon className="h-4.5 w-4.5" />
-      <span className="hidden sm:inline">GIBS Programme Assistant</span>
+      <span className="hidden sm:inline">GIBS AI</span>
     </button>
   );
 }
@@ -421,7 +442,7 @@ export function ConciergeDialog() {
       {/* Scrim */}
       <button
         type="button"
-        aria-label="Close the Programme Assistant"
+        aria-label="Close GIBS AI"
         onClick={() => setOpen(false)}
         className="absolute inset-0 h-full w-full cursor-default bg-ink/45 backdrop-blur-[2px]"
       />
@@ -430,7 +451,7 @@ export function ConciergeDialog() {
         ref={ref}
         role="dialog"
         aria-modal="true"
-        aria-label="GIBS Programme Assistant"
+        aria-label="GIBS AI"
         initial={{ y: 48, opacity: 0, scale: 0.985 }}
         animate={{
           y: open ? 0 : 32,
@@ -446,7 +467,7 @@ export function ConciergeDialog() {
               <span className="relative flex h-2 w-2">
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
               </span>
-              GIBS Programme Assistant
+              GIBS AI
             </p>
             <p className="mt-0.5 text-[11px] text-ivory/75">Your programme and enquiry guide</p>
           </div>
@@ -454,7 +475,7 @@ export function ConciergeDialog() {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              aria-label="Close the Programme Assistant panel"
+              aria-label="Close GIBS AI panel"
               className="flex h-11 w-11 items-center justify-center rounded-pill text-ivory/80 transition-colors hover:bg-ivory/10 hover:text-ivory"
             >
               <CloseIcon className="h-5 w-5" />

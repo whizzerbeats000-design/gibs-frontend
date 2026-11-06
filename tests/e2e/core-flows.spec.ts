@@ -258,6 +258,7 @@ test.describe('Core User Journeys', () => {
     /* The approved current numbers must still be published, so the retired
        numbers cannot be "fixed" by removing the contact details entirely. */
     await page.goto('/contact');
+    await expect(page.getByText("Official Phone Lines")).toBeVisible();
     const telLinks = await page
       .locator('a[href^="tel:"]')
       .evaluateAll((links) => links.map((link) => link.getAttribute('href')));

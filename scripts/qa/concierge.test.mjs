@@ -33,69 +33,69 @@ after(() => {
   if (temporaryDirectory) rmSync(temporaryDirectory, { recursive: true, force: true });
 });
 
-test("topic recommendations rank actual catalogue matches instead of fixed examples", () => {
-  const reply = getConciergeReply("Show me a cybersecurity programme, please");
+test("topic recommendations rank actual catalogue matches instead of fixed examples", async () => {
+  const reply = await getConciergeReply("Show me a cybersecurity programme, please");
   const programmeLabels = reply.cards?.filter((card) => card.kind === "programme").map((card) => card.label);
 
   assert.equal(programmeLabels?.[0], "Strategies Against Cybersecurity Vulnerability and Threats");
   assert.equal(programmeLabels?.length, 1);
 });
 
-test("location and quarter constraints match the programme schedule", () => {
-  const reply = getConciergeReply("accounting programme in Abuja Q3");
+test("location and quarter constraints match the programme schedule", async () => {
+  const reply = await getConciergeReply("accounting programme in Abuja Q3");
   const programmeLabels = reply.cards?.filter((card) => card.kind === "programme").map((card) => card.label);
 
   assert.ok(programmeLabels?.includes("Public Sector Accounting Procedure and Standards"));
   assert.ok(programmeLabels?.every((label) => label !== "Customer Relationship Management and Retention"));
 });
 
-test("destination-only and hub-overview questions reach the foreign hubs guidance", () => {
+test("destination-only and hub-overview questions reach the foreign hubs guidance", async () => {
   for (const question of [
     "Show me programmes in Kigali",
     "Tell me about training hubs",
   ]) {
-    const reply = getConciergeReply(question);
+    const reply = await getConciergeReply(question);
 
     assert.match(reply.text, /22 Foreign Executive Training Programmes across 4 international hubs/i);
     assert.equal(reply.cards?.[0]?.label, "Explore All Foreign Programmes");
   }
 });
 
-test("a local campus hub question reaches the campus locations guidance", () => {
+test("a local campus hub question reaches the campus locations guidance", async () => {
   for (const question of [
     "Where is your Ilorin hub?",
     "Where are your local training hubs?",
   ]) {
-    const reply = getConciergeReply(question);
+    const reply = await getConciergeReply(question);
 
     assert.match(reply.text, /Ilorin Main HQ/i);
     assert.doesNotMatch(reply.text, /Foreign Executive Training Programmes/i);
   }
 });
 
-test("unmatched audience terms do not return unrelated programme cards", () => {
-  const reply = getConciergeReply("training for a hospital department in Q1");
+test("unmatched audience terms do not return unrelated programme cards", async () => {
+  const reply = await getConciergeReply("training for a hospital department in Q1");
 
   assert.match(reply.text, /could(?:n't| not) find a programme/i);
   assert.match(reply.text, /sector, cadre, and department/i);
   assert.equal(reply.cards?.filter((card) => card.kind === "programme").length ?? 0, 0);
 });
 
-test("a broad programme query asks for a topic instead of guessing", () => {
-  const reply = getConciergeReply("recommend a programme");
+test("a broad programme query asks for a topic instead of guessing", async () => {
+  const reply = await getConciergeReply("recommend a programme");
 
   assert.match(reply.text, /what programme topic|share a topic|name a category/i);
   assert.equal(reply.cards?.filter((card) => card.kind === "programme").length ?? 0, 0);
 });
 
-test("empty input remains a concise clarification", () => {
-  const reply = getConciergeReply("   ");
+test("empty input remains a concise clarification", async () => {
+  const reply = await getConciergeReply("   ");
 
   assert.match(reply.text, /what training or institutional information/i);
   assert.equal(reply.cards, undefined);
 });
 
-test("a fee question that also mentions a programme still reaches the enrolment rule", () => {
+test("a fee question that also mentions a programme still reaches the enrolment rule", async () => {
   /* The word "fee" or "cost" stops the programme match, so the query fell
      into the "no programme matches those terms" answer and the visitor was
      told nothing about fees. A question that names a programme and asks
@@ -104,7 +104,7 @@ test("a fee question that also mentions a programme still reaches the enrolment 
     "How much does a programme cost?",
     "What is the fee of the Public Sector Accounting programme?",
   ]) {
-    const reply = getConciergeReply(question);
+    const reply = await getConciergeReply(question);
 
     assert.match(reply.text, /Local programme fees range from/i);
     assert.match(reply.text, /enquir/i);
@@ -112,18 +112,18 @@ test("a fee question that also mentions a programme still reaches the enrolment 
   }
 });
 
-test("duplicate greeting is prevented mid-conversation", () => {
+test("duplicate greeting is prevented mid-conversation", async () => {
   const history = [
     { role: "user", text: "Hello" },
     { role: "concierge", text: "Welcome to Goshen International Business School (GIBS)..." },
   ];
-  const reply = getConciergeReply("Hello", history);
+  const reply = await getConciergeReply("Hello", history);
   assert.match(reply.text, /Hello again/i);
   assert.doesNotMatch(reply.text, /Welcome to Goshen International Business School \(GIBS\)\. We offer 113/i);
 });
 
-test("multi-turn follow-up narrows topic to foreign hub", () => {
-  const turn1 = getConciergeReply("I want a leadership course");
+test("multi-turn follow-up narrows topic to foreign hub", async () => {
+  const turn1 = await getConciergeReply("I want a leadership course");
   assert.ok(turn1.cards?.some((c) => c.kind === "programme"));
 
   const history1 = [
@@ -131,7 +131,7 @@ test("multi-turn follow-up narrows topic to foreign hub", () => {
     { role: "concierge", text: turn1.text, cards: turn1.cards },
   ];
 
-  const turn2 = getConciergeReply("Foreign", history1);
+  const turn2 = await getConciergeReply("Foreign", history1);
   assert.match(turn2.text, /overseas executive training|Foreign Executive Training Programmes/i);
   assert.match(turn2.text, /Which international hub suits your schedule best|explore—Kigali, Dubai, London, or Houston/i);
 
@@ -141,31 +141,31 @@ test("multi-turn follow-up narrows topic to foreign hub", () => {
     { role: "concierge", text: turn2.text, cards: turn2.cards },
   ];
 
-  const turn3 = getConciergeReply("Dubai", history2);
+  const turn3 = await getConciergeReply("Dubai", history2);
   assert.match(turn3.text, /Leadership and Management Innovation/i);
   assert.match(turn3.text, /\$4,800 USD/i);
   assert.ok(turn3.cards?.some((c) => c.kind === "programme" && c.slug.includes("dubai")));
   assert.ok(turn3.cards?.some((c) => c.to === "/contact?type=Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)"));
 });
 
-test("new question correctly resets and replaces stale context", () => {
+test("new question correctly resets and replaces stale context", async () => {
   const history = [
     { role: "user", text: "I want a leadership course" },
     { role: "concierge", text: "Here are leadership programmes..." },
   ];
-  const reply = getConciergeReply("Where is your Ilorin office?", history);
+  const reply = await getConciergeReply("Where is your Ilorin office?", history);
   assert.match(reply.text, /Ilorin Main HQ/i);
   assert.doesNotMatch(reply.text, /leadership/i);
 });
 
-test("corporate staff training query directs to customized in-plant workshops", () => {
-  const reply = getConciergeReply("I need a training for my staff");
+test("corporate staff training query directs to customized in-plant workshops", async () => {
+  const reply = await getConciergeReply("I need a training for my staff");
   assert.match(reply.text, /capacity building for teams/i);
   assert.ok(reply.cards?.some((c) => c.to.includes("Customized+In-Plant+Workshop+Request")));
 });
 
-test("query for specific foreign hub returns that hub's verified programmes", () => {
-  const reply = getConciergeReply("Which courses are available in Dubai?");
+test("query for specific foreign hub returns that hub's verified programmes", async () => {
+  const reply = await getConciergeReply("Which courses are available in Dubai?");
   assert.match(reply.text, /Dubai/i);
   assert.match(reply.text, /22 Foreign Executive Training Programmes across 4 international hubs/i);
   assert.equal(reply.cards?.[0]?.label, "Explore All Foreign Programmes");
@@ -174,20 +174,20 @@ test("query for specific foreign hub returns that hub's verified programmes", ()
   assert.ok(progCards.some((c) => c.slug.includes("dubai")));
 });
 
-test("conversational gratitude returns polite acknowledgment and next steps", () => {
-  const reply = getConciergeReply("Thank you so much for the help!");
+test("conversational gratitude returns polite acknowledgment and next steps", async () => {
+  const reply = await getConciergeReply("Thank you so much for the help!");
   assert.match(reply.text, /You are welcome/i);
   assert.ok(reply.cards?.some((c) => c.to === "/programmes"));
 });
 
-test("foreign executive course enquiry link matches canonical ENQUIRY_TYPES and preselects in contact form", () => {
+test("foreign executive course enquiry link matches canonical ENQUIRY_TYPES and preselects in contact form", async () => {
   const history = [
     { role: "user", text: "I want a leadership course" },
     { role: "concierge", text: "Here are leadership programmes..." },
     { role: "user", text: "Foreign" },
     { role: "concierge", text: "Which international hub suits your schedule best..." },
   ];
-  const reply = getConciergeReply("Dubai", history);
+  const reply = await getConciergeReply("Dubai", history);
   const enquiryCard = reply.cards?.find((c) => c.kind === "link" && c.label === "Make an Enquiry");
 
   // 1. The concierge generates the correct canonical enquiry URL
@@ -209,14 +209,14 @@ test("foreign executive course enquiry link matches canonical ENQUIRY_TYPES and 
   assert.notEqual(contactFormPreselectedType, "", "contact form must not fall back to empty selection");
 });
 
-test("location questions for all GIBS cities return the campus reply without conversation history", () => {
+test("location questions for all GIBS cities return the campus reply without conversation history", async () => {
   // Regression guard for the concierge rewrite that hijacked "Where is your
   // <city> office?" to programme recommendations. The fix routes explicit
   // location-seeking questions to the authoritative campus-locations rule
   // before rankProgrammes can score programme matches. Covers Ilorin, Abuja
   // and Ibafo, with no prior conversation so the case cannot lean on context.
   for (const city of ["Ilorin", "Abuja", "Ibafo"]) {
-    const reply = getConciergeReply(`Where is your ${city} office?`, []);
+    const reply = await getConciergeReply(`Where is your ${city} office?`, []);
     assert.match(reply.text, /Ilorin Main HQ/i, `${city}: must return the campus-locations reply`);
     assert.doesNotMatch(
       reply.text,
@@ -235,13 +235,13 @@ test("location questions for all GIBS cities return the campus reply without con
   }
 });
 
-test("a programme query that names a GIBS city still returns programme recommendations", () => {
+test("a programme query that names a GIBS city still returns programme recommendations", async () => {
   // Counterpart to the location-regression guard: a genuine programme request
   // that happens to name a city must still reach programme ranking and return
   // programme cards, not the campus-address reply. "course" flags programme
   // intent and "where is"/"address" phrasing is absent, so the location guard
   // must not intercept it.
-  const reply = getConciergeReply("leadership course in Ilorin", []);
+  const reply = await getConciergeReply("leadership course in Ilorin", []);
   assert.ok(
     reply.cards?.some((c) => c.kind === "programme"),
     "must still return programme cards for a genuine programme query naming a city"

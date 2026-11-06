@@ -2,7 +2,7 @@ import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingQuiet } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { INSTITUTIONAL_DATA, GOVERNANCE_INFO, FACULTY_ADVISORS, CAMPUS_LOCATIONS } from "../lib/data";
+import { INSTITUTIONAL_DATA, GOVERNANCE_INFO, FACULTY_ADVISORS, CAMPUS_LOCATIONS, PROGRAMMES } from "../lib/data";
 import { CheckIcon, MapPinIcon } from "../components/icons";
 
 export default function About() {
@@ -180,11 +180,19 @@ export default function About() {
                 {INSTITUTIONAL_DATA.technicalPartner}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                {INSTITUTIONAL_DATA.overseasHubs.map((hub) => (
-                  <span key={hub} className="rounded-pill bg-ivory/10 px-3 py-1 text-[12px] font-semibold text-ivory">
-                    {hub}
-                  </span>
-                ))}
+                {/* Only hubs with active programmes in the catalogue are shown,
+                    matching the footer and llms.txt (F-06). The eight entries in
+                    INSTITUTIONAL_DATA.overseasHubs include historical or planned
+                    locations (Miami, Cape Town & Durban, Netherlands, Ghana) that
+                    have no programmes in the 2026 catalogue; rendering them as
+                    active hubs would misrepresent GIBS' current footprint. */}
+                {INSTITUTIONAL_DATA.overseasHubs
+                  .filter((hub) => PROGRAMMES.some((p) => p.destination === hub.split(" (")[0]))
+                  .map((hub) => (
+                    <span key={hub} className="rounded-pill bg-ivory/10 px-3 py-1 text-[12px] font-semibold text-ivory">
+                      {hub}
+                    </span>
+                  ))}
               </div>
             </div>
           </div>

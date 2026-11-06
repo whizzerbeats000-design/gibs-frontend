@@ -405,6 +405,7 @@ function getOrgSchema(inst) {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
     "name": inst.legalName,
+    "legalName": "Goshen International Business School Limited",
     "alternateName": "GIBS",
     "identifier": "RC 1178333",
     "slogan": inst.slogan,
@@ -427,6 +428,24 @@ function getOrgSchema(inst) {
     "sameAs": [
       CANONICAL_DOMAIN
     ]
+  });
+}
+
+function getWebSiteSchema() {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Goshen International Business School (GIBS)",
+    "alternateName": "GIBS",
+    "url": CANONICAL_DOMAIN,
+    "description": "Goshen International Business School offers executive training programmes across Nigeria and four overseas hubs: Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC RC 1178333).",
+    "publisher": {
+      "@type": "EducationalOrganization",
+      "name": "Goshen International Business School Limited",
+      "legalName": "Goshen International Business School Limited",
+      "identifier": "RC 1178333",
+      "url": CANONICAL_DOMAIN
+    }
   });
 }
 
@@ -481,6 +500,7 @@ function getCourseSchema(p) {
     "provider": {
       "@type": "EducationalOrganization",
       "name": "Goshen International Business School",
+      "legalName": "Goshen International Business School Limited",
       "sameAs": CANONICAL_DOMAIN
     },
     "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`,
@@ -626,7 +646,7 @@ function generateLlmsTxt(inst, allProgrammes, contentLayer) {
 - Email: ${inst.emails.join(', ')}
 - Technical Partner: ${inst.technicalPartner}
 - Accreditations: ${inst.accreditations.join(', ')}
-- Overseas Executive Hubs: ${inst.overseasHubs.join(', ')}
+- Overseas Executive Hubs: ${inst.overseasHubs.filter((h) => /Kigali|Dubai|London|Houston/.test(h)).join(', ')}
 - Domestic Training Centres: Ilorin, Abuja, Lagos, Ibafo
 
 ## 2026 Training Programme Catalogue
@@ -1331,10 +1351,19 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
       homeHtml = injectModulePreload(homeHtml, ['sections/Programs.tsx']);
 
       const orgSchema = getOrgSchema(inst);
-      homeHtml = homeHtml.replace('<script type="application/ld+json"></script>', `<script type="application/ld+json">${orgSchema}</script>`);
-      if (!homeHtml.includes('<script type="application/ld+json"')) {
-        homeHtml = homeHtml.replace('</head>', `  <script type="application/ld+json">${orgSchema}</script>\n  </head>`);
+      const webSiteSchema = getWebSiteSchema();
+      const breadcrumbSchema = getBreadcrumbSchema([
+        { name: 'Home', url: CANONICAL_DOMAIN }
+      ]);
+      const combinedSchema = `[${orgSchema}, ${webSiteSchema}, ${breadcrumbSchema}]`;
+      if (homeHtml.includes('<script type="application/ld+json"></script>')) {
+        homeHtml = homeHtml.replace('<script type="application/ld+json"></script>', `<script type="application/ld+json">${combinedSchema}</script>`);
+      } else if (homeHtml.includes('<script type="application/ld+json">')) {
+        homeHtml = homeHtml.replace(/<script type="application\/ld\+json">[\s\S]*?<\/script>/is, `<script type="application/ld+json">${combinedSchema}</script>`);
+      } else {
+        homeHtml = homeHtml.replace('</head>', `  <script type="application/ld+json">${combinedSchema}</script>\n  </head>`);
       }
+
 
 
       fs.writeFileSync(MASTER_SHELL_PATH, homeHtml);

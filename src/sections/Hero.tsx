@@ -178,7 +178,7 @@ export default function Hero() {
             >
               <Link
                 to="/programmes"
-                className="btn btn-primary pl-7 pr-5 py-3.5 text-[15px] font-semibold text-ivory border border-white/20 transition-[transform,background-color,box-shadow] duration-200 ease-out hover:bg-forest-700 hover:border-white/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.985] focus-visible:outline-2 focus-visible:outline-gold-300 focus-visible:outline-offset-2"
+                className="btn btn-primary btn-lg text-ivory border border-white/20 transition-[transform,background-color,box-shadow] duration-200 ease-out hover:bg-forest-700 hover:border-white/30 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.985] focus-visible:outline-2 focus-visible:outline-gold-300 focus-visible:outline-offset-2"
               >
                 <span className="max-w-prose">Explore programmes</span>
                 <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:bg-white/25">

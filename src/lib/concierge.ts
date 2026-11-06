@@ -1,4 +1,4 @@
-import { PROGRAMMES, INSTITUTIONAL_DATA } from "./data";
+import { INSTITUTIONAL_DATA } from "./data";
 import { activePhoneNumbers, scrubRetiredNumbersInProse } from "./phones";
 
 /* ==========================================================================
@@ -7,6 +7,22 @@ import { activePhoneNumbers, scrubRetiredNumbersInProse } from "./phones";
    There is no external model, LLM, or network call: every reply is produced
    by deterministic rules in getConciergeReply against src/lib/data.ts.
    ========================================================================== */
+
+/*
+ * The full programme catalogue (_programmesCache, ~394 KB in data.ts) is lazy-loaded
+ * on first use so that the concierge module — and any page that mounts it —
+ * never pays for the catalogue in its initial JavaScript bundle. data.ts is
+ * imported dynamically inside loadProgrammes() and cached after first access.
+ */
+let _programmesCache: any[] = [];
+
+async function loadProgrammes() {
+  if (_programmesCache.length === 0) {
+    const m = await import("./data.ts");
+    _programmesCache = m.PROGRAMMES;
+  }
+  return _programmesCache;
+}
 
 /* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
    byte-locked (SHA-256 910ff4d7…), so the retired numbers it still lists are
@@ -45,7 +61,7 @@ export type ConciergeReply = {
 };
 
 export const programmeCard = (slug: string): ConciergeCard => {
-  const p = PROGRAMMES.find((x) => x.slug === slug);
+  const p = _programmesCache.find((x) => x.slug === slug);
   return {
     kind: "programme",
     slug,
@@ -54,7 +70,7 @@ export const programmeCard = (slug: string): ConciergeCard => {
   };
 };
 
-type Rule = { test: RegExp; reply: ConciergeReply; id?: string };
+type Rule = { test: RegExp; reply: ConciergeReply | (() => ConciergeReply); id?: string };
 type RankedProgramme = {
   slug: string;
   label: string;
@@ -151,7 +167,7 @@ function rankProgrammes(query: string, options: { destination?: string; topic?: 
 
   const targetDest = options.destination;
 
-  return PROGRAMMES.flatMap((programme) => {
+  return _programmesCache.flatMap((programme) => {
     if (targetDest) {
       if (targetDest === "Foreign" && programme.destination === "Local") return [];
       if (targetDest === "Local" && programme.destination !== "Local") return [];
@@ -264,48 +280,48 @@ function hasProgrammeIntent(query: string): boolean {
   return /\b(programmes?|courses?|training|workshops?|recommend(?:ation)?s?|suggest(?:ion)?s?|suitable|sector|cadre|department|quarter|months?|q[1-4])\b/i.test(query);
 }
 
-const LOCAL_PROGRAMMES_COUNT = PROGRAMMES.filter((p) => p.destination === "Local").length;
-const FOREIGN_PROGRAMMES_COUNT = PROGRAMMES.filter((p) => p.destination !== "Local").length;
-const KIGALI_COUNT = PROGRAMMES.filter((p) => p.destination === "Kigali").length;
-const DUBAI_COUNT = PROGRAMMES.filter((p) => p.destination === "Dubai").length;
-const LONDON_COUNT = PROGRAMMES.filter((p) => p.destination === "London").length;
-const HOUSTON_COUNT = PROGRAMMES.filter((p) => p.destination === "Houston").length;
+const LOCAL_PROGRAMMES_COUNT = () => _programmesCache.filter((p: any) => p.destination === "Local").length;
+const FOREIGN_PROGRAMMES_COUNT = () => _programmesCache.filter((p: any) => p.destination !== "Local").length;
+const KIGALI_COUNT = () => _programmesCache.filter((p: any) => p.destination === "Kigali").length;
+const DUBAI_COUNT = () => _programmesCache.filter((p: any) => p.destination === "Dubai").length;
+const LONDON_COUNT = () => _programmesCache.filter((p: any) => p.destination === "London").length;
+const HOUSTON_COUNT = () => _programmesCache.filter((p: any) => p.destination === "Houston").length;
 
 function foreignHubsReply(hub?: string): ConciergeReply {
   const cards: ConciergeCard[] = [
-    { kind: "link", label: "Explore All Foreign Programmes", to: "/executive-education", detail: `View all ${FOREIGN_PROGRAMMES_COUNT} overseas courses` },
+    { kind: "link", label: "Explore All Foreign Programmes", to: "/executive-education", detail: `View all ${FOREIGN_PROGRAMMES_COUNT()} overseas courses` },
   ];
 
   if (hub === "Kigali") {
     cards.push(
-      programmeCard(PROGRAMMES[113].slug),
-      programmeCard(PROGRAMMES[114].slug),
-      programmeCard(PROGRAMMES[115].slug)
+      programmeCard(_programmesCache[113].slug),
+      programmeCard(_programmesCache[114].slug),
+      programmeCard(_programmesCache[115].slug)
     );
   } else if (hub === "Dubai") {
     cards.push(
-      programmeCard(PROGRAMMES[121].slug),
-      programmeCard(PROGRAMMES[122].slug),
-      programmeCard(PROGRAMMES[124].slug)
+      programmeCard(_programmesCache[121].slug),
+      programmeCard(_programmesCache[122].slug),
+      programmeCard(_programmesCache[124].slug)
     );
   } else if (hub === "London") {
     cards.push(
-      programmeCard(PROGRAMMES[126].slug),
-      programmeCard(PROGRAMMES[127].slug),
-      programmeCard(PROGRAMMES[128].slug)
+      programmeCard(_programmesCache[126].slug),
+      programmeCard(_programmesCache[127].slug),
+      programmeCard(_programmesCache[128].slug)
     );
   } else if (hub === "Houston") {
     cards.push(
-      programmeCard(PROGRAMMES[130].slug),
-      programmeCard(PROGRAMMES[131].slug),
-      programmeCard(PROGRAMMES[132].slug)
+      programmeCard(_programmesCache[130].slug),
+      programmeCard(_programmesCache[131].slug),
+      programmeCard(_programmesCache[132].slug)
     );
   } else {
     cards.push(
-      programmeCard(PROGRAMMES[113].slug),
-      programmeCard(PROGRAMMES[121].slug),
-      programmeCard(PROGRAMMES[126].slug),
-      programmeCard(PROGRAMMES[130].slug)
+      programmeCard(_programmesCache[113].slug),
+      programmeCard(_programmesCache[121].slug),
+      programmeCard(_programmesCache[126].slug),
+      programmeCard(_programmesCache[130].slug)
     );
   }
 
@@ -314,7 +330,7 @@ function foreignHubsReply(hub?: string): ConciergeReply {
     : " Which international hub would you like to explore—Kigali, Dubai, London, or Houston?";
 
   return {
-    text: `GIBS conducts ${FOREIGN_PROGRAMMES_COUNT} Foreign Executive Training Programmes across 4 international hubs: Kigali (${KIGALI_COUNT} courses, $4,800 USD), Dubai (${DUBAI_COUNT} courses, $4,800 USD), London (${LONDON_COUNT} courses, £4,800 GBP), and Houston, Texas (${HOUSTON_COUNT} courses, $5,000–$9,500 USD).${hubDetail}`,
+    text: `GIBS conducts ${FOREIGN_PROGRAMMES_COUNT()} Foreign Executive Training Programmes across 4 international hubs: Kigali (${KIGALI_COUNT()} courses, $4,800 USD), Dubai (${DUBAI_COUNT()} courses, $4,800 USD), London (${LONDON_COUNT()} courses, £4,800 GBP), and Houston, Texas (${HOUSTON_COUNT()} courses, $5,000–$9,500 USD).${hubDetail}`,
     cards,
   };
 }
@@ -323,9 +339,9 @@ const RULES: Rule[] = [
   {
     test: /\b(hi|hello|hey|good (morning|afternoon|evening)|greetings)\b/i,
     reply: {
-      text: `Welcome to Goshen International Business School (GIBS). We offer ${LOCAL_PROGRAMMES_COUNT} Local Open Training Programmes and ${FOREIGN_PROGRAMMES_COUNT} Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. What area of professional development or institutional information can I guide you with today?`,
+      text: `Welcome to Goshen International Business School (GIBS). We offer ${LOCAL_PROGRAMMES_COUNT()} Local Open Training Programmes and ${FOREIGN_PROGRAMMES_COUNT()} Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. What area of professional development or institutional information can I guide you with today?`,
       cards: [
-        { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes", detail: `${LOCAL_PROGRAMMES_COUNT} Local & ${FOREIGN_PROGRAMMES_COUNT} Foreign Courses` },
+        { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes", detail: `${LOCAL_PROGRAMMES_COUNT()} Local & ${FOREIGN_PROGRAMMES_COUNT()} Foreign Courses` },
         { kind: "link", label: "Foreign Training Hubs", to: "/executive-education", detail: "Kigali, Dubai, London & Houston" },
         { kind: "link", label: "Contact Training Desk", to: "/contact", detail: "Direct email & phone lines" },
       ],
@@ -334,7 +350,7 @@ const RULES: Rule[] = [
   {
     id: "foreign-hubs",
     test: /\b(foreign|overseas|international|kigali|dubai|london|houston|rwanda|uae|uk|usa|texas)\b/i,
-    reply: foreignHubsReply(),
+    reply: () => foreignHubsReply(),
   },
   {
     test: /\b(in-plant|custom|customized|tailor|organization|organisation|company|corporate|in house|in-house)\b/i,
@@ -350,7 +366,7 @@ const RULES: Rule[] = [
     id: "enrolment",
     test: /\b(subscribe|subscription|nominate|nomination|register|enrol|enrolment|requirement|fee|fees|cost|price|tuition|apply|admission|scholarship)\b/i,
     reply: {
-      text: `GIBS offers ${LOCAL_PROGRAMMES_COUNT} Local Open and ${FOREIGN_PROGRAMMES_COUNT} Foreign Executive Programmes across its 2026 training calendar. Organisations and individuals enquire by email, phone, or in person; GIBS processes enquiries and provides formal proforma invoices and programme guidance. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP. Would you like enquiry guidance or fee details for a specific programme?`,
+      text: `GIBS offers ${LOCAL_PROGRAMMES_COUNT()} Local Open and ${FOREIGN_PROGRAMMES_COUNT()} Foreign Executive Programmes across its 2026 training calendar. Organisations and individuals enquire by email, phone, or in person; GIBS processes enquiries and provides formal proforma invoices and programme guidance. Local programme fees range from ₦300,000 to ₦800,000 NGN; foreign programmes range from $4,800–$9,500 USD and £4,800 GBP. Would you like enquiry guidance or fee details for a specific programme?`,
       cards: [
         { kind: "link", label: "Programme Enquiry Guidelines", to: "/admissions" },
         { kind: "link", label: "Make an Enquiry", to: "/contact?type=Local+Open+Training+Registration" },
@@ -400,14 +416,16 @@ const RULES: Rule[] = [
   },
 ];
 
-const FALLBACK: ConciergeReply = {
-  text: `I can help you explore our ${LOCAL_PROGRAMMES_COUNT} Local Open Training Programmes, ${FOREIGN_PROGRAMMES_COUNT} Foreign Executive Programmes, customized in-plant workshops, or campus venues across Ilorin, Abuja, and Ibafo.\n\nCould you clarify the topic, destination, or question you would like assistance with?`,
-  cards: [
-    { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes", detail: `${LOCAL_PROGRAMMES_COUNT} Local & ${FOREIGN_PROGRAMMES_COUNT} Foreign Courses` },
-    { kind: "link", label: "Foreign Training Hubs", to: "/executive-education", detail: "Kigali, Dubai, London & Houston" },
-    { kind: "link", label: "Contact Training Desk", to: "/contact", detail: "Direct email & phone lines" },
-  ],
-};
+function fallbackReply(): ConciergeReply {
+  return {
+    text: `I can help you explore our ${LOCAL_PROGRAMMES_COUNT()} Local Open Training Programmes, ${FOREIGN_PROGRAMMES_COUNT()} Foreign Executive Programmes, customized in-plant workshops, or campus venues across Ilorin, Abuja, and Ibafo.\n\nCould you clarify the topic, destination, or question you would like assistance with?`,
+    cards: [
+      { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes", detail: `${LOCAL_PROGRAMMES_COUNT()} Local & ${FOREIGN_PROGRAMMES_COUNT()} Foreign Courses` },
+      { kind: "link", label: "Foreign Training Hubs", to: "/executive-education", detail: "Kigali, Dubai, London & Houston" },
+      { kind: "link", label: "Contact Training Desk", to: "/contact", detail: "Direct email & phone lines" },
+    ],
+  };
+}
 
 /**
  * Defence in depth: every reply that leaves the concierge passes through the
@@ -472,16 +490,18 @@ function extractContextFromHistory(history: ConversationTurn[]): ConciergeContex
   };
 }
 
-export function getConciergeReply(
+export async function getConciergeReply(
   input: string,
   historyOrContext?: ConversationTurn[] | ConciergeContext
-): ConciergeReply {
+): Promise<ConciergeReply> {
   const q = input.trim();
   if (!q) {
     return {
       text: "Tell me what training or institutional information you are looking for, and I will guide you.",
     };
   }
+
+  await loadProgrammes();
 
   const context: ConciergeContext = Array.isArray(historyOrContext)
     ? extractContextFromHistory(historyOrContext)
@@ -512,9 +532,9 @@ export function getConciergeReply(
       });
     }
     return publishable({
-      text: `Welcome to Goshen International Business School (GIBS). We offer ${LOCAL_PROGRAMMES_COUNT} Local Open Training Programmes and ${FOREIGN_PROGRAMMES_COUNT} Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. \n\nI can help you find a specific programme, explain our foreign training hubs, or guide you through the enquiry process. What would you like to explore today?`,
+      text: `Welcome to Goshen International Business School (GIBS). We offer ${LOCAL_PROGRAMMES_COUNT()} Local Open Training Programmes and ${FOREIGN_PROGRAMMES_COUNT()} Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. \n\nI can help you find a specific programme, explain our foreign training hubs, or guide you through the enquiry process. What would you like to explore today?`,
       cards: [
-        { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes", detail: `${LOCAL_PROGRAMMES_COUNT} Local & ${FOREIGN_PROGRAMMES_COUNT} Foreign Courses` },
+        { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes", detail: `${LOCAL_PROGRAMMES_COUNT()} Local & ${FOREIGN_PROGRAMMES_COUNT()} Foreign Courses` },
         { kind: "link", label: "Foreign Training Hub hubs", to: "/executive-education", detail: "Kigali, Dubai, London & Houston" },
         { kind: "link", label: "Contact Training Desk", to: "/contact", detail: "Direct email & phone lines" },
       ],
@@ -536,7 +556,7 @@ export function getConciergeReply(
   // 3. Institutional Intro ("Tell me more about GIBS")
   if (/\b(tell me more about gibs|who is gibs|what is gibs|about gibs)\b/i.test(q)) {
     return publishable({
-      text: `Goshen International Business School (GIBS) is a professional development institution dedicated to national manpower development, management excellence, and professional capacity-building.\n\nWe specialize in executive training across various sectors, offering ${LOCAL_PROGRAMMES_COUNT} Local Open programmes in Nigeria and ${FOREIGN_PROGRAMMES_COUNT} Foreign Executive programmes across our hubs in Kigali, Dubai, London, and Houston.\n\nOur goal is to equip professionals and organizations with the leadership and management skills necessary for institutional growth. You can explore our full calendar or make a direct enquiry for further guidance.`,
+      text: `Goshen International Business School (GIBS) is a professional development institution dedicated to national manpower development, management excellence, and professional capacity-building.\n\nWe specialize in executive training across various sectors, offering ${LOCAL_PROGRAMMES_COUNT()} Local Open programmes in Nigeria and ${FOREIGN_PROGRAMMES_COUNT()} Foreign Executive programmes across our hubs in Kigali, Dubai, London, and Houston.\n\nOur goal is to equip professionals and organizations with the leadership and management skills necessary for institutional growth. You can explore our full calendar or make a direct enquiry for further guidance.`,
       cards: [
         { kind: "link", label: "About GIBS", to: "/about" },
         { kind: "link", label: "Browse 2026 Training Calendar", to: "/programmes" },
@@ -561,7 +581,7 @@ export function getConciergeReply(
   // Follow-up: "Tell me more" / "Explain that"
   if (/^(tell me more|explain that|can you explain that|more details)\b/i.test(norm)) {
     if (context.lastProgrammeSlug) {
-      const p = PROGRAMMES.find((x) => x.slug === context.lastProgrammeSlug);
+      const p = _programmesCache.find((x) => x.slug === context.lastProgrammeSlug);
       if (p) {
         return publishable({
           text: `The ${p.title} programme focuses on ${p.summary}. It is held in ${p.destination} and is designed for ${p.targetAudience}. Would you like to see the full dates or make an enquiry for this specific course?`,
@@ -609,7 +629,7 @@ export function getConciergeReply(
   // Follow-up: "How much does it cost?" / "Price?"
   if (/^(how much does it cost|what is the cost|price|fee|fees)\b/i.test(norm)) {
     if (context.lastProgrammeSlug) {
-      const p = PROGRAMMES.find((x) => x.slug === context.lastProgrammeSlug);
+      const p = _programmesCache.find((x) => x.slug === context.lastProgrammeSlug);
       if (p) {
         const feeStr = `${p.currency === "USD" ? "$" : p.currency === "GBP" ? "£" : "₦"}${p.fee.toLocaleString()} ${p.currency}`;
         return publishable({
@@ -623,13 +643,9 @@ export function getConciergeReply(
     }
     // Fallback to general fee info
     const enrolmentRule = RULES.find((rule) => rule.id === "enrolment");
-    if (enrolmentRule) return publishable(enrolmentRule.reply);
-  }
-
-  // Follow-up: "Where is it held?" / "Location?"
-  if (/^(where is it held|location|where is it)\b/i.test(norm)) {
+    if (enrolmentRule) return publishable(resolveReply(enrolmentRule.reply));
     if (context.lastProgrammeSlug) {
-      const p = PROGRAMMES.find((x) => x.slug === context.lastProgrammeSlug);
+      const p = _programmesCache.find((x) => x.slug === context.lastProgrammeSlug);
       if (p) {
         return publishable({
           text: `${p.title} is held in ${p.destination}. ${p.destination === "Local" ? "Local programmes are delivered across our Ilorin, Abuja, and Ibafo centers." : "Foreign programmes are delivered at our specialized hub in " + p.destination + "."}`,
@@ -641,16 +657,17 @@ export function getConciergeReply(
       }
     }
     const campusRule = RULES.find((rule) => rule.id === "campus-locations");
-    if (campusRule) return publishable(campusRule.reply);
+    if (campusRule) return publishable(resolveReply(campusRule.reply));
   }
 
   // Follow-up: "How do I apply?" / "How to register?"
   if (/^(how do i apply|how to register|application process|how to enrol)\b/i.test(norm)) {
     const enrolmentRule = RULES.find((rule) => rule.id === "enrolment");
     if (enrolmentRule) {
+      const enrolment = resolveReply(enrolmentRule.reply);
       return publishable({
-        text: `${enrolmentRule.reply.text} To begin the process, please use the contact form to send a formal enquiry.`,
-        cards: enrolmentRule.reply.cards,
+        text: `${enrolment.text} To begin the process, please use the contact form to send a formal enquiry.`,
+        cards: enrolment.cards,
       });
     }
   }
@@ -677,7 +694,7 @@ export function getConciergeReply(
     if (context.lastTopic) {
       const hubMatches = rankProgrammes(context.lastTopic, { destination: hub });
       if (hubMatches.length > 0) {
-        const topProg = PROGRAMMES.find((p) => p.slug === hubMatches[0].slug);
+        const topProg = _programmesCache.find((p) => p.slug === hubMatches[0].slug);
         const feeStr = topProg
           ? `${topProg.currency === "USD" ? "$" : topProg.currency === "GBP" ? "£" : "₦"}${topProg.fee.toLocaleString()} ${topProg.currency}`
           : "Approved Fee";
@@ -704,7 +721,7 @@ export function getConciergeReply(
 
   if (localHubIntent) {
     const localHubRule = RULES.find((rule) => rule.id === "campus-locations");
-    if (localHubRule) return publishable(localHubRule.reply);
+    if (localHubRule) return publishable(resolveReply(localHubRule.reply));
   }
   if (hasHubOverview || (destinationOnly && (isForeignHub || requestedHub === "Foreign"))) {
     return publishable(foreignHubsReply(isForeignHub ? requestedHub : undefined));
@@ -724,17 +741,21 @@ export function getConciergeReply(
     campusLocationRule.test.test(q) &&
     /\b(where\s+is|where\s+are|where\s+can\s+i|how\s+do\s+i\s+get(?:\s+to)?|how\s+to\s+get(?:\s+to)?|how\s+do\s+i\s+visit)\b/i.test(q)
   ) {
-    return publishable(campusLocationRule.reply);
+    return publishable(resolveReply(campusLocationRule.reply));
   }
 
   const matches = rankProgrammes(q);
   const programmeIntent = hasProgrammeIntent(q);
 
+function resolveReply(reply: ConciergeReply | (() => ConciergeReply)): ConciergeReply {
+  return typeof reply === "function" ? reply() : reply;
+}
+
   // Prioritize institutional rules over programme matches only if they are high-confidence matches.
   // If we have strong programme matches, we should return them first to support discovery.
   if (matches.length === 0) {
     for (const rule of RULES) {
-      if (rule.test.test(q)) return publishable(rule.reply);
+      if (rule.test.test(q)) return publishable(resolveReply(rule.reply));
     }
   }
 
@@ -743,7 +764,7 @@ export function getConciergeReply(
   // the user's primary intent is the fee.
   if (/\b(fee|fees|cost|price|tuition)\b/i.test(q)) {
     const enrolmentRule = RULES.find((rule) => rule.id === "enrolment");
-    if (enrolmentRule) return publishable(enrolmentRule.reply);
+    if (enrolmentRule) return publishable(resolveReply(enrolmentRule.reply));
   }
 
   if (matches.length && !destinationOnly && !hasHubOverview && (programmeIntent || matches.some((match) => match.topicMatch))) {
@@ -752,14 +773,14 @@ export function getConciergeReply(
   if (programmeIntent && !destinationOnly && !hasHubOverview) {
     const enrolmentRule = RULES.find((rule) => rule.id === "enrolment");
     if (enrolmentRule && enrolmentRule.test.test(q) && matches.length === 0) {
-      return publishable(enrolmentRule.reply);
+      return publishable(resolveReply(enrolmentRule.reply));
     }
     return publishable(searchWords.length ? noProgrammeMatch() : clarifyProgrammeQuery());
   }
 
   for (const rule of RULES) {
-    if (rule.test.test(q)) return publishable(rule.reply);
+    if (rule.test.test(q)) return publishable(resolveReply(rule.reply));
   }
   if (matches.length) return publishable(programmeReply(matches));
-  return publishable(FALLBACK);
+  return publishable(fallbackReply());
 }

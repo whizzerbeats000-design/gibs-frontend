@@ -6,7 +6,6 @@ import { Header, MobileNav, GlobalFooter, SkipLink, ErrorBoundary } from "./comp
 import { SearchModal } from "./components/Search";
 
 import Home from "./pages/Home";
-import About from "./pages/About";
 import Gallery from "./pages/Gallery";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
@@ -24,6 +23,7 @@ const ExecutiveEducation = lazy(() => import("./pages/ExecutiveEducation"));
 const Contact = lazy(() => import("./pages/Contact"));
 const Admissions = lazy(() => import("./pages/Admissions"));
 const ConciergePage = lazy(() => import("./pages/ConciergePage"));
+const About = lazy(() => import("./pages/About"));
 
 /**
  * Resolves a path to a page.

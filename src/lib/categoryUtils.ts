@@ -1,4 +1,5 @@
-import { PROGRAM_CATEGORIES, type ProgrammeCategory } from "./data.ts";
+import { type ProgrammeCategory } from "../types/data.ts";
+import { PROGRAM_CATEGORIES } from "./categories.ts";
 
 /**
  * Deterministic category slugification shared across build generation

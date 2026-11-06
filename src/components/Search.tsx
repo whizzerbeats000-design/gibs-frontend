@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "../lib/router";
-import { PROGRAMMES, STATIC_PAGES } from "../lib/data";
 import { scrubRetiredNumbersInProse } from "../lib/phones";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { EASE } from "./motion";
@@ -15,34 +14,44 @@ type SearchItem = {
   keywords: string;
 };
 
-const INDEX: SearchItem[] = [
-  ...PROGRAMMES.map((p) => ({
-    title: `${p.code} · ${p.title}`,
-    blurb: scrubRetiredNumbersInProse(`${p.fees} · ${p.schedule}`),
-    to: `/programmes/${p.slug}`,
-    group: "Programmes" as const,
-    keywords: `${p.code} ${p.title} ${p.category} ${p.destination} ${p.targetAudience} ${p.schedule} ${p.fees} ${p.summary} ${p.duration}`,
-  })),
-  ...STATIC_PAGES.filter(
-    (p) => !["/faculty", "/research-insights", "/events", "/campus"].includes(p.to)
-  ).map((p) => {
-    /* STATIC_PAGES blurbs in data.ts contain "nomination" and "subscribe"
-       terminology. Transform at the render layer — data.ts is byte-locked. */
-    let blurb = p.blurb;
-    if (p.to === "/admissions") {
-      blurb = "Browse the 2026 calendar and make an enquiry for any programme.";
-    } else if (p.to === "/concierge") {
-      blurb = "Ask about programmes, locations and how to enquire.";
-    }
-    return {
-      title: p.to === "/admissions" ? "Programme Enquiries" : p.title,
-      blurb,
-      to: p.to,
-      group: "Pages" as const,
-      keywords: `${p.to === "/admissions" ? "Programme Enquiries" : p.title} ${blurb}`,
-    };
-  }),
-];
+// The search index is built lazily on first open so the 394 KB programme
+// catalogue (data.ts) is not included in the initial JavaScript bundle.
+// Once built it is cached in this module-level variable for subsequent opens.
+let cachedIndex: SearchItem[] | null = null;
+
+async function loadIndex(): Promise<SearchItem[]> {
+  if (cachedIndex) return cachedIndex;
+  const { PROGRAMMES, STATIC_PAGES } = await import("../lib/data");
+  cachedIndex = [
+    ...PROGRAMMES.map((p) => ({
+      title: `${p.code} · ${p.title}`,
+      blurb: scrubRetiredNumbersInProse(`${p.fees} · ${p.schedule}`),
+      to: `/programmes/${p.slug}`,
+      group: "Programmes" as const,
+      keywords: `${p.code} ${p.title} ${p.category} ${p.destination} ${p.targetAudience} ${p.schedule} ${p.fees} ${p.summary} ${p.duration}`,
+    })),
+    ...STATIC_PAGES.filter(
+      (p) => !["/faculty", "/research-insights", "/events", "/campus"].includes(p.to)
+    ).map((p) => {
+      /* STATIC_PAGES blurbs in data.ts contain "nomination" and "subscribe"
+         terminology. Transform at the render layer — data.ts is byte-locked. */
+      let blurb = p.blurb;
+      if (p.to === "/admissions") {
+        blurb = "Browse the 2026 calendar and make an enquiry for any programme.";
+      } else if (p.to === "/concierge") {
+        blurb = "Ask about programmes, locations and how to enquire.";
+      }
+      return {
+        title: p.to === "/admissions" ? "Programme Enquiries" : p.title,
+        blurb,
+        to: p.to,
+        group: "Pages" as const,
+        keywords: `${p.to === "/admissions" ? "Programme Enquiries" : p.title} ${blurb}`,
+      };
+    }),
+  ];
+  return cachedIndex;
+}
 
 const GROUP_ORDER: SearchItem["group"][] = ["Programmes", "Pages"];
 
@@ -65,6 +74,7 @@ const EXIT_MS = 350;
 export function SearchModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState("");
   const [rendered, setRendered] = useState(open);
+  const [index, setIndex] = useState<SearchItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   // Scroll lock and focus trap follow `rendered`, not `open`, so they stay
   // engaged for the whole exit animation and are released only once the
@@ -73,6 +83,14 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
   useBodyScrollLock(rendered);
   useEscape(open, onClose);
   const trapRef = useFocusTrap<HTMLDivElement>(rendered);
+
+  // Load the search index lazily on first open — the 394 KB catalogue
+  // should not be in the initial bundle, only fetched when needed.
+  useEffect(() => {
+    if (open && index.length === 0) {
+      loadIndex().then(setIndex);
+    }
+  }, [open, index.length]);
 
   // Unmount on a timer rather than relying on the exit animation to signal
   // completion. AnimatePresence waits for that signal, and when the animation
@@ -99,13 +117,13 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (q.length < 2) return [];
-    return INDEX.filter(
+    return index.filter(
       (item) =>
         item.title.toLowerCase().includes(q) ||
         item.blurb.toLowerCase().includes(q) ||
         item.keywords.toLowerCase().includes(q)
     ).slice(0, 24);
-  }, [query]);
+  }, [query, index]);
 
   const grouped = useMemo(() => {
     return GROUP_ORDER.map((group) => ({
@@ -224,14 +242,14 @@ export function SearchModal({ open, onClose }: { open: boolean; onClose: () => v
                 No results for “{trimmed}”
               </p>
               <p className="mx-auto mt-2 max-w-sm type-body text-muted">
-                Nothing in the site index matches. Try Accounting, Procurement, Kigali or Dubai, or ask the Programme Assistant.
+                Nothing in the site index matches. Try Accounting, Procurement, Kigali or Dubai, or ask GIBS AI.
               </p>
               <Link
                 to="/concierge"
                 onClick={onClose}
                 className="btn btn-primary btn-md mt-6"
               >
-                Ask the Programme Assistant
+                Ask GIBS AI
                 <ArrowUpRight className="h-3.5 w-3.5" />
               </Link>
             </div>

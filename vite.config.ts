@@ -18,6 +18,11 @@ export default defineConfig({
         // main entry no longer carries react/react-dom/framer-motion inline.
         manualChunks: {
           vendor: ["react", "react-dom", "framer-motion"],
+          // The 394 KB programme catalogue (data.ts) is only needed by
+          // lazily-loaded routes and the on-demand concierge/search. Keeping it
+          // out of the main entry chunk reduces the initial payload for every
+          // visitor, including homepage hits that never open the catalogue.
+          "catalogue-data": ["src/lib/data.ts"],
         },
       },
     },

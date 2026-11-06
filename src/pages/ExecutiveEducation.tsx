@@ -134,11 +134,12 @@ export default function ExecutiveEducation() {
                   to="/contact?type=Customized+In-Plant+Workshop+Request"
                   variant="gold"
                   size="lg"
+                  className="w-full sm:w-auto"
                 >
                   Request In-Plant Proposal
                   <ArrowUpRight className="h-4 w-4" />
                 </BtnLink>
-                <BtnLink to="/contact" variant="outline-light" size="lg">
+                <BtnLink to="/contact" variant="outline-light" size="lg" className="w-full sm:w-auto">
                   Speak with Registry
                 </BtnLink>
               </div>
@@ -215,18 +216,19 @@ export default function ExecutiveEducation() {
       <ClosingQuiet
         eyebrow="Overseas Training"
         title="Training outside Nigeria"
-        body="Our international desk can issue visa support letters, confirm itineraries, and process enrolments for the Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, Netherlands and Ghana hubs."
+        body="Our international desk can issue visa support letters, confirm itineraries, and process enrolments for the Kigali, Houston, London, Dubai and other executive training hubs."
         actions={
           <>
             <BtnLink
               to="/contact?type=Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)"
               variant="gold"
               size="lg"
+              className="w-full sm:w-auto"
             >
               Make an Enquiry
             </BtnLink>
-            <BtnLink to="/concierge" variant="outline-ink" size="lg">
-              Ask the Programme Assistant
+            <BtnLink to="/concierge" variant="outline-ink" size="lg" className="w-full sm:w-auto">
+              Ask GIBS AI
             </BtnLink>
           </>
         }

@@ -8,7 +8,7 @@ import {
 import { motion } from "framer-motion";
 import { Link, navigate, useRoute } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
-import { INSTITUTIONAL_DATA } from "../lib/data";
+import { CHROME_PHONE_NUMBERS } from "../lib/institutionalStatic";
 import { activePhoneNumbers } from "../lib/phones";
 import { HexMark } from "./Logo";
 import { MenuIcon, CloseIcon, SearchIcon, ChatIcon, ArrowUpRight } from "./icons";
@@ -16,11 +16,12 @@ import { EASE } from "./motion";
 import { cn } from "../utils/cn";
 
 /* The footer publishes the same phone list as the Contact page, derived
-   through the shared policy in src/lib/phones.ts. It used to be a
-   hand-typed literal, which is exactly the kind of duplicate list that
-   drifts out of step with the rest of the site. */
+   through the shared policy in src/lib/phones.ts. The raw list lives in
+   src/lib/institutionalStatic.ts (not data.ts) so this always-rendered
+   chrome module does not pull the 394 KB programme catalogue into the
+   initial bundle. */
 const FOOTER_PHONE_LINES: string[] = activePhoneNumbers(
-  INSTITUTIONAL_DATA.phoneNumbers
+  CHROME_PHONE_NUMBERS as string[]
 );
 
 /* ---------------- Navigation simplification ----------------
@@ -148,7 +149,7 @@ export function Header({
           <button
             type="button"
             onClick={onOpenConcierge}
-            aria-label="Open the Programme Assistant"
+            aria-label="Open GIBS AI"
             className={cn(
               "hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
               path === "/programmes" ? "lg:inline-flex" : "xl:inline-flex"
@@ -157,12 +158,12 @@ export function Header({
             <span className="relative flex h-2 w-2">
               <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-500" />
             </span>
-            GIBS Programme Assistant
+            GIBS AI
           </button>
           <Link to="/admissions" className="btn btn-primary btn-md hidden lg:inline-flex">
             Make an Enquiry
           </Link>
-          <Link to="/admissions" className="btn btn-primary btn-sm lg:hidden">
+          <Link to="/admissions" className="btn btn-primary btn-sm hidden sm:inline-flex lg:hidden">
             Make an Enquiry
           </Link>
           <button
@@ -317,7 +318,7 @@ export function MobileNav({
                     className="inline-flex items-center gap-2.5 rounded-full border border-ink/20 px-5 py-3 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-forest-600 hover:text-ivory"
                   >
                     <ChatIcon className="h-4 w-4" />
-                    GIBS Programme Assistant
+                    GIBS AI
                   </button>
                 </div>
               </div>
@@ -387,7 +388,7 @@ const FOOTER_COLUMNS = [
     title: "Connect",
     links: [
       { label: "Contact Registry", to: "/contact" },
-      { label: "GIBS Programme Assistant", to: "/concierge" },
+      { label: "GIBS AI", to: "/concierge" },
       { label: "Privacy Policy", to: "/privacy-policy" },
     ],
   },
@@ -540,7 +541,7 @@ export function GlobalFooter() {
         </div>
         <div className="mt-6 flex flex-col gap-2 border-t rule-light pt-6 text-[11px] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">
           <p>Technical Academic Partner: Pacific Institute of Technology, Georgia, USA</p>
-          <p>Overseas Hubs: Kigali · Dubai · London · Houston · Miami · Cape Town · Durban · Ghana</p>
+          <p>Overseas Hubs: Kigali · Dubai · London · Houston</p>
         </div>
       </div>
     </footer>

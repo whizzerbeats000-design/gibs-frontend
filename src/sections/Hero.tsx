@@ -155,7 +155,7 @@ export default function Hero() {
                   className="hero-title-gold"
                   aria-hidden="true"
                 >
-                  GIBS 2026 Executive Training Programmes • Nigeria &amp; International Hubs
+                  Business School
                 </motion.span>
               </span>
             </h1>

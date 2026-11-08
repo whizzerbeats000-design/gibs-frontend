@@ -634,7 +634,7 @@ function getLocationSchema(loc) {
       "addressRegion": loc.state,
       "addressCountry": "NG"
     },
-    "telephone": "+2348160010401",
+    "telephone": loc.telephone || "+2348160010401",
     "parentOrganization": {
       "@type": "EducationalOrganization",
       "@id": `${CANONICAL_DOMAIN}/#organization`,
@@ -1454,7 +1454,8 @@ routes.push(...programmeRoutes);
         desc: 'Official training headquarters of Goshen International Business School (GIBS) in Ilorin, Kwara State. Features 12 lecture rooms, 100-seat hall, and lodge.',
         address: 'No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi',
         city: 'Ilorin',
-        state: 'Kwara State'
+        state: 'Kwara State',
+        telephone: '+2348160010401'
       },
       {
         path: '/locations/abuja',
@@ -1465,7 +1466,8 @@ routes.push(...programmeRoutes);
         desc: 'Executive training centre for Goshen International Business School (GIBS) in Lugbe, Airport Road, Abuja. Features 2 conference halls and 7 lecture rooms.',
         address: 'Plot 194, Lugbe 1 Layout, Near Okay Centre, Direct Behind Rainoil filling station, FHA Lugbe, Airport Road',
         city: 'Abuja',
-        state: 'Federal Capital Territory'
+        state: 'Federal Capital Territory',
+        telephone: '+2348160010401'
       },
       {
         path: '/locations/ibafo',
@@ -1476,7 +1478,8 @@ routes.push(...programmeRoutes);
         desc: 'GIBS executive training centre at KM 36 Lagos-Ibadan Expressway, Ibafo, Ogun State. Features executive conference hall, lecture halls, and syndicate rooms.',
         address: 'KM 36, Lagos - Ibadan Express Road, Adjacent Dap-Mude Hotel, Behind World Oil Station',
         city: 'Ibafo',
-        state: 'Ogun State'
+        state: 'Ogun State',
+        telephone: '+2348160010401'
       }
     ];
 

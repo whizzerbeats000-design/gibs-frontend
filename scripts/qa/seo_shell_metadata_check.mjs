@@ -92,12 +92,12 @@ const programme = readShell("programmes/course-1-public-sector-accounting-proced
 
 assert.equal(
   metaValue(home, "og:title", "property"),
-  "GIBS 2026 Executive Training Programmes \u2014 Nigeria & International Hubs",
+  "GIBS 2026 Executive Training — Goshen International Business School",
   `homepage: og:title`
 );
 assert.equal(
   metaValue(home, "twitter:title"),
-  "GIBS 2026 Executive Training Programmes \u2014 Nigeria & International Hubs",
+  "GIBS 2026 Executive Training — Goshen International Business School",
   `homepage: twitter:title`
 );
 assert.equal(
@@ -114,18 +114,18 @@ assert.equal(canonicalValue(home), "https://gibs.com.ng/");
 assert.equal(metaValue(home, "og:url", "property"), canonicalValue(home));
 assert.equal(metaValue(home, "twitter:card"), "summary_large_image");
 checkSocialPair(contact, {
-  title: "Contact GIBS | Training Desk & Enquiries",
-  description: "Get in touch with GIBS for programme registration and campus visits.",
+  title: "Contact Us | Goshen International Business School",
+  description: "Get in touch with GIBS for programme registration, in-plant training, and campus visits.",
   canonical: "https://gibs.com.ng/contact",
   shell: "contact",
 });
 checkSocialPair(category, {
-  title: "Accounting and Financial Management Training Programmes | GIBS",
-  description: "Explore our executive training programmes in Accounting and Financial Management at GIBS.",
+  title: "Accounting and Financial Management Training Programmes | Goshen International Business School",
+  description: "Accounting and Financial Management programmes address public-sector financial controls, International Public Sector Accounting Standards (IPSAS), IFRS…",
   canonical: "https://gibs.com.ng/programmes/category/accounting-and-financial-management",
   shell: "category",
 });
-assert.equal(titleValue(programme), "Public Sector Accounting Procedure and Standards | GIBS");
+assert.equal(titleValue(programme), "Public Sector Accounting Procedure and Standards | Goshen International Business School");
 assert.equal(metaValue(programme, "og:title", "property"), titleValue(programme));
 assert.equal(metaValue(programme, "twitter:title"), titleValue(programme));
 assert.ok(metaValue(programme, "description"), "programme description must be present");
@@ -176,7 +176,7 @@ for (const shell of shells) {
 }
 
 
-assert.equal((readFileSync(join(distDir, "sitemap.xml"), "utf8").match(/<url>/g) ?? []).length, 159);
+assert.equal((readFileSync(join(distDir, "sitemap.xml"), "utf8").match(/<url>/g) ?? []).length, 162);
 const sitemap = readFileSync(join(distDir, "sitemap.xml"), "utf8");
 assert.equal(
   (sitemap.match(/<loc>https:\/\/gibs\.com\.ng\/privacy-policy<\/loc>/g) ?? []).length,
@@ -193,7 +193,7 @@ checkStaticShell("admissions", {
   intro: "Discover a programme, make an enquiry, and GIBS handles the rest. Whether you are an individual professional or an organisation enquiring about staff training, our team guides you through the process.",
 });
 checkStaticShell("gallery", {
-  title: "Gallery — GIBS",
+  title: "Campus & Facility Gallery — GIBS",
   description: "Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.",
   canonical: "https://gibs.com.ng/gallery",
   h1: "The GIBS campus",
@@ -213,6 +213,30 @@ checkStaticShell("privacy-policy", {
   canonical: "https://gibs.com.ng/privacy-policy",
   h1: "Privacy Policy",
   intro: "Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.",
+});
+
+checkStaticShell("locations/ilorin", {
+  title: "Ilorin Training Headquarters | Goshen International Business School",
+  description: "Official training headquarters of Goshen International Business School (GIBS) in Ilorin, Kwara State. Features 12 lecture rooms, 100-seat hall, and lodge.",
+  canonical: "https://gibs.com.ng/locations/ilorin",
+  h1: "Ilorin Training Headquarters | Goshen International Business School",
+  intro: "The primary administrative and executive training headquarters of Goshen International Business School (GIBS), located in Upper Gaa-Akanbi, Ilorin, Kwara State. Features 12 modern lecture rooms, a 100-seat multi-purpose hall, executive guest accommodation, and sports grounds.",
+});
+
+checkStaticShell("locations/abuja", {
+  title: "Abuja Executive Training Centre | Goshen International Business School",
+  description: "Executive training centre for Goshen International Business School (GIBS) in Lugbe, Airport Road, Abuja. Features 2 conference halls and 7 lecture rooms.",
+  canonical: "https://gibs.com.ng/locations/abuja",
+  h1: "Abuja Executive Training Centre | Goshen International Business School",
+  intro: "Purpose-built executive training facility in FHA Lugbe, Airport Road, Abuja. Strategically positioned for Federal Ministries, Departments, Agencies (MDAs), and corporate organisations across the Federal Capital Territory.",
+});
+
+checkStaticShell("locations/ibafo", {
+  title: "Ibafo Training Centre | Goshen International Business School",
+  description: "GIBS executive training centre at KM 36 Lagos-Ibadan Expressway, Ibafo, Ogun State. Features executive conference hall, lecture halls, and syndicate rooms.",
+  canonical: "https://gibs.com.ng/locations/ibafo",
+  h1: "Ibafo Training Centre | Goshen International Business School",
+  intro: "Executive training centre situated at KM 36 on the Lagos-Ibadan Expressway, serving corporate and public-sector organisations across Lagos, Ogun, and the South-West commercial corridor with dedicated seminar and syndicate rooms.",
 });
 
 // Every generated static shell is user-visible to non-JavaScript clients and

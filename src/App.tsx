@@ -24,6 +24,7 @@ const Contact = lazy(() => import("./pages/Contact"));
 const Admissions = lazy(() => import("./pages/Admissions"));
 const ConciergePage = lazy(() => import("./pages/ConciergePage"));
 const About = lazy(() => import("./pages/About"));
+const LocationDetail = lazy(() => import("./pages/LocationDetail"));
 
 /**
  * Resolves a path to a page.
@@ -47,6 +48,11 @@ function RouteView({ path }: { path: string }) {
 
   const programme = matchRoute("/programmes/:slug", path);
   if (programme?.slug) return <ProgrammeDetail slug={programme.slug} />;
+
+  const location = matchRoute("/locations/:slug", path);
+  if (location?.slug && (location.slug === "ilorin" || location.slug === "abuja" || location.slug === "ibafo")) {
+    return <LocationDetail locationId={location.slug as "ilorin" | "abuja" | "ibafo"} />;
+  }
 
   switch (path) {
     case "/":

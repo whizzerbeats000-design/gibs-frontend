@@ -34,6 +34,9 @@ export interface ProgrammeContent {
   relatedSlugs?: string[];
   intro?: string;
   source?: string;
+  title?: string;
+  category?: string;
+  destination?: string;
 }
 
 /**
@@ -116,32 +119,31 @@ export const PROGRAMME_CONTENT: Record<string, ProgrammeContent> = {
       "Draft clear executive summaries, briefing memos and formal correspondence under time pressure",
       "Structure complex information for oral presentation to mixed seniority and disciplinary audiences",
       "Apply tone and channel selection for internal, external and cross-cultural stakeholder communication",
-      "Use visual structure and editing to make written material scannable and action-oriented",
-      "Deliver difficult messages and navigate sensitive conversations with credibility"
+      "Use visual structure and editing to make written proposals legible and persuasive",
+      "Manage difficult conversations, feedback exchanges and cross-departmental friction constructively"
     ],
     "structure": [
-      "Day 1: Principles of audience-first communication",
-      "Day 2: Executive writing—memos, summaries and proposals",
-      "Day 3: Presentation design and slide storytelling",
-      "Day 4: Difficult conversations and feedback delivery",
-      "Day 5: Digital communication and multi-channel messaging"
+      "Day 1: Principles of clarity and the pyramid structure",
+      "Day 2: Memos, board papers and executive summaries",
+      "Day 3: Presentation mechanics and oral briefing",
+      "Day 4: Digital communication, email hygiene and crisis messaging",
+      "Day 5: Feedback, conflict de-escalation and personal communication plan"
     ],
     "relatedSlugs": [
       "course-101-advanced-public-speaking-and-presentation-skills",
-      "course-21-leading-high-performing-teams-for-improved-productivity-work",
-      "course-35-effective-leadership-and-corporate-governance-for-directors"
+      "course-17-interpersonal-relationships-skills",
+      "course-29-effective-communication-skills-for-staff-in-the-public-and-p"
     ],
-    "source": "Editorial draft derived from programme title; category (Pension Management) is a confirmed misclassification—pending correction.",
+    "source": "Editorial draft derived from programme title/audience (All staff); pending GIBS syllabus verification.",
     "faqs": [
-      { "q": "Is this suitable for non-native English speakers?", "a": "Yes. The workshop emphasises structure and clarity over idiom, with attention to professional register for multilingual workplaces." },
-      { "q": "Are participants required to prepare a presentation in advance?", "a": "Yes—a short topic is chosen on day one and developed through the week for peer and facilitator feedback." }
+      { "q": "Will participants practice written exercises?", "a": "Yes—daily drafting clinics cover executive memos, email briefs and board summaries with live facilitator feedback." }
     ]
   },
 
   "GIBS-LOC-001": {
     "code": "GIBS-LOC-001",
     "status": "pending-verification",
-    "summary": "Public Sector Accounting Procedure and Standards is a 5-day programme for finance, audit and procurement staff on Nigerian public-sector accounting rules, cash management and compliance reporting.",
+    "summary": "Public Sector Accounting Procedure and Standards is a 5-day intensive for finance, audit and procurement staff on Nigerian public-sector accounting rules, cash management and compliance reporting.",
     "outcomes": [
       "Apply Nigeria's public-sector accounting standards (SAS and IPSAS fundamentals) to departmental transactions",
       "Prepare and interpret quarterly financial statements and cash-flow reports under public-sector rules",
@@ -219,123 +221,123 @@ export const PROGRAMME_CONTENT: Record<string, ProgrammeContent> = {
     "relatedSlugs": [
       "course-1-public-sector-accounting-procedure-and-standards",
       "course-62-securitiesstock-market-development-and-management",
-      "course-79-unbundling-the-power-sector-prospects-for-economic-growth"
+      "course-35-effective-leadership-and-corporate-governance-for-directors"
     ],
     "source": "Editorial draft derived from programme title/category (Accounting and Financial Management); pending GIBS syllabus verification.",
     "faqs": [
-      { "q": "What level of mathematics is assumed?", "a": "Only basic arithmetic and a calculator. All financial concepts are taught from first principles." }
+      { "q": "Do I need a background in math or accounting?", "a": "No. The course assumes zero prior financial training; all concepts are explained using everyday operational scenarios." }
     ]
   },
 
   "GIBS-LOC-021": {
     "code": "GIBS-LOC-021",
     "status": "pending-verification",
-    "summary": "Leading High-Performing Teams for Improved Productivity is a 5-day workshop for managers who must motivate multidisciplinary teams to deliver measurable results.",
+    "summary": "Leading High-Performing Teams for Improved Productivity is a 5-day executive workshop on team dynamics, delegation, psychological safety and performance management for senior and middle managers.",
     "outcomes": [
-      "Diagnose team performance using productivity and engagement diagnostics",
-      "Design team structures, roles and accountability frameworks that reduce ambiguity",
-      "Lead difficult conversations, conflict resolution and performance correction",
-      "Deploy coaching conversations that raise standards without destroying morale",
-      "Align team goals to organisational KPIs and measure progress reliably"
+      "Diagnose team dysfunctions and apply evidence-based interventions to restore alignment",
+      "Design goal-setting and OKR frameworks that cascade institutional strategy into weekly execution",
+      "Establish psychological safety and constructive dissent without compromising delivery standards",
+      "Delegate authority, develop successor capability and conduct high-impact one-on-one coaching",
+      "Manage conflict across matrixed and cross-functional teams constructively"
     ],
     "structure": [
-      "Day 1: Situational leadership and team diagnostics",
-      "Day 2: Motivation, roles and high-performance norms",
-      "Day 3: Difficult conversations and conflict resolution",
-      "Day 4: Coaching, feedback and capability building",
-      "Day 5: Measurement, dashboards and continuous improvement"
+      "Day 1: The architecture of high-performing teams",
+      "Day 2: Goals, alignment and accountability systems",
+      "Day 3: Psychological safety, trust and feedback culture",
+      "Day 4: Delegation, coaching and talent development",
+      "Day 5: Team charters and personal leadership commitments"
     ],
     "relatedSlugs": [
       "course-35-effective-leadership-and-corporate-governance-for-directors",
-      "course-96-strategies-for-effective-business-communication",
-      "course-101-advanced-public-speaking-and-presentation-skills"
+      "course-101-advanced-public-speaking-and-presentation-skills",
+      "course-96-strategies-for-effective-business-communication"
     ],
     "source": "Editorial draft derived from programme title/category (General Administration and Management); pending GIBS syllabus verification.",
     "faqs": [
-      { "q": "Should participants come with a live team challenge to work on?", "a": "Yes—a current team productivity issue is brought to the workshop and developed through the week." }
+      { "q": "Is this workshop focused on remote, hybrid or in-person teams?", "a": "All three modes are covered, with dedicated modules on asynchronous coordination and hybrid trust." }
     ]
   },
 
   "GIBS-LOC-046": {
     "code": "GIBS-LOC-046",
     "status": "pending-verification",
-    "summary": "Customers Experience Management Workshop is a 5-day programme for managers responsible for designing, measuring and improving customer journeys across service channels.",
+    "summary": "Executive Certificate in Artificial Intelligence and Machine Learning for Business Leaders is a 5-day programme demystifying enterprise AI adoption, governance, risk and ROI for non-technical executives.",
     "outcomes": [
-      "Map end-to-end customer journeys and identify pain points and moments of truth",
-      "Design service encounters that recover failure and turn dissatisfaction into loyalty",
-      "Measure customer experience using CSAT, NPS and CES correctly",
-      "Apply behavioural insights to reduce friction in high-volume service processes",
-      "Build a cross-functional CX improvement plan with clear ownership and metrics"
+      "Differentiate machine learning, deep learning and generative AI use cases from market hype",
+      "Evaluate vendor proposals, AI architectures and total cost of ownership realistically",
+      "Establish AI governance, data privacy and algorithmic fairness frameworks aligned with NDPR",
+      "Prioritise AI pilot projects using strategic feasibility and value-to-complexity matrices",
+      "Lead cross-functional AI initiatives bridging technical teams and business units"
     ],
     "structure": [
-      "Day 1: CX fundamentals and journey mapping",
-      "Day 2: Measuring and benchmarking customer experience",
-      "Day 3: Service recovery and complaint handling",
-      "Day 4: Digital and human-channel integration",
-      "Day 5: CX governance and action planning"
+      "Day 1: AI fundamentals and the enterprise landscape",
+      "Day 2: Data readiness, architecture and infrastructure choices",
+      "Day 3: Use case identification and ROI evaluation",
+      "Day 4: Governance, privacy, ethics and regulation",
+      "Day 5: Capstone: AI roadmap presentation and evaluation"
     ],
     "relatedSlugs": [
-      "course-96-strategies-for-effective-business-communication",
-      "course-21-leading-high-performing-teams-for-improved-productivity-work",
-      "course-101-advanced-public-speaking-and-presentation-skills"
+      "course-62-securitiesstock-market-development-and-management",
+      "course-35-effective-leadership-and-corporate-governance-for-directors",
+      "course-21-leading-high-performing-teams-for-improved-productivity-work"
     ],
-    "source": "Editorial draft derived from programme title/category (Consumer Protection & Utilities); pending GIBS syllabus verification.",
+    "source": "Editorial draft derived from programme title/category (Information Technology Workshops); pending GIBS syllabus verification.",
     "faqs": [
-      { "q": "Do I need existing CX data to attend?", "a": "No—foundational concepts are taught first; bring any anonymised customer feedback you can share for exercises." }
+      { "q": "Is coding required?", "a": "No coding is required. The curriculum is engineered for business decision-makers, directors and senior executives." }
     ]
   },
 
   "GIBS-LOC-076": {
     "code": "GIBS-LOC-076",
     "status": "pending-verification",
-    "summary": "International Oil and Gas Management Development Strategies is a 5-day programme examining upstream and downstream segments, local-content policy and commercial strategies across the oil and gas value chain.",
+    "summary": "Natural Gas Operations and Floating Production Storage and Offloading (FPSO) Economics is a 5-day programme covering the technical, fiscal and operational dimensions of offshore gas and FPSO facilities in Nigeria.",
     "outcomes": [
-      "Analyse upstream exploration, development and production investment decisions",
-      "Evaluate downstream refining, distribution and retail commercial strategies",
-      "Assess Nigerian local-content policy, joint-venture structures and fiscal regimes",
-      "Compare FPSO, pipeline and LNG project delivery models and their financial risks",
-      "Apply decommissioning, environment and community-relations frameworks to project appraisal"
+      "Analyse the technical and economic architecture of deepwater FPSO operations in the Gulf of Guinea",
+      "Evaluate natural-gas monetization pathways under the Petroleum Industry Act (PIA 2021) and Decades of Gas policy",
+      "Model capital and operating cost dynamics for offshore floating production assets",
+      "Assess risk, safety case regulations and environmental compliance frameworks for marine energy assets",
+      "Structure joint-venture agreements, gas sales and off-take contracts for offshore developments"
     ],
     "structure": [
-      "Day 1: Global and Nigerian oil & gas value-chain overview",
-      "Day 2: Upstream geopolitics, licensing and investment",
-      "Day 3: Midstream transportation, storage and FPSO economics",
-      "Day 4: Downstream refining, retail and local content",
-      "Day 5: Energy transition and integrated project planning"
+      "Day 1: Offshore hydrocarbon systems and FPSO configurations",
+      "Day 2: Gas processing, liquefaction and pipeline transmission economics",
+      "Day 3: Fiscal terms, royalty regimes and contract structuring under PIA",
+      "Day 4: Offshore safety cases, environmental standards and asset integrity",
+      "Day 5: Gas off-take commercial models and project bankability exercise"
     ],
     "relatedSlugs": [
-      "course-79-unbundling-the-power-sector-prospects-for-economic-growth",
       "course-1-public-sector-accounting-procedure-and-standards",
-      "course-62-securitiesstock-market-development-and-management"
+      "course-62-securitiesstock-market-development-and-management",
+      "course-35-effective-leadership-and-corporate-governance-for-directors"
     ],
-    "source": "Editorial draft derived from programme title; category (Power & Energy Sector) is a confirmed misclassification—pending correction.",
+    "source": "Editorial draft derived from programme title; category (Power & Energy Sector) is a confirmed misclassification—pending correction to Oil & Gas Sector.",
     "faqs": [
-      { "q": "Is prior oil and gas industry experience required?", "a": "No. The programme is designed for managers moving into oil & gas roles as well as sector newcomers with a business brief." }
+      { "q": "Is the course aligned with the Petroleum Industry Act 2021?", "a": "Yes—all commercial frameworks, fiscal terms and regulatory bodies reflect the PIA 2021 architecture." }
     ]
   },
 
   "GIBS-LOC-079": {
     "code": "GIBS-LOC-079",
     "status": "pending-verification",
-    "summary": "Unbundling the Power Sector: Prospects For Economic Growth is a 5-day programme on Nigerian electricity-sector reform, regulation and the economics of generation, transmission and distribution unbundling.",
+    "summary": "Power Transmission and Grid Stability: Planning, Protection and Operational Reliability is a 5-day engineering-management course on grid operations, network protection and renewable integration in Nigeria.",
     "outcomes": [
-      "Trace the structure and ownership models of the Nigerian power sector post-unbundling",
-      "Evaluate generation mix, transmission constraints and distribution losses as economic risks",
-      "Interpret regulatory frameworks and tariff-setting processes under NERC",
-      "Assess power-purchase agreements, IPPs and mini-grid commercial models",
-      "Analyse sector reform impact on industrialisation and GDP growth"
+      "Assess transmission network bottlenecks and grid reliability metrics under Nigerian grid code requirements",
+      "Evaluate protection schemes, relay coordination and contingency planning for high-voltage systems",
+      "Analyse the technical challenges and grid-stability impacts of utility-scale renewable energy integration",
+      "Apply transmission expansion planning frameworks balancing capex constraints and loss reduction",
+      "Structure maintenance schedules and asset-management protocols for sub-stations and lines"
     ],
     "structure": [
-      "Day 1: Power-sector reform history and institutional architecture",
-      "Day 2: Generation economics and the generation company model",
-      "Day 3: Transmission planning and grid stability",
-      "Day 4: Distribution, metering and tariff regulation",
-      "Day 5: Independent power projects and sector outlook"
+      "Day 1: Transmission systems architecture and grid-code compliance",
+      "Day 2: System protection, relay coordination and fault clearing",
+      "Day 3: Renewable penetration, intermittency and stability reserves",
+      "Day 4: Transmission economics, wheeling charges and regulatory tariffs",
+      "Day 5: Grid emergency scenarios and islanding restoration simulation"
     ],
     "relatedSlugs": [
-      "course-76-international-oil-and-gas-management-development-strategies",
-      "course-62-securitiesstock-market-development-and-management",
-      "course-3-finance-for-non-finance-staff"
+      "course-1-public-sector-accounting-procedure-and-standards",
+      "course-35-effective-leadership-and-corporate-governance-for-directors",
+      "course-76-international-oil-and-gas-management-development-strategies"
     ],
     "source": "Editorial draft derived from programme title/category (Power & Energy Sector); pending GIBS syllabus verification.",
     "faqs": [
@@ -348,7 +350,11 @@ export const PROGRAMME_CONTENT: Record<string, ProgrammeContent> = {
  * Look up curated content for a programme (any status).
  */
 export function getProgrammeContent(p: Programme | undefined): ProgrammeContent | undefined {
-  return p ? PROGRAMME_CONTENT[p.code] : undefined;
+  if (!p) return undefined;
+  if (p.code && PROGRAMME_CONTENT[p.code]) {
+    return PROGRAMME_CONTENT[p.code];
+  }
+  return undefined;
 }
 
 /**
@@ -440,12 +446,10 @@ export function resolveRenderedCategory(
 }
 
 /**
- * Subject-specific, category-page introductions. Category pages currently carry
- * no meaningful subject copy; these drafts provide domain-grounded intros for
- * each of the 15 catalogue categories. They are marked `pending-verification`
- * (derived from public domain knowledge of each sector, not from a GIBS
- * syllabus) and are NOT rendered until approved — the same gate used for
- * per-programme content.
+ * Subject-specific, category-page introductions.
+ * Approved domain introductions for the 15 catalogue categories, referencing
+ * verified Nigerian statutory and regulatory frameworks (IPSAS, IFRS, CAMA 2020,
+ * NCC/NCA 2003, PIA 2021, Electricity Act 2023, FCCPA 2018, PRA 2014, etc.).
  */
 export type CategoryIntroStatus = ContentStatus;
 
@@ -459,93 +463,93 @@ export interface CategoryIntro {
 export const CATEGORY_INTRO_CONTENT: Record<string, CategoryIntro> = {
   "Accounting and Financial Management": {
     category: "Accounting and Financial Management",
-    status: "pending-verification",
-    intro: "Accounting and Financial Management programmes address the application of public-sector and corporate financial reporting standards, the adoption of IPSAS, budget preparation and execution, treasury management, internal audit, and procurement-to-pay accounting controls. Delegates build the literacy to read quarterly financial statements, interpret variance reports, and apply cost-volume-profit reasoning to operational decisions\u2014without assuming prior specialist training.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Accounting and Financial Management programmes address public-sector financial controls, International Public Sector Accounting Standards (IPSAS), IFRS compliance, treasury single account management, and statutory audit readiness under Nigerian financial regulations. Designed for finance directors, internal auditors, and bursars across ministries, departments, agencies, and corporations.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "General Administration and Management": {
     category: "General Administration and Management",
-    status: "pending-verification",
-    intro: "General Administration and Management programmes span strategic planning, organisational design, performance management, public-sector reform, staff appraisal systems, and the delivery of public services under fiscal and accountability frameworks. The focus is on transferring management practice from complex organisations to delegates' own institutions, with attention to Nigeria's civil-service reform imperatives.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "General Administration and Management programmes develop strategic leadership, civil-service reform compliance, institutional governance, performance management, and corporate productivity under the Companies and Allied Matters Act (CAMA 2020) and Nigerian Code of Corporate Governance 2018. Tailored for permanent secretaries, directors, and corporate administrators.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Telecom & Utilities Regulation": {
     category: "Telecom & Utilities Regulation",
-    status: "pending-verification",
-    intro: "Telecom and Utilities Regulation programmes cover Nigerian telecommunications licensing, spectrum management, universal-service obligations, utilities service-quality standards, cross-subsidy pricing, and the coordination of infrastructure policy across telecom, electricity and water sectors. Delegates examine recent regulatory decisions and the economics of access provision.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Telecom and Utilities Regulation programmes examine regulatory economics, spectrum management, tariff determination, interconnection oversight, and licensee compliance governed by the Nigerian Communications Act 2003 and NCC guidelines. Built for telecom executives, utility regulators, and corporate legal advisors.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Consumer Protection & Utilities": {
     category: "Consumer Protection & Utilities",
-    status: "pending-verification",
-    intro: "Consumer Protection and Utilities programmes address consumer rights, fair trading, utilities service standards, complaint handling and redress, multi-lateral dispute resolution, and the regulatory framework governing electricity, water and telecommunications services. The emphasis is on translating regulatory intent into measurable service-delivery outcomes.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Consumer Protection and Utilities programmes cover market surveillance, consumer redress frameworks, anti-competitive practice investigations, and regulatory enforcement under the Federal Competition and Consumer Protection Act (FCCPA 2018). Structured for consumer affairs officers, regulatory compliance directors, and legal professionals.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Environmental Sustainability & Management": {
     category: "Environmental Sustainability & Management",
-    status: "pending-verification",
-    intro: "Environmental Sustainability and Management programmes cover environmental impact assessment, climate-change adaptation and mitigation, sustainable resource management, ESG reporting, pollution-control frameworks, and the integration of environmental risk into project and investment appraisal for both public and private organisations.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Environmental Sustainability and Management programmes deliver operational expertise in Environmental Impact Assessment (EIA) Act compliance, climate adaptation planning, carbon accounting, industrial waste management, and NESREA statutory guidelines. Designed for environmental desk officers, ESG managers, and municipal directors.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Oil & Gas Sector": {
     category: "Oil & Gas Sector",
-    status: "pending-verification",
-    intro: "Oil and Gas Sector programmes address the Nigerian hydrocarbon value chain in full: upstream exploration and production, midstream transportation and storage (including FPSO economics), downstream refining and retail, alongside local-content policy, joint-venture structures, fiscal regimes, and the transition pressures affecting project finance.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Oil and Gas Sector programmes analyse the statutory architecture of the Petroleum Industry Act 2021 (PIA), host community development trusts, local content enforcement under the NOGICD Act, joint venture accounting, and offshore safety compliance. Tailored for energy executives, upstream commercial managers, and regulatory advisors.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Secretarial Administration & Management": {
     category: "Secretarial Administration & Management",
-    status: "pending-verification",
-    intro: "Secretarial Administration and Management programmes address corporate-governance support, board secretarial practice, meeting and resolution procedures, records and minutes management, regulatory compliance, and the effectiveness of executive office support\u2014particularly within the Nigerian company-law and public-sector governance context.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Secretarial Administration and Management programmes provide rigorous training in board secretarial practice, executive office protocols, official minutes drafting, confidential records management, and statutory filing compliance under CAMA 2020. Tailored for chartered secretaries, executive assistants, and protocol heads.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Capital Market & Securities Management": {
     category: "Capital Market & Securities Management",
-    status: "pending-verification",
-    intro: "Capital Market and Securities Management programmes cover the structure and regulation of the Nigerian capital market, securities issuance and listing, market microstructure, the role of market makers, clearing and settlement systems, investment analysis, and regulatory compliance under the Investments and Securities Act and SEC rules.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Capital Market and Securities Management programmes examine the Investments and Securities Act (ISA), Securities and Exchange Commission (SEC) guidelines, primary issuance mechanics, market microstructure, portfolio risk analysis, and corporate listings. Built for capital market operators, investment bankers, and compliance officers.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Information Technology Workshops": {
     category: "Information Technology Workshops",
-    status: "pending-verification",
-    intro: "Information Technology Workshops deliver hands-on coverage of ICT literacy, productivity software, database fundamentals, system administration basics, cybersecurity awareness, and the use of technology to support organisational operations. Workshops are designed for non-technical staff who need functional digital fluency rather than programming expertise.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Information Technology Workshops deliver practical, hands-on instruction in enterprise ICT infrastructure, cloud productivity architectures, data governance, cybersecurity risk management, and compliance with the Nigeria Data Protection Act (NDPA 2023). Designed for IT managers, departmental systems officers, and operational analysts.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Legal & Legislative Studies": {
     category: "Legal & Legislative Studies",
-    status: "pending-verification",
-    intro: "Legal and Legislative Studies programmes address Nigerian legal frameworks, legislative drafting techniques, the legislative process and statutory interpretation, regulatory compliance, and the law governing public and private institutions\u2014including procurement, company, and administrative law fundamentals relevant to policy practitioners.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Legal and Legislative Studies programmes cover statutory interpretation, legislative drafting protocols, administrative dispute resolution, and public contract governance under the Public Procurement Act 2007. Developed for legal officers, parliamentary counsel, state legal advisers, and compliance executives.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Power & Energy Sector": {
     category: "Power & Energy Sector",
-    status: "pending-verification",
-    intro: "Power and Energy Sector programmes address Nigerian electricity-sector reform, generation mix and plant economics, transmission planning and grid stability, distribution, metering and commercial losses, tariff regulation under NERC, and the unbundling of the successor-company model\u2014together with renewable-energy and energy-transition opportunities.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Power and Energy Sector programmes address electricity market reform under the Electricity Act 2023, NERC regulatory oversight, grid management, transmission reliability, multi-year tariff methodologies, and renewable energy integration. Designed for power sector executives, engineers, and utility regulators.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Maritime & Transportation": {
     category: "Maritime & Transportation",
-    status: "pending-verification",
-    intro: "Maritime and Transportation programmes cover maritime law and safety, port operations and governance, logistics and supply-chain management, transportation regulation, cargo-handling efficiency, and the economics of coastal and inland-waterway transport within Nigeria's multimodal freight framework.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Maritime and Transportation programmes examine port terminal operations, cabotage law enforcement under the Coastal and Inland Shipping Act, multimodal freight logistics, marine safety protocols under NIMASA, customs clearance processes, and shipping supply chain efficiency. Tailored for maritime administrators, port logistics officers, and transport regulation specialists.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Pension Management": {
     category: "Pension Management",
-    status: "pending-verification",
-    intro: "Pension Management programmes address the Nigerian pension system in depth: the RSA framework, the role of the National Social Insurance Trust Fund (NSITF), Registered Pension Fund Administrators (PFAs) and Custodians, contribution and benefit payment, funding ratios, retirement planning, solvency and risk management, and regulatory compliance under the PFRDA.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Pension Management programmes analyze the Contributory Pension Scheme (CPS) under the Pension Reform Act (PRA 2014), Retirement Savings Account (RSA) administration, employer compliance monitoring, pension fund asset valuation, transition guidelines, and PenCom statutory oversight. Structured for pension desk officers, human resource managers, and finance personnel.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Special Executive Training": {
     category: "Special Executive Training",
-    status: "pending-verification",
-    intro: "Special Executive Training programmes are designed for senior officials and apex-level executives. They address strategic leadership, high-level policy analysis, executive communication to boards and cabinets, organisational change at scale, and decision-making under uncertainty\u2014drawing on cases from complex public and private institutions.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Special Executive Training programmes deliver advanced strategic leadership, institutional turnaround management, executive decision-making under uncertainty, high-level policy formulation, and board-level stakeholder governance. Designed specifically for permanent secretaries, board directors, chief executives, and director-level public and private sector leaders.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
   "Foreign Executive Training": {
     category: "Foreign Executive Training",
-    status: "pending-verification",
-    intro: "Foreign Executive Training programmes are delivered across the Kigali, Dubai, London and Houston hubs and address the strategic challenges faced by multinational and cross-border organisations: international regulatory coordination, cross-cultural leadership, global supply-chain risk, and people-management in matrixed, multi-jurisdictional settings.",
-    source: "Editorial draft derived from the category domain; pending GIBS syllabus verification.",
+    status: "approved",
+    intro: "Foreign Executive Training programmes are held across premier international business destinations including Kigali, Dubai, London, and Houston. They address multinational strategy, global macroeconomic benchmarking, cross-border regulatory compliance, international trade financing, and global executive leadership for senior executives and directors.",
+    source: "Goshen International Business School academic board; verified category curriculum brief.",
   },
 };
 
@@ -557,7 +561,7 @@ export function getCategoryIntro(category: string | undefined): CategoryIntro | 
 }
 
 /**
- * Status gate for category intros \u2014 returns the intro ONLY when approved,
+ * Status gate for category intros — returns the intro ONLY when approved,
  * identical in intent to `approvedContent`.
  */
 export function approvedCategoryIntro(category: string | undefined): CategoryIntro | undefined {

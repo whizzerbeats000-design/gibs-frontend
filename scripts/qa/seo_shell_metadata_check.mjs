@@ -239,6 +239,24 @@ checkStaticShell("locations/ibafo", {
   intro: "Executive training centre situated at KM 36 on the Lagos-Ibadan Expressway, serving corporate and public-sector organisations across Lagos, Ogun, and the South-West commercial corridor with dedicated seminar and syndicate rooms.",
 });
 
+// Location shell capacity & arithmetic verification
+for (const loc of ["ilorin", "abuja", "ibafo"]) {
+  const locShell = readShell(`locations/${loc}`);
+  assert.ok(
+    !/500\s*(?:delegates|people|participants|seats)/i.test(locShell),
+    `locations/${loc}: must not contain contradictory 500-delegate plenary claim`
+  );
+  assert.ok(
+    !/300\s*(?:candidates|delegates|participants)\s*across\s*6\s*classes/i.test(locShell),
+    `locations/${loc}: must not contain contradictory arithmetic (300 across 6 classes of 25)`
+  );
+  assert.match(
+    locShell,
+    /"telephone":\s*"\+234\d+"/,
+    `locations/${loc}: must include valid E.164 telephone in structured data`
+  );
+}
+
 // Every generated static shell is user-visible to non-JavaScript clients and
 // search crawlers. Keep retired source phone numbers out of that output even
 // when a future programme FAQ contains one.

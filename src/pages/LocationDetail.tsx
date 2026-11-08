@@ -2,7 +2,7 @@ import { PageHero } from "../components/PageHero";
 import { BtnLink, ClosingQuiet } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
-import { CAMPUS_CAPACITY, PROGRAMMES } from "../lib/data";
+import { PROGRAMMES } from "../lib/data";
 import { CheckIcon, MapPinIcon } from "../components/icons";
 import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
 
@@ -28,6 +28,8 @@ interface LocationConfig {
   highlights: string[];
   academicFacilities: string;
   recreationalFacilities?: string;
+  facilityDescription: string;
+  capacityNote: string;
   galleryImages: { src: string; alt: string; caption: string }[];
 }
 
@@ -60,6 +62,8 @@ const LOCATION_DATA: Record<LocationSlug, LocationConfig> = {
     ],
     academicFacilities: "12 Lecture Rooms, Reference Library, 100-person capacity Hall, 20-Room Executive Guest Facility",
     recreationalFacilities: "Olympic-size Lawn Tennis court, International standard Table Tennis, Open space keep-fit grounds, 3 medium-size breakout halls, 24/7 dedicated power supply, assured security",
+    facilityDescription: "Designed for concurrent syndicate workshops, executive seminars, and plenary sessions in the 100-person multi-purpose conference hall, supported by an on-site 20-room executive guest lodge and modern reference library.",
+    capacityNote: "Plenary conference hall capacity of 100 delegates, with 12 lecture rooms supporting concurrent syndicate workshop streams.",
     galleryImages: [
       {
         src: "/images/gibs-hq-classroom-branded.webp",
@@ -104,6 +108,8 @@ const LOCATION_DATA: Record<LocationSlug, LocationConfig> = {
       "18 Modern Restrooms and Secure On-Site Parking",
     ],
     academicFacilities: "2 Halls (100-person capacity each), 7 Lecture Rooms, 2 Administrative offices, 2 Syndicate rooms, 3-Room guest facility",
+    facilityDescription: "Configured for executive seminars, concurrent syndicate groups, and conference sessions across two 100-person capacity halls and dedicated breakout rooms.",
+    capacityNote: "Two conference halls with 100-person capacity each (up to 200 delegates total across both halls), supplemented by 7 lecture rooms and 2 breakout syndicate rooms.",
     galleryImages: [
       {
         src: "/images/gibs-abuja-office-branded.webp",
@@ -142,6 +148,8 @@ const LOCATION_DATA: Record<LocationSlug, LocationConfig> = {
       "Dedicated Standby Generator Power",
     ],
     academicFacilities: "1 Hall, 4 Lecture Rooms, 4 Syndicate Rooms",
+    facilityDescription: "Purpose-built for corporate seminars, intensive management retreats, and syndicate breakout sessions serving organisations along the Lagos-Ibadan industrial corridor.",
+    capacityNote: "Executive conference hall and 4 lecture rooms supplemented by 4 dedicated breakout syndicate rooms. Specific seating arrangements are configured per session upon enquiry.",
     galleryImages: [
       {
         src: "/images/gibs-ibafo-front-gate-branded.webp",
@@ -192,9 +200,7 @@ export default function LocationDetail({ locationId }: { locationId: LocationSlu
                 Academic &amp; Training <em className="italic text-forest-700">Facilities.</em>
               </h2>
               <p className="type-body mt-4 text-ink/80">
-                {config.academicFacilities}. Under the GIBS regular session format, each facility comfortably
-                accommodates up to 300 candidates across concurrent syndicate workshops or up to 500 delegates in
-                plenary conference settings.
+                {config.academicFacilities}. {config.facilityDescription}
               </p>
             </Reveal>
 
@@ -267,7 +273,7 @@ export default function LocationDetail({ locationId }: { locationId: LocationSlu
               <div className="mt-6 rounded-panel border border-line bg-stone/40 p-5">
                 <p className="label-base text-muted">Operational Capacity</p>
                 <p className="type-caption mt-1 text-ink/80 break-words">
-                  {CAMPUS_CAPACITY.regularCapacity}
+                  {config.capacityNote}
                 </p>
               </div>
             </Reveal>

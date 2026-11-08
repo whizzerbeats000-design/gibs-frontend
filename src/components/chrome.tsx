@@ -149,7 +149,7 @@ export function Header({
           <button
             type="button"
             onClick={onOpenConcierge}
-            aria-label="Open GIBS AI"
+            aria-label="Open GIBS AI Programme Assistant"
             className={cn(
               "hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
               path === "/programmes" ? "lg:inline-flex" : "xl:inline-flex"

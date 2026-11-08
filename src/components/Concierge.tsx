@@ -387,7 +387,7 @@ export function ConciergeLauncher({ suppressed = false }: { suppressed?: boolean
     <button
       type="button"
       onClick={() => setOpen(true)}
-      aria-label="Open GIBS AI"
+      aria-label="Open GIBS AI Programme Assistant"
       aria-expanded={open}
       tabIndex={hidden ? -1 : 0}
       className={cn(

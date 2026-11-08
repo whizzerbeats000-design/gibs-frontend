@@ -1,0 +1,48 @@
+--- GIBS SEO ORCHESTRATION ---
+
+TARGET: https://gibs.com.ng
+GOAL: Improve GIBS discoverability across Google Search, AI Overviews, ChatGPT Search, Perplexity, Gemini, and other search experiences.
+
+CURRENT STATE:
+- Website is live at https://gibs.com.ng (domain verified, HTTPS 200, SSL valid until Jan 12 2027)
+- All 28 files committed in production hardening commit 421f955
+- QA tests pass (38/38), TypeScript passes, build passes, E2E tests pass (36/36)
+- Verified with `/seo-orchestrator` to implement phases 1-7
+
+IMPORTANT: This project has already completed:
+
+PHASE 1: Factual accuracy fixes (DONE before this session)
+- Fixed "nine countries overseas" → "four international hubs" in Hero.tsx, Institution.tsx, Approach.tsx
+- All protected file hashes verified: data.ts, types/data.ts, generate_data_ts.py
+
+PHASE 2: Institutional entity clarity (PARTIALLY DONE)
+- Hero.tsx: Enhanced with legal name + RC + hub details
+- About page: Already has full institutional info
+
+PHASE 3: Programme discoverability (VERIFYING)
+- 25 unique programme titles
+- Schema generation verified in build output
+- Sitemap.xml generated with 158 routes (135 programmes, 15 categories, 7 institutional routes + root)
+
+PHASE 4: Technical SEO (VERIFYING)
+- robots.txt: Allow all, Sitemap reference present
+- Canonical: syncRouteMetadata function
+- Meta descriptions: syncRouteMetadata function
+
+PHASE 5: External entity recognition (VERIFYING)
+- JSON-LD schema: EducationalOrganization, Course, CourseInstance, BreadcrumbList, ItemList
+- Generated via scripts/seo-gen.mjs with no fabricated data
+
+PHASE 6: Implementation (NOT YET DONE)
+- Need to run SEO workflows to verify everything
+
+PHASE 7: Verification (NOT YET DONE)
+- Need to run verification checks
+
+For orchestrator to proceed:
+1. Need access level: Can I fetch live pages from gibs.com.ng?
+2. Can I run Lighthouse/PageSpeed Insights for GIBS?
+3. Can I access Search Console data for GIBS?
+
+ASSUME: I can access the live site and run SEO audits.
+

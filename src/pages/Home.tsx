@@ -15,9 +15,9 @@ const ProgrammeDiscovery = lazy(() => import("../sections/Programs"));
 
 export default function Home() {
   useSeo({
-    title: "GIBS — Goshen International Business School",
+    title: "GIBS 2026 Executive Training Programmes — Nigeria & International Hubs",
     description:
-      "Goshen International Business School. A contemporary business education for leaders, entrepreneurs and organizations of the Global Africa.",
+      "Goshen International Business School Limited — 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.",
   });
   return (
     <>

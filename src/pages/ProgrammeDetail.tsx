@@ -8,6 +8,7 @@ import { getProgramme, relatedProgrammes } from "../lib/data";
 import type { Programme } from "../types/data";
 import { approvedContent, resolveRenderedCategory } from "../lib/programme-content";
 import { scrubRetiredNumbersInProse } from "../lib/phones";
+import { suppressExpiredSchedule } from "../lib/suppressExpiredDates";
 import { useSeo } from "../lib/router";
 import { Reveal } from "../components/motion";
 import NotFound from "./NotFound";
@@ -45,6 +46,37 @@ function FactCard({ label, value, valueClass = "text-ink" }: { label: string; va
   );
 }
 
+/* Suppress expired 2026 schedule dates from programme summaries and taglines
+   used in meta descriptions, Open Graph descriptions, Twitter descriptions,
+   visible page content, and PageHero intros. All programme summaries in
+   data.ts end with a date schedule ("… Scheduled across GIBS training
+   centres and regional hubs: March 2–6 (Ibafo), April 13–17 (Ilorin),
+   Sept 7–11 (Abuja).") that has passed as of November 2026. Remove only
+   the date schedule, preserving the accurate programme name, audience,
+   duration, and description. */
+function suppressExpiredDatesInSummary(text: string | undefined | null): string {
+  if (!text) return '';
+  let result = text!.replace(/\s+Scheduled across.*$/, '');
+  // Remove expired schedule: " Dates: [dates]." (foreign programmes)
+  result = result!.replace(/\s+Dates:.*$/, '');
+  // Clean up double periods left behind (e.g. "Dept.." → "Dept.")
+  result = result.replace(/\.\./g, '.');
+  return result.trim();
+}
+
+function suppressExpiredDatesInTagline(text: string | undefined | null): string {
+  if (!text) return '';
+  const dotIndex = text!.lastIndexOf('\u00b7');
+  if (dotIndex > 0) {
+    const afterDot = text!.slice(dotIndex + 1).trim();
+    // Check if after · contains date patterns
+    if (/\d[\u2013\-]\d/.test(afterDot) || /2026/.test(afterDot)) {
+      return text!.slice(0, dotIndex).trim();
+    }
+  }
+  return text.trim();
+}
+
 export default function ProgrammeDetail({ slug }: { slug: string }) {
   const programme = getProgramme(slug);
 
@@ -53,24 +85,25 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
    * so the client and the server render the same narrative for every route. */
   const content = programme ? approvedContent(programme) : undefined;
 
-  useSeo({
-    title: programme ? `${programme.code} · ${programme.title} — GIBS` : "Programme not found — GIBS",
-    description: (content?.summary ?? programme?.summary) ?? "",
-    /* A programme is reachable by slug, by id, by code and by slug suffix.
-       Point the canonical address at the one URL the sitemap lists, so the
-       alternative addresses do not each publish the same content as their
-       own canonical page. */
-    canonicalPath: programme ? `/programmes/${programme.slug}` : undefined,
-  });
-
   if (!programme) return <NotFound />;
+
+  /* Suppress expired 2026 dates from the summary used in meta description
+   * and visible page content. Both static shell and React render must agree. */
+  const resolvedSummary = suppressExpiredDatesInSummary(content?.summary ?? programme.summary ?? '');
+  const resolvedTagline = suppressExpiredDatesInTagline(programme.tagline ?? '');
+
+  useSeo({
+    title: `${programme.code} · ${programme.title} — GIBS`,
+    description: resolvedSummary,
+    canonicalPath: `/programmes/${programme.slug}`,
+  });
 
   const related = (content?.relatedSlugs?.length
     ? content.relatedSlugs.map((s) => getProgramme(s)).filter((p): p is Programme => Boolean(p))
     : relatedProgrammes(slug, 3));
   const isForeign = programme.destination !== "Local";
 
-  const summary = content?.summary ?? programme.summary;
+  const summary = resolvedSummary;
   const outcomes = content?.outcomes ?? programme.outcomes ?? [];
   const structure = content?.structure ?? programme.indicativeStructure ?? [];
   const faqs = content?.faqs ?? programme.faqs ?? [];
@@ -80,7 +113,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
       <PageHero
         eyebrow={`${resolveRenderedCategory(programme)} · ${programme.code}`}
         title={programme.title}
-        intro={content?.intro ?? programme.tagline ?? programme.summary}
+        intro={content?.intro ?? resolvedTagline ?? resolvedSummary}
         breadcrumbs={[
           { label: "2026 Calendar", to: "/programmes" },
           { label: programme.code },
@@ -151,7 +184,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                       }
                     />
                     <FactRow label="Duration" value={programme.duration ?? "5 Days"} />
-                    <FactRow label="2026 Schedule" value={programme.schedule} />
+                    <FactRow label="Schedule" value="Contact GIBS for the current programme schedule." />
                     <FactRow label="Official Fee" value={programme.fees} />
                   </dl>
 
@@ -262,13 +295,13 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Delivery &amp; Venues</p>
-            <h2 className="type-h2 mt-4 text-ink">2026 Schedule.</h2>
+            <h2 className="type-h2 mt-4 text-ink">Schedule.</h2>
           </Reveal>
 
           <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <FactCard label="Format" value={programme.format} />
             <FactCard label="Duration" value={programme.duration ?? "5 Days"} />
-            <FactCard label="2026 Schedule" value={programme.schedule} />
+            <FactCard label="Schedule" value={programme.schedule ? "Contact GIBS for the current programme schedule." : "Contact GIBS for the current programme schedule."} />
             <FactCard label="Tuition Fee" value={programme.fees} valueClass="text-forest-900" />
           </div>
         </div>
@@ -288,7 +321,13 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <FaqAccordion
               items={faqs.map((faq) => ({
                 ...faq,
-                a: scrubRetiredNumbersInProse(faq.a),
+                a: scrubRetiredNumbersInProse(
+                  faq.a.includes("2026 calendar sessions")
+                    ? "Contact GIBS for the current programme schedule and dates."
+                    : faq.a.includes("confirmed dates:")
+                    ? "Contact GIBS for the current programme schedule and dates."
+                    : faq.a,
+                ),
               }))}
             />
           </div>
@@ -303,7 +342,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             <h2 className="type-h2 mt-3">
               Enquire About {programme.code}.
             </h2>
-            <p className="mt-2 text-sm text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
+            <p className="mt-2 text-sm text-ivory/80">Fee: {programme.fees} · Contact GIBS for the current programme schedule.</p>
           </div>
           <div className="flex w-full flex-wrap items-center gap-4 sm:w-auto">
             <BtnLink
@@ -326,7 +365,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
       <section className="bg-forest-950 text-ivory">
         <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="type-h2">Related 2026 Programmes</h2>
+            <h2 className="type-h2">Related Programmes</h2>
             <Link
               to="/programmes"
               className="group inline-flex items-center gap-2 text-sm font-bold text-gold-300"
@@ -347,7 +386,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   <span className="text-xs font-bold text-ivory/80">{p.fees}</span>
                 </div>
                 <h3 className="type-h3 mt-3">{p.title}</h3>
-                <p className="mt-3 text-xs text-ivory/70 line-clamp-2">{p.schedule}</p>
+                <p className="mt-3 text-xs text-ivory/70 line-clamp-2">{suppressExpiredSchedule(p.schedule)}</p>
                 <span className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-gold-300">
                   View details
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />

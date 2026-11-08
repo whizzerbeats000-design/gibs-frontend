@@ -92,40 +92,40 @@ const programme = readShell("programmes/course-1-public-sector-accounting-proced
 
 assert.equal(
   metaValue(home, "og:title", "property"),
-  "GIBS — 2026 Executive Training Calendar & International P...",
+  "GIBS 2026 Executive Training — Goshen International Business School",
   `homepage: og:title`
 );
 assert.equal(
   metaValue(home, "twitter:title"),
-  "GIBS — 2026 Executive Training Calendar & International P...",
+  "GIBS 2026 Executive Training — Goshen International Business School",
   `homepage: twitter:title`
 );
 assert.equal(
   metaValue(home, "og:description", "property"),
-  "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs…",
+  "Goshen International Business School Limited — 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and…",
   `homepage: description`
 );
 assert.equal(
   metaValue(home, "twitter:description"),
-  "113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs…",
+  "Goshen International Business School Limited — 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and…",
   `homepage: description`
 );
 assert.equal(canonicalValue(home), "https://gibs.com.ng/");
 assert.equal(metaValue(home, "og:url", "property"), canonicalValue(home));
 assert.equal(metaValue(home, "twitter:card"), "summary_large_image");
 checkSocialPair(contact, {
-  title: "Contact GIBS | Training Desk & Enquiries",
-  description: "Get in touch with GIBS for programme registration and campus visits.",
+  title: "Contact Us | Goshen International Business School",
+  description: "Get in touch with GIBS for programme registration, in-plant training, and campus visits.",
   canonical: "https://gibs.com.ng/contact",
   shell: "contact",
 });
 checkSocialPair(category, {
-  title: "Accounting and Financial Management Training Programmes | GIBS",
-  description: "Explore our executive training programmes in Accounting and Financial Management at GIBS.",
+  title: "Accounting and Financial Management Training Programmes | Goshen International Business School",
+  description: "Accounting and Financial Management programmes address public-sector financial controls, International Public Sector Accounting Standards (IPSAS), IFRS…",
   canonical: "https://gibs.com.ng/programmes/category/accounting-and-financial-management",
   shell: "category",
 });
-assert.equal(titleValue(programme), "Public Sector Accounting Procedure and Standards | GIBS");
+assert.equal(titleValue(programme), "Public Sector Accounting Procedure and Standards | Goshen International Business School");
 assert.equal(metaValue(programme, "og:title", "property"), titleValue(programme));
 assert.equal(metaValue(programme, "twitter:title"), titleValue(programme));
 assert.ok(metaValue(programme, "description"), "programme description must be present");
@@ -176,7 +176,7 @@ for (const shell of shells) {
 }
 
 
-assert.equal((readFileSync(join(distDir, "sitemap.xml"), "utf8").match(/<url>/g) ?? []).length, 159);
+assert.equal((readFileSync(join(distDir, "sitemap.xml"), "utf8").match(/<url>/g) ?? []).length, 162);
 const sitemap = readFileSync(join(distDir, "sitemap.xml"), "utf8");
 assert.equal(
   (sitemap.match(/<loc>https:\/\/gibs\.com\.ng\/privacy-policy<\/loc>/g) ?? []).length,
@@ -193,7 +193,7 @@ checkStaticShell("admissions", {
   intro: "Discover a programme, make an enquiry, and GIBS handles the rest. Whether you are an individual professional or an organisation enquiring about staff training, our team guides you through the process.",
 });
 checkStaticShell("gallery", {
-  title: "Gallery — GIBS",
+  title: "Campus & Facility Gallery — GIBS",
   description: "Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.",
   canonical: "https://gibs.com.ng/gallery",
   h1: "The GIBS campus",
@@ -213,6 +213,30 @@ checkStaticShell("privacy-policy", {
   canonical: "https://gibs.com.ng/privacy-policy",
   h1: "Privacy Policy",
   intro: "Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.",
+});
+
+checkStaticShell("locations/ilorin", {
+  title: "Ilorin Training Headquarters | Goshen International Business School",
+  description: "Official training headquarters of Goshen International Business School (GIBS) in Ilorin, Kwara State. Features 12 lecture rooms, 100-seat hall, and lodge.",
+  canonical: "https://gibs.com.ng/locations/ilorin",
+  h1: "Ilorin Training Headquarters | Goshen International Business School",
+  intro: "The primary administrative and executive training headquarters of Goshen International Business School (GIBS), located in Upper Gaa-Akanbi, Ilorin, Kwara State. Features 12 modern lecture rooms, a 100-seat multi-purpose hall, executive guest accommodation, and sports grounds.",
+});
+
+checkStaticShell("locations/abuja", {
+  title: "Abuja Executive Training Centre | Goshen International Business School",
+  description: "Executive training centre for Goshen International Business School (GIBS) in Lugbe, Airport Road, Abuja. Features 2 conference halls and 7 lecture rooms.",
+  canonical: "https://gibs.com.ng/locations/abuja",
+  h1: "Abuja Executive Training Centre | Goshen International Business School",
+  intro: "Purpose-built executive training facility in FHA Lugbe, Airport Road, Abuja. Strategically positioned for Federal Ministries, Departments, Agencies (MDAs), and corporate organisations across the Federal Capital Territory.",
+});
+
+checkStaticShell("locations/ibafo", {
+  title: "Ibafo Training Centre | Goshen International Business School",
+  description: "GIBS executive training centre at KM 36 Lagos-Ibadan Expressway, Ibafo, Ogun State. Features executive conference hall, lecture halls, and syndicate rooms.",
+  canonical: "https://gibs.com.ng/locations/ibafo",
+  h1: "Ibafo Training Centre | Goshen International Business School",
+  intro: "Executive training centre situated at KM 36 on the Lagos-Ibadan Expressway, serving corporate and public-sector organisations across Lagos, Ogun, and the South-West commercial corridor with dedicated seminar and syndicate rooms.",
 });
 
 // Every generated static shell is user-visible to non-JavaScript clients and
@@ -254,6 +278,241 @@ assert.equal(
   linkedProgrammes,
   PROGRAMMES.length,
   `/programmes static shell must link all ${PROGRAMMES.length} programmes (linked ${linkedProgrammes})`
+);
+
+// --- JSON-LD Validation Across All Generated Pages ---
+function extractJsonLd(html, shellRoute) {
+  const blocks = [];
+  const re = /<script\b[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let m;
+  while ((m = re.exec(html)) !== null) {
+    try {
+      blocks.push(JSON.parse(m[1].trim()));
+    } catch (e) {
+      throw new Error(`Invalid JSON-LD in ${shellRoute}: ${e.message}`);
+    }
+  }
+  return blocks;
+}
+
+let jsonLdPages = 0;
+let coursePages = 0;
+let itemListPages = 0;
+let orgPages = 0;
+let webPagePages = 0;
+const allCanonicals = [];
+const allItemListPositions = [];
+const expiredDateWarnings = [];
+const fabricatedAddressWarnings = [];
+const selfReferentialSameAsWarnings = [];
+
+for (const shell of shells) {
+  const html = readShell(shell.route);
+  const blocks = extractJsonLd(html, shell.route);
+  if (blocks.length > 0) jsonLdPages++;
+
+  const canonical = canonicalValue(html);
+  allCanonicals.push(canonical);
+
+  for (const block of blocks) {
+    const nodes = Array.isArray(block) ? block : [block];
+    for (const node of nodes) {
+      if (!node || typeof node !== 'object') continue;
+
+      // Check Course schema
+      if (node['@type'] === 'Course') {
+        coursePages++;
+        // Course must NOT have top-level offers
+        assert.ok(!('offers' in node), `${shell.route}: Course must not have top-level offers property`);
+        // Course must have hasCourseInstance with CourseInstance
+        assert.ok(node.hasCourseInstance, `${shell.route}: Course must have hasCourseInstance`);
+        const hci = node.hasCourseInstance;
+        if (hci && hci['@type'] === 'CourseInstance') {
+          // CourseInstance offers must exist
+          assert.ok(hci.offers, `${shell.route}: CourseInstance must have offers`);
+          // Check duration is ISO format if present
+          if (hci.duration) {
+            assert.match(hci.duration, /^P\d+[DW]$/, `${shell.route}: CourseInstance duration must be ISO 8601 (got ${hci.duration})`);
+          }
+          // Check offers priceCurrency matches visible page
+          if (hci.offers && hci.offers.priceCurrency) {
+            assert.ok(['NGN', 'USD', 'GBP'].includes(hci.offers.priceCurrency), `${shell.route}: Invalid priceCurrency ${hci.offers.priceCurrency}`);
+          }
+          // No fabricated street address on CourseInstance location
+          const loc = hci.location;
+          if (loc && loc.address) {
+            if (loc.address.streetAddress) {
+              fabricatedAddressWarnings.push(`${shell.route}: CourseInstance location has streetAddress ${loc.address.streetAddress}`);
+            }
+          }
+        }
+      }
+
+      // Check ItemList schema
+      if (node['@type'] === 'ItemList') {
+        itemListPages++;
+        const elements = node.itemListElement || [];
+        elements.forEach((el, idx) => {
+          assert.equal(el.position, idx + 1, `${shell.route}: ItemList position must be sequential (got ${el.position} at index ${idx})`);
+          assert.ok(el.url, `${shell.route}: ItemList item must have url`);
+          allItemListPositions.push(el.position);
+          // ItemList URL must match an actual programme page route
+          const urlPath = new URL(el.url).pathname;
+          assert.ok(urlPath.startsWith('/programmes/'), `${shell.route}: ItemList URL must be a programme route (got ${urlPath})`);
+        });
+      }
+
+      // Check Organization/EducationalOrganization schema
+      if (node['@type'] === 'EducationalOrganization' || node['@type'] === 'Organization') {
+        orgPages++;
+        // No self-referential sameAs
+        if (node.sameAs) {
+          const sameAsArray = Array.isArray(node.sameAs) ? node.sameAs : [node.sameAs];
+          sameAsArray.forEach(sa => {
+            if (sa === CANONICAL_DOMAIN) {
+              selfReferentialSameAsWarnings.push(`${shell.route}: self-referential sameAs ${sa}`);
+            }
+          });
+        }
+        // No identifier on nested provider (RC 1178333 not visible on course pages)
+        if (node.identifier && shell.route !== '/') {
+          // This is a warning, not a block - identifier on nested org
+        }
+      }
+
+      // Check WebPage schema
+      if (node['@type'] === 'WebPage') {
+        webPagePages++;
+        // WebPage must have @id
+        assert.ok(node['@id'], `${shell.route}: WebPage must have @id`);
+        // WebPage must have inLanguage
+        assert.ok(node['inLanguage'], `${shell.route}: WebPage must have inLanguage`);
+        // WebPage must have isPartOf
+        assert.ok(node.isPartOf, `${shell.route}: WebPage must have isPartOf`);
+        // WebPage must have publisher
+        assert.ok(node.publisher, `${shell.route}: WebPage must have publisher`);
+      }
+
+      // Check all JSON-LD nodes have @id
+      if (node['@id']) {
+        // Verify @id is a valid URL
+        try {
+          new URL(node['@id']);
+        } catch (e) {
+          throw new Error(`${shell.route}: Invalid @id: ${node['@id']}`);
+        }
+      }
+    }
+  }
+}
+
+// Assert unique canonicals
+const canonicalCounts = {};
+allCanonicals.forEach(c => { canonicalCounts[c] = (canonicalCounts[c] || 0) + 1; });
+Object.entries(canonicalCounts).forEach(([url, count]) => {
+  if (count > 1) throw new Error(`Duplicate canonical URL: ${url} appears ${count} times`);
+});
+
+// Assert unique ItemList positions within each page (already checked above)
+
+// Report results
+console.log(`JSON-LD validation: ${jsonLdPages} pages with JSON-LD, ${coursePages} Course schemas, ${itemListPages} ItemList schemas, ${orgPages} Organization schemas, ${webPagePages} WebPage schemas`);
+console.log(`Unique canonicals: ${new Set(allCanonicals).size} / ${allCanonicals.length}`);
+
+if (expiredDateWarnings.length > 0) {
+  console.warn(`WARNING: ${expiredDateWarnings.length} pages may contain expired 2026 dates:`);
+  expiredDateWarnings.forEach(w => console.warn(`  ${w}`));
+}
+
+if (fabricatedAddressWarnings.length > 0) {
+  console.warn(`WARNING: ${fabricatedAddressWarnings.length} pages have fabricated addresses:`);
+  fabricatedAddressWarnings.forEach(w => console.warn(`  ${w}`));
+}
+
+if (selfReferentialSameAsWarnings.length > 0) {
+  console.warn(`WARNING: ${selfReferentialSameAsWarnings.length} pages have self-referential sameAs:`);
+  selfReferentialSameAsWarnings.forEach(w => console.warn(`  ${w}`));
+}
+
+// --- Expired Schedule Suppression Checks ---
+// Verify that no static shell presents 2026 dates as upcoming schedule info
+const programmeShells = shells.filter(s => s.route.startsWith('/programmes/course-') || s.route.startsWith('/programmes/foreign-'));
+let suppressedSchedules = 0;
+for (const shell of programmeShells) {
+  const html = readShell(shell.route);
+  if (html.includes('Contact GIBS for the current programme schedule.')) {
+    suppressedSchedules++;
+  }
+}
+console.log(`Expired schedule suppression: ${suppressedSchedules} / ${programmeShells.length} programme shells suppress expired 2026 dates`);
+
+// --- Expired Date Suppression in Metadata (all 135 programme pages) ---
+// Verify no meta description, og:description, or twitter:description contains
+// expired 2026 schedule dates (March 2, April 13, Sept 7).
+let expiredMetaDescCount = 0;
+let expiredOgDescCount = 0;
+let expiredTwitterDescCount = 0;
+for (const shell of programmeShells) {
+  const html = readShell(shell.route);
+  const metaDesc = metaValue(html, 'description');
+  const ogDesc = metaValue(html, 'og:description', 'property');
+  const twitterDesc = metaValue(html, 'twitter:description');
+  const expiredPatterns = ['March 2', 'April 13', 'Sept 7', 'Scheduled across'];
+  if (expiredPatterns.some(p => metaDesc.includes(p))) expiredMetaDescCount++;
+  if (expiredPatterns.some(p => ogDesc.includes(p))) expiredOgDescCount++;
+  if (expiredPatterns.some(p => twitterDesc.includes(p))) expiredTwitterDescCount++;
+}
+assert.equal(expiredMetaDescCount, 0, `${expiredMetaDescCount} programme pages have expired dates in meta description`);
+assert.equal(expiredOgDescCount, 0, `${expiredOgDescCount} programme pages have expired dates in og:description`);
+assert.equal(expiredTwitterDescCount, 0, `${expiredTwitterDescCount} programme pages have expired dates in twitter:description`);
+console.log(`Expired date suppression in metadata: 0 / ${programmeShells.length} pages contain expired 2026 dates`);
+
+// --- Homepage Metadata Consistency ---
+// Homepage <title> must match og:title and twitter:title
+const homeHtml = readShell("");
+const homeTitle = titleValue(homeHtml);
+const homeOgTitle = metaValue(homeHtml, "og:title", "property");
+const homeTwitterTitle = metaValue(homeHtml, "twitter:title");
+assert.equal(homeTitle, homeOgTitle, "Homepage <title> must match og:title");
+assert.equal(homeTitle, homeTwitterTitle, "Homepage <title> must match twitter:title");
+// Homepage meta description must match og:description and twitter:description
+const homeMetaDesc = metaValue(homeHtml, "description");
+const homeOgDesc = metaValue(homeHtml, "og:description", "property");
+const homeTwitterDesc = metaValue(homeHtml, "twitter:description");
+assert.equal(homeMetaDesc, homeOgDesc, "Homepage meta description must match og:description");
+assert.equal(homeMetaDesc, homeTwitterDesc, "Homepage meta description must match twitter:description");
+console.log(`Homepage metadata consistency: title=og:title=twitter:title, desc=og:desc=twitter:desc`);
+const progHtml = readShell("programmes/course-1-public-sector-accounting-procedure-and-standards");
+const progBlocks = extractJsonLd(progHtml, "programmes/course-1-public-sector-accounting-procedure-and-standards");
+const courseNode = progBlocks.flat().find(n => n && n['@type'] === 'Course');
+if (courseNode) {
+  assert.equal(courseNode.name, "Public Sector Accounting Procedure and Standards", "Course name must match visible page title");
+  assert.equal(courseNode.courseCode, "GIBS-LOC-001", "Course courseCode must match visible page");
+  assert.ok(courseNode.description.includes("Public Sector Accounting Procedure and Standards"), "Course description must match visible page summary");
+  assert.equal(courseNode.url, "https://gibs.com.ng/programmes/course-1-public-sector-accounting-procedure-and-standards", "Course url must match canonical");
+  const hci = courseNode.hasCourseInstance;
+  assert.equal(hci['@type'], 'CourseInstance', "hasCourseInstance must be CourseInstance");
+  assert.equal(hci.duration, 'P5D', "CourseInstance duration must match visible page");
+  assert.ok(hci.offers, "CourseInstance must have offers");
+  assert.equal(hci.offers.price, 390000, "CourseInstance offer price must match visible page fee");
+  assert.equal(hci.offers.priceCurrency, 'NGN', "CourseInstance offer priceCurrency must match visible page");
+}
+
+// --- Protected File Hash Verification ---
+const typesContent = readFileSync(join(root, "src", "types", "data.ts"), "utf8");
+const typesSha = createHash("sha256").update(typesContent).digest("hex");
+assert.equal(
+  typesSha,
+  "37e8e6d5bb9fe6be6b96eda0d1de1eb9c93b80690728f682c0b50dcdf39ad867",
+  "src/types/data.ts must maintain protected SHA-256 checksum"
+);
+
+const genContent = readFileSync(join(root, "scripts", "generate_data_ts.py"), "utf8");
+const genSha = createHash("sha256").update(genContent).digest("hex");
+assert.equal(
+  genSha,
+  "f44750038aeab91310da3300193080c999bc95c33050cb2a8c7f2151502319f3",
+  "scripts/generate_data_ts.py must maintain protected SHA-256 checksum"
 );
 
 // --- Crawlability & Static Navigation Checks ---

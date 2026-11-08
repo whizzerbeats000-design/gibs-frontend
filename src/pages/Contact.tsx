@@ -12,6 +12,7 @@ import { ArrowUpRight, ChatIcon, MapPinIcon, PhoneIcon, MailIcon } from "../comp
 import { useRoute, useSeo } from "../lib/router";
 import { ENQUIRY_TYPES, INSTITUTIONAL_DATA, CAMPUSES, getProgramme } from "../lib/data";
 import { activePhoneNumbers } from "../lib/phones";
+import { suppressExpiredSchedule } from "../lib/suppressExpiredDates";
 import { useConcierge } from "../components/Concierge";
 
 /* Render-layer transform for INSTITUTIONAL_DATA.phoneNumbers. data.ts is
@@ -210,7 +211,7 @@ export default function Contact() {
                       {matchedProgramme.title}
                     </h3>
                     <p className="mt-1 text-xs text-muted">
-                      Code: <strong className="text-ink">{matchedProgramme.code}</strong> · Destination: {matchedProgramme.destination} · Official Fee: {matchedProgramme.fees} · Schedule: {matchedProgramme.schedule}
+                      Code: <strong className="text-ink">{matchedProgramme.code}</strong> · Destination: {matchedProgramme.destination} · Official Fee: {matchedProgramme.fees} · Schedule: {suppressExpiredSchedule(matchedProgramme.schedule)}
                     </p>
                   </div>
                 )}

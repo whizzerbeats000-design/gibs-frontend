@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "../lib/router";
 import { scrubRetiredNumbersInProse } from "../lib/phones";
+import { suppressExpiredSchedule } from "../lib/suppressExpiredDates";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
 import { EASE } from "./motion";
 import { SearchIcon, CloseIcon, ArrowUpRight } from "./icons";
@@ -25,7 +26,7 @@ async function loadIndex(): Promise<SearchItem[]> {
   cachedIndex = [
     ...PROGRAMMES.map((p) => ({
       title: `${p.code} · ${p.title}`,
-      blurb: scrubRetiredNumbersInProse(`${p.fees} · ${p.schedule}`),
+      blurb: scrubRetiredNumbersInProse(`${p.fees} · ${suppressExpiredSchedule(p.schedule)}`),
       to: `/programmes/${p.slug}`,
       group: "Programmes" as const,
       keywords: `${p.code} ${p.title} ${p.category} ${p.destination} ${p.targetAudience} ${p.schedule} ${p.fees} ${p.summary} ${p.duration}`,

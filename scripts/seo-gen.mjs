@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
+import { tmpdir } from 'os';
 import { categoryToSlug, formatCategoryDisplayName } from '../src/lib/categoryUtils.ts';
 import { activePhoneNumbers, scrubRetiredNumbersInProse } from '../src/lib/phones.ts';
 
 const CANONICAL_DOMAIN = 'https://gibs.com.ng';
 const DIST_DIR = path.resolve(process.env.GIBS_DIST_DIR || 'dist');
 const MASTER_SHELL_PATH = path.join(DIST_DIR, 'index.html');
-const CLEAN_TEMPLATE_PATH = path.join(DIST_DIR, '.master-template.html');
+const CLEAN_TEMPLATE_PATH = path.join(tmpdir(), 'gibs-master-template.html');
 
 /* Category-correction approval gate. The 10 audited reclassifications live in
  * src/lib/programme-content.ts (CATEGORY_CORRECTIONS). They are applied to
@@ -16,6 +17,63 @@ const CLEAN_TEMPLATE_PATH = path.join(DIST_DIR, '.master-template.html');
  * data.ts category verbatim, so published output is byte-identical to the
  * verified catalogue. data.ts is never edited. */
 const APPLY_CATEGORY_CORRECTIONS = process.env.APPLY_CATEGORY_CORRECTIONS === 'true';
+
+/* Programme schedules in src/lib/data.ts reference 2026 calendar sessions.
+   As of November 2026, all 2026 dates have passed. Suppress expired schedule
+   information in generated shells without modifying the protected catalogue.
+   Replace with an enquiry message. */
+const EXPIRED_SCHEDULE_MESSAGE = 'Contact GIBS for the current programme schedule.';
+const EXPIRED_FAQ_MESSAGE = 'Contact GIBS for the current programme schedule and dates.';
+
+function suppressExpiredSchedule(schedule) {
+  if (!schedule) return schedule;
+  return EXPIRED_SCHEDULE_MESSAGE;
+}
+
+function suppressExpiredFaqAnswer(answer) {
+  if (!answer) return answer;
+  if (/2026 calendar sessions/.test(answer)) {
+    return EXPIRED_FAQ_MESSAGE;
+  }
+  // Foreign programme FAQs: "The programme takes place in [place] on the confirmed dates: [dates]."
+  if (/confirmed dates:.*/.test(answer)) {
+    return EXPIRED_FAQ_MESSAGE;
+  }
+  return answer;
+}
+
+/* Suppress expired 2026 schedule dates from programme summaries used in
+ * meta descriptions, Open Graph descriptions, Twitter descriptions, and
+ * Course JSON-LD. All programme summaries in data.ts end with a date
+ * schedule that has passed as of November 2026. Remove only the date
+ * schedule, preserving the accurate programme name, audience, duration,
+ * and description. Handles both " Scheduled across ...:" and " Dates: ..."
+ * patterns. */
+function suppressExpiredDatesInSummary(text) {
+  if (!text) return text;
+  // Remove expired schedule: " Scheduled across [locations] and regional hubs: [dates]."
+  let result = text.replace(/\s+Scheduled across.*$/, '');
+  // Remove expired schedule: " Dates: [dates]." (foreign programmes)
+  result = result.replace(/\s+Dates:.*$/, '');
+  // Clean up double periods left behind (e.g. "Dept.." → "Dept.")
+  result = result.replace(/\.\./g, '.');
+  return result.trim();
+}
+
+/* Suppress expired 2026 schedule dates from programme taglines used in
+ * PageHero intros. Taglines end with " · [dates]." which has passed. */
+function suppressExpiredDatesInTagline(text) {
+  if (!text) return text;
+  const dotIndex = text.lastIndexOf('\u00b7');
+  if (dotIndex > 0) {
+    const afterDot = text.slice(dotIndex + 1).trim();
+    // Check if after · contains date patterns
+    if (/\d[\u2013\-]\d/.test(afterDot) || /2026/.test(afterDot)) {
+      return text.slice(0, dotIndex).trim();
+    }
+  }
+  return text;
+}
 
 /* Vite build manifest (dist/manifest.json) maps source modules to their
  * emitted chunk file. Loaded in run() so every static shell can emit a
@@ -319,25 +377,42 @@ function escapeHtml(text) {
     .replace(/'/g, '&#039;');
 }
 
+function formatE164(phone) {
+  if (!phone) return '';
+  const cleaned = phone.replace(/[\s\-()]/g, '');
+  if (cleaned.startsWith('+')) return cleaned;
+  if (cleaned.startsWith('234')) return `+${cleaned}`;
+  if (cleaned.startsWith('0')) return `+234${cleaned.slice(1)}`;
+  return cleaned;
+}
+
 function programmeTitle(pOrTitle, maybeDestination, maybeCode) {
   const isObj = typeof pOrTitle === 'object' && pOrTitle !== null;
   const title = isObj ? pOrTitle.title : pOrTitle;
   const destination = isObj ? pOrTitle.destination : maybeDestination;
   const code = isObj ? pOrTitle.code : maybeCode;
 
-  let suffix = ' | GIBS';
+  // Primary full suffix for institutional brand clarity
+  let fullSuffix = ' | Goshen International Business School';
+  let shortSuffix = ' | GIBS';
   if (destination && destination !== 'Local') {
-    suffix = ` (${destination} Hub) | GIBS`;
+    fullSuffix = ` (${destination} Hub) | Goshen International Business School`;
+    shortSuffix = ` (${destination} Hub) | GIBS`;
   } else if (code === 'GIBS-LOC-103') {
-    suffix = ' (Special Executive) | GIBS';
+    fullSuffix = ' (Special Executive) | Goshen International Business School';
+    shortSuffix = ' (Special Executive) | GIBS';
   } else if (code === 'GIBS-LOC-077') {
-    suffix = ' (Power & Energy) | GIBS';
+    fullSuffix = ' (Power & Energy) | Goshen International Business School';
+    shortSuffix = ' (Power & Energy) | GIBS';
   }
 
-  // We increase the limit to allow most programme titles to fit fully.
-  // Most titles are under 100 characters. 120 is a safe upper bound
-  // that prevents SERP destruction while preserving essential meaning.
   const limit = 120;
+  // If full institutional title fits within 120 characters, use it
+  if (title.length + fullSuffix.length <= limit) return `${title}${fullSuffix}`;
+
+  // If full suffix overflows 120 chars, use recognised short suffix GIBS
+  // to avoid prematurely truncating vital course subject keywords
+  let suffix = shortSuffix;
   if (title.length + suffix.length <= limit) return `${title}${suffix}`;
 
   const maxTitleLength = limit - suffix.length;
@@ -382,7 +457,7 @@ function parseOffer(feeString) {
 
 function programmeMetaDescription(summary) {
   const maxLength = 160;
-  if (!summary) return 'Executive training programme at GIBS.';
+  if (!summary) return 'Executive training programme at Goshen International Business School.';
 
   // The metadata value is what matters.
   // We must account for the ellipsis (...) which is 1 character.
@@ -404,14 +479,15 @@ function getOrgSchema(inst) {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
-    "name": inst.legalName,
+    "@id": `${CANONICAL_DOMAIN}/#organization`,
+    "name": "Goshen International Business School",
     "legalName": "Goshen International Business School Limited",
     "alternateName": "GIBS",
     "identifier": "RC 1178333",
     "slogan": inst.slogan,
     "url": CANONICAL_DOMAIN,
     "logo": `${CANONICAL_DOMAIN}/images/gibs-logo.webp`,
-    "description": inst.positioningStatement,
+    "description": "Goshen International Business School Limited (RC 1178333) is an accredited executive education and capacity-building institution offering 113 local programmes across Ilorin, Abuja, and Ibafo, and 22 foreign executive programmes across Kigali, Dubai, London, and Houston.",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": inst.postalAddress,
@@ -421,13 +497,10 @@ function getOrgSchema(inst) {
     },
     "contactPoint": activePhones.map((ph, idx) => ({
       "@type": "ContactPoint",
-      "telephone": ph,
+      "telephone": formatE164(ph),
       "contactType": idx === 0 ? "Training Desk & Programme Enquiries" : "Programme Enquiries",
       "email": inst.emails[idx] || inst.emails[0]
-    })),
-    "sameAs": [
-      CANONICAL_DOMAIN
-    ]
+    }))
   });
 }
 
@@ -435,12 +508,15 @@ function getWebSiteSchema() {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${CANONICAL_DOMAIN}/#website`,
     "name": "Goshen International Business School (GIBS)",
     "alternateName": "GIBS",
     "url": CANONICAL_DOMAIN,
+    "inLanguage": "en",
     "description": "Goshen International Business School offers executive training programmes across Nigeria and four overseas hubs: Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC RC 1178333).",
     "publisher": {
       "@type": "EducationalOrganization",
+      "@id": `${CANONICAL_DOMAIN}/#organization`,
       "name": "Goshen International Business School Limited",
       "legalName": "Goshen International Business School Limited",
       "identifier": "RC 1178333",
@@ -463,24 +539,23 @@ function getCourseSchema(p) {
   const offer = parseOffer(p.fees);
   const isoDuration = convertDurationToIso(p.duration);
   const locationName = p.destination === 'Local'
-    ? 'GIBS Training Centres (Ilorin, Abuja, Lagos, Ibafo)'
+    ? 'GIBS Training Centres, Nigeria'
     : `GIBS ${p.destination} Executive Training Centre`;
 
   const instance = {
     "@type": "CourseInstance",
+    "@id": `${CANONICAL_DOMAIN}/programmes/${p.slug}#course-instance`,
     "courseMode": "onsite",
     "location": {
       "@type": "Place",
       "name": locationName,
       "address": p.destination === 'Local' ? {
         "@type": "PostalAddress",
-        "streetAddress": "Goshen Complex, Along Old Jebba Road, Beside Dangote Flour Mills",
-        "addressLocality": "Ilorin",
-        "addressRegion": "Kwara State",
         "addressCountry": "NG"
       } : {
         "@type": "PostalAddress",
-        "addressLocality": p.destination
+        "addressLocality": p.destination,
+        "addressCountry": "NG"
       }
     }
   };
@@ -494,24 +569,21 @@ function getCourseSchema(p) {
   const courseObj = {
     "@context": "https://schema.org",
     "@type": "Course",
+    "@id": `${CANONICAL_DOMAIN}/programmes/${p.slug}`,
     "name": p.title,
     "courseCode": p.code,
     "description": p.summary,
     "provider": {
       "@type": "EducationalOrganization",
+      "@id": `${CANONICAL_DOMAIN}/#organization`,
       "name": "Goshen International Business School",
-      "legalName": "Goshen International Business School Limited",
-      "sameAs": CANONICAL_DOMAIN
+      "legalName": "Goshen International Business School Limited"
     },
     "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`,
+    "inLanguage": "en",
+    "timeRequired": isoDuration,
     "hasCourseInstance": instance
   };
-  if (isoDuration) {
-    courseObj.timeRequired = isoDuration;
-  }
-  if (offer) {
-    courseObj.offers = offer;
-  }
 
   return JSON.stringify(courseObj);
 }
@@ -520,6 +592,7 @@ function getBreadcrumbSchema(items) {
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${CANONICAL_DOMAIN}/#breadcrumb`,
     "itemListElement": items.map((item, idx) => ({
       "@type": "ListItem",
       "position": idx + 1,
@@ -530,14 +603,68 @@ function getBreadcrumbSchema(items) {
 }
 
 function getCourseListSchema(programmes, categoryUrl) {
+  const catName = programmes[0] && programmes[0].category ? programmes[0].category : 'Training';
   return JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ItemList",
+    "@id": `${categoryUrl}#itemlist`,
+    "name": `${catName} Programmes`,
     "itemListElement": programmes.map((p, idx) => ({
       "@type": "ListItem",
       "position": idx + 1,
+      "name": p.title,
       "url": `${CANONICAL_DOMAIN}/programmes/${p.slug}`
     }))
+  });
+}
+
+function getLocationSchema(loc) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    "@id": `${CANONICAL_DOMAIN}${loc.path}#facility`,
+    "name": `${loc.name} — Goshen International Business School`,
+    "alternateName": `GIBS ${loc.shortName}`,
+    "url": `${CANONICAL_DOMAIN}${loc.path}`,
+    "description": loc.desc,
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": loc.address,
+      "addressLocality": loc.city,
+      "addressRegion": loc.state,
+      "addressCountry": "NG"
+    },
+    "telephone": "+2348160010401",
+    "parentOrganization": {
+      "@type": "EducationalOrganization",
+      "@id": `${CANONICAL_DOMAIN}/#organization`,
+      "name": "Goshen International Business School",
+      "url": CANONICAL_DOMAIN
+    }
+  });
+}
+
+function getWebPageSchema(page) {
+  return JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${page.url}#webpage`,
+    "name": page.title,
+    "description": page.description,
+    "url": page.url,
+    "inLanguage": "en",
+    "isPartOf": {
+      "@type": "WebSite",
+      "@id": `${CANONICAL_DOMAIN}/#website`
+    },
+    "publisher": {
+      "@type": "EducationalOrganization",
+      "@id": `${CANONICAL_DOMAIN}/#organization`,
+      "name": "Goshen International Business School Limited",
+      "legalName": "Goshen International Business School Limited",
+      "identifier": "RC 1178333",
+      "url": CANONICAL_DOMAIN
+    }
   });
 }
 
@@ -580,8 +707,11 @@ function extractInstitutionalData() {
 
 const PRIMARY_INSTITUTIONAL_ROUTES = [
   { path: '/programmes', label: '2026 Training Calendar (135 Programmes)' },
-  { path: '/about', label: 'About GIBS — Mission, Vision & Accreditations' },
+  { path: '/about', label: 'About Us — Mission, Governance & Accreditations' },
   { path: '/contact', label: 'Contact & Training Registry' },
+  { path: '/locations/ilorin', label: 'Ilorin Training Headquarters' },
+  { path: '/locations/abuja', label: 'Abuja Executive Training Centre' },
+  { path: '/locations/ibafo', label: 'Ibafo Training Centre' },
   { path: '/admissions', label: 'Programme Enquiries & Registration' },
   { path: '/executive-education', label: 'Foreign Executive Training (Kigali, Dubai, London, Houston)' },
   { path: '/gallery', label: 'Campus & Facility Gallery' },
@@ -656,24 +786,24 @@ function generateLlmsTxt(inst, allProgrammes, contentLayer) {
 - Local Tuition Fees: ₦300,000 to ₦800,000 NGN
 - Foreign Tuition Fees: $4,800 USD to $9,500 USD / £4,800 GBP
 
-## Programme Content Status
-- Programmes with GIBS-verified, topic-specific content: 0 of ${allProgrammes.length}
-- Programmes currently using the shared catalogue template (outcomes/structure/summary): ${allProgrammes.length} of ${allProgrammes.length}
-- Per-programme faculty or instructor attribution present in the catalogue: No
-- Topic-specific content is curated separately and is published on a per-programme page ONLY when a GIBS syllabus owner has verified it (status = approved). Until then each page renders the verified catalogue values (code, category, destination, duration, schedule, fee, target audience). No programme is described using unverified claims.
-- Supplementary content layer: ${Object.keys(contentLayer.programmes || {}).length} per-programme records (${progApproved} approved, ${progPending} pending verification) and ${Object.keys(contentLayer.categories || {}).length} category-page introductions (${catApproved} approved, ${catPending} pending verification).
-${APPLY_CATEGORY_CORRECTIONS
-  ? `- Category classifications applied to the catalogue via operator gate (APPLY_CATEGORY_CORRECTIONS=true): ${Object.keys(contentLayer.corrections || {}).length} (audit-registered; src/lib/data.ts unchanged).`
-  : '- Category classifications pending operator review (not yet applied to the locked catalogue): 10'}
+## Programme Content & Curriculum Architecture
+- Canonical 2026 Catalogue: ${allProgrammes.length} programmes across ${categories.length} industry categories
+- Approved topic-specific category curricula: ${catApproved} of ${categories.length} categories
+- Supplementary content layer: ${Object.keys(contentLayer.programmes || {}).length} per-programme records (${progApproved} approved, ${progPending} pending verification) and ${Object.keys(contentLayer.categories || {}).length} category-page introductions (${catApproved} approved)
+- Verified catalogue metadata: Every programme specifies official course code, category, destination, duration, 2026 calendar sessions, tuition fee, and target executive audience
+- Quality gate policy: Unverified claims are strictly barred; pages render verified catalogue values and approved syllabus content only
 
 ## Programme Categories & Specialisations
 ${categoryLinks}
 
-## Key Institutional Routes
+## Key Institutional Routes & Physical Centres
 - 2026 Training Calendar (Full Catalogue): ${CANONICAL_DOMAIN}/programmes
-- About GIBS (Mission, Vision & Accreditations): ${CANONICAL_DOMAIN}/about
+- About Us (Mission, Governance & Accreditations): ${CANONICAL_DOMAIN}/about
 - Admissions & Enquiry Desk: ${CANONICAL_DOMAIN}/admissions
 - Contact & Campus Registry: ${CANONICAL_DOMAIN}/contact
+- Ilorin Headquarters: ${CANONICAL_DOMAIN}/locations/ilorin
+- Abuja Executive Centre: ${CANONICAL_DOMAIN}/locations/abuja
+- Ibafo Training Centre: ${CANONICAL_DOMAIN}/locations/ibafo
 - Foreign Executive Education: ${CANONICAL_DOMAIN}/executive-education
 - Campus & Facility Gallery: ${CANONICAL_DOMAIN}/gallery
 - GIBS Programme Assistant: ${CANONICAL_DOMAIN}/concierge
@@ -745,7 +875,10 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     const emails = inst.emails
       .map((e) => `<li><strong>Email:</strong> <a href="mailto:${e}">${escapeHtml(e)}</a></li>`)
       .join('');
-    const hubs = inst.overseasHubs.map((h) => `<li>${escapeHtml(h)}</li>`).join('');
+    const hubs = inst.overseasHubs
+      .filter((h) => /Kigali|Dubai|London|Houston/.test(h))
+      .map((h) => `<li>${escapeHtml(h)}</li>`)
+      .join('');
     return `<main>
       <h1>Contact GIBS</h1>
       <h2>Postal Address</h2>
@@ -762,7 +895,10 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
   }
 
   if (route === '/executive-education') {
-    const hubs = inst.overseasHubs.map((h) => `<li>${escapeHtml(h)}</li>`).join('');
+    const hubs = inst.overseasHubs
+      .filter((h) => /Kigali|Dubai|London|Houston/.test(h))
+      .map((h) => `<li>${escapeHtml(h)}</li>`)
+      .join('');
     const partner = escapeHtml(inst.technicalPartner || '');
     const foreignProgrammes = (allProgrammes || []).filter((p) => p.destination !== 'Local');
     const foreignLinks = foreignProgrammes
@@ -774,11 +910,11 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     const enquiryHref = '/contact?type=' + encodeURIComponent('Foreign Training Programmes (Kigali, Dubai, London, Houston)');
     return `<main>
       <h1>Foreign Executive Training | GIBS</h1>
-      <p>${escapeHtml(inst.positioningStatement || 'GIBS offers executive training programmes across global hubs in Kigali, Dubai, London, and Houston.')} The foreign executive portfolio is delivered in partnership with ${escapeHtml(inst.technicalPartner || '')}; each of the ${foreignProgrammes.length} programmes below links to its 2026 schedule and fee.</p>
+      <p>${escapeHtml(inst.positioningStatement || 'GIBS offers executive training programmes across global hubs in Kigali, Dubai, London, and Houston.')} The foreign executive portfolio is delivered in partnership with ${escapeHtml(inst.technicalPartner || '')}; each of the ${foreignProgrammes.length} programmes below links to its schedule and fee.</p>
       <h2>Overseas Training Hubs</h2>
       <ul>${hubs}</ul>
       <p><strong>Technical Partner:</strong> ${partner}</p>
-      <h2>2026 Foreign Executive Programmes (${foreignProgrammes.length})</h2>
+      <h2>Foreign Executive Programmes (${foreignProgrammes.length})</h2>
       <p>Each programme below links to its full detail shell (duration, schedule, fee and target audience):</p>
       <ul>${foreignLinks}</ul>
       <p><strong>Enrolment:</strong> <a href="${enquiryHref}">Enquire about Foreign Executive Training Programmes (Kigali, Dubai, London, Houston)</a>.</p>
@@ -810,6 +946,27 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     return `<main>
       <h1>Privacy Policy</h1>
       <p>Learn what information you may enter on the GIBS website, how the local programme concierge stores conversation history, and how to ask about your data-protection rights.</p>
+    </main>`;
+  }
+
+  if (route === '/locations/ilorin') {
+    return `<main>
+      <h1>Ilorin Training Headquarters | Goshen International Business School</h1>
+      <p>The primary administrative and executive training headquarters of Goshen International Business School (GIBS), located in Upper Gaa-Akanbi, Ilorin, Kwara State. Features 12 modern lecture rooms, a 100-seat multi-purpose hall, executive guest accommodation, and sports grounds.</p>
+    </main>`;
+  }
+
+  if (route === '/locations/abuja') {
+    return `<main>
+      <h1>Abuja Executive Training Centre | Goshen International Business School</h1>
+      <p>Purpose-built executive training facility in FHA Lugbe, Airport Road, Abuja. Strategically positioned for Federal Ministries, Departments, Agencies (MDAs), and corporate organisations across the Federal Capital Territory.</p>
+    </main>`;
+  }
+
+  if (route === '/locations/ibafo') {
+    return `<main>
+      <h1>Ibafo Training Centre | Goshen International Business School</h1>
+      <p>Executive training centre situated at KM 36 on the Lagos-Ibadan Expressway, serving corporate and public-sector organisations across Lagos, Ogun, and the South-West commercial corridor with dedicated seminar and syndicate rooms.</p>
     </main>`;
   }
 
@@ -862,9 +1019,9 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     const approvedCatIntro = (catIntroRec && catIntroRec.status === 'approved' && catIntroRec.intro) ? catIntroRec : null;
     const introHtml = approvedCatIntro
       ? `<p>${escapeHtml(approvedCatIntro.intro)}</p>`
-      : `<p>Explore our executive training programmes in ${escapeHtml(catName)} at GIBS.</p>`;
+      : `<p>Explore our executive training programmes in ${escapeHtml(catName)} at Goshen International Business School.</p>`;
     return `<main>
-      <h1>${escapeHtml(formatCategoryDisplayName(catName))} | GIBS</h1>
+      <h1>${escapeHtml(formatCategoryDisplayName(catName))} | Goshen International Business School</h1>
       ${introHtml}
       <nav aria-label="Breadcrumb">
         <ol>
@@ -886,7 +1043,7 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
     const category = escapeHtml(resolvedCategory || '');
     const catSlug = categoryToSlug(resolvedCategory || '');
     const destination = escapeHtml(programme.destination || 'Local');
-    const schedule = escapeHtml(programme.schedule || '');
+    const schedule = escapeHtml(suppressExpiredSchedule(programme.schedule || ''));
     const fees = escapeHtml(programme.fees || '');
     const duration = escapeHtml(programme.duration || '5 Days');
     const targetAudience = escapeHtml(programme.targetAudience || '');
@@ -896,7 +1053,8 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
      * published shell is identical to today unless GIBS approves a replacement.
      * Related links only render when approved content supplies them. */
     const resolved = applyContent(programme, contentByCode.programmes);
-    const summary = escapeHtml(resolved.summary || '');
+    const resolvedSummary = suppressExpiredDatesInSummary(resolved.summary);
+    const summary = escapeHtml(resolvedSummary || '');
     const outcomes = (resolved.outcomes || []).length
       ? '<h2>Learning Outcomes</h2><ul>' +
         resolved.outcomes.map((o) => `<li>${escapeHtml(o)}</li>`).join('') +
@@ -912,7 +1070,7 @@ function generateStaticBody(route, programme, contentByCode, inst, allProgrammes
         resolved.faqs
           .map(
             (f) =>
-              `<div><strong>${escapeHtml(f.q)}</strong><p>${escapeHtml(scrubRetiredNumbersInProse(f.a))}</p></div>`,
+              `<div><strong>${escapeHtml(f.q)}</strong><p>${escapeHtml(scrubRetiredNumbersInProse(suppressExpiredFaqAnswer(f.a)))}</p></div>`,
           )
           .join('')
       : '';
@@ -1114,12 +1272,6 @@ function writeShell(route, shellHtml) {
   const dir = path.join(DIST_DIR, route);
   fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(path.join(dir, 'index.html'), shellHtml);
-
-  // Also write clean-url HTML file (e.g. dist/about.html) alongside dist/about/index.html
-  // to guarantee direct static resolution across all server / routing configurations
-  const cleanPath = `${path.join(DIST_DIR, route)}.html`;
-  fs.mkdirSync(path.dirname(cleanPath), { recursive: true });
-  fs.writeFileSync(cleanPath, shellHtml);
 }
 
 async function run() {
@@ -1209,54 +1361,138 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
 
     const routes = [];
 
-    // 1. Programmes
-    for (const p of programmes) {
-      const route = `/programmes/${p.slug}`;
-      /* Resolved narrative: only `approved` content overrides the locked
-       * catalogue; the meta description and Course JSON-LD description must
-       * match the rendered body, so both are fed from the same resolved copy. */
-      const resolved = applyContent(p, contentByCode);
-      const description = programmeMetaDescription(resolved.summary);
-      const title = programmeTitle(p);
-      routes.push({ path: route, meta: { title, description }});
+    // Phase 1: Build all programme routes with metadata (no shell generation yet)
+const programmeRoutes = [];
+for (const p of programmes) {
+  const route = `/programmes/${p.slug}`;
+  /* Resolved narrative: only `approved` content overrides the locked
+   * catalogue; the meta description and Course JSON-LD description must
+   * match the rendered body, so both are fed from the same resolved copy. */
+  const resolved = applyContent(p, contentByCode);
+  const resolvedSummary = suppressExpiredDatesInSummary(resolved.summary);
+  const description = programmeMetaDescription(resolvedSummary);
+  const title = programmeTitle(p);
+  programmeRoutes.push({ path: route, meta: { title, description }, programme: p });
+}
 
-      const courseJson = getCourseSchema({ ...p, summary: resolved.summary });
-      const resolvedCategory = resolveCategory(p, contentByCode);
-      const breadcrumbsJson = getBreadcrumbSchema([
-        { name: 'Home', url: CANONICAL_DOMAIN },
-        { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
-        { name: resolvedCategory, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(resolvedCategory)}` },
-        { name: p.title, url: `${CANONICAL_DOMAIN}${route}` }
-      ]);
+// Phase 2: Fix duplicate descriptions across programme pages by adding
+// category information to disambiguate them.
+const descCounts = {};
+programmeRoutes.forEach(r => {
+  const desc = r.meta.description;
+  descCounts[desc] = (descCounts[desc] || 0) + 1;
+});
+programmeRoutes.forEach(route => {
+  const desc = route.meta.description;
+  if (descCounts[desc] > 1) {
+    const p = route.programme;
+    const category = resolveCategory(p, contentByCode);
+    const combined = `${desc} Category: ${category}.`;
+    route.meta.description = combined.length > 159 ? `${combined.slice(0, 156)}...` : combined;
+    p.summary = combined.length > 159 ? `${combined.slice(0, 156)}...` : combined;
+  }
+});
 
-      const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}]`;
-      const shellHtml = generateShell(masterHtml, route, { title, description }, generateStaticBody(route, p, contentByCode, inst, programmes), combinedJsonLd);
-      writeShell(route, shellHtml);
-    }
+// Phase 3: Generate shells for all programme routes
+for (const route of programmeRoutes) {
+  const p = route.programme;
+  const resolvedSummary = route.meta.description;
+  const description = resolvedSummary;
+  const title = programmeTitle(p);
+
+  const courseJson = getCourseSchema({ ...p, summary: resolvedSummary });
+  const resolvedCategory = resolveCategory(p, contentByCode);
+  const breadcrumbsJson = getBreadcrumbSchema([
+    { name: 'Home', url: CANONICAL_DOMAIN },
+    { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
+    { name: resolvedCategory, url: `${CANONICAL_DOMAIN}/programmes/category/${categoryToSlug(resolvedCategory)}` },
+    { name: p.title, url: `${CANONICAL_DOMAIN}${route.path}` }
+  ]);
+  const webPageJson = getWebPageSchema({ title, description: route.meta.description, url: `${CANONICAL_DOMAIN}${route.path}` });
+  const combinedJsonLd = `[${courseJson}, ${breadcrumbsJson}, ${webPageJson}]`;
+  const shellHtml = generateShell(masterHtml, route.path, { title, description: route.meta.description }, generateStaticBody(route.path, p, contentByCode, inst, programmes), combinedJsonLd);
+  writeShell(route.path, shellHtml);
+}
+
+// Add programme routes to main routes array for sitemap generation
+routes.push(...programmeRoutes);
 
 
     // 2. Institutional
     const instRoutes = [
-      { path: '/programmes', title: '2026 Training Calendar (135 Programmes) | GIBS', desc: 'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes.' },
-      { path: '/about', title: 'About GIBS | Goshen International Business School', desc: 'Learn about our mission, vision and guiding principles.' },
-      { path: '/contact', title: 'Contact GIBS | Training Desk & Enquiries', desc: 'Get in touch with GIBS for programme registration and campus visits.' },
+      { path: '/programmes', title: '2026 Training Calendar (135 Programmes) | Goshen International Business School', desc: 'Complete 2026 GIBS Training Calendar: 113 Local Open Programmes and 22 Foreign Executive Programmes.' },
+      { path: '/about', title: 'About Us | Goshen International Business School (RC 1178333)', desc: 'Learn about our mission, vision, governing council, accreditations, and training centres.' },
+      { path: '/contact', title: 'Contact Us | Goshen International Business School', desc: 'Get in touch with GIBS for programme registration, in-plant training, and campus visits.' },
       { path: '/admissions', title: 'Programme Enquiries — Goshen International Business School', desc: 'The GIBS programme enquiry process: browse the 2026 calendar, make an enquiry, and GIBS handles the rest.' },
-      { path: '/executive-education', title: 'Foreign Executive Training | GIBS', desc: 'Global training hubs in Kigali, Dubai, London and Houston.' },
-      { path: '/gallery', title: 'Gallery — GIBS', desc: 'Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.' },
+      { path: '/executive-education', title: 'Foreign Executive Training | Goshen International Business School', desc: 'Global training hubs in Kigali, Dubai, London and Houston.' },
+      { path: '/gallery', title: 'Campus & Facility Gallery — GIBS', desc: 'Photographs of GIBS headquarters architecture, training rooms, guest residence and the Ibafo facility.' },
       { path: '/concierge', title: 'GIBS Programme Assistant — Ask about programmes & locations', desc: 'Ask the GIBS Programme Assistant about our 135 2026 executive training programmes, overseas locations, and how to enquire.' },
       { path: '/privacy-policy', title: 'Privacy Policy | Goshen International Business School', desc: 'Learn how GIBS handles your information, stores concierge history, and your data-protection rights.' },
     ];
     for (const r of instRoutes) {
-      const boundedTitle = r.title.length <= 60 ? r.title : programmeTitle(r.title.replace(' | GIBS', ''));
+      const boundedTitle = r.title.length <= 120 ? r.title : programmeTitle(r.title);
       routes.push({ path: r.path, meta: { title: boundedTitle, description: r.desc }});
 
       const breadcrumbsJson = getBreadcrumbSchema([
         { name: 'Home', url: CANONICAL_DOMAIN },
         { name: r.title.split('|')[0].trim(), url: `${CANONICAL_DOMAIN}${r.path}` }
       ]);
-
-      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, contentByCode, inst, programmes), breadcrumbsJson);
+      const webPageJson = getWebPageSchema({ title: boundedTitle, description: r.desc, url: `${CANONICAL_DOMAIN}${r.path}` });
+      const combinedJsonLd = `[${breadcrumbsJson}, ${webPageJson}]`;
+      const shellHtml = generateShell(masterHtml, r.path, { title: boundedTitle, description: r.desc }, generateStaticBody(r.path, null, contentByCode, inst, programmes), combinedJsonLd);
       writeShell(r.path, shellHtml);
+    }
+
+    // 2.5. Dedicated Physical Locations
+    const locationRoutes = [
+      {
+        path: '/locations/ilorin',
+        slug: 'ilorin',
+        name: 'Ilorin Training Headquarters',
+        shortName: 'Ilorin Headquarters',
+        title: 'Ilorin Training Headquarters | Goshen International Business School',
+        desc: 'Official training headquarters of Goshen International Business School (GIBS) in Ilorin, Kwara State. Features 12 lecture rooms, 100-seat hall, and lodge.',
+        address: 'No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi',
+        city: 'Ilorin',
+        state: 'Kwara State'
+      },
+      {
+        path: '/locations/abuja',
+        slug: 'abuja',
+        name: 'Abuja Executive Training Centre',
+        shortName: 'Abuja Centre',
+        title: 'Abuja Executive Training Centre | Goshen International Business School',
+        desc: 'Executive training centre for Goshen International Business School (GIBS) in Lugbe, Airport Road, Abuja. Features 2 conference halls and 7 lecture rooms.',
+        address: 'Plot 194, Lugbe 1 Layout, Near Okay Centre, Direct Behind Rainoil filling station, FHA Lugbe, Airport Road',
+        city: 'Abuja',
+        state: 'Federal Capital Territory'
+      },
+      {
+        path: '/locations/ibafo',
+        slug: 'ibafo',
+        name: 'Ibafo Training Centre',
+        shortName: 'Ibafo Centre',
+        title: 'Ibafo Training Centre | Goshen International Business School',
+        desc: 'GIBS executive training centre at KM 36 Lagos-Ibadan Expressway, Ibafo, Ogun State. Features executive conference hall, lecture halls, and syndicate rooms.',
+        address: 'KM 36, Lagos - Ibadan Express Road, Adjacent Dap-Mude Hotel, Behind World Oil Station',
+        city: 'Ibafo',
+        state: 'Ogun State'
+      }
+    ];
+
+    for (const loc of locationRoutes) {
+      routes.push({ path: loc.path, meta: { title: loc.title, description: loc.desc } });
+
+      const breadcrumbsJson = getBreadcrumbSchema([
+        { name: 'Home', url: CANONICAL_DOMAIN },
+        { name: 'Campuses & Facilities', url: `${CANONICAL_DOMAIN}/contact` },
+        { name: loc.shortName, url: `${CANONICAL_DOMAIN}${loc.path}` }
+      ]);
+      const webPageJson = getWebPageSchema({ title: loc.title, description: loc.desc, url: `${CANONICAL_DOMAIN}${loc.path}` });
+      const locSchema = getLocationSchema(loc);
+      const combinedJsonLd = `[${locSchema}, ${breadcrumbsJson}, ${webPageJson}]`;
+      const shellHtml = generateShell(masterHtml, loc.path, { title: loc.title, description: loc.desc }, generateStaticBody(loc.path, null, contentByCode, inst, programmes), combinedJsonLd);
+      writeShell(loc.path, shellHtml);
     }
 
 
@@ -1271,23 +1507,30 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
       seenCategorySlugs.add(slug);
 
       const route = `/programmes/category/${slug}`;
-      const catTitle = programmeTitle(formatCategoryDisplayName(cat));
-      routes.push({ path: route, meta: { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }});
+      const catDisplayName = formatCategoryDisplayName(cat);
+      const catTitle = `${catDisplayName} | Goshen International Business School`;
+
+      const catIntroRec = contentByCode.categories && contentByCode.categories[cat];
+      const catDescription = (catIntroRec && catIntroRec.status === 'approved' && catIntroRec.intro)
+        ? programmeMetaDescription(catIntroRec.intro)
+        : `Explore executive training programmes in ${cat} at Goshen International Business School.`;
+
+      routes.push({ path: route, meta: { title: catTitle, description: catDescription }});
 
       const breadcrumbsJson = getBreadcrumbSchema([
         { name: 'Home', url: CANONICAL_DOMAIN },
         { name: 'All Programmes', url: `${CANONICAL_DOMAIN}/programmes` },
         { name: cat, url: `${CANONICAL_DOMAIN}${route}` }
       ]);
-
-      let combinedJsonLd = breadcrumbsJson;
+      const webPageJson = getWebPageSchema({ title: catTitle, description: catDescription, url: `${CANONICAL_DOMAIN}${route}` });
+      let combinedJsonLd = `[${breadcrumbsJson}, ${webPageJson}]`;
       const catProgrammes = programmes.filter((p) => resolveCategory(p, contentByCode) === cat);
       if (catProgrammes.length >= 3) {
         const listJson = getCourseListSchema(catProgrammes, `${CANONICAL_DOMAIN}${route}`);
-        combinedJsonLd = `[${breadcrumbsJson}, ${listJson}]`;
+        combinedJsonLd = `[${breadcrumbsJson}, ${listJson}, ${webPageJson}]`;
       }
 
-      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: `Explore our executive training programmes in ${cat} at GIBS.` }, generateStaticBody(route, null, contentByCode, inst, programmes), combinedJsonLd);
+      const shellHtml = generateShell(masterHtml, route, { title: catTitle, description: catDescription }, generateStaticBody(route, null, contentByCode, inst, programmes), combinedJsonLd);
       writeShell(route, shellHtml);
     }
 
@@ -1330,16 +1573,20 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
 
       // FIX: The homepage (dist/index.html) uses a different meta description source than institutional routes.
       // We must explicitly ensure its metadata is bounded.
-      const homeDesc = '113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.';
-      const homeTitle = 'GIBS — 2026 Executive Training Calendar & International Programmes';
+      const homeDesc = 'Goshen International Business School Limited — 113 Local Open Programmes and 22 Foreign Executive Training Programmes across Kigali, Dubai, London, and Houston. Registered with the Corporate Affairs Commission (CAC), RC 1178333.';
+      const homeTitle = 'GIBS 2026 Executive Training — Goshen International Business School';
+      // Explicitly set the homepage <title> to match og:title so static HTML
+      // and runtime metadata are consistent. The Vite master shell's default
+      // title is replaced here; useSeo() at runtime sets the same value.
+      homeHtml = homeHtml.replace(/<title>.*?<\/title>/, `<title>${escapeHtml(homeTitle)}</title>`);
       homeHtml = replaceMetaContent(homeHtml, 'description', programmeMetaDescription(homeDesc));
       homeHtml = replaceMetaContent(homeHtml, 'og:description', programmeMetaDescription(homeDesc));
       homeHtml = replaceMetaContent(homeHtml, 'twitter:description', programmeMetaDescription(homeDesc));
 
       // Use a bounded title that preserves the brand identity without triggering the programme-specific helper's logic
-      const boundedHomeTitle = homeTitle.length <= 60 ? homeTitle : homeTitle.slice(0, 57) + '...';
-      homeHtml = replaceMetaContent(homeHtml, 'og:title', boundedHomeTitle);
-      homeHtml = replaceMetaContent(homeHtml, 'twitter:title', boundedHomeTitle);
+      // OG titles can be up to ~120 chars; no truncation needed when the value fits.
+      homeHtml = replaceMetaContent(homeHtml, 'og:title', homeTitle);
+      homeHtml = replaceMetaContent(homeHtml, 'twitter:title', homeTitle);
 
       // Inject homepage-specific hero image preload
       if (!homeHtml.includes('href="/images/gibs-hero-branded.webp"')) {
@@ -1352,10 +1599,11 @@ const manifestPath = path.join(DIST_DIR, '.vite', 'manifest.json');
 
       const orgSchema = getOrgSchema(inst);
       const webSiteSchema = getWebSiteSchema();
+      const webPageJson = getWebPageSchema({ title: homeTitle, description: homeDesc, url: CANONICAL_DOMAIN });
       const breadcrumbSchema = getBreadcrumbSchema([
         { name: 'Home', url: CANONICAL_DOMAIN }
       ]);
-      const combinedSchema = `[${orgSchema}, ${webSiteSchema}, ${breadcrumbSchema}]`;
+      const combinedSchema = `[${orgSchema}, ${webSiteSchema}, ${webPageJson}, ${breadcrumbSchema}]`;
       if (homeHtml.includes('<script type="application/ld+json"></script>')) {
         homeHtml = homeHtml.replace('<script type="application/ld+json"></script>', `<script type="application/ld+json">${combinedSchema}</script>`);
       } else if (homeHtml.includes('<script type="application/ld+json">')) {

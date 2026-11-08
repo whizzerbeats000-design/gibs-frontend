@@ -3,6 +3,7 @@ import { Link } from "../lib/router";
 import { cn } from "../utils/cn";
 import { ArrowUpRight, PlusIcon, CalendarIcon, UsersIcon } from "./icons";
 import { type Programme } from "../lib/data";
+import { suppressExpiredSchedule } from "../lib/suppressExpiredDates";
 
 /* ---------- Programme card (index pages / programmes catalog) ---------- */
 
@@ -61,7 +62,7 @@ export function ProgrammeCard({
           <div className="min-w-0">
             <dt className="card-field-label">Schedule &amp; Duration</dt>
             <dd className="mt-0.5 break-words text-sm leading-snug text-ink/85">
-              {programme.schedule}
+              {suppressExpiredSchedule(programme.schedule)}
               {programme.duration ? <span className="text-muted"> · {programme.duration}</span> : null}
             </dd>
           </div>
@@ -130,7 +131,7 @@ export function ProgrammeCard({
           <div className="min-w-0">
             <p className="text-sm leading-snug tracking-[-0.005em] text-ink">
               <span className="font-semibold text-muted text-xs uppercase tracking-wider block mb-0.5">Schedule &amp; Duration</span>
-              {programme.schedule}
+              {suppressExpiredSchedule(programme.schedule)}
               {programme.duration ? (
                 <span className="text-muted"> · {programme.duration}</span>
               ) : null}
@@ -142,7 +143,7 @@ export function ProgrammeCard({
       {/* Desktop-only simplified body (hidden on mobile/tablet) */}
       <div className="hidden lg:block mt-3.5">
         <p className="text-sm leading-snug tracking-[-0.005em] text-ink">
-          {programme.schedule}
+          {suppressExpiredSchedule(programme.schedule)}
           {programme.duration ? (
             <span className="text-muted"> · {programme.duration}</span>
           ) : null}

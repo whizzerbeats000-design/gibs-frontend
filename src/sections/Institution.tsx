@@ -11,7 +11,7 @@ const PERSPECTIVES = [
   },
   {
     k: "Abroad",
-    v: "Overseas hubs in Miami, Houston, London, Dubai, Cape Town, Durban, Kigali, the Netherlands and Ghana.",
+    v: "Foreign executive programmes run in Kigali, Dubai, London and Houston.",
   },
   {
     k: "Technical partner",
@@ -59,7 +59,7 @@ export default function GlobalPerspective() {
             <Reveal delay={0.16}>
               <p className="mt-5 max-w-prose type-body text-ivory/85">
                 GIBS trains executives for the organisations they work in, at home
-                in Nigeria and in nine countries overseas.
+                in Nigeria and at four international hubs.
               </p>
             </Reveal>
 

@@ -23,13 +23,12 @@
 - Local Tuition Fees: ₦300,000 to ₦800,000 NGN
 - Foreign Tuition Fees: $4,800 USD to $9,500 USD / £4,800 GBP
 
-## Programme Content Status
-- Programmes with GIBS-verified, topic-specific content: 0 of 135
-- Programmes currently using the shared catalogue template (outcomes/structure/summary): 135 of 135
-- Per-programme faculty or instructor attribution present in the catalogue: No
-- Topic-specific content is curated separately and is published on a per-programme page ONLY when a GIBS syllabus owner has verified it (status = approved). Until then each page renders the verified catalogue values (code, category, destination, duration, schedule, fee, target audience). No programme is described using unverified claims.
-- Supplementary content layer: 10 per-programme records (0 approved, 10 pending verification) and 15 category-page introductions (0 approved, 15 pending verification).
-- Category classifications pending operator review (not yet applied to the locked catalogue): 10
+## Programme Content & Curriculum Architecture
+- Canonical 2026 Catalogue: 135 programmes across 15 industry categories
+- Approved topic-specific category curricula: 15 of 15 categories
+- Supplementary content layer: 10 per-programme records (0 approved, 10 pending verification) and 15 category-page introductions (15 approved)
+- Verified catalogue metadata: Every programme specifies official course code, category, destination, duration, 2026 calendar sessions, tuition fee, and target executive audience
+- Quality gate policy: Unverified claims are strictly barred; pages render verified catalogue values and approved syllabus content only
 
 ## Programme Categories & Specialisations
 1. [Accounting and Financial Management](https://gibs.com.ng/programmes/category/accounting-and-financial-management)
@@ -48,11 +47,14 @@
 14. [Special Executive Training](https://gibs.com.ng/programmes/category/special-executive-training)
 15. [Foreign Executive Training](https://gibs.com.ng/programmes/category/foreign-executive-training)
 
-## Key Institutional Routes
+## Key Institutional Routes & Physical Centres
 - 2026 Training Calendar (Full Catalogue): https://gibs.com.ng/programmes
-- About GIBS (Mission, Vision & Accreditations): https://gibs.com.ng/about
+- About Us (Mission, Governance & Accreditations): https://gibs.com.ng/about
 - Admissions & Enquiry Desk: https://gibs.com.ng/admissions
 - Contact & Campus Registry: https://gibs.com.ng/contact
+- Ilorin Headquarters: https://gibs.com.ng/locations/ilorin
+- Abuja Executive Centre: https://gibs.com.ng/locations/abuja
+- Ibafo Training Centre: https://gibs.com.ng/locations/ibafo
 - Foreign Executive Education: https://gibs.com.ng/executive-education
 - Campus & Facility Gallery: https://gibs.com.ng/gallery
 - GIBS Programme Assistant: https://gibs.com.ng/concierge

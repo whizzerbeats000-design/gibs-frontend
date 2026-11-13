@@ -3,7 +3,7 @@ import { BtnLink, ClosingQuiet } from "../components/ui";
 import { Reveal } from "../components/motion";
 import { useSeo } from "../lib/router";
 import { PROGRAMMES } from "../lib/data";
-import { CheckIcon, MapPinIcon } from "../components/icons";
+import { MapPinIcon } from "../components/icons";
 import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
 
 export type LocationSlug = "ilorin" | "abuja" | "ibafo";
@@ -204,12 +204,14 @@ export default function LocationDetail({ locationId }: { locationId: LocationSlu
               </p>
             </Reveal>
 
-            <div className="mt-8 space-y-3">
+            <div className="mt-8 border-t border-line/70">
               {config.highlights.map((h, i) => (
-                <Reveal key={h} delay={i * 0.04}>
-                  <div className="flex items-start gap-3 rounded-panel border border-line bg-white p-4">
-                    <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-forest-700" />
-                    <span className="type-body text-ink/90 font-medium break-words">{h}</span>
+                <Reveal key={h} delay={i * 0.03}>
+                  <div className="flex items-start gap-3.5 border-b border-line/70 py-3.5">
+                    <span className="font-mono text-xs font-semibold tabular-nums text-forest-700 pt-0.5">
+                      0{i + 1}
+                    </span>
+                    <span className="type-body text-ink font-medium break-words">{h}</span>
                   </div>
                 </Reveal>
               ))}
@@ -217,8 +219,8 @@ export default function LocationDetail({ locationId }: { locationId: LocationSlu
 
             {config.recreationalFacilities && (
               <Reveal delay={0.2}>
-                <div className="mt-6 rounded-panel border border-forest-800/20 bg-forest-900/5 p-5">
-                  <p className="label-base font-semibold text-forest-900">Recreational &amp; Delegate Welfare Amenities</p>
+                <div className="mt-6 rounded-panel border border-forest-700/25 bg-forest-50/60 p-5">
+                  <p className="font-mono text-xs font-semibold uppercase tracking-wider text-forest-800">Recreational &amp; Delegate Welfare Amenities</p>
                   <p className="type-body mt-2 text-ink/85 break-words">{config.recreationalFacilities}</p>
                 </div>
               </Reveal>
@@ -227,10 +229,10 @@ export default function LocationDetail({ locationId }: { locationId: LocationSlu
 
           <div className="min-w-0 lg:col-span-5">
             <Reveal delay={0.1}>
-              <div className="rounded-panel border border-line bg-white p-5 sm:p-6 shadow-crisp">
+              <div className="rounded-panel border border-forest-950/[0.08] bg-white p-5 sm:p-6 shadow-crisp">
                 <div className="flex items-center gap-2 text-forest-800">
                   <MapPinIcon className="h-5 w-5 shrink-0" />
-                  <span className="label-base font-bold uppercase tracking-wider">Physical Address</span>
+                  <span className="font-mono text-xs font-bold uppercase tracking-wider">Physical Address</span>
                 </div>
                 <h3 className="type-h3 mt-3 text-ink break-words">{config.name}</h3>
                 <p className="type-body mt-3 text-ink/80 break-words">{config.address}</p>
@@ -240,8 +242,8 @@ export default function LocationDetail({ locationId }: { locationId: LocationSlu
                   </p>
                 )}
 
-                <div className="mt-6 border-t border-line pt-4">
-                  <p className="label-base text-muted">Institutional Registry</p>
+                <div className="mt-6 border-t border-line/70 pt-4">
+                  <p className="font-mono text-xs uppercase tracking-wider text-muted">Institutional Registry</p>
                   <p className="type-body mt-1 text-ink font-medium break-words">
                     Goshen International Business School Limited (RC 1178333)
                   </p>
@@ -270,9 +272,9 @@ export default function LocationDetail({ locationId }: { locationId: LocationSlu
 
             {/* Campus Capacity Metric */}
             <Reveal delay={0.15}>
-              <div className="mt-6 rounded-panel border border-line bg-stone/40 p-5">
-                <p className="label-base text-muted">Operational Capacity</p>
-                <p className="type-caption mt-1 text-ink/80 break-words">
+              <div className="mt-6 rounded-panel border border-forest-600/20 bg-forest-50/50 p-5">
+                <p className="font-mono text-xs font-semibold uppercase tracking-wider text-forest-800">Operational Capacity</p>
+                <p className="type-caption mt-1 text-ink/85 break-words">
                   {config.capacityNote}
                 </p>
               </div>

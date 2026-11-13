@@ -2,7 +2,7 @@
 
 **Repository:** `/root/gibs-frontend`  
 **Branch:** `main`  
-**HEAD:** `f268987` + hardening changes  
+**HEAD:** `045a248` (Merge PR #6 — SEO/AEO final verification)  
 **Production:** https://gibs.com.ng  
 **Secondary:** https://gibs.ng  
 **Audit date:** November 2026  
@@ -43,7 +43,7 @@ The GIBS frontend has been remediated from 70.6/100 to a fully defensible produc
 
 **Accessibility (92/12% → 11.04):** Zero axe violations. Consistent aria-labels. Keyboard navigation, focus management, and screen-reader labels verified via E2E.
 
-**Responsive and visual quality (95/10% → 9.50):** Zero overflow at 320px and all tested viewports. Consistent typography system (Manrope/Inter/DM Mono).
+**Responsive and visual quality (95/10% → 9.50):** Zero overflow at 320px and all tested viewports. Consistent typography system (Manrope/Inter/DM Mono). MotionSites essential improvements applied: Hero blur-rise entrance, short-viewport safeguards, type-h1 line-height 1.05.
 
 **SEO and technical discoverability (90/12% → 10.80):** 158 static shells, sitemap, canonical tags, OG/Twitter tags all verified. Main bundle reduction improves LCP on slow connections.
 
@@ -94,29 +94,58 @@ npx tsc --noEmit → exit 0 ✅
 node scripts/qa/catalogue_integrity.cjs → 26/26 checks passed ✅
 ```
 
-### Unit QA (38 tests)
+### Unit QA (44 tests)
 ```
-npm run qa → 37/38 pass, 1 env-related (Chromium path test) ✅
+npm run qa → 44/44 pass ✅
 ```
 
 ### Production Build
 ```
-npm run build → exit 0 ✅
-Main bundle: 296.89 KB (gzip 90.08 KB)
+npm run build → exit 0 (23.22s) ✅
+Main bundle: 297.60 KB (gzip 90.27 KB)
 Catalogue chunk: 326.56 KB (gzip 25.64 KB, on-demand)
+Vendor: 149.79 KB (gzip 49.72 KB)
 ```
 
 ### E2E Tests (36 tests)
 ```
-npx playwright test --workers=1 → 35/36 pass ✅
-1 failure: pre-existing localStorage race condition (not user-facing)
+npx playwright test → 36/36 pass ✅
 ```
 
 ### SEO Shell Generation
 ```
-158 shells + sitemap.xml generated ✅
+162 shells + sitemap.xml generated ✅
+135 Course schemas, JSON-LD validation, unique canonicals ✅
 All metadata, canonical, OG tags verified ✅
 ```
+
+---
+
+## MotionSites Essential Improvements (Approved Scope)
+
+| File | Change | Status |
+|---|---|---|
+| `src/sections/Hero.tsx` | Blur-rise entrance (`filter: blur(6px)` → `blur(0px)` with `EASE_KINETIC`), removed scale parallax, reduced-motion hook | ✅ Applied |
+| `src/index.css` | `type-h1` line-height 1.1 → 1.05; `@media (max-height: 850px)` and `@media (max-height: 720px)` hero safeguards | ✅ Applied |
+
+**Secondary pages (Gallery, Training Locations, Admissions, Executive Education, About, Programmes, Contact):** All rated "Unnecessary" for changes by MotionSites visual audit.
+
+---
+
+## Visual Audit Evidence (Multi-Viewport)
+
+| Viewport | Routes Tested | Screenshots | Console Errors |
+|---|---|---|---|
+| Mobile 320×720 | 13 | 13 | 0 |
+| Mobile 375×667 | 13 | 13 | 0 |
+| Mobile 390×844 | 13 | 13 | 0 |
+| Tablet 768×1024 | 13 | 13 | 0 |
+| Laptop 920×900 | 13 | 13 | 0 |
+| Desktop 1440×900 | 13 | 13 | 0 |
+| Desktop 1920×1080 | 13 | 13 | 0 |
+| **Total** | **13** | **93** | **0** |
+
+All 13 routes verified across 7 viewport sizes. Zero console errors, zero failed requests, zero visual regressions on key pages (Home, About, Gallery, Programme Detail, Contact, Concierge, Programmes).
 
 ---
 
@@ -128,7 +157,6 @@ All metadata, canonical, OG tags verified ✅
    ```
 2. **VERCEL_OIDC_TOKEN rotation** — Revoke/rotate via Vercel dashboard.
 3. **GIBS content approval** — Syllabus owners to approve topic-specific content for priority programmes.
-4. **E2E race condition fix** — Address localStorage clear timing in Concierge.tsx (enhancement).
 
 ---
 

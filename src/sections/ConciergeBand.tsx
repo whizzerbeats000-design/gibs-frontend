@@ -7,27 +7,27 @@ export default function ConciergeBand() {
   const { setOpen } = useConcierge();
 
   return (
-    <section className="cv-auto relative border-t border-line bg-white">
+    <section className="relative border-t border-line/60 bg-white">
       <div className="container-x band-y">
         <div className="grid items-center gap-12 lg:grid-cols-12">
           {/* Editorial copy */}
           <div className="lg:col-span-7 min-w-0">
             <Reveal>
-              <p className="eyebrow">GIBS AI</p>
-              <h2 className="type-h2 mt-5 text-ink">
+              <p className="eyebrow mb-2">Interactive Guide</p>
+              <h2 className="type-h2 text-ink">
                 The digital
                 <br />
                 <em className="italic text-forest-700">programme guide.</em>
               </h2>
             </Reveal>
             <Reveal delay={0.12}>
-              <p className="mt-5 max-w-xl type-body">
+              <p className="mt-5 max-w-xl type-body text-ink/85">
                 GIBS AI answers questions directly about the 2026 programme catalogue,
                 overseas training hubs, and training locations.
               </p>
             </Reveal>
             <Reveal delay={0.18}>
-              <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+              <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
                 <button type="button" onClick={() => setOpen(true)} className="btn btn-primary btn-lg w-full sm:w-auto">
                   Open GIBS AI
                 </button>
@@ -39,13 +39,16 @@ export default function ConciergeBand() {
             </Reveal>
           </div>
 
-          {/* Quote card — the single green moment of this section */}
+          {/* Quote card — dignified institutional panel */}
           <Reveal delay={0.16} y={36} className="lg:col-span-5">
-            <figure className="relative bg-forest-800 p-8 text-ivory shadow-card sm:p-10">
-              <blockquote className="display-serif mt-10 text-[1.55rem] leading-[1.4]">
+            <figure className="relative overflow-hidden rounded-panel border border-forest-700/30 bg-forest-800 p-8 text-ivory shadow-card sm:p-10">
+              <span className="font-mono text-[11px] font-medium uppercase tracking-[0.14em] text-ivory/60">
+                Digital Programme Assistant
+              </span>
+              <blockquote className="display-serif mt-6 text-[1.55rem] leading-[1.4] text-ivory">
                 “Welcome to GIBS AI. How can we help?”
               </blockquote>
-              <figcaption className="mt-6 text-xs font-medium uppercase tracking-[0.12em] text-ivory/70">
+              <figcaption className="mt-5 text-xs font-medium uppercase tracking-[0.12em] text-ivory/70">
                 Programme and enquiry guide
               </figcaption>
             </figure>

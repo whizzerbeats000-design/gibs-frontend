@@ -11,27 +11,27 @@ const STEPS_RENDER = ADMISSIONS_STEPS.map((step) =>
 
 export default function AdmissionsTeaser() {
   return (
-    <section id="subscription" className="cv-auto relative overflow-hidden bg-forest-800 text-ivory">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_88%_-20%,rgba(235,211,117,0.16),transparent_50%)]" />
+    <section id="subscription" className="relative overflow-hidden bg-forest-800 text-ivory">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_88%_-20%,rgba(235,211,117,0.16),transparent_50%)]" aria-hidden="true" />
       <div className="container-x relative section-y">
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <Reveal>
-              <p className="eyebrow-light">Programme Enquiry</p>
+              <p className="eyebrow-light mb-2">Programme Enquiry</p>
             </Reveal>
             <Reveal delay={0.08} y={28}>
-              <h2 className="type-h2 mt-2">
+              <h2 className="type-h2">
                 How to enquire
               </h2>
             </Reveal>
             <Reveal delay={0.16}>
-                              <p className="mt-7 max-w-lg type-body text-ivory/85">
+              <p className="mt-6 max-w-lg type-body text-ivory/85">
                 Organisations enquire by email or phone. Individual professionals can make an
                 enquiry directly. Either way, six steps connect you to the right GIBS training and guide your enquiry through to programme details.
               </p>
             </Reveal>
             <Reveal delay={0.24}>
-              <div className="mt-10">
+              <div className="mt-8">
                 <BtnLink to="/admissions" variant="gold" size="lg">
                   Make an Enquiry
                   <ArrowUpRight className="h-4 w-4" />
@@ -45,9 +45,9 @@ export default function AdmissionsTeaser() {
               {STEPS_RENDER.map((step) => (
                 <li
                   key={step.n}
-                  className="grid grid-cols-[3rem_1fr] items-baseline gap-x-5 border-b rule-light py-5 sm:grid-cols-[4rem_1fr] sm:gap-x-8"
+                  className="grid grid-cols-[3rem_1fr] items-baseline gap-x-5 border-b rule-light py-4.5 sm:grid-cols-[4rem_1fr] sm:gap-x-8 transition-colors duration-150 hover:bg-white/[0.03] -mx-2 px-2 rounded-xs"
                 >
-                  <span className="font-mono text-[12px] font-medium tabular-nums tracking-[0.08em] text-gold-300">{step.n}</span>
+                  <span className="font-mono text-[12px] font-medium tabular-nums tracking-[0.1em] text-ivory/70">{step.n}</span>
                   <h3 className="type-h3 text-ivory">{step.title}</h3>
                 </li>
               ))}

@@ -1,41 +1,33 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Link } from "../lib/router";
 import { ArrowUpRight } from "../components/icons";
 import { EASE_KINETIC } from "../components/motion";
 import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
 
-/* ── Green brand overlay opacity ramp (tweak here only) ───────────
-   Top half: subtle green tint that lets the building photo breathe.
-   Bottom third: ramps into a deep dark-green to anchor the text zone.
-   Colour always references the brand green CSS var
-   (--color-forest-600) so the palette never hardcodes a hex here. */
-const OVERLAY_OPACITY_TOP = 10; // % brand green at the top edge (subtle tint)
-const OVERLAY_OPACITY_MID = 30; // % brand green at mid-height (increased for better transition)
-const OVERLAY_OPACITY_BOTTOM = 92; // % dark green at the bottom (increased for text punch)
-const DARK_GREEN_BLEND = 25; // % brand green mixed with black (darkened for higher contrast)
-
 const line = {
-  hidden: { y: "112%" },
+  hidden: { y: "110%", opacity: 0.3, filter: "blur(6px)" },
   visible: (delay: number) => ({
     y: 0,
-    transition: { duration: 0.62, ease: EASE_KINETIC, delay },
+    opacity: 1,
+    filter: "blur(0px)",
+    transition: { duration: 0.68, ease: EASE_KINETIC, delay },
   }),
 };
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
   });
 
-  // Layered spatial parallax on scroll (compositor-only transforms)
-  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "10%"]);
-  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.05]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "-7%"]);
-  const textOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0.35]);
+  // Layered spatial parallax on scroll (compositor-only translateY: zero scale re-rasterization)
+  const bgY = useTransform(scrollYProgress, [0, 1], ["0%", "8%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "-6%"]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0.3]);
 
   return (
     <section
@@ -45,15 +37,13 @@ export default function Hero() {
     >
       {/* 3D Perspective Stage */}
       <div className="perspective-hero relative h-full w-full">
-        {/* Deep background plane; the plain wrapper keeps the Z offset separate
-            from the transform written by Framer Motion. */}
+        {/* Deep background plane; clean GPU transform layer */}
         <div className="layer-z-deep absolute inset-0">
           <motion.div
-            style={{ y: bgY, scale: bgScale }}
+            style={shouldReduceMotion ? undefined : { y: bgY }}
             className="absolute inset-0 will-change-transform"
           >
-            {/* Fallback wash: shows through only if the photograph fails to
-                decode, so a dead asset never presents as a blank green void. */}
+            {/* Fallback wash */}
             <div
               className="absolute inset-0"
               style={{
@@ -79,17 +69,15 @@ export default function Hero() {
         </div>
 
         {/*
-          Architectural lighting overlays — preserves natural GIBS photography
-          Layer 1 (text zone)   anchor left→centre so headline stays legible at all breakpoints.
-          Layer 2 (green light) top-to-bottom wash deepening towards base.
-          Layer 3 (temperature) soft-light spill keeping skin tones natural.
-          Layer 4 (grounding)   bottom vignette and top sheen.
+          Architectural lighting overlays — consolidated two-pass gradient:
+          Pass 1 (horizontal reading protection): deep forest green gradient anchoring the text zone
+          Pass 2 (vertical atmospheric blend): smooth edge transition into section boundary
         */}
         <div
           className="pointer-events-none absolute inset-0 z-20"
           style={{
             background:
-              "linear-gradient(95deg, rgba(0,20,9,0.72) 0%, rgba(0,26,11,0.52) 28%, rgba(0,26,11,0.18) 52%, transparent 70%)",
+              "linear-gradient(95deg, rgba(0,20,9,0.86) 0%, rgba(0,26,11,0.68) 32%, rgba(0,26,11,0.24) 62%, transparent 82%)",
           }}
           aria-hidden="true"
         />
@@ -97,25 +85,7 @@ export default function Hero() {
           className="pointer-events-none absolute inset-0 z-20"
           style={{
             background:
-              "linear-gradient(180deg, transparent 0%, rgba(0,15,7,0.08) 58%, rgba(0,15,7,0.32) 100%)",
-          }}
-          aria-hidden="true"
-        />
-
-        {/* Green brand overlay — deepens toward the text zone. Top half
-            stays a subtle green tint; bottom third ramps into a dark
-            green (brand green mixed with black) for text legibility.
-            Colour references the brand green CSS var (--color-forest-600);
-            opacity ramp is the constants block above. pointer-events:none
-            so clicks on the CTAs below are never intercepted. */}
-        <div
-          className="pointer-events-none absolute inset-0 z-30"
-          style={{
-            background: `linear-gradient(180deg,
-              color-mix(in srgb, var(--color-forest-600) ${OVERLAY_OPACITY_TOP}%, transparent) 0%,
-              color-mix(in srgb, var(--color-forest-600) ${OVERLAY_OPACITY_MID}%, transparent) 50%,
-              color-mix(in srgb, color-mix(in srgb, var(--color-forest-600) ${DARK_GREEN_BLEND}%, black) ${OVERLAY_OPACITY_BOTTOM}%, transparent) 100%
-            )`,
+              "linear-gradient(180deg, rgba(0,20,9,0.15) 0%, transparent 40%, rgba(0,18,7,0.35) 75%, rgba(0,18,7,0.92) 100%)",
           }}
           aria-hidden="true"
         />
@@ -127,18 +97,28 @@ export default function Hero() {
 
           {/* Main Headline & CTAs */}
           <motion.div
-            style={{ y: textY, opacity: textOpacity }}
+            style={shouldReduceMotion ? undefined : { y: textY, opacity: textOpacity }}
             className="max-w-editorial pb-8 sm:pb-12 lg:pb-16"
           >
+            {/* Micro-eyebrow metadata */}
+            <motion.p
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE_KINETIC, delay: 0.18 }}
+              className="mb-4 font-mono text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.14em] text-ivory/80"
+            >
+              Accredited Executive Education · RC 1178333
+            </motion.p>
+
             <h1
               className="type-hero"
               aria-label="Goshen International Business School"
             >
-              <span className="block overflow-hidden pb-[0.1em] -mb-[0.1em]">
+              <span className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
                 <motion.span
-                  custom={0.3}
+                  custom={0.28}
                   variants={line}
-                  initial="hidden"
+                  initial={shouldReduceMotion ? "visible" : "hidden"}
                   animate="visible"
                   className="hero-title-white"
                   aria-hidden="true"
@@ -146,11 +126,11 @@ export default function Hero() {
                   Goshen International
                 </motion.span>
               </span>
-              <span className="block overflow-hidden pb-[0.1em] -mb-[0.1em]">
+              <span className="block overflow-hidden pb-[0.08em] -mb-[0.08em]">
                 <motion.span
-                  custom={0.42}
+                  custom={0.38}
                   variants={line}
-                  initial="hidden"
+                  initial={shouldReduceMotion ? "visible" : "hidden"}
                   animate="visible"
                   className="hero-title-gold"
                   aria-hidden="true"
@@ -161,19 +141,19 @@ export default function Hero() {
             </h1>
 
             <motion.p
-              initial={{ opacity: 0, y: 12 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 14 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: EASE_KINETIC, delay: 0.62 }}
-              className="mt-5 max-w-prose text-[clamp(0.95rem,1.2vw,1.0625rem)] leading-[1.55] text-white/90"
+              transition={{ duration: 0.75, ease: EASE_KINETIC, delay: 0.52 }}
+              className="mt-5 max-w-prose text-[clamp(0.95rem,1.2vw,1.0625rem)] leading-[1.6] text-white/90"
               style={{ textShadow: "0 1px 4px rgba(0, 0, 0, 0.4)" }}
             >
               Executive training in Nigeria and four international hubs, for the people who run public and private organisations.
             </motion.p>
 
             <motion.div
-              initial={{ opacity: 0, y: 18 }}
+              initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: EASE_KINETIC, delay: 0.75 }}
+              transition={{ duration: 0.8, ease: EASE_KINETIC, delay: 0.65 }}
               className="mt-8 flex flex-wrap items-center gap-4 sm:mt-10 sm:gap-6"
             >
               <Link

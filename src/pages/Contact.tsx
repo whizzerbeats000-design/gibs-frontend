@@ -309,8 +309,13 @@ export default function Contact() {
           <div className="min-w-0 lg:col-span-5">
             <Reveal y={32}>
               <div className="space-y-6">
-                <div className="rounded-panel border border-line border-t-2 border-t-forest-600 bg-paper p-7 shadow-crisp max-w-card">
-                  <p className="eyebrow">GIBS AI</p>
+                <div className="rounded-panel border border-line bg-paper p-7 shadow-crisp max-w-card">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="eyebrow">Interactive Advisory</p>
+                    <span className="font-mono text-[11px] font-medium text-muted uppercase tracking-wider">
+                      Executive Guide
+                    </span>
+                  </div>
                   <p className="mt-3 type-body max-w-prose">
                     GIBS AI is available to help guide you through programme selection, overseas hub schedules, and fee breakdowns.
                   </p>

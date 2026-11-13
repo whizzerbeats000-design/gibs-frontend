@@ -25,8 +25,8 @@
 
 ## Programme Content & Curriculum Architecture
 - Canonical 2026 Catalogue: 135 programmes across 15 industry categories
-- Approved topic-specific category curricula: 15 of 15 categories
-- Supplementary content layer: 10 per-programme records (0 approved, 10 pending verification) and 15 category-page introductions (15 approved)
+- Category introductions with topic-specific curricula: 15 of 15 categories approved (0 pending institutional verification)
+- Supplementary content layer: 10 per-programme records (0 approved, 10 pending verification) and 15 category-page introductions (15 approved, 0 pending verification)
 - Verified catalogue metadata: Every programme specifies official course code, category, destination, duration, 2026 calendar sessions, tuition fee, and target executive audience
 - Quality gate policy: Unverified claims are strictly barred; pages render verified catalogue values and approved syllabus content only
 

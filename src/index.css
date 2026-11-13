@@ -341,7 +341,7 @@ body {
   font-weight: 700;
   /* Page-title rung — confident modern editorial heading */
   font-size: clamp(2rem, 4.5vw, 3.5rem);
-  line-height: 1.1;
+  line-height: 1.05;
   letter-spacing: -0.025em;
   text-wrap: balance;
   -webkit-font-smoothing: antialiased;
@@ -709,6 +709,91 @@ body {
      ever consumed by the now-removed `.card-depth:hover` and stays in @theme
      as an unused token. */
 
+  /* ---------------- Liquid Glass System (Performance-Conscious) ----------------
+     MotionSites refined materiality: subtle restrained blur (8-12px), single compositing
+     layer, hairline boundary luminance, and solid ivory fallback for weaker devices. */
+  .liquid-glass-header {
+    position: relative;
+    background: color-mix(in srgb, var(--color-ivory) 80%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 32, 9, 0.08);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 2px 10px -4px rgba(0, 32, 9, 0.06);
+    transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .liquid-glass-header--scrolled {
+    position: relative;
+    background: color-mix(in srgb, var(--color-ivory) 92%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 32, 9, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      0 6px 20px -8px rgba(0, 32, 9, 0.18);
+    transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .liquid-glass-header {
+      background: var(--color-ivory);
+      border-bottom: 1px solid var(--color-line);
+    }
+    .liquid-glass-header--scrolled {
+      background: var(--color-ivory);
+      border-bottom: 1px solid rgba(0, 32, 9, 0.15);
+    }
+  }
+
+  .liquid-glass-pill {
+    position: relative;
+    background: rgba(255, 255, 255, 0.65);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 107, 27, 0.2);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.8),
+      0 2px 8px -3px rgba(0, 32, 9, 0.08);
+    transition: background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .liquid-glass-pill:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 107, 27, 0.4);
+    box-shadow:
+      inset 0 1px 1px #fff,
+      0 4px 12px -4px rgba(0, 107, 27, 0.2);
+    transform: translateY(-0.5px);
+  }
+
+  .liquid-glass-pill:active {
+    transform: scale(0.98);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .liquid-glass-header {
+      background: var(--color-ivory);
+      border-bottom: 1px solid var(--color-line);
+    }
+    .liquid-glass-header--scrolled {
+      background: var(--color-ivory);
+      border-bottom: 1px solid rgba(0, 32, 9, 0.15);
+    }
+    .liquid-glass-pill {
+      background: #ffffff;
+      border: 1px solid rgba(0, 107, 27, 0.3);
+    }
+  }
+
   /* Interactive card lift — for cards where the WHOLE surface is the target
      (stretched link). Hover and focus-within share one state so a keyboard
      user sees the same lift a mouse user does. Pairs with the reduced-motion
@@ -939,5 +1024,30 @@ body {
   }
   .layer-z-deep, .layer-z-fore {
     transform: none !important;
+  }
+}
+
+/* Short-viewport hero safeguards — keep headline and primary CTA above the
+   fold on shorter laptop screens without changing desktop or mobile layouts. */
+@media (max-height: 850px) {
+  #home-hero {
+    min-height: 440px !important;
+    max-height: 760px !important;
+  }
+  #home-hero .max-w-editorial {
+    padding-bottom: 2rem !important;
+  }
+}
+
+@media (max-height: 720px) {
+  #home-hero {
+    min-height: 380px !important;
+    max-height: 640px !important;
+  }
+  #home-hero .max-w-editorial {
+    padding-bottom: 1.5rem !important;
+  }
+  #home-hero .type-hero {
+    font-size: clamp(1.875rem, 4vw, 2.75rem) !important;
   }
 }

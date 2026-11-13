@@ -93,7 +93,7 @@ export default function ExecutiveEducation() {
 
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:col-span-7 lg:mt-0">
             {FOREIGN_HUBS.map((hub) => (
-              <div key={hub.city} className="flex flex-col border border-line bg-paper p-7 shadow-crisp">
+              <div key={hub.city} className="flex flex-col rounded-panel border border-line bg-paper p-7 shadow-crisp">
                 <span className="pill pill-forest self-start">
                   {hub.coursesCount} Programmes
                 </span>
@@ -148,23 +148,23 @@ export default function ExecutiveEducation() {
           </div>
 
           <div className="lg:col-span-5">
-            <div className="border border-ivory/20 bg-forest-950/70 p-7 shadow-lift max-w-editorial">
-              <p className="eyebrow-light text-gold-300">In-Plant Advantages</p>
-                <ul className="mt-5 space-y-4 text-sm text-ivory/85">
+            <div className="rounded-panel border border-ivory/20 bg-forest-950/70 p-7 shadow-lift max-w-editorial">
+              <p className="eyebrow-light">In-Plant Advantages</p>
+              <ul className="mt-5 space-y-4 text-sm text-ivory/85">
                 <li className="flex items-start gap-3">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span className="font-mono text-xs font-semibold text-forest-300">01</span>
                   <span>Cost-effective team training at your institutional facility</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span className="font-mono text-xs font-semibold text-forest-300">02</span>
                   <span>Curriculum customized to internal SOPs, systems, and challenges</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span className="font-mono text-xs font-semibold text-forest-300">03</span>
                   <span>Flexible scheduling aligned with organizational calendars</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rotate-45 bg-gold-400" />
+                  <span className="font-mono text-xs font-semibold text-forest-300">04</span>
                   <span>Full GIBS &amp; CMD accredited certification for all participants</span>
                 </li>
               </ul>

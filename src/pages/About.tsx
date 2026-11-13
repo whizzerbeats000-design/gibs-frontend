@@ -38,8 +38,8 @@ export default function About() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:col-span-12 lg:grid-cols-4">
             {INSTITUTIONAL_DATA.guidingPrinciples.map((pillar, i) => (
               <Reveal key={pillar} delay={i * 0.06}>
-                <div className="rounded-panel border border-line bg-white px-4 py-4">
-                  <span className="label-base text-muted">
+                <div className="rounded-panel border border-line bg-white p-6 shadow-crisp">
+                  <span className="font-mono text-xs font-semibold uppercase tracking-wider text-forest-700">
                     Pillar 0{i + 1}
                   </span>
                   <h3 className="card-title mt-2 text-ink">{pillar}</h3>
@@ -51,7 +51,7 @@ export default function About() {
       </section>
 
       {/* Core Values & Strategic Focus */}
-      <section className="border-y border-line bg-white">
+      <section className="border-y border-line/60 bg-white">
         <div className="container-x section-y grid gap-14 lg:grid-cols-12">
           {/* Core Values */}
           <div className="lg:col-span-5">
@@ -60,8 +60,8 @@ export default function About() {
               <h2 className="type-h2 mt-4 text-ink">What we stand for</h2>
               <div className="mt-8 grid gap-4 sm:grid-cols-2">
                 {INSTITUTIONAL_DATA.coreValues.map((val) => (
-                  <div key={val} className="flex items-center gap-3 border border-line bg-paper px-4 py-3.5 max-w-card">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-xs bg-forest-600" aria-hidden="true" />
+                  <div key={val} className="flex items-center gap-3 rounded-panel border border-line bg-paper px-4 py-3.5 shadow-crisp max-w-card">
+                    <CheckIcon className="h-4 w-4 shrink-0 text-forest-700" />
                     <span className="text-sm font-semibold text-ink">{val}</span>
                   </div>
                 ))}
@@ -156,26 +156,26 @@ export default function About() {
           </Reveal>
 
           <div className="mt-12 grid gap-8 lg:grid-cols-12">
-            <div className="border border-ivory/20 bg-forest-900/60 p-8 sm:p-10 lg:col-span-7">
-              <h3 className="display-serif text-2xl text-gold-300">Company Registration</h3>
+            <div className="rounded-panel border border-ivory/20 bg-forest-900/80 p-8 sm:p-10 shadow-spatial lg:col-span-7">
+              <h3 className="display-serif text-2xl text-ivory">Company Registration</h3>
               <p className="mt-4 max-w-prose text-[14.5px] leading-relaxed text-ivory/85">
                 Registered with the Corporate Affairs Commission (CAC), RC 1178333.
               </p>
-              <h3 className="mt-8 display-serif text-2xl text-gold-300">Accreditations &amp; Certifications</h3>
+              <h3 className="mt-8 display-serif text-2xl text-ivory">Accreditations &amp; Certifications</h3>
               <ul className="mt-6 space-y-3.5">
                 {INSTITUTIONAL_DATA.accreditations
                   .filter((acc) => !acc.startsWith("Corporate Affairs Commission"))
                   .map((acc) => (
                   <li key={acc} className="flex items-start gap-3 text-[14.5px] text-ivory/85 max-w-prose">
-                    <CheckIcon className="mt-1 h-4 w-4 shrink-0 text-gold-300" />
+                    <CheckIcon className="mt-1 h-4 w-4 shrink-0 text-forest-300" />
                     {acc}
                   </li>
                   ))}
               </ul>
             </div>
 
-            <div className="border border-ivory/20 bg-forest-900/60 p-8 sm:p-10 lg:col-span-5">
-              <h3 className="display-serif text-2xl text-gold-300">International Technical Partnership</h3>
+            <div className="rounded-panel border border-ivory/20 bg-forest-900/80 p-8 sm:p-10 shadow-spatial lg:col-span-5">
+              <h3 className="display-serif text-2xl text-ivory">International Technical Partnership</h3>
               <p className="mt-4 text-[15px] font-bold text-ivory">
                 {INSTITUTIONAL_DATA.technicalPartner}
               </p>
@@ -218,7 +218,7 @@ export default function About() {
                 <span className="rounded-pill bg-stone px-4 py-1.5 text-[12.5px] font-bold text-ink">
                   Management Team: 20 Advisors &amp; Experts
                 </span>
-                <span className="rounded-pill bg-gold-100 px-4 py-1.5 text-[12.5px] font-bold text-gold-700">
+                <span className="rounded-pill border border-line bg-stone/60 px-4 py-1.5 text-[12.5px] font-bold text-ink">
                   {GOVERNANCE_INFO.boardChairman}
                 </span>
               </div>

@@ -20,13 +20,16 @@ const COMMITMENTS = [
 
 export default function Perspective() {
   return (
-    <section id="perspective" className="paper-grain cv-auto relative bg-paper">
-      <div className="container-x section-y grid lg:grid-cols-12">
+    <section id="perspective" className="paper-grain relative bg-paper border-b border-line/60">
+      <div className="container-x section-y grid gap-10 lg:grid-cols-12 lg:gap-14">
         <StaggerSlow className="lg:col-span-5">
+          <motion.p variants={staggerItem} className="eyebrow mb-3">
+            Institutional Principles
+          </motion.p>
           <motion.h2 variants={staggerItem} className="type-h2 text-ink">
             What we ask of ourselves
           </motion.h2>
-          <motion.p variants={staggerItem} className="mt-6 max-w-prose type-body">
+          <motion.p variants={staggerItem} className="mt-5 max-w-prose type-body text-ink/85">
             GIBS has trained in Ilorin since 2014. It now runs centres in Ilorin,
             Abuja and Ibafo, and runs foreign executive programmes in Kigali,
             Dubai, London and Houston.
@@ -42,12 +45,14 @@ export default function Perspective() {
               key={c.title}
               variants={staggerItem}
               className={cn(
-                "py-4 sm:py-7 first:pt-0",
-                i !== 0 && "border-t rule"
+                "group py-5 sm:py-7 first:pt-0 transition-colors duration-200",
+                i !== 0 && "border-t border-line/70"
               )}
             >
-              <h3 className="type-h3 text-ink">{c.title}</h3>
-              <p className="mt-3 max-w-prose type-body">{c.body}</p>
+              <h3 className="type-h3 text-ink transition-colors duration-200 group-hover:text-forest-800">
+                {c.title}
+              </h3>
+              <p className="mt-2.5 max-w-prose type-body text-ink/80">{c.body}</p>
             </motion.div>
           ))}
         </Stagger>

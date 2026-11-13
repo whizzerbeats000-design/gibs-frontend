@@ -89,27 +89,26 @@ export function ProgrammeCard({
       to={`/programmes/${programme.slug}`}
       data-programme-card
       className={cn(
-        "group relative block overflow-hidden bg-white border border-line rounded-panel p-4 sm:p-5 shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-px hover:border-forest-600/40 hover:shadow-card focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
+        "group relative block overflow-hidden bg-white border border-line rounded-panel p-4 sm:p-5 shadow-crisp transition-[border-color,box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:border-forest-600/35 hover:shadow-card focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
         className
       )}
     >
       {/* Meta line */}
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-        <span className="card-eyebrow">{programme.category}</span>
+        <span className="inline-flex items-center rounded-pill bg-forest-50 px-2.5 py-0.5 text-[11px] font-semibold text-forest-800">
+          {programme.category}
+        </span>
         {isForeign && (
-          <>
-            <span className="meta text-muted/70" aria-hidden="true">
-              ·
-            </span>
-            <span className="meta text-gold-700">{programme.destination} Hub</span>
-          </>
+          <span className="inline-flex items-center rounded-pill bg-stone px-2.5 py-0.5 text-[11px] font-semibold text-forest-900">
+            {programme.destination} Hub
+          </span>
         )}
       </div>
 
       {/* Primary Identity */}
       <div className="mt-2.5">
-        <h3 className="card-title">{programme.title}</h3>
-        <p className="mt-1 font-mono text-xs font-medium tabular-nums tracking-[0.04em] text-gold-700">
+        <h3 className="card-title transition-colors duration-150 group-hover:text-forest-800">{programme.title}</h3>
+        <p className="mt-1 font-mono text-xs font-medium tabular-nums tracking-[0.04em] text-muted">
           {programme.code}
         </p>
       </div>

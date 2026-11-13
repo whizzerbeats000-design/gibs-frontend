@@ -90,13 +90,11 @@ export function Header({
 
   return (
     <header className="fixed inset-x-0 top-0 z-[var(--z-header)]">
-      {/* Primary bar — the single sanctioned glass treatment */}
+      {/* Primary bar — the single sanctioned liquid glass treatment */}
       <div
         className={cn(
-          "border-b transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          scrolled
-            ? "border-ink/10 bg-ivory/90 shadow-[0_2px_20px_-14px_rgba(0,32,9,0.4)] backdrop-blur-xl"
-            : "border-transparent bg-ivory/72 backdrop-blur-md"
+          "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          scrolled ? "liquid-glass-header--scrolled" : "liquid-glass-header"
         )}
       >
       <div className="container-x flex h-[var(--header-height)] min-w-0 items-center justify-between gap-4">
@@ -151,13 +149,11 @@ export function Header({
             onClick={onOpenConcierge}
             aria-label="Open GIBS AI Programme Assistant"
             className={cn(
-              "hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
+              "liquid-glass-pill hidden items-center gap-2 rounded-pill px-3.5 py-2 text-[13px] font-bold text-forest-800 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
               path === "/programmes" ? "lg:inline-flex" : "xl:inline-flex"
             )}
           >
-            <span className="relative flex h-2 w-2">
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-500" />
-            </span>
+            <ChatIcon className="h-3.5 w-3.5 text-forest-700" />
             GIBS AI
           </button>
           <Link to="/admissions" className="btn btn-primary btn-md hidden lg:inline-flex">
@@ -489,16 +485,16 @@ export function GlobalFooter() {
                 </p>
               </div>
             </div>
-            <p className="mt-5 text-[13px] font-sans italic text-gold-300">
+            <p className="mt-5 text-[13px] font-sans italic text-ivory/80">
               “Take advantage of us, so that no one takes advantage of you”
             </p>
             <div className="mt-5 space-y-1.5 text-[12px] leading-relaxed text-ivory/75">
               <p className="font-semibold text-ivory">Headquarters (Ilorin):</p>
               <p>No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi, Ilorin, Kwara State</p>
-              <p className="pt-1"><span className="text-gold-300">Emails:</span> gibsilorin@gmail.com · goshenibs22@gmail.com</p>
-              <p><span className="text-gold-300">Phones:</span> {FOOTER_PHONE_LINES.join(" · ")}</p>
-              <p><span className="text-gold-300">Postal:</span> P.O. Box 63, Ilorin General Post Office, Kwara State</p>
-              <p><span className="text-gold-300">Web:</span> www.gibs.com.ng</p>
+              <p className="pt-1"><span className="text-ivory/60 font-medium">Emails:</span> gibsilorin@gmail.com · goshenibs22@gmail.com</p>
+              <p><span className="text-ivory/60 font-medium">Phones:</span> {FOOTER_PHONE_LINES.join(" · ")}</p>
+              <p><span className="text-ivory/60 font-medium">Postal:</span> P.O. Box 63, Ilorin General Post Office, Kwara State</p>
+              <p><span className="text-ivory/60 font-medium">Web:</span> www.gibs.com.ng</p>
             </div>
             <Newsletter />
           </div>

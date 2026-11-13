@@ -464,9 +464,7 @@ export function ConciergeDialog() {
         <div className="flex items-center justify-between gap-4 bg-forest-800 px-5 py-4 text-ivory">
           <div>
             <p className="flex items-center gap-2 font-display text-[15px] font-bold">
-              <span className="relative flex h-2 w-2">
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
-              </span>
+              <ChatIcon className="h-4 w-4 text-forest-200" />
               GIBS AI
             </p>
             <p className="mt-0.5 text-[11px] text-ivory/75">Your programme and enquiry guide</p>

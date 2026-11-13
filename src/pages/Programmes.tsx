@@ -37,10 +37,10 @@ const listStagger: Variants = {
 const DESTINATION_TABS: { label: string; value: DestinationFilter; activeClass: string }[] = [
   { label: "All Programmes", value: "All", activeClass: "bg-forest-900 text-ivory border border-forest-950 shadow-card" },
   { label: "Local / Open", value: "Local", activeClass: "bg-forest-600 text-ivory border border-forest-700 shadow-card" },
-  { label: "Kigali Hub", value: "Kigali", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
-  { label: "Dubai Hub", value: "Dubai", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
-  { label: "London Hub", value: "London", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
-  { label: "Houston Hub", value: "Houston", activeClass: "bg-gold-600 text-ivory border border-gold-700 shadow-card" },
+  { label: "Kigali Hub", value: "Kigali", activeClass: "bg-forest-800 text-ivory border border-forest-900 shadow-card" },
+  { label: "Dubai Hub", value: "Dubai", activeClass: "bg-forest-800 text-ivory border border-forest-900 shadow-card" },
+  { label: "London Hub", value: "London", activeClass: "bg-forest-800 text-ivory border border-forest-900 shadow-card" },
+  { label: "Houston Hub", value: "Houston", activeClass: "bg-forest-800 text-ivory border border-forest-900 shadow-card" },
 ];
 
 function ScopeToggle({ pressed, activeClass, onClick, label, count }: {
@@ -56,7 +56,7 @@ function ScopeToggle({ pressed, activeClass, onClick, label, count }: {
       onClick={onClick}
       aria-pressed={pressed}
       className={cn(
-        "min-h-[44px] shrink-0 rounded-none px-3.5 py-1.5 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
+        "min-h-[44px] shrink-0 rounded-pill px-4 py-2 text-[12.5px] font-semibold transition-[transform,box-shadow,background-color,border-color] duration-150 ease-out focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
         pressed ? activeClass : "bg-white text-ink hover:bg-stone/60 border border-line shadow-crisp"
       )}
     >
@@ -227,8 +227,8 @@ export default function ProgrammesPage({
             </div>
           </div>
 
-          {/* Sticky filter & search container (Matching Admissions card elevation) */}
-          <div className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] -mx-5 mb-6 border-b border-line bg-paper/95 px-5 py-3.5 backdrop-blur-md sm:mx-0 sm:my-6 sm:rounded-none sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
+          {/* Sticky filter & search container */}
+          <div className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] -mx-5 mb-6 border-b border-line bg-paper px-5 py-3.5 sm:mx-0 sm:my-6 sm:rounded-panel sm:border sm:border-line sm:bg-white sm:px-6 sm:py-4 sm:shadow-card">
             <div className="flex flex-col gap-3">
               {/* Search bar with warm editorial border & subtle inset highlight */}
               <div className="relative w-full">

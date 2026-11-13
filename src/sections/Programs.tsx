@@ -47,27 +47,17 @@ const PROGRAMME_GROUPS = [
 function ProgrammeListItem({ programme }: { programme: Programme }) {
   const isForeign = programme.destination !== "Local";
   return (
-    <li className="border-t rule">
-      <Link to={`/programmes/${programme.slug}`} className="group flex items-start gap-3 py-3 sm:py-4">
+    <li className="border-t border-line/70">
+      <Link to={`/programmes/${programme.slug}`} className="group flex items-start justify-between gap-3 py-3.5 sm:py-4">
         <span className="min-w-0">
-          {/* Titles come from PROGRAMMES, not markup, so they may carry long
-              unbroken tokens. `wrap-anywhere` and not `break-words`: the row is
-              a grid item, and only `anywhere` reduces the min-content
-              contribution, so the column can shrink instead of forcing the
-              whole document into horizontal scroll. They wrap rather than
-              truncate — the full title is the thing being scanned. */}
-          <span className="card-title block wrap-anywhere group-focus-visible:text-forest-700">
+          <span className="card-title block wrap-anywhere group-hover:text-forest-800 group-focus-visible:text-forest-700 transition-colors">
             {programme.title}
           </span>
           <span className="meta mt-1 block">
             {isForeign ? `${programme.destination} Hub · ` : ""}
-            {programme.code}
+            <span className="font-mono text-xs font-medium text-muted">{programme.code}</span>
           </span>
         </span>
-        {/* The arrow and the title carry the same two states. Hover alone would
-            leave a keyboard user with the focus ring but none of the affordance
-            a mouse user gets, which is the split this codebase forbids (see the
-            focus-visible/focus-within pairing note above `.card-lift`). */}
         <ArrowUpRight className="mt-1 h-4 w-4 shrink-0 text-forest-600 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-focus-visible:-translate-y-0.5 group-focus-visible:translate-x-0.5" />
       </Link>
     </li>
@@ -76,7 +66,7 @@ function ProgrammeListItem({ programme }: { programme: Programme }) {
 
 export default function ProgrammeDiscovery() {
   return (
-    <section id="programmes" className="cv-auto relative bg-white">
+    <section id="programmes" className="relative bg-white border-b border-line/60">
       <div className="container-x mx-auto section-y text-left">
         <div className="grid gap-8 lg:grid-cols-12 lg:gap-10">
           <div className="lg:col-span-5">

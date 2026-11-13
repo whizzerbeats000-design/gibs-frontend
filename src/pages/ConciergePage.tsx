@@ -34,7 +34,7 @@ export default function ConciergePage() {
           {/* LEFT — identity and topics */}
           <div className="order-2 lg:order-1 lg:col-span-5">
             <Reveal>
-              <div className="rounded-panel border border-line border-t-2 border-t-forest-600 bg-paper p-8 shadow-crisp sm:p-10 max-w-editorial">
+              <div className="rounded-panel border border-line bg-paper p-8 shadow-crisp sm:p-10 max-w-editorial">
                 <span className="flex h-12 w-12 items-center justify-center rounded-pill bg-forest-700 text-gold-300">
                   <ChatIcon className="h-5 w-5" />
                 </span>
@@ -74,9 +74,7 @@ export default function ConciergePage() {
                 <div className="flex items-center justify-between gap-3 bg-forest-800 px-6 py-4 text-ivory">
                   <div>
                     <p className="flex items-center gap-2.5 font-display text-sm font-bold">
-                      <span className="relative flex h-2 w-2">
-                        <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-300" />
-                      </span>
+                      <ChatIcon className="h-4 w-4 text-forest-200" />
                       GIBS AI
                     </p>
                     <p className="mt-0.5 text-xs text-ivory/75">

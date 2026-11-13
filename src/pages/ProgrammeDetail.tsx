@@ -39,7 +39,7 @@ function FactRow({ label, value }: { label: string; value?: string | null }) {
    identical rendered output to the previous inline block. */
 function FactCard({ label, value, valueClass = "text-ink" }: { label: string; value?: string | null; valueClass?: string }) {
   return (
-    <div className="border border-line bg-paper p-6">
+    <div className="rounded-panel border border-forest-950/[0.08] bg-paper p-6 shadow-crisp">
       <p className="eyebrow">{label}</p>
       <h3 className={`display-serif mt-3 text-lg tabular-nums ${valueClass}`}>{value}</h3>
     </div>
@@ -161,16 +161,16 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </Reveal>
 
             {/* Target Audience Highlight */}
-            <div className="mt-8 border-l-2 border-gold-500 bg-white p-6">
-              <p className="eyebrow text-gold-700">Target Audience</p>
-              <p className="mt-2 text-sm font-bold text-ink">{programme.targetAudience}</p>
+            <div className="mt-8 rounded-panel border border-line bg-paper p-6">
+              <p className="eyebrow text-forest-700">Target Audience</p>
+              <p className="mt-2 text-sm font-semibold text-ink">{programme.targetAudience}</p>
             </div>
           </div>
 
           <div className="lg:col-span-5">
             <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + var(--subnav-height) + 16px)" }}>
               <Reveal y={32}>
-                <div className="border border-line bg-white p-7 sm:p-8">
+                <div className="rounded-panel border border-forest-950/[0.08] bg-white p-7 sm:p-8 shadow-card">
                   <p className="eyebrow">Programme Summary</p>
                   <dl className="mt-5">
                     <FactRow label="Course Code" value={programme.code} />

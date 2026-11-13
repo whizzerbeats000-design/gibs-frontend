@@ -542,6 +542,16 @@ function getCourseSchema(p) {
     ? 'GIBS Training Centres, Nigeria'
     : `GIBS ${p.destination} Executive Training Centre`;
 
+  // Map destination to correct ISO 3166-1 alpha-2 country codes
+  const destinationCountryMap = {
+    'Kigali': 'RW',
+    'Dubai': 'AE',
+    'London': 'GB',
+    'Houston': 'US',
+    'Local': 'NG'
+  };
+  const addressCountry = destinationCountryMap[p.destination] || 'NG';
+
   const instance = {
     "@type": "CourseInstance",
     "@id": `${CANONICAL_DOMAIN}/programmes/${p.slug}#course-instance`,
@@ -555,7 +565,7 @@ function getCourseSchema(p) {
       } : {
         "@type": "PostalAddress",
         "addressLocality": p.destination,
-        "addressCountry": "NG"
+        "addressCountry": addressCountry
       }
     }
   };
@@ -788,8 +798,8 @@ function generateLlmsTxt(inst, allProgrammes, contentLayer) {
 
 ## Programme Content & Curriculum Architecture
 - Canonical 2026 Catalogue: ${allProgrammes.length} programmes across ${categories.length} industry categories
-- Approved topic-specific category curricula: ${catApproved} of ${categories.length} categories
-- Supplementary content layer: ${Object.keys(contentLayer.programmes || {}).length} per-programme records (${progApproved} approved, ${progPending} pending verification) and ${Object.keys(contentLayer.categories || {}).length} category-page introductions (${catApproved} approved)
+- Category introductions with topic-specific curricula: ${catApproved} of ${categories.length} categories approved (${catPending} pending institutional verification)
+- Supplementary content layer: ${Object.keys(contentLayer.programmes || {}).length} per-programme records (${progApproved} approved, ${progPending} pending verification) and ${Object.keys(contentLayer.categories || {}).length} category-page introductions (${catApproved} approved, ${catPending} pending verification)
 - Verified catalogue metadata: Every programme specifies official course code, category, destination, duration, 2026 calendar sessions, tuition fee, and target executive audience
 - Quality gate policy: Unverified claims are strictly barred; pages render verified catalogue values and approved syllabus content only
 

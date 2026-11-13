@@ -124,7 +124,7 @@ export default function Admissions() {
                   key={step.n}
                   className="group grid grid-cols-[3.5rem_1fr] items-baseline gap-5 border-b rule py-7 sm:grid-cols-[5rem_auto_1fr] sm:gap-10"
                 >
-                  <span className="display-serif text-3xl tabular-nums text-gold-700 sm:text-4xl">{step.n}</span>
+                  <span className="display-serif text-3xl tabular-nums text-forest-700 sm:text-4xl">{step.n}</span>
                   <h3 className="type-h3 w-44 shrink-0 text-ink sm:w-52">
                     {step.title}
                   </h3>
@@ -160,7 +160,7 @@ export default function Admissions() {
 
           <div className="lg:col-span-5">
             <Reveal>
-              <div className="border border-line bg-paper p-7 sm:p-9 max-w-editorial">
+              <div className="rounded-panel border border-line bg-paper p-7 sm:p-9 shadow-crisp max-w-editorial">
                 <p className="eyebrow">2026 Training Calendar Cycles</p>
                 <dl className="mt-6">
                   {CALENDAR_CYCLES.map((d) => (

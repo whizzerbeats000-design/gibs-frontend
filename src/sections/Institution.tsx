@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { Reveal } from "../components/motion";
 import { ArrowTextLink } from "../components/ui";
 import { gibsResponsiveImage } from "../lib/gibsResponsiveImages";
@@ -21,25 +21,26 @@ const PERSPECTIVES = [
 
 export default function GlobalPerspective() {
   const ref = useRef<HTMLDivElement>(null);
+  const shouldReduceMotion = useReducedMotion();
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"],
   });
-  const imgY = useTransform(scrollYProgress, [0, 1], ["-5%", "5%"]);
+  const imgY = useTransform(scrollYProgress, [0, 1], ["-4%", "4%"]);
 
   return (
-    <section ref={ref} className="cv-auto relative overflow-hidden bg-forest-900 text-ivory">
+    <section ref={ref} className="relative overflow-hidden bg-forest-900 text-ivory">
       <div className="grid lg:grid-cols-12">
         {/* Full-bleed image half */}
         <div className="relative min-h-[300px] overflow-hidden lg:col-span-6 lg:min-h-[640px]">
           <motion.img
-            style={{ y: imgY }}
+            style={shouldReduceMotion ? undefined : { y: imgY }}
             {...gibsResponsiveImage("/images/gibs-hq-architecture-edited-branded.webp")}
             alt="GIBS headquarters building with signage and blue-framed windows"
             loading="lazy"
             decoding="async"
             sizes="(min-width: 1024px) 50vw, 100vw"
-            className="absolute inset-0 h-[110%] w-full object-cover"
+            className="absolute inset-0 h-[108%] w-full object-cover"
           />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,32,9,0.35),rgba(0,32,9,0.15))] lg:bg-[linear-gradient(90deg,rgba(0,32,9,0.05),rgba(0,32,9,0.55))]" />
         </div>

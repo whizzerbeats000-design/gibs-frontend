@@ -321,7 +321,7 @@ export default function Gallery() {
       </section>
 
       {/* Filters */}
-      <section className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] border-y border-line bg-white/95 backdrop-blur-md">
+      <section className="sticky top-[var(--sticky-top)] z-[var(--z-sticky-panel)] border-y border-line bg-paper">
         <div className="container-x flex items-center gap-2 overflow-x-auto py-3 scrollbar-none">
           {CATEGORIES.map((cat) => (
             <button
@@ -329,7 +329,7 @@ export default function Gallery() {
               type="button"
               aria-pressed={activeCategory === cat}
               onClick={() => setActiveCategory(cat)}
-              className={`chip shrink-0 whitespace-nowrap ${activeCategory === cat ? "border-forest-600 bg-forest-600 text-ivory" : "border-ink/20 text-ink/70 hover:border-forest-600 hover:text-forest-700"}`}
+              className={`chip shrink-0 whitespace-nowrap rounded-pill ${activeCategory === cat ? "border-forest-700 bg-forest-700 text-ivory shadow-crisp" : "border-line bg-white text-ink/80 hover:border-forest-600 hover:text-forest-700"}`}
             >
               {cat}
             </button>

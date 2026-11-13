@@ -1,12 +1,42 @@
-import { Component, useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  Component,
+  useEffect,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
+import { motion } from "framer-motion";
 import { Link, navigate, useRoute } from "../lib/router";
 import { useBodyScrollLock, useEscape, useFocusTrap } from "../lib/hooks";
+import { CHROME_PHONE_NUMBERS } from "../lib/institutionalStatic";
+import { activePhoneNumbers } from "../lib/phones";
 import { HexMark } from "./Logo";
 import { MenuIcon, CloseIcon, SearchIcon, ChatIcon, ArrowUpRight } from "./icons";
-import { NAV_LINKS } from "../lib/data";
 import { EASE } from "./motion";
 import { cn } from "../utils/cn";
+
+/* The footer publishes the same phone list as the Contact page, derived
+   through the shared policy in src/lib/phones.ts. The raw list lives in
+   src/lib/institutionalStatic.ts (not data.ts) so this always-rendered
+   chrome module does not pull the 394 KB programme catalogue into the
+   initial bundle. */
+const FOOTER_PHONE_LINES: string[] = activePhoneNumbers(
+  CHROME_PHONE_NUMBERS as string[]
+);
+
+/* ---------------- Navigation simplification ----------------
+ * The site architecture has been simplified to four primary
+ * destinations — All Programmes, About GIBS, Gallery,
+ * Contact & Registry — plus the utility (Search, GIBS Programme Assistant).
+ * All four destinations receive equal visual weight in both
+ * the desktop header and the mobile sheet.
+ */
+const CORE_NAV = [
+  { label: "All Programmes", to: "/programmes" },
+  { label: "About GIBS", to: "/about" },
+  { label: "Gallery", to: "/gallery" },
+  { label: "Contact & Registry", to: "/contact" },
+];
 
 /* ---------------- Skip link ---------------- */
 
@@ -15,12 +45,13 @@ export function SkipLink() {
     <a
       href="#main"
       onClick={(e) => {
-        e.preventDefault();
         const main = document.getElementById("main");
-        main?.focus();
-        main?.scrollIntoView();
+        if (!main) return;
+        e.preventDefault();
+        main.focus({ preventScroll: true });
+        main.scrollIntoView();
       }}
-      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-panel focus:bg-forest-600 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-ivory"
+      className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[var(--z-skip)] focus:rounded-panel focus:bg-forest-600 focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-ivory"
     >
       Skip to content
     </a>
@@ -59,20 +90,18 @@ export function Header({
 
   return (
     <header className="fixed inset-x-0 top-0 z-[var(--z-header)]">
-      {/* Primary bar — the single sanctioned glass treatment */}
+      {/* Primary bar — the single sanctioned liquid glass treatment */}
       <div
         className={cn(
-          "border-b transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
-          scrolled
-            ? "border-ink/10 bg-ivory/90 shadow-[0_2px_20px_-14px_rgba(0,32,9,0.4)] backdrop-blur-xl"
-            : "border-transparent bg-ivory/72 backdrop-blur-md"
+          "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          scrolled ? "liquid-glass-header--scrolled" : "liquid-glass-header"
         )}
       >
       <div className="container-x flex h-[var(--header-height)] min-w-0 items-center justify-between gap-4">
         <Link to="/" className="flex min-w-0 shrink-0 items-center gap-3" aria-label="GIBS home">
           <HexMark compact className="h-11 w-11 shrink-0" />
-          <span className="hidden leading-tight lg:block">
-            <span className="block font-serif text-[14px] font-semibold tracking-wide text-forest-900">
+          <span className="hidden leading-tight xl:block">
+            <span className="block font-display text-[14px] font-bold tracking-tight text-forest-900">
               Goshen International
             </span>
             <span className="block eyebrow text-forest-600">
@@ -81,15 +110,16 @@ export function Header({
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav aria-label="Primary" className="hidden items-center gap-7 xl:flex">
-          {NAV_LINKS.map((link) => (
+        {/* Desktop nav — primary bar plus an Explore disclosure carrying
+            the secondary destinations, so no public section is lost at wider breakpoints. */}
+        <nav aria-label="Primary" className="hidden items-center gap-6 lg:flex xl:gap-7">
+          {CORE_NAV.map((link) => (
             <Link
               key={link.to}
               to={link.to}
               aria-current={isActive(link.to) ? "page" : undefined}
               className={cn(
-                "relative py-2 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors duration-200",
+                "relative py-2 text-[13.5px] font-semibold tracking-[-0.01em] transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-4 rounded-xs",
                 isActive(link.to) ? "text-forest-700" : "text-ink/75 hover:text-forest-700"
               )}
             >
@@ -110,26 +140,27 @@ export function Header({
             type="button"
             onClick={onOpenSearch}
             aria-label="Search GIBS"
-            className="flex h-11 w-11 items-center justify-center rounded-pill text-forest-800 transition-colors hover:bg-forest-50"
+            className="flex h-11 w-11 items-center justify-center rounded-pill text-forest-800 transition-colors hover:bg-forest-50 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2"
           >
             <SearchIcon className="h-5 w-5" />
           </button>
           <button
             type="button"
             onClick={onOpenConcierge}
-            aria-label="Open GIBS AI"
-            className="hidden items-center gap-2 rounded-pill border border-forest-700/25 px-4 py-2.5 text-[13px] font-bold text-forest-700 transition-colors hover:border-forest-600 hover:bg-forest-50 md:inline-flex"
+            aria-label="Open GIBS AI Programme Assistant"
+            className={cn(
+              "liquid-glass-pill hidden items-center gap-2 rounded-pill px-3.5 py-2 text-[13px] font-bold text-forest-800 focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2",
+              path === "/programmes" ? "lg:inline-flex" : "xl:inline-flex"
+            )}
           >
-            <span className="relative flex h-2 w-2">
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-gold-500" />
-            </span>
+            <ChatIcon className="h-3.5 w-3.5 text-forest-700" />
             GIBS AI
           </button>
-          <Link to="/admissions" className="btn btn-primary btn-md hidden xl:inline-flex">
-            Subscribe
+          <Link to="/admissions" className="btn btn-primary btn-md hidden lg:inline-flex">
+            Make an Enquiry
           </Link>
-          <Link to="/admissions" className="btn btn-primary btn-sm xl:hidden">
-            Subscribe
+          <Link to="/admissions" className="btn btn-primary btn-sm hidden sm:inline-flex lg:hidden">
+            Make an Enquiry
           </Link>
           <button
             type="button"
@@ -137,7 +168,7 @@ export function Header({
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             aria-controls="mobile-navigation"
-            className="flex h-11 w-11 items-center justify-center rounded-pill border border-forest-700/25 text-forest-800 transition-colors hover:border-forest-600 hover:bg-forest-600 hover:text-ivory xl:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-pill border border-forest-700/25 text-forest-800 transition-colors hover:border-forest-600 hover:bg-forest-600 hover:text-ivory focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2 lg:hidden"
           >
             <MenuIcon className="h-5 w-5" />
           </button>
@@ -150,24 +181,12 @@ export function Header({
 
 /* ---------------- Mobile / tablet navigation ---------------- */
 
-const MOBILE_PRIMARY = [
-  { label: "All Programmes", to: "/programmes" },
-  { label: "Foreign Training", to: "/executive-education" },
-  { label: "Faculty & Governance", to: "/faculty" },
-  { label: "About GIBS", to: "/about" },
-  { label: "Programme Subscription", to: "/admissions" },
-];
-const MOBILE_SECONDARY = [
-  { label: "Research & Insights", to: "/research-insights" },
-  { label: "Conferences & Events", to: "/events" },
-  { label: "Campuses & Facilities", to: "/campus" },
-  { label: "Campus Gallery", to: "/gallery" },
-  { label: "Contact & Registry", to: "/contact" },
-];
-
 function isActiveRoute(to: string, path: string) {
   return path === to || path.startsWith(to + "/");
 }
+
+/** Matches the sheet's slide-out duration below, so nothing is cut short. */
+const EXIT_MS = 450;
 
 export function MobileNav({
   open,
@@ -180,9 +199,21 @@ export function MobileNav({
   onOpenSearch: () => void;
   onOpenConcierge: () => void;
 }) {
-  useBodyScrollLock(open);
+  const [rendered, setRendered] = useState(open);
+  // Scroll lock and focus trap follow `rendered`, not `open`, so they stay
+  // active for exactly as long as the aria-modal element is mounted. Binding
+  // them to `open` ran the trap's effect on the commit where `open` became true
+  // but `rendered` was still false, so `ref.current` was null, the effect
+  // early-returned, and because its dependency array is `[active]` it never ran
+  // again once the sheet mounted. The result was an `aria-modal="true"` dialog
+  // that never received focus and never trapped it: Tab walked straight out
+  // into #main, and closing it restored focus to nothing. This matches
+  // SearchModal and ConciergeDialog, which have always bound these to
+  // `rendered`. `useEscape` stays on `open` so Escape is inert during the exit
+  // animation.
+  useBodyScrollLock(rendered);
   useEscape(open, onClose);
-  const ref = useFocusTrap<HTMLDivElement>(open);
+  const ref = useFocusTrap<HTMLDivElement>(rendered);
   const { path: routePath } = useRoute();
 
   // Reopening the sheet always starts from the top of the list.
@@ -192,45 +223,74 @@ export function MobileNav({
     if (node) node.scrollTop = 0;
   }, [open]);
 
+  // Rotating a tablet or resizing a narrow window past the `lg` breakpoint
+  // swaps the burger for the desktop bar, so the sheet must leave with it —
+  // otherwise it lingers as a full-screen modal over a layout it cannot close.
+  useEffect(() => {
+    if (!open) return;
+    const desktop = window.matchMedia("(min-width: 1024px)");
+    if (desktop.matches) {
+      onClose();
+      return;
+    }
+    const onChange = (e: MediaQueryListEvent) => {
+      if (e.matches) onClose();
+    };
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
+  }, [open, onClose]);
+
+  // Unmount on a timer rather than relying on the exit animation to signal
+  // completion. AnimatePresence waits for that signal, and when the animation
+  // is dropped (busy or software-rendered frame) it keeps the sheet mounted —
+  // leaving a live aria-modal overlay that traps focus and locks scrolling
+  // after Escape. The timer makes the teardown deterministic.
+  useEffect(() => {
+    if (open) {
+      setRendered(true);
+      return;
+    }
+    const t = window.setTimeout(() => setRendered(false), EXIT_MS);
+    return () => window.clearTimeout(t);
+  }, [open]);
+
+  if (!rendered) return null;
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          ref={ref}
-          id="mobile-navigation"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Menu"
-          className="mobile-nav-sheet paper-grain overflow-y-auto overscroll-contain bg-paper z-[var(--z-nav)]"
-          initial={{ opacity: 0, y: -16 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -16 }}
-          transition={{ duration: 0.45, ease: EASE }}
-        >
-          <div className="container-x flex min-h-full flex-col pb-10 pt-[92px]">
+    <motion.div
+      ref={ref}
+      id="mobile-navigation"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Menu"
+      className="mobile-nav-sheet paper-grain overflow-y-auto overscroll-contain bg-paper z-[var(--z-nav)]"
+      initial={{ opacity: 0, y: -16 }}
+      animate={{ opacity: open ? 1 : 0, y: open ? 0 : -16 }}
+      transition={{ duration: 0.45, ease: EASE }}
+    >
+          <div className="container-x flex flex-col pb-10 pt-[92px]">
             <button
               type="button"
               onClick={onClose}
               aria-label="Close menu"
-              className="fixed right-5 top-[18px] z-10 flex h-[52px] w-[52px] items-center justify-center rounded-pill bg-stone text-ink transition-colors hover:bg-forest-600 hover:text-ivory"
+              className="fixed right-5 top-[18px] z-10 flex h-[52px] w-[52px] items-center justify-center rounded-pill bg-stone text-ink transition-colors hover:bg-forest-600 hover:text-ivory focus-visible:outline-2 focus-visible:outline-forest-600 focus-visible:outline-offset-2"
             >
               <CloseIcon className="h-5 w-5" />
             </button>
 
-            <div className="grid flex-1 gap-10 lg:grid-cols-12">
+            <div className="grid gap-10 lg:grid-cols-12">
               <div className="lg:col-span-5">
                 <p className="eyebrow text-forest-600">
                   GIBS / Navigation
                 </p>
-                <h2 className="mt-6 font-baskerville text-[38px] leading-[0.95] tracking-[-0.02em] text-ink">
+                <h2 className="mt-6 font-display text-[34px] font-bold leading-[1.02] tracking-[-0.025em] text-ink sm:text-[38px]">
                   Explore
                   <br />
-                  <em className="italic text-forest-600">Goshen.</em>
+                  <em className="text-forest-600">Goshen.</em>
                 </h2>
                 <p className="mt-5 max-w-md text-[14px] leading-[1.55] text-muted">
                   Explore the 2026 Training Calendar of 113 Local and 22 Foreign
-                  Executive Programmes, campuses in Ilorin, Abuja & Ibafo, or ask
-                  GIBS AI to guide you.
+                  Executive Programmes, or ask the Programme Assistant to guide you.
                 </p>
 
                 <div className="mt-8 flex flex-wrap gap-3">
@@ -261,7 +321,7 @@ export function MobileNav({
 
               <nav className="border-t rule lg:col-span-7" aria-label="Mobile primary">
                 <ul>
-                  {MOBILE_PRIMARY.map((link, i) => (
+                  {CORE_NAV.map((link, i) => (
                     <motion.li
                       key={link.to}
                       className="border-b rule"
@@ -277,7 +337,7 @@ export function MobileNav({
                       >
                         <span
                           className={cn(
-                            "font-baskerville text-[27px] leading-none tracking-[-0.01em] text-ink transition-transform duration-300 group-hover:translate-x-2",
+                            "font-display text-[23px] font-semibold leading-none tracking-[-0.015em] text-ink transition-transform duration-300 group-hover:translate-x-2 sm:text-[26px]",
                             isActiveRoute(link.to, routePath) && "text-forest-700"
                           )}
                         >
@@ -289,39 +349,8 @@ export function MobileNav({
                   ))}
                 </ul>
 
-                <p className="mt-8 meta">
-                  More from GIBS
-                </p>
-                <ul className="mt-3">
-                  {MOBILE_SECONDARY.map((link, i) => (
-                    <motion.li
-                      key={link.to}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5, ease: EASE, delay: 0.4 + i * 0.05 }}
-                    >
-                      <Link
-                        to={link.to}
-                        onClick={onClose}
-                        aria-current={isActiveRoute(link.to, routePath) ? "page" : undefined}
-                        className="group -mx-2 flex items-center gap-4 rounded-panel px-2 py-3"
-                      >
-                        <span
-                          className={cn(
-                            "text-[15px] font-bold text-ink/75 transition-colors group-hover:text-forest-700",
-                            isActiveRoute(link.to, routePath) && "text-forest-700"
-                          )}
-                        >
-                          {link.label}
-                        </span>
-                        <ArrowUpRight className="ml-auto h-4 w-4 text-ink/40 transition-all group-hover:text-forest-600" />
-                      </Link>
-                    </motion.li>
-                  ))}
-                </ul>
-
                 <Link to="/admissions" onClick={onClose} className="btn btn-primary btn-lg mt-8 w-full">
-                  Subscribe to a Programme
+                  Make an Enquiry
                   <ArrowUpRight className="h-4 w-4" />
                 </Link>
               </nav>
@@ -331,9 +360,7 @@ export function MobileNav({
               <p className="meta">Goshen International Business School Limited · RC 1178333</p>
             </div>
           </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+    </motion.div>
   );
 }
 
@@ -343,21 +370,14 @@ const FOOTER_COLUMNS = [
   {
     title: "Programmes",
     links: [
-      { label: "2026 Training Calendar", to: "/programmes" },
-      { label: "Foreign Training Hubs", to: "/executive-education" },
-      { label: "In-Plant Workshops", to: "/executive-education" },
-      { label: "Programme Subscription", to: "/admissions" },
+      { label: "All Programmes", to: "/programmes" },
     ],
   },
   {
-    title: "Institution",
+    title: "About GIBS",
     links: [
       { label: "About GIBS", to: "/about" },
-      { label: "Governance & Faculty", to: "/faculty" },
-      { label: "Research & Insights", to: "/research-insights" },
-      { label: "Campuses & Facilities", to: "/campus" },
-      { label: "Campus Gallery", to: "/gallery" },
-      { label: "Conferences & Events", to: "/events" },
+      { label: "Gallery", to: "/gallery" },
     ],
   },
   {
@@ -365,16 +385,14 @@ const FOOTER_COLUMNS = [
     links: [
       { label: "Contact Registry", to: "/contact" },
       { label: "GIBS AI", to: "/concierge" },
-      { label: "Ilorin Headquarters", to: "/campus" },
-      { label: "Abuja Center", to: "/campus" },
-      { label: "Ibafo Center", to: "/campus" },
+      { label: "Privacy Policy", to: "/privacy-policy" },
     ],
   },
 ];
 
 function Newsletter() {
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [showInfo, setShowInfo] = useState(false);
   const [validationError, setValidationError] = useState("");
 
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -387,21 +405,22 @@ function Newsletter() {
       return;
     }
     setValidationError("");
-    setStatus("submitting");
-    window.setTimeout(() => {
-      setStatus("success");
-    }, 600);
+    setShowInfo(true);
   };
 
-  if (status === "success") {
+  if (showInfo) {
     return (
       <div className="mt-9 max-w-md border-l-2 border-gold-400 pl-4">
-        <p className="eyebrow-light">Thank you.</p>
+        <p className="eyebrow-light">How to join the mailing list</p>
         <p className="mt-1.5 text-[13px] leading-relaxed text-ivory/70">
-          Your request for calendar updates has been received. For immediate official enquiries, you can also reach the registry directly at{" "}
-          <a href="mailto:gibsilorin@gmail.com" className="text-gold-300 underline underline-offset-2">
+          Our newsletter is currently managed manually via the registry. To join the GIBS Executive Bulletin, please email us at{" "}
+          <a
+            href={`mailto:gibsilorin@gmail.com?subject=${encodeURIComponent("GIBS Executive Bulletin")}&body=${encodeURIComponent(`Please add ${email.trim()} to the GIBS Executive Bulletin mailing list.`)}`}
+            className="text-gold-300 underline underline-offset-2"
+          >
             gibsilorin@gmail.com
-          </a>.
+          </a>{" "}
+          and ask to be added.
         </p>
       </div>
     );
@@ -412,7 +431,7 @@ function Newsletter() {
       className="mt-9 max-w-md"
       onSubmit={handleSubmit}
       noValidate
-      aria-label="Register interest in GIBS Executive Calendar Updates"
+      aria-label="Sign up for GIBS Executive Calendar Updates"
     >
       <label htmlFor="footer-email" className="eyebrow-light">
         GIBS Executive Bulletin & Calendar Updates
@@ -426,7 +445,6 @@ function Newsletter() {
           onChange={(e) => {
             setEmail(e.target.value);
             if (validationError) setValidationError("");
-            if (status === "error") setStatus("idle");
           }}
           placeholder="Your official email address"
           aria-invalid={validationError ? "true" : undefined}
@@ -435,28 +453,15 @@ function Newsletter() {
         />
         <button
           type="submit"
-          disabled={status === "submitting"}
-          aria-label="Subscribe"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 disabled:cursor-wait disabled:opacity-60 focus-visible:outline-gold-300"
+          aria-label="Sign up for updates"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-gold-300 text-forest-950 transition-colors hover:bg-gold-400 focus-visible:outline-2 focus-visible:outline-gold-300 focus-visible:outline-offset-2"
         >
-          {status === "submitting" ? (
-            <span
-              className="h-4 w-4 animate-spin rounded-full border-2 border-forest-950/30 border-t-forest-950"
-              aria-hidden="true"
-            />
-          ) : (
-            <ArrowUpRight className="h-4 w-4" />
-          )}
+          <ArrowUpRight className="h-4 w-4" />
         </button>
       </div>
       {validationError && (
         <p id="footer-email-error" role="alert" className="mt-2 text-[12px] text-gold-300">
           {validationError}
-        </p>
-      )}
-      {status === "error" && (
-        <p role="alert" className="mt-2 text-[12px] text-gold-300">
-          Something went wrong. Please try again.
         </p>
       )}
     </form>
@@ -466,7 +471,7 @@ function Newsletter() {
 export function GlobalFooter() {
   return (
     <footer className="relative border-t-2 border-gold-500/30 bg-forest-950 text-ivory">
-      <div className="container-x py-20 sm:py-24">
+      <div className="container-x band-y">
         <div className="grid gap-14 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <div className="flex items-center gap-4">
@@ -474,30 +479,27 @@ export function GlobalFooter() {
                 <HexMark compact className="h-full w-full" />
               </span>
               <div className="leading-tight">
-                <p className="fraunces font-semibold text-base text-ivory">Goshen International</p>
+                <p className="font-display font-bold text-base text-ivory">Goshen International</p>
                 <p className="eyebrow-light">
                   Business School
                 </p>
               </div>
             </div>
-            <p className="mt-5 text-[13px] font-serif italic text-gold-300">
+            <p className="mt-5 text-[13px] font-sans italic text-ivory/80">
               “Take advantage of us, so that no one takes advantage of you”
-            </p>
-            <p className="mt-4 max-w-sm type-body text-ivory/85">
-              An outfit committed to manpower development and capacity-building.
             </p>
             <div className="mt-5 space-y-1.5 text-[12px] leading-relaxed text-ivory/75">
               <p className="font-semibold text-ivory">Headquarters (Ilorin):</p>
               <p>No 81, Olorunsogo Street, Off Agbabiaka Road, Upper Gaa - Akanbi, Ilorin, Kwara State</p>
-              <p className="pt-1"><span className="text-gold-300">Emails:</span> gibsilorin@gmail.com · goshenibs22@gmail.com</p>
-              <p><span className="text-gold-300">Phones:</span> 08160010401 · 08033429427 · 08186464474</p>
-              <p><span className="text-gold-300">Postal:</span> P.O. Box 63, Ilorin General Post Office, Kwara State</p>
-              <p><span className="text-gold-300">Web:</span> www.gibs.com.ng</p>
+              <p className="pt-1"><span className="text-ivory/60 font-medium">Emails:</span> gibsilorin@gmail.com · goshenibs22@gmail.com</p>
+              <p><span className="text-ivory/60 font-medium">Phones:</span> {FOOTER_PHONE_LINES.join(" · ")}</p>
+              <p><span className="text-ivory/60 font-medium">Postal:</span> P.O. Box 63, Ilorin General Post Office, Kwara State</p>
+              <p><span className="text-ivory/60 font-medium">Web:</span> www.gibs.com.ng</p>
             </div>
             <Newsletter />
           </div>
 
-          <div className="grid grid-cols-1 gap-10 min-[400px]:grid-cols-2 sm:grid-cols-3 lg:col-span-7 lg:pl-10">
+          <div className="grid grid-cols-1 gap-5 min-[400px]:grid-cols-2 sm:grid-cols-3 sm:gap-10 lg:col-span-7 lg:pl-10">
             {FOOTER_COLUMNS.map((col) => (
               <div key={col.title}>
                 <p className="eyebrow-light">
@@ -508,7 +510,7 @@ export function GlobalFooter() {
                     <li key={l.label}>
                       <Link
                         to={l.to}
-                        className="group inline-flex items-center gap-1.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory"
+                        className="group inline-flex min-h-[44px] items-center gap-1.5 py-2.5 text-[14px] text-ivory/65 transition-colors hover:text-ivory focus-visible:outline-2 focus-visible:outline-gold-300 focus-visible:outline-offset-2 rounded-xs"
                       >
                         <span className="h-px w-0 bg-gold-300 transition-all duration-300 group-hover:w-4" />
                         {l.label}
@@ -522,7 +524,7 @@ export function GlobalFooter() {
         </div>
 
         <div className="mt-20 select-none overflow-hidden border-t rule-light pt-10">
-          <p className="display-serif type-extrude-ink bg-[linear-gradient(180deg,rgba(245,245,240,0.16),rgba(245,245,240,0.03))] bg-clip-text text-[clamp(4.5rem,17vw,15rem)] leading-[0.85] text-transparent">
+          <p className="font-display font-extrabold tracking-tighter bg-[linear-gradient(180deg,rgba(245,245,240,0.16),rgba(245,245,240,0.03))] bg-clip-text text-[clamp(4.5rem,17vw,15rem)] leading-[0.85] text-transparent">
             GIBS
           </p>
         </div>
@@ -530,12 +532,12 @@ export function GlobalFooter() {
         <div className="mt-10 flex flex-col gap-4 text-[11px] font-medium uppercase tracking-[0.12em] text-ivory/60 sm:flex-row sm:items-center sm:justify-between sm:text-[12px]">
           <p>© {new Date().getFullYear()} Goshen International Business School Limited (RC 1178333)</p>
           <p className="text-ivory/60">
-            Accreditations: CAC · CMD · ITF Compliant · NSTIF
+            CAC registered · RC 1178333
           </p>
         </div>
         <div className="mt-6 flex flex-col gap-2 border-t rule-light pt-6 text-[11px] text-ivory/60 sm:flex-row sm:items-center sm:justify-between">
           <p>Technical Academic Partner: Pacific Institute of Technology, Georgia, USA</p>
-          <p>Overseas Hubs: Kigali · Dubai · London · Houston · Miami · Cape Town · Durban · Ghana</p>
+          <p>Overseas Hubs: Kigali · Dubai · London · Houston</p>
         </div>
       </div>
     </footer>
@@ -565,7 +567,7 @@ export class ErrorBoundary extends Component<
         <div className="flex min-h-screen items-center justify-center bg-paper px-6">
           <div className="max-w-md text-center">
             <HexMark compact className="mx-auto h-16 w-16" />
-            <h1 className="display-serif mt-6 text-3xl text-ink">The page encountered a problem</h1>
+            <h1 className="font-display font-bold mt-6 text-3xl text-ink">The page encountered a problem</h1>
             <p className="mt-4 type-body text-muted">
               An unexpected error interrupted this page. You can return to the
               homepage or retry. Nothing you entered elsewhere has been lost

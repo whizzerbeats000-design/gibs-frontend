@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "instrument serif",
+        "createdAt": "2026-10-26T09:36:35.987Z",
+        "reason": "Intentional brand identity: Modern Classicism design system"
+      },
+      {
+        "rule": "overused-font",
+        "value": "space grotesk",
+        "createdAt": "2026-10-26T09:36:36.146Z",
+        "reason": "Intentional brand identity: Modern Classicism design system"
+      },
+      {
+        "rule": "overused-font",
+        "value": "fraunces",
+        "createdAt": "2026-10-26T09:36:36.315Z",
+        "reason": "Intentional brand identity: Modern Classicism design system"
+      }
+    ]
+  }
+}

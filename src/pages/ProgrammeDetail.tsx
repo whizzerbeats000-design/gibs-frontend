@@ -4,7 +4,11 @@ import { FaqAccordion } from "../components/cards";
 import { ProgrammeNav, type ProgrammeSection } from "../components/ProgrammeNav";
 import { CheckIcon, ArrowUpRight, ArrowLeft, Diamond } from "../components/icons";
 import { Link } from "../lib/router";
-import { getProgramme, relatedProgrammes, IMAGES } from "../lib/data";
+import { getProgramme, relatedProgrammes } from "../lib/data";
+import type { Programme } from "../types/data";
+import { approvedContent, resolveRenderedCategory } from "../lib/programme-content";
+import { scrubRetiredNumbersInProse } from "../lib/phones";
+import { suppressExpiredSchedule } from "../lib/suppressExpiredDates";
 import { useSeo } from "../lib/router";
 import { Reveal } from "../components/motion";
 import NotFound from "./NotFound";
@@ -14,41 +18,102 @@ const SECTIONS: ProgrammeSection[] = [
   { id: "audience", label: "Who it is for" },
   { id: "curriculum", label: "Structure & Modules" },
   { id: "delivery", label: "Delivery & Venues" },
-  { id: "enrolment", label: "Enrolment & Fees" },
   { id: "faq", label: "FAQ" },
+  { id: "enrolment", label: "Enrolment & Fees" },
 ];
 
 function FactRow({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
-    <div className="flex items-start justify-between gap-6 border-b rule py-3.5 last:border-b-0">
+    <div className="flex items-start justify-between gap-4 border-b rule py-3.5 last:border-b-0 sm:gap-6">
       <dt className="meta shrink-0 text-muted">{label}</dt>
-      <dd className="text-right text-[13.5px] font-semibold text-ink">{value}</dd>
+      <dd className="min-w-0 text-right text-sm font-semibold tabular-nums text-ink">{value}</dd>
     </div>
   );
+}
+
+/* Shared shell for the four "Delivery & Venues" fact surfaces (Format,
+   Duration, Schedule, Tuition Fee). The surface, eyebrow and display-serif
+   value styling are identical; only the value colour varies (the fee is
+   forest-900 to read as the emphasized datum). One shell, four call sites —
+   identical rendered output to the previous inline block. */
+function FactCard({ label, value, valueClass = "text-ink" }: { label: string; value?: string | null; valueClass?: string }) {
+  return (
+    <div className="rounded-panel border border-forest-950/[0.08] bg-paper p-6 shadow-crisp">
+      <p className="eyebrow">{label}</p>
+      <h3 className={`display-serif mt-3 text-lg tabular-nums ${valueClass}`}>{value}</h3>
+    </div>
+  );
+}
+
+/* Suppress expired 2026 schedule dates from programme summaries and taglines
+   used in meta descriptions, Open Graph descriptions, Twitter descriptions,
+   visible page content, and PageHero intros. All programme summaries in
+   data.ts end with a date schedule ("… Scheduled across GIBS training
+   centres and regional hubs: March 2–6 (Ibafo), April 13–17 (Ilorin),
+   Sept 7–11 (Abuja).") that has passed as of November 2026. Remove only
+   the date schedule, preserving the accurate programme name, audience,
+   duration, and description. */
+function suppressExpiredDatesInSummary(text: string | undefined | null): string {
+  if (!text) return '';
+  let result = text!.replace(/\s+Scheduled across.*$/, '');
+  // Remove expired schedule: " Dates: [dates]." (foreign programmes)
+  result = result!.replace(/\s+Dates:.*$/, '');
+  // Clean up double periods left behind (e.g. "Dept.." → "Dept.")
+  result = result.replace(/\.\./g, '.');
+  return result.trim();
+}
+
+function suppressExpiredDatesInTagline(text: string | undefined | null): string {
+  if (!text) return '';
+  const dotIndex = text!.lastIndexOf('\u00b7');
+  if (dotIndex > 0) {
+    const afterDot = text!.slice(dotIndex + 1).trim();
+    // Check if after · contains date patterns
+    if (/\d[\u2013\-]\d/.test(afterDot) || /2026/.test(afterDot)) {
+      return text!.slice(0, dotIndex).trim();
+    }
+  }
+  return text.trim();
 }
 
 export default function ProgrammeDetail({ slug }: { slug: string }) {
   const programme = getProgramme(slug);
 
-  useSeo({
-    title: programme ? `${programme.code} · ${programme.title} — GIBS` : "Programme not found — GIBS",
-    description: programme?.summary ?? "",
-  });
+  /* Status-gated content: only `approved` overrides the locked catalogue.
+   * scripts/seo-gen.mjs applies the identical gate when emitting static shells,
+   * so the client and the server render the same narrative for every route. */
+  const content = programme ? approvedContent(programme) : undefined;
 
   if (!programme) return <NotFound />;
 
-  const related = relatedProgrammes(slug, 3);
+  /* Suppress expired 2026 dates from the summary used in meta description
+   * and visible page content. Both static shell and React render must agree. */
+  const resolvedSummary = suppressExpiredDatesInSummary(content?.summary ?? programme.summary ?? '');
+  const resolvedTagline = suppressExpiredDatesInTagline(programme.tagline ?? '');
+
+  useSeo({
+    title: `${programme.code} · ${programme.title} — GIBS`,
+    description: resolvedSummary,
+    canonicalPath: `/programmes/${programme.slug}`,
+  });
+
+  const related = (content?.relatedSlugs?.length
+    ? content.relatedSlugs.map((s) => getProgramme(s)).filter((p): p is Programme => Boolean(p))
+    : relatedProgrammes(slug, 3));
   const isForeign = programme.destination !== "Local";
+
+  const summary = resolvedSummary;
+  const outcomes = content?.outcomes ?? programme.outcomes ?? [];
+  const structure = content?.structure ?? programme.indicativeStructure ?? [];
+  const faqs = content?.faqs ?? programme.faqs ?? [];
 
   return (
     <>
       <PageHero
-        image={isForeign ? IMAGES.city : IMAGES.colonnade}
-        imageAlt={`GIBS Executive Training — ${programme.title}`}
-        eyebrow={`${programme.category} · ${programme.code}`}
+        eyebrow={`${resolveRenderedCategory(programme)} · ${programme.code}`}
         title={programme.title}
-        intro={programme.tagline ?? programme.summary}
+        intro={content?.intro ?? resolvedTagline ?? resolvedSummary}
         breadcrumbs={[
           { label: "2026 Calendar", to: "/programmes" },
           { label: programme.code },
@@ -56,15 +121,15 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
         meta={
           <div className="flex flex-wrap gap-3">
             <BtnLink
-              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
+              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}&programme=${encodeURIComponent(programme.slug)}`}
               variant="gold"
               size="md"
             >
-              Subscribe / Nominate
+              Make an Enquiry
               <ArrowUpRight className="h-3.5 w-3.5" />
             </BtnLink>
-            <BtnLink to="/concierge" variant="outline-light" size="md">
-              Ask GIBS AI
+            <BtnLink to="/concierge" variant="outline-ink" size="md">
+              Ask the Programme Assistant
             </BtnLink>
           </div>
         }
@@ -74,7 +139,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Overview & Quick Facts */}
       <section id="overview" className="bg-paper">
-        <div className="container-x grid gap-12 py-20 sm:py-24 lg:grid-cols-12 lg:gap-14">
+        <div className="container-x section-y grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-14">
           <div className="lg:col-span-7">
             <Reveal>
               <div className="flex flex-wrap items-center gap-2.5">
@@ -85,52 +150,59 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
                   {programme.destination} Training
                 </span>
                 {programme.inPlantAvailable && (
-                  <span className="rounded-pill border border-forest-600/30 px-3 py-1 text-[11px] font-semibold text-forest-700">
+                  <span className="rounded-pill border border-forest-600/30 px-3 py-1 text-xs font-semibold text-forest-700">
                     In-Plant Option Available
                   </span>
                 )}
               </div>
-              <p className="prose-editorial mt-6 max-w-[62ch] text-[17px] leading-[1.8] text-ink">
-                {programme.summary}
+              <p className="prose-editorial mt-6 max-w-[62ch] type-body text-ink">
+                {summary}
               </p>
             </Reveal>
 
             {/* Target Audience Highlight */}
-            <div className="mt-8 border-l-2 border-gold-500 bg-white p-6 shadow-crisp">
-              <p className="eyebrow text-gold-700">Target Audience</p>
-              <p className="mt-2 text-[15px] font-bold text-ink">{programme.targetAudience}</p>
+            <div className="mt-8 rounded-panel border border-line bg-paper p-6">
+              <p className="eyebrow text-forest-700">Target Audience</p>
+              <p className="mt-2 text-sm font-semibold text-ink">{programme.targetAudience}</p>
             </div>
           </div>
 
           <div className="lg:col-span-5">
-            <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + 16px)" }}>
+            <div className="lg:sticky" style={{ top: "calc(var(--sticky-top) + var(--subnav-height) + 16px)" }}>
               <Reveal y={32}>
-                <div className="border border-line bg-white p-7 shadow-card sm:p-8">
+                <div className="rounded-panel border border-forest-950/[0.08] bg-white p-7 sm:p-8 shadow-card">
                   <p className="eyebrow">Programme Summary</p>
                   <dl className="mt-5">
                     <FactRow label="Course Code" value={programme.code} />
-                    <FactRow label="Sector / Category" value={programme.category} />
-                    <FactRow label="Scope / Location" value={`${programme.destination} Hub`} />
+                    <FactRow label="Sector / Category" value={resolveRenderedCategory(programme)} />
+                    <FactRow
+                      label="Scope / Location"
+                      value={
+                        programme.destination === "Local"
+                          ? "Local / Open"
+                          : `${programme.destination} Hub`
+                      }
+                    />
                     <FactRow label="Duration" value={programme.duration ?? "5 Days"} />
-                    <FactRow label="2026 Schedule" value={programme.schedule} />
+                    <FactRow label="Schedule" value="Contact GIBS for the current programme schedule." />
                     <FactRow label="Official Fee" value={programme.fees} />
                   </dl>
 
                   <BtnLink
-                    to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
+                    to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}&programme=${encodeURIComponent(programme.slug)}`}
                     variant="primary"
                     size="lg"
-                    className="mt-7 w-full"
+                    className="mt-7 w-full whitespace-normal px-4 text-sm sm:px-7"
                   >
-                    Subscribe / Nominate Candidates
+                    Make an Enquiry
                     <ArrowUpRight className="h-4 w-4" />
                   </BtnLink>
                   {programme.inPlantAvailable && (
                     <BtnLink
-                      to="/contact?type=Customized+In-Plant+Workshop+Request"
+                      to={`/contact?type=Customized+In-Plant+Workshop+Request&programme=${encodeURIComponent(programme.slug)}`}
                       variant="outline-ink"
                       size="md"
-                      className="mt-3 w-full"
+                      className="mt-3 w-full whitespace-normal"
                     >
                       Request In-Plant Customized Edition
                     </BtnLink>
@@ -144,7 +216,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Audience & Outcomes */}
       <section id="audience" className="border-y border-line bg-white">
-        <div className="container-x grid gap-14 py-20 sm:py-24 lg:grid-cols-2 lg:gap-20">
+        <div className="container-x section-y grid grid-cols-1 gap-14 lg:grid-cols-2 lg:gap-20">
           <Reveal>
             <p className="eyebrow">Target Participants</p>
             <h2 className="type-h2 mt-4 text-ink">
@@ -163,12 +235,12 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
           <Reveal delay={0.1}>
             <p className="eyebrow">Learning Outcomes</p>
             <h2 className="type-h2 mt-4 text-ink">
-              Key <em className="italic text-gold-600">takeaways.</em>
+              Key <em className="italic text-gold-700">takeaways.</em>
             </h2>
             <ul className="mt-7 space-y-4">
-              {programme.outcomes?.map((o) => (
+              {outcomes.map((o) => (
                 <li key={o} className="flex items-start gap-3.5 type-body text-ink/85">
-                  <Diamond className="mt-1.5 h-2 w-2 shrink-0 text-gold-600" />
+                  <Diamond className="mt-1.5 h-2 w-2 shrink-0 text-gold-700" />
                   {o}
                 </li>
               ))}
@@ -179,7 +251,7 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Structure & Modules */}
       <section id="curriculum" className="paper-grain bg-paper">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Curriculum Architecture</p>
             <h2 className="type-h2 mt-4 max-w-3xl text-ink">
@@ -187,11 +259,11 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-10 lg:grid-cols-12 lg:gap-14">
+          <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
             <ol className="border-t rule lg:col-span-7">
-              {programme.indicativeStructure?.map((item, i) => (
+              {structure.map((item, i) => (
                 <li key={i} className="grid grid-cols-[2.75rem_1fr] gap-4 border-b rule py-6">
-                  <span className="text-[12px] font-bold tracking-[0.16em] text-forest-600">
+                  <span className="font-mono text-xs font-bold tabular-nums tracking-[0.08em] text-forest-600">
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <p className="type-body font-medium text-ink/90">{item}</p>
@@ -200,9 +272,9 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
             </ol>
 
             <div className="lg:col-span-5">
-              <div className="border border-line bg-white p-7 shadow-card">
+              <div className="border border-line bg-white p-7">
                 <p className="eyebrow">Training Methodology</p>
-                <div className="mt-4 space-y-4 text-[14px] leading-relaxed text-muted">
+                <div className="mt-4 space-y-4 text-sm leading-relaxed text-muted">
                   <p>
                     GIBS executive workshops employ participatory case studies, syndicate discussions,
                     expert lectures, and live institutional problem-solving.
@@ -220,68 +292,70 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Delivery & Venues */}
       <section id="delivery" className="bg-white">
-        <div className="container-x py-20 sm:py-24">
+        <div className="container-x section-y">
           <Reveal>
             <p className="eyebrow">Delivery &amp; Venues</p>
-            <h2 className="type-h2 mt-4 text-ink">
-              2026 Schedule: <span className="text-forest-700">{programme.schedule}</span>
-            </h2>
+            <h2 className="type-h2 mt-4 text-ink">Schedule.</h2>
           </Reveal>
 
-          <div className="mt-10 grid gap-8 sm:grid-cols-3">
-            <div className="border border-line bg-paper p-6">
-              <p className="eyebrow">Format</p>
-              <h3 className="display-serif mt-3 text-lg text-ink">{programme.format}</h3>
-            </div>
-            <div className="border border-line bg-paper p-6">
-              <p className="eyebrow">Duration</p>
-              <h3 className="display-serif mt-3 text-lg text-ink">{programme.duration ?? "5 Days"}</h3>
-            </div>
-            <div className="border border-line bg-paper p-6">
-              <p className="eyebrow">Tuition Fee</p>
-              <h3 className="display-serif mt-3 text-lg text-forest-900">{programme.fees}</h3>
-            </div>
+          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            <FactCard label="Format" value={programme.format} />
+            <FactCard label="Duration" value={programme.duration ?? "5 Days"} />
+            <FactCard label="Schedule" value={programme.schedule ? "Contact GIBS for the current programme schedule." : "Contact GIBS for the current programme schedule."} />
+            <FactCard label="Tuition Fee" value={programme.fees} valueClass="text-forest-900" />
           </div>
         </div>
       </section>
 
       {/* Enrolment & FAQs */}
       <section id="faq" className="border-t border-line bg-paper">
-        <div className="container-x grid gap-10 py-20 sm:py-24 lg:grid-cols-12">
+        <div className="container-x section-y grid gap-10 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="eyebrow">Frequently Asked Questions</p>
-            <h2 className="type-h2 mt-4 text-ink">Registration &amp; logistics</h2>
+            <h2 className="type-h2 mt-4 text-ink">Enrolment &amp; logistics</h2>
             <p className="mt-4 type-body">
-              Questions regarding nomination procedures, in-plant arrangements, or international logistics.
+              Questions about in-plant arrangements, international logistics, or programme enrolment.
             </p>
           </div>
           <div className="lg:col-span-8">
-            <FaqAccordion items={programme.faqs ?? []} />
+            <FaqAccordion
+              items={faqs.map((faq) => ({
+                ...faq,
+                a: scrubRetiredNumbersInProse(
+                  faq.a.includes("2026 calendar sessions")
+                    ? "Contact GIBS for the current programme schedule and dates."
+                    : faq.a.includes("confirmed dates:")
+                    ? "Contact GIBS for the current programme schedule and dates."
+                    : faq.a,
+                ),
+              }))}
+            />
           </div>
         </div>
       </section>
 
       {/* Bottom CTA */}
       <section id="enrolment" className="relative overflow-hidden bg-forest-900 text-ivory">
-        <div className="container-x relative flex flex-col items-start gap-8 py-16 sm:flex-row sm:items-center sm:justify-between sm:py-20">
+        <div className="container-x band-y relative flex flex-col items-start gap-8 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="eyebrow-light">Subscription Desk</p>
+            <p className="eyebrow-light">Enrolment Desk</p>
             <h2 className="type-h2 mt-3">
-              Subscribe to {programme.code}.
+              Enquire About {programme.code}.
             </h2>
-            <p className="mt-2 text-[14px] text-ivory/80">Fee: {programme.fees} · Schedule: {programme.schedule}</p>
+            <p className="mt-2 text-sm text-ivory/80">Fee: {programme.fees} · Contact GIBS for the current programme schedule.</p>
           </div>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex w-full flex-wrap items-center gap-4 sm:w-auto">
             <BtnLink
-              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}`}
+              to={`/contact?type=${isForeign ? "Foreign+Training+Programmes+(Kigali,+Dubai,+London,+Houston)" : "Local+Open+Training+Registration"}&programme=${encodeURIComponent(programme.slug)}`}
               variant="gold"
               size="lg"
+              className="min-w-0 w-full sm:w-auto"
             >
-              Submit Subscription Enquiry
+              Make an Enquiry
               <ArrowUpRight className="h-4 w-4" />
             </BtnLink>
             <BtnLink to="/concierge" variant="outline-light" size="lg">
-              Ask GIBS AI
+              Ask the Programme Assistant
             </BtnLink>
           </div>
         </div>
@@ -289,9 +363,9 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
 
       {/* Related Programmes */}
       <section className="bg-forest-950 text-ivory">
-        <div className="container-x py-16 sm:py-20">
+        <div className="container-x section-y">
           <div className="flex flex-wrap items-end justify-between gap-4">
-            <h2 className="type-h2">Related 2026 Programmes</h2>
+            <h2 className="type-h2">Related Programmes</h2>
             <Link
               to="/programmes"
               className="group inline-flex items-center gap-2 text-sm font-bold text-gold-300"
@@ -309,11 +383,11 @@ export default function ProgrammeDetail({ slug }: { slug: string }) {
               >
                 <div className="flex items-center justify-between">
                   <p className="meta text-gold-300">{p.code}</p>
-                  <span className="text-[12px] font-bold text-ivory/80">{p.fees}</span>
+                  <span className="text-xs font-bold text-ivory/80">{p.fees}</span>
                 </div>
                 <h3 className="type-h3 mt-3">{p.title}</h3>
-                <p className="mt-3 text-[13px] text-ivory/70 line-clamp-2">{p.schedule}</p>
-                <span className="mt-5 inline-flex items-center gap-2 text-[13px] font-bold text-gold-300">
+                <p className="mt-3 text-xs text-ivory/70 line-clamp-2">{suppressExpiredSchedule(p.schedule)}</p>
+                <span className="mt-5 inline-flex items-center gap-2 text-xs font-bold text-gold-300">
                   View details
                   <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                 </span>

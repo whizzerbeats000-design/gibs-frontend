@@ -35,7 +35,7 @@ export const INSTITUTIONAL_DATA: InstitutionalMetadata = {
   legalName: "Goshen International Business School Limited (GIBS)",
   cacRegistration: "Registered at Corporate Affairs Commission, Ilorin, Certificate of Incorporation RC 1178333 (Dated March 17, 2014)",
   slogan: "Take advantage of us, so that no one takes advantage of you",
-  positioningStatement: "An outfit committed to manpower development and capacity-building. Our uniqueness is in our dedication to capacity-building exercise.",
+  positioningStatement: "An outfit committed to manpower development and capacity-building. Our uniqueness is in this dedication.",
   mission: "Goshen International Business School (GIBS) is dedicated to empowering the future generation through acquisition and communication of management and business knowledge relevant to the development of Nigeria and the world at large. We are a world-class Business School impacting positively on the public and private sectors of the economy.",
   vision: "To support the development of National Manpower and Economic Development Policies for the emancipation of the people.",
   guidingPrinciples: ["Thoroughness", "Fair", "Firm", "Forthright"],
@@ -179,24 +179,59 @@ export const FACULTY_ADVISORS: FacultyAdvisor[] = [
 /* ---------------- 4. Image Assets ---------------- */
 
 export const IMAGES = {
-  hero: "/images/hero-campus.webp",
+  hero: "/images/campus-colonnade.webp",
   colonnade: "/images/campus-colonnade.webp",
   library: "/images/library-interior.webp",
   boardroom: "/images/library-interior.webp",
-  city: "/images/hero-campus.webp",
+  city: "/images/campus-colonnade.webp",
   lecture: "/images/library-interior.webp",
   seminar: "/images/campus-colonnade.webp",
   books: "/images/library-interior.webp",
   study: "/images/library-interior.webp",
 };
 
+/* srcset for the 1376×768 photographic assets. A 640w derivative ships
+   alongside each original (same encoding settings, scaled down only); the
+   browser picks the closest candidate for the render slot — no resizing at
+   runtime and no 1.4MB of decoding on small screens. */
+export function imageSet(url: string) {
+  const w640 = url.replace(/\.webp$/, "-640.webp");
+  return {
+    src: url,
+    srcSet: `${w640} 640w, ${url} 1376w`,
+  };
+}
+
 /* ---------------- 5. Navigation Links ---------------- */
 
+/*
+ * Single authoritative navigation inventory.
+ *
+ * NAV_LINKS renders in the desktop header bar. NAV_SECONDARY holds the
+ * remaining public sections and is surfaced by the header's "Explore"
+ * disclosure on desktop, and by MOBILE_SECONDARY in the mobile sheet.
+ *
+ * These were previously two unrelated literals: the desktop bar had 4 entries
+ * and the mobile sheet had 10, so widening the viewport silently dropped six
+ * destinations with no dropdown or overflow to recover them. Every public route
+ * must appear in exactly one of these two arrays so no section becomes
+ * unreachable at a wider breakpoint.
+ */
 export const NAV_LINKS = [
   { label: "Programmes", to: "/programmes" },
   { label: "Foreign Training", to: "/executive-education" },
   { label: "Faculty & Governance", to: "/faculty" },
   { label: "About GIBS", to: "/about" },
+];
+
+export const NAV_SECONDARY = [
+  { label: "Research & Insights", to: "/research-insights", note: "Journal, briefs and think-pieces" },
+  { label: "Conferences & Events", to: "/events", note: "Sessions, calendars and registration" },
+  { label: "Campuses & Facilities", to: "/campus", note: "Ilorin, Abuja and Ibafo" },
+  { label: "Campus Gallery", to: "/gallery", note: "The campus in pictures" },
+  { label: "Contact & Registry", to: "/contact", note: "Enquiries and registry details" },
+  { label: "Programme Subscription", to: "/admissions", note: "Join the 2026 calendar" },
+  { label: "GIBS AI", to: "/concierge", note: "Ask the school assistant" },
 ];
 
 /* ---------------- 6. Events / Executive Sessions ---------------- */
@@ -7307,7 +7342,7 @@ export const ARTICLES: Article[] = [
     title: "Regulatory Compliance Monitoring and Consumer Protection in Utility Sectors",
     dek: "Examining the intersections of tariff setting, quality of experience, and sustainable economic growth.",
     image: IMAGES.city,
-    alt: "Urban infrastructure and utilities governance in Nigeria",
+    alt: "GIBS campus sandstone architecture in focus",
     status: "Published",
     blocks: [
       {

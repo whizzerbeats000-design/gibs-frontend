@@ -1,24 +1,115 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+
+/* Scope Tailwind's source detection to the application's own files.
+   `source(none)` disables automatic project-wide scanning; the explicit
+   sources below ensure generated artifacts, including Playwright reports,
+   cannot contribute classes to the production stylesheet.
+
+   `src` covers every .ts/.tsx file that defines the component classes.
+   `index.html` is included because the document element carries the
+   `no-js` class that the FOUC rules key off. Nothing outside these two
+   locations contributes utilities to the shipped app. */
+@source "../src";
+@source "../index.html";
+
+/* Hide static SEO body content when JS is available — React mounts and replaces
+   it. When JS is disabled, <html> retains the no-js class and this rule does not
+   apply, so crawlers see the static content unchanged. The :not(#main) guard
+   ensures React's own <main id="main"> is never hidden. */
+.js #root > main:not(#main) {
+  display: none;
+}
 
 /* ============================================================
    GIBS DESIGN SYSTEM — single source of truth
    Modern Classicism
    Global Excellence, African Heart
    ============================================================ */
+
+/* ---------------- Self-hosted Modern Editorial Typography ----------------
+   GIBS typography system replaces obsolete handwriting-like fonts with a
+   modern, confident, institutional type hierarchy:
+   1. Primary Headings: Manrope (geometric, confident, editorial weights 600–800)
+   2. Body & UI Text: Inter (high readability, neutral, weights 400–600)
+   3. Technical Labels: DM Mono (monospaced, structured codes and metadata)
+
+   All faces are self-hosted locally in /fonts/ as Brotli-compressed .woff2
+   latin subsets with `font-display: swap` to prevent render blocking and layout shifts.
+   ------------------------------------------------------------- */
+/* Modern Editorial Typography System: Manrope (Headings), Inter (Body & UI), DM Mono (Technical Labels) */
+@font-face {
+  font-family: "Manrope";
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url("/fonts/manrope-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/inter-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/inter-italic-var-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dm-mono-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/dm-mono-500-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/dm-mono-italic-400-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
-  /* Fraunces — variable display serif (weight 300–700, optical size 9–144).
-      SOFT/WONK are pinned to 0 so the family reads controlled and architectural
-      rather than wonky; display sizes use the wide rendering it was designed for. */
-  --font-serif: "Fraunces", Georgia, "Times New Roman", serif;
-  /* Instrument Serif — high-contrast Modern Editorial Serif for display */
-  --font-display: "Instrument Serif", Georgia, serif;
-  /* Libre Baskerville — wide, low-contrast Transitional Serif. Mobile menu
-      sheet only; site-wide display font is unaffected. */
-  --font-baskerville: "Libre Baskerville", Georgia, serif;
-  /* Space Grotesk — architectural grotesque for UI, micro-type and body. */
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system,
-    "Segoe UI", sans-serif;
+  /* Manrope — confident modern geometric display sans for headings and major editorial titles */
+  --font-display: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-baskerville: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Inter — modern neutral sans for body copy, paragraphs, UI, navigation, buttons, forms */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* DM Mono — precision monospaced typeface for codes, technical metadata, labels */
+  --font-mono: "DM Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* Forest green — primary signal (600 = brand #006B1B) */
   --color-forest-50: #edf6ee;
@@ -63,34 +154,31 @@
   /* Shape scale — architecture over pills */
   --radius-xs: 2px;
   --radius-panel: 4px;
-  --radius-card: 16px;
   --radius-pill: 9999px;
 
   /* Elevation — crisp and rare.
      Hierarchy: L0 flat editorial → L1 tactile surface → L2 interactive cards → L3 floating/dialog.
      Layered tight+soft pairs read as physical depth; one huge blurred shadow reads as plastic. */
   --shadow-crisp: 0 1px 2px rgba(18, 18, 18, 0.05);
-  --shadow-lift: 0 24px 48px -20px rgba(0, 32, 9, 0.28), 0 8px 16px -6px rgba(18, 18, 18, 0.06);
-  /* L2 — cards: a near contact edge, a brief falloff, a long soft ambient pool. */
+  --shadow-lift: 0 12px 24px -12px rgba(0, 32, 9, 0.2), 0 4px 8px -4px rgba(18, 18, 18, 0.05);
+  /* L2 — cards: a near contact edge, a brief falloff, and a soft ambient pool.
+     Simplified to remove the 'plastic' look of too many layered shadows. */
   --shadow-card:
     0 1px 2px rgba(18, 18, 18, 0.05),
-    0 3px 8px rgba(18, 18, 18, 0.04),
-    0 18px 36px -22px rgba(0, 40, 16, 0.18);
-  /* L3 — interactive cards: raised + closer ambient pool. */
+    0 8px 16px -6px rgba(0, 40, 16, 0.12);
+  /* L3 — interactive cards: slightly more presence, but still grounded. */
   --shadow-card-strong:
     0 2px 4px rgba(18, 18, 18, 0.06),
-    0 8px 18px -8px rgba(18, 18, 18, 0.09),
-    0 28px 52px -24px rgba(0, 40, 16, 0.26);
+    0 16px 32px -12px rgba(0, 40, 16, 0.2);
   /* Spatial architectural shadow for elevated photo planes */
   --shadow-spatial:
     0 1px 2px rgba(0, 20, 5, 0.08),
-    0 6px 14px -4px rgba(0, 32, 9, 0.12),
-    0 24px 48px -12px rgba(0, 32, 9, 0.24);
+    0 12px 24px -8px rgba(0, 32, 9, 0.15),
+    0 32px 64px -16px rgba(0, 32, 9, 0.2);
 
-  /* Layout */
-  --container-page: 1280px;
-  --gutter: 1.25rem;
-
+  /* Layout. --gutter-x and --section-y/--band-y are consumed by .container-x
+     and the section rhythm tokens (see the semantic aliases block); they live
+     here in @theme as documented values only. */
   /* Header height. Single source of truth: the <header> itself, the sticky
      sub-headers on /programmes and /gallery, and html scroll-padding-top all
      derive from this. It previously existed only as a --sticky-top token that
@@ -100,11 +188,19 @@
 
   /* Motion — durations and easing are inlined where used */
 
-  /* Z-index */
+  /* Z-index. App-level chrome owns 50–80. Sub-header layers (sticky filter
+     panels, scroll-spy nav) sit below the chrome in their own 20–30 band;
+     intra-section photo layering uses local z-10/z-[1] and is out of the
+     app-level scale. The skip link must clear the header (50) yet sit under
+     the search (70) and concierge (80) overlays, so it sits at 55. */
   --z-header: 50;
   --z-nav: 60;
   --z-search: 70;
   --z-concierge: 80;
+  --z-subnav: 30;
+  --z-sticky-panel: 20;
+  --z-skip: 55;
+  --z-lightbox: 100;
 
   /* Sticky offsets. The header is a single 72px bar at every breakpoint — the
      xl nav moved inside it and the former 36px utility bar was removed, but a
@@ -112,6 +208,13 @@
      that removal. It left the sticky filter panel on /programmes and /gallery
      floating 35px below the header on desktop while sitting flush on mobile. */
   --sticky-top: var(--header-height);
+  /* Height of the sticky scroll-spy bar on programme detail — measured 69px
+     at desktop (44px content + 24px container padding + 1px border). The bar
+     itself is pinned to this value (container lg:h = height − border) so the
+     token IS the bar. Everything that must clear it (the pinned summary card,
+     the scroll-spy root, section scroll targets) derives from this SAME token
+     — previously 72/88/136/150 were independently encoded in three files. */
+  --subnav-height: 69px;
 }
 
 /* ---- Semantic token aliases (consumed via arbitrary values) ---- */
@@ -129,6 +232,50 @@
   /* Focus outline must hold 3:1 against any surface; forest-600 passes on
      paper, ivory, stone and white — amber does not. */
   --focus: var(--color-forest-600);
+
+  /* Responsive rhythm — the canonical section & band scale (doc 06 §4).
+     Tiers: compact 64–80 · normal 80–96 · major 96–112.
+     Compact <640:   section 64  band 48  gutter 20
+     Medium  640–1023: section 80  band 64  gutter 32
+     Expanded ≥1024: section 72  band 64  gutter 48
+     Cinematic closings opt into .section-y-major (112px) so the scene-closes
+     read spacious while ordinary sections hold the normal tier. */
+  --section-y: 64px;
+  --band-y: 48px;
+  --section-y-major: 64px;
+  --gutter-x: 20px;
+
+  /* Reading measures — cap prose and display text width, never whole layouts. */
+  --measure-prose: 68ch;
+  --measure-hero: 22ch;
+
+  /* Page-top clearance under the fixed 72px header. Page shells and hero
+     heroes derive from --header-height so a header-height change retunes the
+     whole site; previously hardcoded as pt-[112/120/132/140/142/148px]
+     scattered across six files. */
+  --pt-page: calc(var(--header-height) + 40px); /* 112 — page shell, base   */
+  --pt-page-sm: calc(var(--header-height) + 60px); /* 132 — page shell, sm  */
+  --pt-page-lg: calc(var(--header-height) + 76px); /* 148 — page shell, lg  */
+  --pt-hero: calc(var(--header-height) + 48px); /* 120 — hero pages, base    */
+  --pt-hero-sm: calc(var(--header-height) + 70px); /* 142 — hero pages, sm   */
+  --pt-hero-lg: calc(var(--header-height) + 76px); /* 148 — hero pages, lg   */
+  --pt-404: calc(var(--header-height) + 68px); /* 140 — not-found page       */
+}
+@media (min-width: 640px) {
+  :root {
+    --section-y: 80px;
+    --band-y: 64px;
+    --section-y-major: 80px;
+    --gutter-x: 32px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --section-y: 72px;
+    --band-y: 64px;
+    --section-y-major: 112px;
+    --gutter-x: 48px;
+  }
 }
 
 html {
@@ -178,7 +325,6 @@ body {
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
 /* In-page anchor targets clear the fixed header. Aligned to --sticky-top so it
@@ -188,41 +334,114 @@ body {
   scroll-margin-top: calc(var(--sticky-top) + 8px);
 }
 
+/* Type scale rungs and the label base are @utility so other rules can
+   @apply them (Tailwind v4 only applies registered utilities). */
+@utility type-h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  /* Page-title rung — confident modern editorial heading */
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility type-h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  /* Section headings — one rung quieter than H1 */
+  font-size: clamp(1.65rem, 3.2vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility type-hero {
+  font-family: var(--font-display);
+  font-weight: 800;
+  /* The one loud rung — reserved for the full-bleed home hero */
+  font-size: clamp(2.25rem, 5.2vw, 4rem);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility type-h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  /* Sub-section headings — scaled below H2 */
+  font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+@utility label-base {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 @layer components {
   /* ---------------- Layout ---------------- */
   .container-x {
-    @apply mx-auto w-full max-w-[1280px] px-5 sm:px-8 lg:px-12;
+    @apply mx-auto w-full max-w-[1280px] px-(--gutter-x);
+  }
+
+  .max-w-prose {
+    max-width: 68ch;
+  }
+
+  .max-w-card {
+    max-width: 420px;
+  }
+
+  .max-w-editorial {
+    max-width: 800px;
+  }
+
+  /* Section / band vertical rhythm — token-driven, responsive via @theme.
+     Sections set the fuller rhythm; bands (sub-sections, hero bodies, footer
+     bands) sit at the tighter band-y which is equal for sm+ so adjacent band
+     stacking stays even. */
+  .section-y {
+    padding-block: var(--section-y);
+  }
+  /* Major tier — cinematic scene-closes (full-bleed closings, journal close)
+     opt in to the 112px expanded rhythm instead of the normal 88px, so the
+     page breathes louder at its starts and ends but not in between. */
+  .section-y-major {
+    padding-block: var(--section-y-major);
+  }
+  .band-y {
+    padding-block: var(--band-y);
   }
 
   /* ---------------- Typography roles ----------------
-     GIBS type system — Instrument Serif for display (Modern Editorial), Fraunces fallback, Space Grotesk for UI/body.
-     Display weights use Instrument Serif for high-contrast editorial impact; Fraunces remains for refined light cuts.
+     GIBS modern typography system — Manrope for display headings, Inter for UI & body copy, DM Mono for technical labels.
   ------------------------------------------------------------- */
-  .fraunces {
-    font-family: var(--font-serif);
-    font-optical-sizing: auto;
-    font-variation-settings: "SOFT" 0, "WONK" 0;
+  .type-display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.015em;
   }
-  /* Arbitrary-size editorial serif — for display moments that sit between the
-     type scale rungs (card titles, figure labels, quote pulls). When a heading
-     DOES match the scale, use .type-h1/h2/h3 alone: they declare family,
-     weight, tracking and line-height, so stacking both is redundant. */
+  /* Arbitrary-size editorial heading — for display moments that sit between the
+     type scale rungs (card titles, figure labels, quote pulls). */
   .display-serif {
     font-family: var(--font-display);
-    font-weight: 400;
-    letter-spacing: -0.01em;
-    line-height: 1.05;
-    text-wrap: balance;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  .type-h1 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(3.2rem, 6.5vw, 5.5rem);
-    line-height: 1.02;
+    font-weight: 700;
     letter-spacing: -0.02em;
+    line-height: 1.15;
     text-wrap: balance;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -231,93 +450,56 @@ body {
   /* Section headings — large but not every heading at the same ceiling.
      The hero owns the biggest size; sections sit one rung quieter so the
      full-page scale reads as an intentional climb, not an equal shout. */
-  .type-h2 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(2.1rem, 4vw, 3.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
-    text-wrap: balance;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  .type-h3 {
-    font-family: var(--font-display);
-    font-weight: 400;
-    font-size: clamp(1.5rem, 2.5vw, 2.1rem);
-    line-height: 1.2;
-    letter-spacing: -0.01em;
-    text-wrap: balance;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-  /* Hero headline — Instrument Serif: crisp, authoritative editorial typography */
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.2rem, 6.5vw, 5.5rem);
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    font-weight: 400;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
   .hero-title-white {
     color: #ffffff;
-    font-weight: 400;
+    font-weight: 800;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
   .hero-title-gold {
     color: var(--color-gold-focus, #e2c06b);
-    font-weight: 400;
+    font-weight: 800;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
   }
   .type-body {
-    font-size: clamp(0.95rem, 1.5vw, 1.125rem);
-    line-height: 1.55;
+    font-family: var(--font-sans);
+    font-size: clamp(0.95rem, 1.2vw, 1.0625rem);
+    line-height: 1.65;
     text-wrap: pretty;
     @apply text-muted;
   }
-  /* Section labels — deliberately quiet: medium weight, tighter tracking.
-     Hierarchy comes from size and space, not from shouting labels. */
+  /* Section labels — clean, technical and legible via DM Mono. */
   .eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-forest-700 sm:text-[12px];
+    @apply label-base text-forest-700;
   }
   .eyebrow-light {
-    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-gold-300 sm:text-[12px];
+    @apply label-base text-gold-300;
   }
   .meta {
-    @apply text-[11px] font-medium uppercase tracking-[0.1em] text-muted sm:text-[12px];
+    @apply label-base tracking-[0.08em] text-muted;
   }
   .prose-editorial {
-    @apply text-[16.5px] leading-[1.9] text-ink/85;
+    @apply text-[16px] leading-[1.8] text-ink/85 sm:text-[17px];
   }
   .prose-editorial p + p {
-    margin-top: 1.6em;
+    margin-top: 1.5em;
   }
   .prose-editorial h2 {
-    font-family: var(--font-display);
-    font-size: clamp(2.1rem, 4vw, 3.4rem);
-    line-height: 1.1;
-    letter-spacing: -0.015em;
+    @apply type-h2;
     color: var(--color-ink);
-    margin: 2.2em 0 0.8em;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
+    margin: 2em 0 0.75em;
   }
   .prose-editorial blockquote {
-    font-family: var(--font-serif);
-    font-size: 1.45rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.25rem;
     line-height: 1.5;
+    letter-spacing: -0.01em;
     color: var(--color-forest-800);
     border-left: 2px solid var(--color-gold-500);
     padding-left: 1.5rem;
@@ -357,13 +539,9 @@ body {
   to   { transform: scale(1.05) translateY(-0.6%); }
 }
 
-@keyframes concierge-ping {
-  0% { transform: scale(1); opacity: 0.7; }
-  80%, 100% { transform: scale(2.6); opacity: 0; }
-}
   /* ---------------- Buttons — one system ---------------- */
   .btn {
-    @apply inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-pill font-semibold transition-[background-color,color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-2 active:scale-[0.985];
+    @apply inline-flex min-h-[44px] items-center justify-center gap-2.5 whitespace-nowrap rounded-pill font-semibold transition-[background-color,color,border-color,transform,box-shadow] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] focus-visible:outline-2 active:scale-[0.985];
   }
   .btn-lg {
     @apply px-7 py-4 text-[15px];
@@ -480,10 +658,10 @@ body {
      same 0.12em tracking — so form labels read as one system with section
      labels instead of shouting in a different key. */
   .field-label {
-    @apply mb-2 block text-[11px] font-semibold uppercase tracking-[0.12em] text-ink sm:text-[12px];
+    @apply label-base mb-2 block font-semibold text-ink;
   }
   .field-input {
-    @apply w-full rounded-panel border border-ink/20 bg-white px-4 py-3.5 text-base text-ink placeholder:text-muted/60 transition-colors duration-200 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 sm:text-[15px];
+    @apply w-full rounded-panel border border-ink/20 bg-white px-4 py-3.5 text-base text-ink placeholder:text-muted/60 transition-colors duration-200 focus:border-forest-600 focus:outline-none focus:ring-2 focus:ring-forest-600/20 disabled:bg-stone/40 disabled:text-muted disabled:cursor-not-allowed sm:text-[15px];
   }
   .field-input-error {
     @apply border-error/60 focus:border-error focus:ring-error/15;
@@ -512,33 +690,108 @@ body {
   .pill-stone {
     @apply bg-stone text-forest-900;
   }
-  .pill-ivory {
-    @apply border border-ivory/25 text-ivory/90;
-  }
-  .pill-gold-outline {
-    @apply border border-gold-600/50 text-gold-700;
-  }
 
   /* ---------------- Programme Catalogue Card ----------------
      Elevation lives in tokens (--shadow-card / --shadow-card-strong) so the
      catalogue shares the same depth ladder as every other card. Hover and
      focus-visible share one state: a keyboard user must see the same lift a
      mouse user does. */
-  .programme-card {
-    border-radius: 0;
-    box-shadow: var(--shadow-card);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }  .programme-card:hover,
-  .programme-card:focus-visible {
-    transform: translateY(-3px);
+  /* NOTE: the former `.programme-card` block lived here and has been removed.
+     No component ever applied the class — ProgrammeCard keys itself off the
+     `data-programme-card` attribute (used by the QA harness) and styles itself
+     with Tailwind utilities (`shadow-crisp` / `hover:shadow-card`) plus the
+     shared `.card-lift` shell (homepage featured card). The block was
+     dead weight that also contradicted the card: it declared `border-radius: 0`
+     and `--shadow-card` where the component ships `rounded-panel` and
+     `shadow-crisp`, so adopting it would have changed the card. The elevation
+     ladder those rules referenced (--shadow-card / --shadow-card-strong) is
+     `.card-lift` (which reads `--shadow-card`). `--shadow-card-strong` was only
+     ever consumed by the now-removed `.card-depth:hover` and stays in @theme
+     as an unused token. */
+
+  /* ---------------- Liquid Glass System (Performance-Conscious) ----------------
+     MotionSites refined materiality: subtle restrained blur (8-12px), single compositing
+     layer, hairline boundary luminance, and solid ivory fallback for weaker devices. */
+  .liquid-glass-header {
+    position: relative;
+    background: color-mix(in srgb, var(--color-ivory) 80%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(0, 32, 9, 0.08);
     box-shadow:
-      inset 1.5px 1.5px 0 #ffffff,
-      inset 0 0 0 1px rgba(0, 107, 27, 0.18),
-      var(--shadow-card-strong);
+      inset 0 1px 0 rgba(255, 255, 255, 0.6),
+      0 2px 10px -4px rgba(0, 32, 9, 0.06);
+    transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .programme-card:active {
-    transform: translateY(-1px) scale(0.995);
-    box-shadow: var(--shadow-card);
+
+  .liquid-glass-header--scrolled {
+    position: relative;
+    background: color-mix(in srgb, var(--color-ivory) 92%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 32, 9, 0.12);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.7),
+      0 6px 20px -8px rgba(0, 32, 9, 0.18);
+    transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .liquid-glass-header {
+      background: var(--color-ivory);
+      border-bottom: 1px solid var(--color-line);
+    }
+    .liquid-glass-header--scrolled {
+      background: var(--color-ivory);
+      border-bottom: 1px solid rgba(0, 32, 9, 0.15);
+    }
+  }
+
+  .liquid-glass-pill {
+    position: relative;
+    background: rgba(255, 255, 255, 0.65);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 107, 27, 0.2);
+    box-shadow:
+      inset 0 1px 1px rgba(255, 255, 255, 0.8),
+      0 2px 8px -3px rgba(0, 32, 9, 0.08);
+    transition: background-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .liquid-glass-pill:hover {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 107, 27, 0.4);
+    box-shadow:
+      inset 0 1px 1px #fff,
+      0 4px 12px -4px rgba(0, 107, 27, 0.2);
+    transform: translateY(-0.5px);
+  }
+
+  .liquid-glass-pill:active {
+    transform: scale(0.98);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .liquid-glass-header {
+      background: var(--color-ivory);
+      border-bottom: 1px solid var(--color-line);
+    }
+    .liquid-glass-header--scrolled {
+      background: var(--color-ivory);
+      border-bottom: 1px solid rgba(0, 32, 9, 0.15);
+    }
+    .liquid-glass-pill {
+      background: #ffffff;
+      border: 1px solid rgba(0, 107, 27, 0.3);
+    }
   }
 
   /* Interactive card lift — for cards where the WHOLE surface is the target
@@ -560,7 +813,23 @@ body {
      the two card families can never drift apart again — this is what let the
      programme card fall behind the homepage editorial card in the first place. */
   .card-title {
-    @apply font-serif text-[16px] font-normal leading-[1.25] tracking-[-0.01em] text-ink transition-colors duration-150 group-hover:text-forest-700 sm:text-[17px];
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    color: var(--color-ink);
+    transition: color 150ms ease;
+  }
+  @media (min-width: 640px) {
+    .card-title {
+      font-size: 17.5px;
+    }
+  }
+  .group:hover .card-title,
+  .card-title:hover {
+    color: var(--color-forest-700);
   }
   /* Editorial card label — the single definition behind the homepage featured
      card's category line. The programme catalogue pulls this same class so the
@@ -568,7 +837,7 @@ body {
      forest-600 (not the darker .eyebrow forest-700) because this is the louder,
      more category-forward register that the editorial card already proved. */
   .card-eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-[0.12em] text-forest-600 sm:text-[12px];
+    @apply label-base text-forest-600;
   }
   /* Field labels inside a dense card — one step below .card-eyebrow. */
   .card-field-label {
@@ -591,31 +860,25 @@ body {
     @apply gap-2 rounded-none px-0 py-0 text-[13px] font-bold tracking-normal text-forest-700 group-hover:text-forest-800;
   }
 
-  /* ---------------- Spatial Depth System (Levels 0–3) ----------------
-     L0: Flat editorial canvas (bg-paper, bg-white)
-     L1: (reserved) tactile surface with 1px top highlight + contact edge
-     L2: Raised architectural cards with dual-layer shadow & 3D preserve (.surface-depth-2, .card-depth)
-     L3: Spatial stages with controlled perspective and Z-axis layers (.perspective-stage, .layer-z-*)
-  ---------------------------------------------------------------------- */
-  .preserve-3d {
-    transform-style: preserve-3d;
-  }
-
-  /* Perspective Stages */
-  .perspective-stage {
-    perspective: 1200px;
-    transform-style: preserve-3d;
-  }
+  /* ---------------- Z-Axis Depth System ----------------
+     L0: Flat editorial canvas (bg-paper, bg-white).
+     L3 / stage: the Hero parallax stage is a single `.perspective-hero` parent
+     carrying `.layer-z-deep` (receding) + `.layer-z-fore` (headline, rising).
+     ProgrammeCatalogue cards deliberately do NOT adopt this 3D tilt/lighting
+     kit — they use Tailwind `shadow-crisp` + `hover:shadow-card` and the
+     `.card-lift` shell (used by the homepage featured card) — so the
+     `surface-depth-2` / `card-depth` / `card-spot` rules that previously
+     declared that kit are removed. `transform-origin` on the live layer
+     primitives is pinned to the anchored corner so a translateZ toward the
+     viewer scales the plane about its own centre rather than sliding
+     left-aligned editorial type out of the container gutter. */
+  /* Perspective stage for the Hero parallax stage. */
   .perspective-hero {
     perspective: 1400px;
     transform-style: preserve-3d;
   }
 
-  /* Z-Plane Layers for multi-plane architectural compositions.
-     transform-origin is pinned to the anchored corner: a translateZ toward the
-     viewer scales the plane about its centre by perspective/(perspective-z),
-     which would slide left-aligned editorial type out of the container gutter
-     and break alignment with the sections below. */
+  /* Z-Plane Layers for multi-plane architectural compositions. */
   .layer-z-deep {
     transform: translateZ(-20px) scale(1.02);
     transform-origin: center;
@@ -624,79 +887,39 @@ body {
     transform: translateZ(28px);
     transform-origin: left center;
   }
-  .layer-z-top {
-    transform: translateZ(44px);
-    transform-origin: left top;
-  }
 
-  /* Level 1: Tactile Surface (Clean structural framing) */
+  /* ProgrammeCatalogue surfaces use `.panel` (`shadow-crisp`) plus the
+     `.card-lift` shell on the homepage featured card; the L1 tactile surface
+     and the L2 `surface-depth-2` dual-bezel card kit were never wired in. */
 
-  /* Level 2: Tactile Raised Architectural Card (Double-Bezel & Contact Drop) */
-  .surface-depth-2 {
-    background-color: #ffffff;
-    border: 1px solid rgba(18, 18, 18, 0.08);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 0 rgba(0, 32, 9, 0.03),
-      0 1px 3px rgba(18, 18, 18, 0.04),
-      0 8px 20px -6px rgba(0, 32, 9, 0.08),
-      0 20px 40px -16px rgba(0, 40, 16, 0.12);
-    transform-style: preserve-3d;
-    transition:
-      transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.35s ease;
-  }
-  .surface-depth-2:hover {
-    transform: translateY(-3px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 1),
-      0 2px 5px rgba(18, 18, 18, 0.05),
-      0 12px 28px -6px rgba(0, 48, 16, 0.12),
-      0 28px 56px -14px rgba(0, 40, 16, 0.18);
-  }
+  /* ---------------- Scroll reveal ----------------
+     Drives <Reveal> in src/components/motion.tsx. Kept as plain CSS so the
+     105 reveal instances on a page cost no JavaScript per frame — see the
+     comment on Reveal for the measured numbers this replaced.
 
-  /* Tactile Floating Institutional Badge */
-
-  /* ---------------- Dimensional cards ----------------
-     CARD DEPTH (L3): a physical, sub-3° tilt that trails the pointer; driven
-     entirely by CSS variables set from a passive pointermove handler (no
-     React re-renders, no layout reads). Disabled for coarse pointers and
-     prefers-reduced-motion. */
-  .card-depth {
-    transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    transform-style: preserve-3d;
-    transition:
-      transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
-      box-shadow 0.4s ease;
-  }
-  .card-depth:hover {
-    box-shadow: var(--shadow-card-strong);
-  }
-
-  /* CARD LIGHTING: a restrained ivory highlight follows the pointer inside the
-     surface. Alpha 0.05 — light interacting with the material, not an RGB glow. */
-  .card-spot {
-    position: relative;
-  }
-  .card-spot::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
+     [data-reveal="hidden"] is the pre-trigger state; the component adds
+     data-reveal="shown" when its IntersectionObserver (or its 1200ms
+     guaranteed-resolve fallback) fires, and the transition runs. */
+  [data-reveal] {
     opacity: 0;
-    border-radius: inherit;
-    background: radial-gradient(
-      420px circle at var(--mx, 50%) var(--my, 50%),
-      rgba(255, 251, 235, 0.05),
-      transparent 45%
-    );
-    transition: opacity 0.45s ease;
+    transform: translateY(var(--reveal-y, 28px));
+    transition-property: opacity, transform;
+    transition-duration: 900ms;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .card-spot:hover::before,
-  .card-spot:focus-within::before {
+  [data-reveal="shown"] {
     opacity: 1;
+    transform: translateY(0);
   }
+  [data-reveal="hidden"]:focus-within {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* The `.card-depth` pointer-tilt and `.card-spot` pointer-light kit were
+     prototyped for ProgrammeCatalogue cards but never adopted — those cards
+     ship `shadow-crisp` + `.card-lift` instead, so the rules are removed.
+     (The `--shadow-card` / `--shadow-card-strong` tokens remain in @theme.) */
 
   /* Film grain — 1.5% turbulence, static paint, composited once. Attach to
      important photography only (hero, full-bleed closes, framed features). */
@@ -714,19 +937,15 @@ body {
     animation: kenburns 46s ease-in-out infinite alternate;
   }
 
-  /* Rendering containment */
-  .cv-auto {
-    /* content-visibility: auto was removed here. It makes the browser skip
-       layout and paint for off-screen subtrees, which prevents the
-       IntersectionObserver that drives every whileInView reveal from computing
-       an accurate intersection against those skipped subtrees. Combined with a
-       negative viewport margin the trigger never fires and the content stays at
-       opacity 0 permanently. Measured in Chromium: campus-experience left 12
-       children invisible, faculty 10, insights 5 — real copy, not decoration.
-       The perf win was ~0 on a 957 kB single-file document where the document
-       is one paint anyway. If containment is ever wanted back, it must only be
-       applied to subtrees that contain no whileInView / Reveal content. */
-  }
+  /* NOTE: there is deliberately no `content-visibility: auto` utility here.
+     It was tried and removed — do not reintroduce it blindly. `cv-auto` made
+     the browser skip layout and paint for off-screen subtrees, which starves
+     the IntersectionObserver behind every `Reveal` (src/components/motion.tsx)
+     of an accurate intersection: the trigger never fired and real copy stayed
+     pinned at opacity 0. Measured in Chromium at the time — campus-experience
+     left 12 children invisible, faculty 10, insights 5. The perf win was ~0 on
+     a single-file document that paints as one anyway. If containment is ever
+     wanted back it must only wrap subtrees proven to contain no Reveal. */
 
 }
 
@@ -779,28 +998,22 @@ body {
   .typing-dot { animation: none; }
   .btn { transform: none !important; }
   .kenburns { animation: none !important; }
-  .card-depth { transform: none !important; }
-  .programme-card,
-  .programme-card:hover,
-  .programme-card:focus-visible,
-  .programme-card:active { transform: none !important; transition: none !important; }
   .card-lift,
   .card-lift:hover,
   .card-lift:focus-within { transform: none !important; transition: none !important; }
-  .perspective-stage, .perspective-hero { perspective: none !important; }
-  .layer-z-deep, .layer-z-fore, .layer-z-top { transform: none !important; }
+  .perspective-hero { perspective: none !important; }
+  .layer-z-deep, .layer-z-fore { transform: none !important; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* Touch / coarse pointers never receive tilt or pointer-light; they scroll.
-   Elevation shadow may remain (harmless), transform is stripped entirely. */
-@media (pointer: coarse) {
-  .card-depth { transform: none !important; }
-  .card-spot::before { opacity: 0 !important; }
-}
+/* No coarse-pointer overrides remain: the only classes that lived here
+   (.card-depth / .card-spot) were never wired and are now removed, so touch
+   users retain the live hero/kenburns motion exactly as before. The universal
+   animation-duration reset in prefers-reduced-motion above is the sole motion
+   policy. */
 
 /* Mobile hero breathes slower and stays fractionally flatter — the scale
    delta and duration keep the effect subconscious on small viewports. */
@@ -809,7 +1022,32 @@ body {
     animation-duration: 60s;
     transform-origin: 50% 62%;
   }
-  .layer-z-deep, .layer-z-fore, .layer-z-top {
+  .layer-z-deep, .layer-z-fore {
     transform: none !important;
+  }
+}
+
+/* Short-viewport hero safeguards — keep headline and primary CTA above the
+   fold on shorter laptop screens without changing desktop or mobile layouts. */
+@media (max-height: 850px) {
+  #home-hero {
+    min-height: 440px !important;
+    max-height: 760px !important;
+  }
+  #home-hero .max-w-editorial {
+    padding-bottom: 2rem !important;
+  }
+}
+
+@media (max-height: 720px) {
+  #home-hero {
+    min-height: 380px !important;
+    max-height: 640px !important;
+  }
+  #home-hero .max-w-editorial {
+    padding-bottom: 1.5rem !important;
+  }
+  #home-hero .type-hero {
+    font-size: clamp(1.875rem, 4vw, 2.75rem) !important;
   }
 }

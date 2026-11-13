@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, lazy, Suspense } from "react";
 import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import { RouterProvider, ScrollManager, matchRoute, useRoute } from "./lib/router";
 import { ConciergeProvider, ConciergeLauncher, ConciergeDialog, useConcierge } from "./components/Concierge";
@@ -6,21 +6,25 @@ import { Header, MobileNav, GlobalFooter, SkipLink, ErrorBoundary } from "./comp
 import { SearchModal } from "./components/Search";
 
 import Home from "./pages/Home";
-import Programmes from "./pages/Programmes";
-import ProgrammeDetail from "./pages/ProgrammeDetail";
-import ExecutiveEducation from "./pages/ExecutiveEducation";
-import Admissions from "./pages/Admissions";
-import About from "./pages/About";
-import Faculty from "./pages/Faculty";
-import ResearchInsights from "./pages/ResearchInsights";
-import ArticleDetail from "./pages/ArticleDetail";
-import CampusPage from "./pages/Campus";
 import Gallery from "./pages/Gallery";
-import Events from "./pages/Events";
-import EventDetail from "./pages/EventDetail";
-import Contact from "./pages/Contact";
-import ConciergePage from "./pages/ConciergePage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
+import { slugToCategory } from "./lib/categoryUtils.ts";
+
+/* Catalogue-heavy routes are code-split with React.lazy so the ~395 KB GIBS
+ * programme catalogue (src/lib/data.ts) is no longer bundled into the
+ * initial/homepage payload. scripts/seo-gen.mjs injects a
+ * <link rel="modulepreload"> for each route's chunk into the matching static
+ * shell, so a direct hit serves full static HTML and hydration finds the
+ * chunk already in flight. */
+const Programmes = lazy(() => import("./pages/Programmes"));
+const ProgrammeDetail = lazy(() => import("./pages/ProgrammeDetail"));
+const ExecutiveEducation = lazy(() => import("./pages/ExecutiveEducation"));
+const Contact = lazy(() => import("./pages/Contact"));
+const Admissions = lazy(() => import("./pages/Admissions"));
+const ConciergePage = lazy(() => import("./pages/ConciergePage"));
+const About = lazy(() => import("./pages/About"));
+const LocationDetail = lazy(() => import("./pages/LocationDetail"));
 
 /**
  * Resolves a path to a page.
@@ -33,14 +37,22 @@ import NotFound from "./pages/NotFound";
  * bail out of the untouched exiting subtree instead.
  */
 function RouteView({ path }: { path: string }) {
+  const category = matchRoute("/programmes/category/:slug", path);
+  if (category?.slug) {
+    const categoryName = slugToCategory(category.slug);
+    if (categoryName) {
+      return <Programmes initialCategory={categoryName} />;
+    }
+    return <NotFound />;
+  }
+
   const programme = matchRoute("/programmes/:slug", path);
   if (programme?.slug) return <ProgrammeDetail slug={programme.slug} />;
 
-  const article = matchRoute("/research-insights/:slug", path);
-  if (article?.slug) return <ArticleDetail slug={article.slug} />;
-
-  const event = matchRoute("/events/:slug", path);
-  if (event?.slug) return <EventDetail slug={event.slug} />;
+  const location = matchRoute("/locations/:slug", path);
+  if (location?.slug && (location.slug === "ilorin" || location.slug === "abuja" || location.slug === "ibafo")) {
+    return <LocationDetail locationId={location.slug as "ilorin" | "abuja" | "ibafo"} />;
+  }
 
   switch (path) {
     case "/":
@@ -53,20 +65,14 @@ function RouteView({ path }: { path: string }) {
       return <Admissions />;
     case "/about":
       return <About />;
-    case "/faculty":
-      return <Faculty />;
-    case "/research-insights":
-      return <ResearchInsights />;
-    case "/campus":
-      return <CampusPage />;
     case "/gallery":
       return <Gallery />;
-    case "/events":
-      return <Events />;
     case "/contact":
       return <Contact />;
     case "/concierge":
       return <ConciergePage />;
+    case "/privacy-policy":
+      return <PrivacyPolicy />;
     default:
       return <NotFound />;
   }
@@ -75,22 +81,30 @@ function RouteView({ path }: { path: string }) {
 function Chrome() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { setOpen: setConciergeOpen } = useConcierge();
+  const { path } = useRoute();
+  const { open: conciergeOpen, setOpen: setConciergeOpen } = useConcierge();
+  const isProgrammeCatalogue = path === "/programmes" || path.startsWith("/programmes/category/");
+  // The Contact page has an inline concierge action beside its form. Hiding
+  // the fixed launcher there keeps it from covering the lower form controls.
+  const showFloatingConcierge = !isProgrammeCatalogue && path !== "/contact";
 
   const openSearch = useCallback(() => setSearchOpen(true), []);
   const openConcierge = useCallback(() => setConciergeOpen(true), [setConciergeOpen]);
 
-  // Global keyboard shortcut: Cmd/Ctrl + K opens search
+  // Global keyboard shortcut: Cmd/Ctrl + K opens search.
+  // Guard against opening search while another overlay is active to
+  // prevent stacked modals (search underneath concierge/mobile drawer).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
+        if (conciergeOpen || menuOpen || searchOpen) return;
         setSearchOpen(true);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, []);
+  }, [conciergeOpen, menuOpen, searchOpen]);
 
   return (
     <>
@@ -109,7 +123,7 @@ function Chrome() {
         onOpenConcierge={openConcierge}
       />
       <SearchModal open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <ConciergeLauncher suppressed={searchOpen || menuOpen} />
+      {showFloatingConcierge && <ConciergeLauncher suppressed={searchOpen || menuOpen} />}
       <ConciergeDialog />
     </>
   );
@@ -133,6 +147,18 @@ export default function App() {
   );
 }
 
+/* Fallback shown only while a lazy (catalogue) route chunk is streaming in
+ * during client-side navigation. Direct entry is covered by the static shell
+ * (pre-rendered by seo-gen) plus a modulepreload hint, so this loader is a
+ * last line of defence on slower connections, never the primary paint. */
+function RouteLoader() {
+  return (
+    <div aria-busy="true" className="py-12 text-center text-ink/60">
+      Loading…
+    </div>
+  );
+}
+
 /** Restrained cross-fade between routes; transform/opacity only. */
 function AnimatedRoutes() {
   const { path } = useRoute();
@@ -145,7 +171,9 @@ function AnimatedRoutes() {
         exit={{ opacity: 0, y: -6 }}
         transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
       >
-        <RouteView path={path} />
+        <Suspense fallback={<RouteLoader />}>
+          <RouteView path={path} />
+        </Suspense>
       </motion.div>
     </AnimatePresence>
   );
